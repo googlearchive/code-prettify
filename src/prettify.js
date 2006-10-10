@@ -1247,7 +1247,7 @@ function prettyPrintOne(s) {
         // into pre blocks for some strange reason.
         // IE seems to ignore the newlines unless they're proper windows style
         // CRLFs.
-        html = html.replace(/(?:\r\n?)|\n/g, '\r\n').replace(/  /g, '&nbsp; ');
+        //html = html.replace(/  /g, '&nbsp; ');
       }
       out.push(html);
     }
@@ -1315,7 +1315,14 @@ function prettyPrint() {
           // push the prettified html back into the tag.
           if (!isRawContent) {
             // just replace the old html with the new
-            cs.innerHTML = newContent;
+            // To avoid newlines getting whacked by IE, use the workaround
+            // from http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
+            if ('insertAdjacentHTML' in cs) {
+              cs.innerHTML = '';
+              cs.insertAdjacentHTML(newContent);
+            } else {
+              cs.innerHTML = newContent;
+            }
           } else {
             // we need to change the tag to a <pre> since <xmp>s do not allow
             // embedded tags such as the span tags used to attach styles to
