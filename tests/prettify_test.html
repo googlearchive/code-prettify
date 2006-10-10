@@ -315,8 +315,8 @@ var goldens = {
       '&nbsp; local a`END`PUN=`END`LIT1`END`PLN<br>' +
       '&nbsp; local b`END`PUN=`END`LIT1`END`PLN<br>' +
       '&nbsp; `END`KWDwhile`END`PLN `END`PUN[`END`PLN `END`STR"$n"`END' +
-          '`PLN `END`PUN!=`END`PLN `END`LIT0`END`PLN `END`PUN]`END' +
-          '`PLN `END`PUN;`END`PLN `END`KWDdo`END`PLN<br>' +
+          '`PLN `END`PUN!=`END`PLN `END`LIT0`END`PLN `END`PUN]`END`PLN `END' +
+          '`PUN;`END`PLN `END`KWDdo`END`PLN<br>' +
       '&nbsp; &nbsp; local tmp`END`PUN=`END`PLN$a<br>' +
       '&nbsp; &nbsp; a`END`PUN=`END`PLN$`END`PUN((`END`PLN $a `END`PUN+`END' +
           '`PLN $b `END`PUN))`END`PLN<br>' +
@@ -708,7 +708,54 @@ function runTests() {
     return plainText.replace(/\046/g, '&amp;')
         .replace(/\074/g, '&lt;')
         .replace(/\076/g, '&gt;')
-        .replace(/\042/g, '&quot;');
+        .replace(/\042/g, '&quot;')
+        .replace(/\xa0/g, '&nbsp;');
+  }
+
+  /** convert a plain text string to html by escaping html special chars. */
+  function htmlDQSafe(plainText) {
+    return plainText.replace(/\046/g, '&amp;')
+        .replace(/\074/g, '&lt;')
+        .replace(/\076/g, '&gt;')
+        .replace(/\xa0/g, '&nbsp;');
+  }
+
+  /**
+   * get normalized markup.  innerHTML varies enough across browsers that we
+   * can't use it.
+   */
+  function normalizedInnerHtml(node, opt_out) {
+    var out = [];
+    for (var child = node.firstChild; child; child = child.nextSibling) {
+      normalizedHtml(child, out);
+    }
+    return out.join('');
+  }
+  var annoy = 10;
+  function normalizedHtml(node, out) {
+    switch (node.nodeType) {
+      case 1:  // an element
+        var name = node.tagName.toLowerCase();
+        out.push('\074', name);
+        for (var i = 0; i < node.attributes.length; ++i) {
+          out.push(' ');
+          normalizedHtml(node.attributes[i], out);
+        }
+        out.push('>');
+        for (var child = node.firstChild; child; child = child.nextSibling) {
+          normalizedHtml(child, out);
+        }
+        if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
+          out.push('<\/', name, '>');
+        }
+        break;
+      case 2: // an attribute
+        out.push(node.name.toLowerCase(), '="', htmlDQSafe(node.value), '"');
+        break;
+      case 3: case 4: // text
+        out.push(htmlDQSafe(node.nodeValue));
+        break;
+    }
   }
 
   var htmlOut = [];
@@ -720,7 +767,7 @@ function runTests() {
             ? '<\/span>'
             : '<span class="' + lbl.toLowerCase() + '">');
       });
-    var actual = document.getElementById(lang).innerHTML;
+    var actual = normalizedInnerHtml(document.getElementById(lang));
     if (golden !== actual) {  // test failed
       // write out
       var pre = commonPrefix(golden, actual);
