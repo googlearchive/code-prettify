@@ -1228,33 +1228,33 @@ function PR_lexOne(s) {
 function prettyPrintOne(s) {
   try {
     var tokens = PR_lexOne(s);
-    var out = '';
+    var out = [];
     var lastStyle = null;
     for (var i = 0; i < tokens.length; i++) {
       var t = tokens[i];
       if (t.style != lastStyle) {
         if (lastStyle != null) {
-          out += '</span>';
+          out.push('</span>');
         }
         if (t.style != null) {
-          out += '<span class=' + t.style + '>';
+          out.push('<span class=', t.style, '>');
         }
         lastStyle = t.style;
       }
       var html = t.token;
       if (null != t.style) {
-        // This interacts badly with the wiki which introduces paragraph tags
-        // int pre blocks for some strange reason.
+        // This interacts badly with some wikis which introduces paragraph tags
+        // into pre blocks for some strange reason.
         // It's necessary for IE though which seems to lose the preformattedness
         // of <pre> tags when their innerHTML is assigned.
         html = html.replace(/(?:\r\n?)|\n/g, '<br>').replace(/  /g, '&nbsp; ');
       }
-      out += html;
+      out.push(html);
     }
     if (lastStyle != null) {
-      out += '</span>';
+      out.push('</span>');
     }
-    return out;
+    return out.join('');
   } catch (e) {
     //alert(e.stack);  // DISABLE in production
     return s;
@@ -1302,8 +1302,9 @@ function prettyPrint() {
           // XMP tags contain unescaped entities so require special handling.
           var isRawContent = 'XMP' == cs.tagName;
 
-          // fetch the content as a snippet of properly escaped HTML
-          var content = cs.innerHTML;
+          // fetch the content as a snippet of properly escaped HTML.
+          // Firefox adds newlines at the end.
+          var content = cs.innerHTML.replace(/(?:\r\n?|\n)$/, '');
           if (isRawContent) {
             content = PR_textToHtml(content);
           }
