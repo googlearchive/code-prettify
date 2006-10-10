@@ -761,12 +761,12 @@ function runTests() {
       });
     var actual = normalizedInnerHtml(document.getElementById(lang));
     if (golden !== actual) {  // test failed
-      pre = pre.replace(/\\/g, '\\\\')
-               .replace(/\r/g, '\\r')
-               .replace(/\n/g, '\\n\n');
-      post = post.replace(/\\/g, '\\\\')
-               .replace(/\r/g, '\\r')
-               .replace(/\n/g, '\\n\n');
+      golden = golden.replace(/\\/g, '\\\\')
+          .replace(/\r/g, '\\r')
+          .replace(/\n/g, '\\n\n');
+      actual = actual.replace(/\\/g, '\\\\')
+          .replace(/\r/g, '\\r')
+          .replace(/\n/g, '\\n\n');
       // write out
       var pre = commonPrefix(golden, actual);
       var post = commonSuffix(golden, actual, pre);
