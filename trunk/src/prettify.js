@@ -1245,9 +1245,12 @@ function prettyPrintOne(s) {
       if (null != t.style) {
         // This interacts badly with some wikis which introduces paragraph tags
         // into pre blocks for some strange reason.
-        // IE seems to ignore the newlines unless they're proper windows style
-        // CRLFs.
-        //html = html.replace(/  /g, '&nbsp; ');
+        // It's necessary for IE though which seems to lose the preformattedness
+        // of <pre> tags when their innerHTML is assigned.
+        // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
+        html = html
+               .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
+               .replace(/\r\n?|\n/g, '<br>');
       }
       out.push(html);
     }
@@ -1315,14 +1318,7 @@ function prettyPrint() {
           // push the prettified html back into the tag.
           if (!isRawContent) {
             // just replace the old html with the new
-            // To avoid newlines getting whacked by IE, use the workaround
-            // from http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
-            if ('insertAdjacentHTML' in cs) {
-              cs.innerHTML = '';
-              cs.insertAdjacentHTML('afterBegin', newContent);
-            } else {
-              cs.innerHTML = newContent;
-            }
+            cs.innerHTML = newContent;
           } else {
             // we need to change the tag to a <pre> since <xmp>s do not allow
             // embedded tags such as the span tags used to attach styles to
