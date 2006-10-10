@@ -738,8 +738,10 @@ function runTests() {
         var name = node.tagName.toLowerCase();
         out.push('\074', name);
         for (var i = 0; i < node.attributes.length; ++i) {
+          var attr = node.attributes[i];
+          if (!attr.specified) { continue; }
           out.push(' ');
-          normalizedHtml(node.attributes[i], out);
+          normalizedHtml(attr, out);
         }
         out.push('>');
         for (var child = node.firstChild; child; child = child.nextSibling) {
