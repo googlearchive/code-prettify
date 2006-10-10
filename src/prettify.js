@@ -1319,7 +1319,7 @@ function prettyPrint() {
             // from http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
             if ('insertAdjacentHTML' in cs) {
               cs.innerHTML = '';
-              cs.insertAdjacentHTML(newContent);
+              cs.insertAdjacentHTML('afterBegin', newContent);
             } else {
               cs.innerHTML = newContent;
             }
