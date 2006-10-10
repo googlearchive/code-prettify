@@ -751,7 +751,8 @@ function runTests() {
 
   var htmlOut = [];
   var failures = 0;
-  document.getElementById('errorReport') = '<h1>Running tests&hellip;<\/h1>';
+  document.getElementById('errorReport').innerHTML =
+      '<h1>Running tests&hellip;<\/h1>';
   htmlOut.push('<h1>Test results<\/h1>');
   for (var lang in goldens) {
     var golden = goldens[lang].replace(/`([A-Z]{3})/g, function (_, lbl) {
