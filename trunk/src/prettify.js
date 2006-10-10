@@ -1245,9 +1245,9 @@ function prettyPrintOne(s) {
       if (null != t.style) {
         // This interacts badly with some wikis which introduces paragraph tags
         // into pre blocks for some strange reason.
-        // It's necessary for IE though which seems to lose the preformattedness
-        // of <pre> tags when their innerHTML is assigned.
-        html = html.replace(/(?:\r\n?)|\n/g, '<br>').replace(/  /g, '&nbsp; ');
+        // IE seems to ignore the newlines unless they're proper windows style
+        // CRLFs.
+        html = html.replace(/(?:\r\n?)|\n/g, '\r\n').replace(/  /g, '&nbsp; ');
       }
       out.push(html);
     }
