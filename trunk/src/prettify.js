@@ -1308,6 +1308,7 @@ function prettyPrint() {
           // fetch the content as a snippet of properly escaped HTML.
           // Firefox adds newlines at the end.
           var content = cs.innerHTML.replace(/(?:\r\n?|\n)$/, '');
+          if (!content) { continue; }
           if (isRawContent) {
             content = PR_textToHtml(content);
           }
