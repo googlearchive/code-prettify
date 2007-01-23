@@ -316,7 +316,7 @@ var goldens = {
       '&nbsp; &nbsp; a`END`PUN=`END`PLN$`END`PUN((`END`PLN $a `END`PUN+`END' +
           '`PLN $b `END`PUN))`END`PLN<br>' +
       '&nbsp; &nbsp; b`END`PUN=`END`PLN$tmp<br>' +
-      '&nbsp; done<br>' +
+      '&nbsp; `END`KWDdone`END`PLN<br>' +
       '`END`PUN}`END`PLN<br>' +
       '<br>' +
       '`END`COM# output the 10th element of the series and halt`END`PLN<br>' +
@@ -696,14 +696,6 @@ function runTests() {
         .replace(/\xa0/g, '&nbsp;');
   }
 
-  /** convert a plain text string to html by escaping html special chars. */
-  function htmlDQSafe(plainText) {
-    return plainText.replace(/\046/g, '&amp;')
-        .replace(/\074/g, '&lt;')
-        .replace(/\076/g, '&gt;')
-        .replace(/\xa0/g, '&nbsp;');
-  }
-
   /**
    * get normalized markup.  innerHTML varies enough across browsers that we
    * can't use it.
@@ -711,36 +703,15 @@ function runTests() {
   function normalizedInnerHtml(node, opt_out) {
     var out = [];
     for (var child = node.firstChild; child; child = child.nextSibling) {
-      normalizedHtml(child, out);
+      PR_normalizedHtml(child, out);
     }
-    return out.join('');
-  }
-  function normalizedHtml(node, out) {
-    switch (node.nodeType) {
-      case 1:  // an element
-        var name = node.tagName.toLowerCase();
-        out.push('\074', name);
-        for (var i = 0; i < node.attributes.length; ++i) {
-          var attr = node.attributes[i];
-          if (!attr.specified) { continue; }
-          out.push(' ');
-          normalizedHtml(attr, out);
-        }
-        out.push('>');
-        for (var child = node.firstChild; child; child = child.nextSibling) {
-          normalizedHtml(child, out);
-        }
-        if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
-          out.push('<\/', name, '>');
-        }
-        break;
-      case 2: // an attribute
-        out.push(node.name.toLowerCase(), '="', htmlDQSafe(node.value), '"');
-        break;
-      case 3: case 4: // text
-        out.push(htmlDQSafe(node.nodeValue));
-        break;
+    out = out.join('');
+    // more normalization to work around problems with non-ascii chars in
+    // regexps in Safari
+    for (var i = 0; (i = out.indexOf('\xa0')) >= 0;) {
+      out = out.substring(0, i) + '&nbsp;' + out.substring(i + 1);
     }
+    return out;
   }
 
   var htmlOut = [];

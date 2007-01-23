@@ -75,7 +75,7 @@ var PR_keywords = new Object();
   var PERL_KEYWORDS = (
     "foreach require sub unless until use elsif BEGIN END");
   var SH_KEYWORDS = (
-    "if then do else fi end");
+    "if then do done else fi end");
   var RUBY_KEYWORDS = (
       "if then elsif else end begin do rescue ensure while for class module " +
       "def yield raise until unless and or not when case super undef break " +
@@ -240,9 +240,85 @@ function PR_prefixMatch(chars, len, prefix) {
   return true;
 }
 
-/** used to convert html special characters embedded in XMP tags into html. */
+/** like textToHtml but escapes double quotes to be attribute safe. */
+function PR_attribToHtml(str) {
+  return str.replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/\xa0/, '&nbsp;');
+}
+
+/** escapest html special characters to html. */
 function PR_textToHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\xa0/g, '&nbsp;');
+}
+
+/** is the given node's innerHTML normally unescaped? */
+function PR_isRawContent(node) {
+  return 'XMP' == node.tagName;
+}
+
+var PR_innerHtmlWorks = null;
+function PR_getInnerHtml(node) {
+  // inner html is hopelessly broken in Safari 2.0.4 when the content is
+  // an html description of well formed XML and the containing tag is a PRE
+   // tag, so we detect that case and emulate innerHTML.
+  if (null == PR_innerHtmlWorks) {
+    var testNode = document.createElement('PRE');
+    testNode.appendChild(
+        document.createTextNode('<!DOCTYPE foo PUBLIC "foo bar">\n<foo />'));
+    PR_innerHtmlWorks = !/</.test(testNode.innerHTML);
+  }
+
+  if (PR_innerHtmlWorks) {
+    var content = node.innerHTML;
+    // XMP tags contain unescaped entities so require special handling.
+    if (PR_isRawContent(node)) {
+       content = PR_textToHtml(html);
+    }
+    return content;
+  }
+
+  var out = [];
+  for (var child = node.firstChild; child; child = child.nextSibling) {
+    PR_normalizedHtml(child, out);
+  }
+  return out.join('');
+}
+
+/**
+ * walks the DOM returning a properly escaped version of innerHTML.
+ */
+function PR_normalizedHtml(node, out) {
+  switch (node.nodeType) {
+    case 1:  // an element
+      var name = node.tagName.toLowerCase();
+      out.push('\074', name);
+      for (var i = 0; i < node.attributes.length; ++i) {
+        var attr = node.attributes[i];
+        if (!attr.specified) { continue; }
+        out.push(' ');
+        PR_normalizedHtml(attr, out);
+      }
+      out.push('>');
+      for (var child = node.firstChild; child; child = child.nextSibling) {
+        PR_normalizedHtml(child, out);
+      }
+      if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
+        out.push('<\/', name, '>');
+      }
+      break;
+    case 2: // an attribute
+      out.push(node.name.toLowerCase(), '="', PR_attribToHtml(node.value), '"');
+      break;
+    case 3: case 4: // text
+      out.push(PR_textToHtml(node.nodeValue));
+      break;
+  }
 }
 
 
@@ -1302,22 +1378,17 @@ function prettyPrint() {
           }
         }
         if (!nested) {
-          // XMP tags contain unescaped entities so require special handling.
-          var isRawContent = 'XMP' == cs.tagName;
-
           // fetch the content as a snippet of properly escaped HTML.
           // Firefox adds newlines at the end.
-          var content = cs.innerHTML.replace(/(?:\r\n?|\n)$/, '');
+          var content = PR_getInnerHtml(cs);
+          content = content.replace(/(?:\r\n?|\n)$/, '');
           if (!content) { continue; }
-          if (isRawContent) {
-            content = PR_textToHtml(content);
-          }
 
           // do the pretty printing
           var newContent = prettyPrintOne(content);
 
           // push the prettified html back into the tag.
-          if (!isRawContent) {
+          if (PR_isRawContent(cs)) {
             // just replace the old html with the new
             cs.innerHTML = newContent;
           } else {
