@@ -278,7 +278,7 @@ function PR_getInnerHtml(node) {
     var content = node.innerHTML;
     // XMP tags contain unescaped entities so require special handling.
     if (PR_isRawContent(node)) {
-       content = PR_textToHtml(html);
+       content = PR_textToHtml(content);
     }
     return content;
   }
@@ -1388,7 +1388,7 @@ function prettyPrint() {
           var newContent = prettyPrintOne(content);
 
           // push the prettified html back into the tag.
-          if (PR_isRawContent(cs)) {
+          if (!PR_isRawContent(cs)) {
             // just replace the old html with the new
             cs.innerHTML = newContent;
           } else {
