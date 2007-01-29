@@ -245,7 +245,7 @@ function PR_attribToHtml(str) {
   return str.replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+    .replace(/\"/g, '&quot;')
     .replace(/\xa0/, '&nbsp;');
 }
 
@@ -730,7 +730,20 @@ function PR_splitStringAndCommentTokens(chunks) {
     }
     k += s.length;
   }
-  tokenEnds.push(new PR_TokenEnd(k, PR_PLAIN));  // a token ends at the end
+  var endTokenType;
+  switch (state) {
+    case 1: case 2:
+      endTokenType = PR_STRING;
+      break;
+    case 4: case 5: case 6:
+      endTokenType = PR_COMMENT;
+      break;
+    default:
+      endTokenType = PR_PLAIN;
+      break;
+  }
+  // handle unclosed token which can legally happen for line comments (state 4)
+  tokenEnds.push(new PR_TokenEnd(k, endTokenType));  // a token ends at the end
 
   return PR_splitChunks(chunks, tokenEnds);
 }
