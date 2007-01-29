@@ -293,6 +293,10 @@ document.writeln(fib(10));
 <h1>Whitespace</h1>
 <pre class=prettyprint id="whitespace"></pre>
 
+<h1>Misc</h1>
+<pre class=prettyprint id="misc1">// ends with line comment token
+//</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -662,7 +666,9 @@ var goldens = {
       '&nbsp; &nbsp; `END`END`TAG&lt;/script&gt;`END`PLN<br>' +
       '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
       '`END`TAG&lt;/html&gt;`END'),
-  whitespace: ''
+  whitespace: '',
+  misc1: '`COM// ends with line comment token`END`PLN<br>' +
+      '`END`COM//`END'
 };
 
 
