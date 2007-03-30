@@ -43,7 +43,7 @@
  *   Java annotations (start with "@") are now captured as literals ("lit")
  */
 
-var PR_keywords = new Object();
+var PR_keywords = {};
 /** initialize the keyword list for our target languages. */
 (function () {
   var CPP_KEYWORDS = (
@@ -153,8 +153,8 @@ PR_Token.prototype.toString = function () {
 };
 
 
-/** a helper class that decodes common html entities used to escape source and
-  * markup punctuation characters in html.
+/** a helper class that decodes common html entities used to escape special
+  * characters in source code.
   * @constructor
   * @private
   */
@@ -163,33 +163,50 @@ function PR_DecodeHelper() {
   this.ch = '\0';
 }
 
+var PR_NAMED_ENTITIES = {
+  'lt':   '<',
+  'gt':   '>',
+  'quot': '"',
+  'apos': "'",
+  'amp':  '&'   // reencoding requires that & always be decoded properly
+};
+
 PR_DecodeHelper.prototype.decode = function (s, i) {
   var next = i + 1;
   var ch = s.charAt(i);
-  if ('&' == ch) {
+  if ('&' === ch) {
     var semi = s.indexOf(';', next);
     if (semi >= 0 && semi < next + 4) {
-      var entityName = s.substring(next, semi).toLowerCase();
-      next = semi + 1;
-      if ('lt' == entityName) {
-        ch = '<';
-      } else if ('gt' == entityName) {
-        ch = '>';
-      } else if ('quot' == entityName) {
-        ch = '"';
-      } else if ('apos' == entityName) {
-        ch = '\'';
-      } else if ('amp' == entityName) {
-        ch = '&';
-      } else {
+      var entityName = s.substring(next, semi);
+      var decoded = null;
+      if (entityName.charAt(0) === '#') {  // check for numeric entity
+        var ch1 = entityName.charAt(1);
+        var charCode;
+        if (ch1 === 'x' || ch1 === 'X') {  // like &#xA0;
+          charCode = parseInt(entityName.substring(2), 16);
+        } else {  // like &#160;
+          charCode = parseInt(entityName.substring(1), 10);
+        }
+        if (!isNaN(charCode)) {
+          decodedEntity = String.fromCharCode(charCode);
+        }
+      }
+      if (!decoded) {
+        decoded = PR_NAMED_ENTITIES[entityName.toLowerCase()];
+      }
+      if (decoded) {
+        ch = decoded;
+        next = semi + 1;
+      } else {  // skip over unrecognized entity
         next = i + 1;
+        ch = '\0';
       }
     }
   }
   this.next = next;
   this.ch = ch;
   return this.ch;
-}
+};
 
 
 // some string utilities
@@ -321,105 +338,43 @@ function PR_normalizedHtml(node, out) {
   }
 }
 
-
 /** split markup into chunks of html tags (style null) and
   * plain text (style {@link #PR_PLAIN}).
   *
-  * @param s a String of html.
-  * @return an Array of PR_Tokens of style PR_PLAIN and null.
+  * @param {String} s html.
+  * @return {Array} of PR_Tokens of style PR_PLAIN, and null.
   * @private
   */
 function PR_chunkify(s) {
-  var chunks = new Array();
-  var state = 0;
-  var start = 0;
-  var pos = -1;
-  for (var i = 0, n = s.length; i < n; ++i) {
-    var ch = s.charAt(i);
-    switch (state) {
-      case 0:
-        if ('<' == ch) { state = 1; }
-        break;
-      case 1:
-        pos = i - 1;
-        if ('/' == ch) { state = 2; }
-        else if (PR_isWordChar(ch)) { state = 3; }
-        else if ('<' == ch) { state = 1; }
-        else { state = 0; }
-        break;
-      case 2:
-        if (PR_isWordChar(ch)) { state = 3; }
-        else if ('<' == ch) { state = 1; }
-        else { state = 0; }
-        break;
-      case 3:
-        if ('>' == ch) {
-          if (pos > start) {
-            chunks.push(new PR_Token(s.substring(start, pos), PR_PLAIN));
-          }
-          chunks.push(new PR_Token(s.substring(pos, i + 1), null));
-          start = i + 1;
-          pos = -1;
-          state = 0;
+  // The below pattern matches one of the following
+  // (1) /[^<]+/ : A run of characters other than '<'
+  // (2) /<\/?[a-zA-Z][^>]*>/ : A probably tag that should not be highlighted
+  // (3) /</ : A '<' that does not begin a larger chunk.  Treated as 1
+  var chunkPattern = /(?:[^<]+|<\/?[a-zA-Z][^>]*>|<)/g;
+  // since the pattern has the 'g' modifier and defines no capturing groups,
+  // this will return a list of all chunks which we then classify and wrap as
+  // PR_Tokens
+  var matches = s.match(chunkPattern);
+  var chunks = [];
+  if (matches) {
+    var lastChunk = null;
+    for (var i = 0, n = matches.length; i < n; ++i) {
+      var chunkText = matches[i];
+      var style;
+      if (chunkText.length < 2 || chunkText.charAt(0) !== '<') {
+        if (lastChunk && lastChunk.style === PR_PLAIN) {
+          lastChunk.token += chunkText;
+          continue;
         }
-        break;
+        style = PR_PLAIN;
+      } else {  // a tag
+        style = null;
+      }
+      lastChunk = new PR_Token(chunkText, style);
+      chunks.push(lastChunk);
     }
-  }
-  if (s.length > start) {
-    chunks.push(new PR_Token(s.substring(start, s.length), PR_PLAIN));
   }
   return chunks;
-}
-
-/** splits chunks around entities.
-  * @private
-  */
-function PR_splitEntities(chunks) {
-  var chunksOut = new Array();
-  var state = 0;
-  for (var ci = 0, nc = chunks.length; ci < nc; ++ci) {
-    var chunk = chunks[ci];
-    if (PR_PLAIN != chunk.style) {
-      chunksOut.push(chunk);
-      continue;
-    }
-    var s = chunk.token;
-    var pos = 0;
-    var start;
-    for (var i = 0; i < s.length; ++i) {
-      var ch = s.charAt(i);
-      switch (state) {
-        case 0:
-          if ('&' == ch) { state = 1; }
-          break;
-        case 1:
-          if ('#' == ch || PR_isWordChar(ch)) {
-            start = i - 1;
-            state = 2;
-          } else {
-            state = 0;
-          }
-          break;
-        case 2:
-          if (';' == ch) {
-            if (start > pos) {
-              chunksOut.push(
-                  new PR_Token(s.substring(pos, start), chunk.style));
-            }
-            chunksOut.push(new PR_Token(s.substring(start, i + 1), null));
-            pos = i + 1;
-            state = 0;
-          }
-          break;
-      }
-    }
-    if (s.length > pos) {
-      chunksOut.push(pos ?
-                     new PR_Token(s.substring(pos, s.length), chunk.style) :
-                     chunk);
-    }
-  }
-  return chunksOut;
 }
 
 /** walk the tokenEnds list and the chunk list in parallel to generate a list
@@ -427,7 +382,7 @@ function PR_splitEntities(chunks) {
   * @private
   */
 function PR_splitChunks(chunks, tokenEnds) {
-  var tokens = new Array();  // the output
+  var tokens = [];  // the output
 
   var ci = 0;  // index into chunks
   // position of beginning of amount written so far in absolute space.
@@ -438,9 +393,10 @@ function PR_splitChunks(chunks, tokenEnds) {
   // current chunk
   var chunk = new PR_Token('', null);
 
-  for (var ei = 0, ne = tokenEnds.length; ei < ne; ++ei) {
+  for (var ei = 0, ne = tokenEnds.length, lastEnd = 0; ei < ne; ++ei) {
     var tokenEnd = tokenEnds[ei];
     var end = tokenEnd.end;
+    if (end === lastEnd) { continue; }  // skip empty regions
 
     var tokLen = end - posAbs;
     var remainingInChunk = chunk.token.length - posChunk;
@@ -452,7 +408,9 @@ function PR_splitChunks(chunks, tokenEnds) {
       }
       posAbs += remainingInChunk;
       posChunk = 0;
-      if (ci < chunks.length) { chunk = chunks[ci++]; }
+      if (ci < chunks.length) {
+        chunk = chunks[ci++];
+      }
 
       tokLen = end - posAbs;
       remainingInChunk = chunk.token.length - posChunk;
@@ -487,7 +445,7 @@ function PR_splitMarkup(chunks) {
   // Handling this would require a stack, and we don't use PHP.
 
   // The output: a list of pairs of PR_TokenEnd instances
-  var tokenEnds = new Array();
+  var tokenEnds = [];
 
   var state = 0;  // FSM state variable
   var k = 0;  // position in absolute space of the start of the current chunk
@@ -658,7 +616,7 @@ function PR_splitMarkup(chunks) {
 }
 
 /** splits the given string into comment, string, and "other" tokens.
-  * @return an array of PR_Tokens with style in
+  * @return {Array} of PR_Tokens with style in
   *   (PR_STRING, PR_COMMENT, PR_PLAIN, null)
   *   The result array may contain spurious zero length tokens.  Ignore them.
   *
@@ -666,16 +624,22 @@ function PR_splitMarkup(chunks) {
   */
 function PR_splitStringAndCommentTokens(chunks) {
   // a state machine to split out comments, strings, and other stuff
-  var tokenEnds = new Array();  // positions of ends of tokens in absolute space
+  var tokenEnds = [];  // positions of ends of tokens in absolute space
   var state = 0;  // FSM state variable
   var delim = -1;  // string delimiter
   var k = 0;  // absolute position of beginning of current chunk
+
   for (var ci = 0, nc = chunks.length; ci < nc; ++ci) {
     var chunk = chunks[ci];
     var s = chunk.token;
     if (PR_PLAIN == chunk.style) {
-      for (var i = 0, n = s.length; i < n; ++i) {
-        var ch = s.charAt(i);
+      var decodeHelper = new PR_DecodeHelper();
+      var last = -1;
+      var next;
+      for (var i = 0, n = s.length; i < n; last = i, i = next) {
+        decodeHelper.decode(s, i);
+        var ch = decodeHelper.ch;
+        next = decodeHelper.next;
         if (0 == state) {
           if (ch == '"' || ch == '\'' || ch == '`') {
             tokenEnds.push(new PR_TokenEnd(k + i, PR_PLAIN));
@@ -690,7 +654,7 @@ function PR_splitStringAndCommentTokens(chunks) {
         } else if (1 == state) {
           if (ch == delim) {
             state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + i + 1, PR_STRING));
+            tokenEnds.push(new PR_TokenEnd(k + next, PR_STRING));
           } else if (ch == '\\') {
             state = 2;
           }
@@ -699,15 +663,15 @@ function PR_splitStringAndCommentTokens(chunks) {
         } else if (3 == state) {
           if (ch == '/') {
             state = 4;
-            tokenEnds.push(new PR_TokenEnd(k + i - 1, PR_PLAIN));
+            tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
           } else if (ch == '*') {
             state = 5;
-            tokenEnds.push(new PR_TokenEnd(k + i - 1, PR_PLAIN));
+            tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
           } else {
             state = 0;
             // next loop will reenter state 0 without same value of i, so
             // ch will be reconsidered as start of new token.
-            --i;
+            next = i;
           }
         } else if (4 == state) {
           if (ch == '\r' || ch == '\n') {
@@ -721,7 +685,7 @@ function PR_splitStringAndCommentTokens(chunks) {
         } else if (6 == state) {
           if (ch == '/') {
             state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + i + 1, PR_COMMENT));
+            tokenEnds.push(new PR_TokenEnd(k + next, PR_COMMENT));
           } else if (ch != '*') {
             state = 5;
           }
@@ -754,17 +718,24 @@ function PR_splitStringAndCommentTokens(chunks) {
 function PR_splitNonStringNonCommentToken(s, outlist) {
   var pos = 0;
   var state = 0;
-  for (var i = 0; i <= s.length; i++) {
-    var ch = s.charAt(i);
-    // the next state.
-    // if set to -1 then it will cause a reentry to state 0 without consuming
-    // another character.
-    var nstate = state;
 
+  var decodeHelper = new PR_DecodeHelper();
+  var next;
+  for (var i = 0; i <= s.length; i = next) {
     if (i == s.length) {
       // nstate will not be equal to state, so it will append the token
       nstate = -2;
+      next = i + 1;
     } else {
+      decodeHelper.decode(s, i);
+      next = decodeHelper.next;
+      var ch = decodeHelper.ch;
+
+      // the next state.
+      // if set to -1 then it will cause a reentry to state 0 without consuming
+      // another character.
+      var nstate = state;
+
       switch (state) {
       case 0:  // whitespace state
         if (PR_isIdentifierStart(ch)) {
@@ -809,7 +780,10 @@ function PR_splitNonStringNonCommentToken(s, outlist) {
       if (nstate < 0) {
         if (i > pos) {
           var t = s.substring(pos, i);
-          var ch0 = t.charAt(0);
+          var wordDecodeHelper = new PR_DecodeHelper();
+          wordDecodeHelper.decode(t, 0);
+          var ch0 = wordDecodeHelper.ch;
+          var isSingleCharacter = wordDecodeHelper.next == t.length;
           var style;
           if (PR_isIdentifierStart(ch0)) {
             if (PR_keywords[t]) {
@@ -824,14 +798,16 @@ function PR_splitNonStringNonCommentToken(s, outlist) {
               // passably for Python.  The _t catches C structs.
               var isType = false;
               if (ch0 >= 'A' && ch0 <= 'Z') {
-                for (var j = 1; j < t.length; j++) {
-                  var ch1 = t.charAt(j);
+                for (var j = wordDecodeHelper.next;
+                     j < t.length; j = wordDecodeHelper.next) {
+                  wordDecodeHelper.decode(t, j);
+                  var ch1 = wordDecodeHelper.ch;
                   if (ch1 >= 'a' && ch1 <= 'z') {
                     isType = true;
                     break;
                   }
                 }
-                if (!isType && t.length >= 2 &&
+                if (!isType && !isSingleCharacter &&
                     t.substring(t.length - 2) == '_t') {
                   isType = true;
                 }
@@ -853,13 +829,14 @@ function PR_splitNonStringNonCommentToken(s, outlist) {
         if (nstate == -1) {
           // don't increment.  This allows us to use state 0 to redispatch based
           // on the current character.
-          i--;
+          next = i;
           continue;
         }
       }
       state = nstate;
     }
   }
+
 }
 
 /** split a group of chunks of markup.
@@ -877,7 +854,7 @@ function PR_tokenizeMarkup(chunks) {
   * @private
   */
 function PR_splitTagAttributes(tokens) {
-  var tokensOut = new Array();
+  var tokensOut = [];
   var state = 0;
   var stateStyle = PR_TAG;
   var delim = null;  // attribute delimiter for quoted value state.
@@ -991,7 +968,7 @@ function PR_splitTagAttributes(tokens) {
   * @private
   */
 function PR_splitSourceNodes(tokens) {
-  var tokensOut = new Array();
+  var tokensOut = [];
   // when we see a <script> tag, store '/' here so that we know to end the
   // source processing
   var endScriptTag = null;
@@ -1047,10 +1024,10 @@ function PR_splitSourceNodes(tokens) {
             s = s.substring(0, pos);
           }
         }
-        if (null == sourceChunks) { sourceChunks = new Array(); }
+        if (null == sourceChunks) { sourceChunks = []; }
         sourceChunks.push(new PR_Token(s, PR_PLAIN));
       } else if (PR_PLAIN == tok.style) {
-        if (null == sourceChunks) { sourceChunks = new Array(); }
+        if (null == sourceChunks) { sourceChunks = []; }
         sourceChunks.push(tok);
       } else if (PR_TAG == tok.style) {
         // if it starts with </ then it must be the end tag.
@@ -1126,7 +1103,7 @@ function PR_splitAttributeQuotes(tokens) {
     lpos = ls.length;
   }
 
-  var tokensOut = new Array();
+  var tokensOut = [];
   for (var i = 0; i < firstPlain; ++i) {
     tokensOut.push(tokens[i]);
   }
@@ -1158,7 +1135,7 @@ function PR_splitAttributeQuotes(tokens) {
   * @private
   */
 function PR_splitSourceAttributes(tokens) {
-  var tokensOut = new Array();
+  var tokensOut = [];
 
   var sourceChunks = null;
   var inSource = false;
@@ -1193,7 +1170,7 @@ function PR_splitSourceAttributes(tokens) {
       name += tok.token;
     } else if (PR_ATTRIB_VALUE == tok.style) {
       if (inSource) {
-        if (null == sourceChunks) { sourceChunks = new Array(); }
+        if (null == sourceChunks) { sourceChunks = []; }
         outList = sourceChunks;
         tok = new PR_Token(tok.token, PR_PLAIN);
       }
@@ -1209,34 +1186,29 @@ function PR_splitSourceAttributes(tokens) {
 
 /** returns a list of PR_Token objects given chunks of source code.
   *
-  * This code assumes that < tokens are html escaped, but " are not.
-  * It will do a resonable job with <, but will not recognize an &quot;
-  * as starting a string.
-  *
   * This code treats ", ', and ` as string delimiters, and \ as a string escape.
-  * It does not recognize double delimiter escapes, or perl's qq() style
-  * strings.
+  * It does not recognize perl's qq() style strings.  It has no special handling
+  * for double delimiter escapes as in basic, or tje tripled delimiters used in
+  * python, but should work on those regardless although in those cases a single
+  * string literal may be broken up into multiple adjacent string literals.
   *
   * It recognizes C, C++, and shell style comments.
   *
   * @param chunks PR_Tokens with style in (null, PR_PLAIN)
   */
 function PR_lexSource(chunks) {
-  // positions of ends of tokens in order
-  var tokensIn = PR_splitStringAndCommentTokens(chunks);
-
-  // split entities out of so that we know to treat them as single units.
-  tokensIn = PR_splitEntities(tokensIn);
+  // split into strings, comments, and other.
+  // We do this because strings and comments are easily recognizable and can
+  // contain stuff that looks like other tokens, so we want to mark those early
+  // so we don't recurse into them.
+  var tokens = PR_splitStringAndCommentTokens(chunks);
 
   // split non comment|string tokens on whitespace and word boundaries
-  var tokensOut = new Array();
-  for (var i = 0; i < tokensIn.length; ++i) {
-    var tok = tokensIn[i];
-    var t = tok.token;
-    var s = tok.style;
-
-    if (PR_PLAIN == s) {
-      PR_splitNonStringNonCommentToken(t, tokensOut);
+  var tokensOut = [];
+  for (var i = 0; i < tokens.length; ++i) {
+    var tok = tokens[i];
+    if (PR_PLAIN === tok.style) {
+      PR_splitNonStringNonCommentToken(tok.token, tokensOut);
       continue;
     }
     tokensOut.push(tok);
@@ -1348,7 +1320,10 @@ function prettyPrintOne(s) {
     }
     return out.join('');
   } catch (e) {
-    //alert(e.stack);  // DISABLE in production
+    if ('console' in window) {
+      console.log(e);
+      console.trace();
+    }
     return s;
   }
 }
@@ -1395,7 +1370,6 @@ function prettyPrint() {
           // Firefox adds newlines at the end.
           var content = PR_getInnerHtml(cs);
           content = content.replace(/(?:\r\n?|\n)$/, '');
-          if (!content) { continue; }
 
           // do the pretty printing
           var newContent = prettyPrintOne(content);
