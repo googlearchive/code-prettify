@@ -976,11 +976,21 @@ function PR_splitSourceNodes(tokens) {
 
   var sourceChunks = null;
 
-  for (var ci = 0, nc = tokens.length; ci < nc; ++ci) {
-    var tok = tokens[ci];
-    if (null == tok.style) {
-      tokens.push(tok);
-      continue;
+  for (var ci = 0, nc = tokens.length; /* break below */; ++ci) {
+    var tok;
+
+    if (ci < nc) {
+      tok = tokens[ci];
+      if (null == tok.style) {
+        tokens.push(tok);
+        continue;
+      }
+    } else if (!endScriptTag) {
+      break;
+    } else {
+      // else pretend there's an end tag so we can gracefully handle
+      // unclosed source blocks
+      tok = new PR_Token('', null);
     }
 
     var s = tok.token;
@@ -1038,6 +1048,9 @@ function PR_splitSourceNodes(tokens) {
         } else {
           tokensOut.push(tok);
         }
+      } else if (ci >= nc) {
+        // force the token to close
+        endTok = tok;
       } else {
         if (sourceChunks) {
           sourceChunks.push(tok);
@@ -1056,7 +1069,7 @@ function PR_splitSourceNodes(tokens) {
           tokensOut.push(new PR_Token('</span>', null));
           sourceChunks = null;
         }
-        tokensOut.push(endTok);
+        if (endTok.token) { tokensOut.push(endTok); }
         endScriptTag = null;
       }
     } else {
@@ -1278,6 +1291,7 @@ function PR_lexOne(s) {
       break;
     }
   }
+
   return isMarkup ? PR_lexMarkup(chunks) : PR_lexSource(chunks);
 }
 
