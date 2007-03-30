@@ -46,42 +46,32 @@
 var PR_keywords = {};
 /** initialize the keyword list for our target languages. */
 (function () {
-  var CPP_KEYWORDS = (
-    "bool break case catch char class const const_cast continue default " +
-    "delete deprecated dllexport dllimport do double dynamic_cast else enum " +
-    "explicit extern false float for friend goto if inline int long mutable " +
-    "naked namespace new noinline noreturn nothrow novtable operator private " +
-    "property protected public register reinterpret_cast return selectany " +
-    "short signed sizeof static static_cast struct switch template this " +
-    "thread throw true try typedef typeid typename union unsigned using " +
-    "declaration, using directive uuid virtual void volatile while typeof");
-  var JAVA_KEYWORDS = (
-    "abstract default goto package synchronized boolean do if private this " +
-    "break double implements protected throw byte else import public throws " +
-    "case enum instanceof return transient catch extends int short try char " +
-    "final interface static void class finally long strictfp volatile const " +
-    "float native super while continue for new switch");
-  var PYTHON_KEYWORDS = (
-    "and assert break class continue def del elif else except exec finally " +
-    "for from global if import in is lambda not or pass print raise return " +
-    "try while yield False True None");
-  var JSCRIPT_KEYWORDS = (
-    "abstract boolean break byte case catch char class const continue " +
-    "debugger default delete do double else enum export extends false final " +
-    "finally float for function goto if implements import in instanceof int " +
-    "interface long native new null package private protected public return " +
-    "short static super switch synchronized this throw throws transient " +
-    "true try typeof var void volatile while with NaN Infinity");
-  var PERL_KEYWORDS = (
-    "foreach require sub unless until use elsif BEGIN END");
-  var SH_KEYWORDS = (
-    "if then do done else fi end");
-  var RUBY_KEYWORDS = (
-      "if then elsif else end begin do rescue ensure while for class module " +
-      "def yield raise until unless and or not when case super undef break " +
-      "next redo retry in return alias defined");
-  var KEYWORDS = [CPP_KEYWORDS, JAVA_KEYWORDS, JSCRIPT_KEYWORDS, PERL_KEYWORDS,
-                  PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
+  var CPP_KEYWORDS = "abstract bool break case catch char class const " +
+    "const_cast continue default delete deprecated dllexport dllimport do " +
+    "double dynamic_cast else enum explicit extern false float for friend " +
+    "goto if inline int long mutable naked namespace new noinline noreturn " +
+    "nothrow novtable operator private property protected public register " +
+    "reinterpret_cast return selectany short signed sizeof static " +
+    "static_cast struct switch template this thread throw true try typedef " +
+    "typeid typename union unsigned using declaration, directive uuid " +
+    "virtual void volatile while typeof";
+  var CSHARP_KEYWORDS = "as base by byte checked decimal delegate descending " +
+    "event finally fixed foreach from group implicit in interface internal " +
+    "into is lock null object out override orderby params readonly ref sbyte " +
+    "sealed stackalloc string select uint ulong unchecked unsafe ushort var";
+  var JAVA_KEYWORDS = "package synchronized boolean implements import throws " +
+    "instanceof transient extends final strictfp native super";
+  var JSCRIPT_KEYWORDS = "debugger export function with NaN Infinity";
+  var PERL_KEYWORDS = "require sub unless until use elsif BEGIN END";
+  var PYTHON_KEYWORDS = "and assert def del elif except exec global lambda " +
+    "not or pass print raise yield False True None";
+  var RUBY_KEYWORDS = "then end begin rescue ensure module when undef next " +
+    "redo retry alias defined";
+  var SH_KEYWORDS = "done fi";
+
+  var KEYWORDS = [CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS,
+                  JSCRIPT_KEYWORDS, PERL_KEYWORDS, PYTHON_KEYWORDS,
+                  RUBY_KEYWORDS, SH_KEYWORDS];
   for (var k = 0; k < KEYWORDS.length; k++) {
     var kw = KEYWORDS[k].split(' ');
     for (var i = 0; i < kw.length; i++) {
