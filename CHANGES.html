@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Change Log</title>
+  </head>
+  <body>
+    <a style="float:right" href="README.html">README</a>
+    <h1>Change Log</h1>
+    <h2>29 March 2007</h2>
+    <ul>
+      <li>Added <a href="tests/prettify_test.html#PHP">tests</a> for PHP support
+        to address 
+      <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=3"
+       >issue 3</a>.
+      <li>Fixed
+      <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=6"
+       >bug</a>: <code>prettyPrintOne</code> was not halting.  This was not
+        reachable through the normal entry point.
+      <li>Fixed entity handling so that the caveat
+        <blockquote>
+      <li>Fixed
+      <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=4"
+       >bug</a>: recursing into a script block or PHP tag that was not properly
+        closed would not silently drop the content.
+        (<a href="tests/prettify_test.html#issue4">test</a>)
+      <li>Fixed
+      <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=8"
+       >bug</a>: was eating tabs
+        (<a href="tests/prettify_test.html#issue8">test</a>)
+      <li>Fixed entity handling so that the caveat
+        <blockquote>
+    <p>Caveats: please properly escape less-thans.  <tt>x&amp;lt;y</tt>
+    instead of <tt>x&lt;y</tt>, and use <tt>&quot;</tt> instead of 
+    <tt>&amp;quot;</tt> for string delimiters.</p>
+        </blockquote>
+        is no longer applicable.
+      <li>Added noisefree's C#
+      <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=4"
+       >patch</a>
+      <li>Added a <a href="http://google-code-prettify.googlecode.com/files/prettify-small.zip">smaller distribution</a> that has comments and
+        whitespace removed to reduce download size from 45.5kB to 12.8kB.
+  </body>
+</html>
