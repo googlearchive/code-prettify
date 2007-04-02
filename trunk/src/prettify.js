@@ -107,6 +107,9 @@ var PR_ATTRIB_NAME = 'atn';
 /** token style for an sgml attribute value. */
 var PR_ATTRIB_VALUE = 'atv';
 
+/** the number of characters between tab columns */
+var PR_TAB_WIDTH = 8;
+
 /** the position of the end of a token during.  A division of a string into
   * n tokens can be represented as a series n - 1 token ends, as long as
   * runs of whitespace warrant their own token.
@@ -178,7 +181,7 @@ PR_DecodeHelper.prototype.decode = function (s, i) {
           charCode = parseInt(entityName.substring(1), 10);
         }
         if (!isNaN(charCode)) {
-          decodedEntity = String.fromCharCode(charCode);
+          decoded = String.fromCharCode(charCode);
         }
       }
       if (!decoded) {
@@ -326,6 +329,64 @@ function PR_normalizedHtml(node, out) {
       out.push(PR_textToHtml(node.nodeValue));
       break;
   }
+}
+
+/** expand tabs to spaces
+  * @param {Array} chunks PR_Tokens possibly containing tabs
+  * @param {Number} tabWidth number of spaces between tab columns
+  * @return {Array} chunks with tabs replaced with spaces
+  */
+function PR_expandTabs(chunks, tabWidth) {
+  var SPACES = '                ';
+
+  var charInLine = 0;
+  var decodeHelper = new PR_DecodeHelper();
+
+  var chunksOut = []
+  for (var chunkIndex = 0; chunkIndex < chunks.length; ++chunkIndex) {
+    var chunk = chunks[chunkIndex];
+    if (chunk.style == null) {
+      chunksOut.push(chunk);
+      continue;
+    }
+
+    var s = chunk.token;
+    var pos = 0;  // index of last character output
+    var out = [];
+
+    // walk over each character looking for tabs and newlines.
+    // On tabs, expand them.  On newlines, reset charInLine.
+    // Otherwise increment charInLine
+    for (var charIndex = 0, n = s.length; charIndex < n;
+         charIndex = decodeHelper.next) {
+      decodeHelper.decode(s, charIndex);
+      var ch = decodeHelper.ch;
+
+      switch (ch) {
+        case '\t':
+          out.push(s.substring(pos, charIndex));
+          // calculate how much space we need in front of this part
+          // nSpaces is the amount of padding -- the number of spaces needed to
+          // move us to the next column, where columns occur at factors of
+          // tabWidth.
+          var nSpaces = tabWidth - (charInLine % tabWidth);
+          charInLine += nSpaces;
+          for (; nSpaces >= 0; nSpaces -= SPACES.length) {
+            out.push(SPACES.substring(0, nSpaces));
+          }
+          pos = decodeHelper.next;
+          break;
+        case '\n': case '\r':
+          charInLine = 0;
+          break;
+        default:
+          ++charInLine;
+      }
+    }
+    out.push(s.substring(pos));
+    chunksOut.push(new PR_Token(out.join(''), chunk.style));
+  }
+  return chunksOut
 }
 
 /** split markup into chunks of html tags (style null) and
@@ -1262,9 +1323,13 @@ function PR_lexMarkup(chunks) {
   return tokensOut;
 }
 
-/** classify the string as either source or markup and lex appropriately. */
-function PR_lexOne(s) {
-  var chunks = PR_chunkify(s);
+/**
+ * classify the string as either source or markup and lex appropriately.
+ * @param {String} html
+ */
+function PR_lexOne(html) {
+  var chunks = PR_expandTabs(PR_chunkify(html), PR_TAB_WIDTH);
+
   // treat it as markup if the first non whitespace character is a < and the
   // last non-whitespace character is a >
   var isMarkup = false;
