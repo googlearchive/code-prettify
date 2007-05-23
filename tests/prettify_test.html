@@ -150,6 +150,47 @@ function fib(n) {
 document.write(fib(10));
 </pre>
 
+<h1>Issue 12 - Javascript Regular Expressions</h1>
+<pre class="prettyprint" id="issue12">
+/foo/;  // a slash starting a line treated as a regexp beginning
+"foo".match(/fo+$/);
+// this line comment not treated as a regular expressions
+"foo /bar/".test(/"baz"/);  // test string and regexp boundaries
+var division = /\b\d+\/\d+/g;  // test char sets and escaping of specials
+var allSpecials = /([^\(\)\[\]\{\}\-\?\+\*\.\^\$\/]+)\\/;
+
+// test that slash used in numeric context treated as an operator
+1 / 2;
+1. / x;
+x / y;
+(x) / y;
+1 /* foo */ / 2;
+1 /* foo *// 2;
+1/2;
+1./x;
+x/y;
+(x)/y;
+
+// test split over two lines.  line comment should not fool it
+1//
+/2;
+
+x++/y;
+x--/y;
+x[y] / z;
+f() / n;
+
+// test that slash after non postfix operator is start of regexp
+log('matches = ' + /foo/.test(foo));
+
+// test keyword preceders
+return /a regexp/;
+division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
+
+// & not used as prefix operator in javascript but this should still work
+&/foo/;
+</pre>
+
 <h1>Perl</h1>
 <pre class="prettyprint" id="perl">
 #!/usr/bin/perl
@@ -747,7 +788,7 @@ var goldens = {
       '&nbsp; &nbsp; &nbsp; `END`COM// PHP has a plethora of comment types' +
           '`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; `END`COM\/* What is a<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"plethora"? */`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"plethora"? *\/`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; `END`KWDfunction`END`PLN fib`END`PUN(`END' +
           '`PLN$n`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM# I don\'t know.`END`PLN<br>' +
@@ -827,7 +868,66 @@ var goldens = {
       '`END<b>`PLNeleven`END</b>`PLN &nbsp;`END`TYPTwelve`END`PLN &nbsp;`END' +
           '<b>`PLNthirteen`END</b>`PLN &nbsp; &nbsp; &nbsp; &nbsp;`END' +
           '`TYPFourteen`END`PLN &nbsp; &nbsp; &nbsp; &nbsp;fifteen `END`' +
-          'PUN|`END')
+          'PUN|`END'),
+  issue12: (
+      '`STR/foo/`END`PUN;`END`PLN &nbsp;`END`COM// a slash starting a line ' +
+          'treated as a regexp beginning`END`PLN<br>' +
+      '`END`STR"foo"`END`PUN.`END`PLNmatch`END`PUN(`END`STR/fo+$/`END' +
+          '`PUN);`END`PLN<br>' +
+      '`END`COM// this line comment not treated as a regular expressions`END' +
+          '`PLN<br>' +
+      '`END`STR"foo /bar/"`END`PUN.`END`PLNtest`END`PUN(`END`STR/"baz"/`END' +
+          '`PUN);`END`PLN &nbsp;`END`COM// test string and regexp boundaries' +
+          '`END`PLN<br>' +
+      '`END`KWDvar`END`PLN division `END`PUN=`END`PLN `END' +
+          '`STR/\\b\\d+\\/\\d+/`END`PLNg`END`PUN;`END`PLN &nbsp;`END' +
+          '`COM// test char sets and escaping of specials`END`PLN<br>' +
+      '`END`KWDvar`END`PLN allSpecials `END`PUN=`END`PLN `END' +
+          '`STR/([^\\(\\)\\[\\]\\{\\}\\-\\?\\+\\*\\.\\^\\$\\/]+)\\\\/`END' +
+          '`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// test that slash used in numeric context treated as an ' +
+          'operator`END`PLN<br>' +
+      '`END`LIT1`END`PLN `END`PUN/`END`PLN `END`LIT2`END`PUN;`END`PLN<br>' +
+      '`END`LIT1`END`PUN.`END`PLN `END`PUN/`END`PLN x`END`PUN;`END`PLN<br>' +
+      'x `END`PUN/`END`PLN y`END`PUN;`END`PLN<br>' +
+      '`END`PUN(`END`PLNx`END`PUN)`END`PLN `END`PUN/`END`PLN y`END`PUN;`END' +
+          '`PLN<br>' +
+      '`END`LIT1`END`PLN `END`COM/* foo */`END`PLN `END`PUN/`END`PLN `END' +
+          '`LIT2`END`PUN;`END`PLN<br>' +
+      '`END`LIT1`END`PLN `END`COM/* foo */`END`PUN/`END`PLN `END`LIT2`END' +
+          '`PUN;`END`PLN<br>' +
+      '`END`LIT1`END`PUN/`END`LIT2`END`PUN;`END`PLN<br>' +
+      '`END`LIT1`END`PUN./`END`PLNx`END`PUN;`END`PLN<br>' +
+      'x`END`PUN/`END`PLNy`END`PUN;`END`PLN<br>' +
+      '`END`PUN(`END`PLNx`END`PUN)/`END`PLNy`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// test split over two lines. &nbsp;line comment should not ' +
+          'fool it`END`PLN<br>' +
+      '`END`LIT1`END`COM//`END`PLN<br>' +
+      '`END`PUN/`END`LIT2`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      'x`END`PUN++/`END`PLNy`END`PUN;`END`PLN<br>' +
+      'x`END`PUN--/`END`PLNy`END`PUN;`END`PLN<br>' +
+      'x`END`PUN[`END`PLNy`END`PUN]`END`PLN `END`PUN/`END`PLN z`END`PUN;`END' +
+          '`PLN<br>' +
+      'f`END`PUN()`END`PLN `END`PUN/`END`PLN n`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// test that slash after non postfix operator is start of ' +
+          'regexp`END`PLN<br>' +
+      'log`END`PUN(`END`STR\'matches = \'`END`PLN `END`PUN+`END`PLN `END' +
+          '`STR/foo/`END`PUN.`END`PLNtest`END`PUN(`END`PLNfoo`END`PUN));`END' +
+          '`PLN<br>' +
+      '<br>' +
+      '`END`COM// test keyword preceders`END`PLN<br>' +
+      '`END`KWDreturn`END`PLN `END`STR/a regexp/`END`PUN;`END`PLN<br>' +
+      'division `END`PUN=`END`PLN notreturn `END`PUN/`END`PLN not_a_regexp ' +
+          '`END`PUN/`END`PLN `END`LIT2`END`PUN;`END`PLN &nbsp;`END`COM// ' +
+          'keyword suffix does not match`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// &amp; not used as prefix operator in javascript but this ' +
+          'should still work`END`PLN<br>' +
+      '`END`PUN&amp;`END`STR/foo/`END`PUN;`END')
 };
 
 

@@ -239,6 +239,51 @@ function PR_endsWith(s, suffix) {
          suffix == s.substring(s.length - suffix.length, s.length);
 }
 
+/** a set of tokens that can precede a regular expression literal in javascript.
+  * http://www.mozilla.org/js/language/js20/rationale/syntax.html has the full
+  * list, but I've removed ones that might be problematic when seen in languages
+  * that don't support regular expression literals.
+  *
+  * <p>Specifically, I've removed any keywords that can't precede a regexp
+  * literal in a syntactically legal javascript program, and I've removed the
+  * "in" keyword since it's not a keyword in many languages, and might be used
+  * as a count of inches.
+  * @private
+  */
+var REGEXP_PRECEDER_PATTERN = (function () {
+    var preceders = [
+        "!", "!=", "!==", "#", "%", "%=", "&", "&&", "&&=",
+        "&=", "(", "*", "*=", /* "+", */ "+=", ",", /* "-", */ "-=",
+        "->", /*".", "..", "...", handled below */ "/", "/=", ":", "::", ";",
+        "<", "<<", "<<=", "<=", "=", "==", "===", ">",
+        ">=", ">>", ">>=", ">>>", ">>>=", "?", "@", "[",
+        "^", "^=", "^^", "^^=", "{", "|", "|=", "||",
+        "||=", "~", "break", "case", "continue", "delete",
+        "do", "else", "finally", "instanceof",
+        "return", "throw", "try", "typeof"
+        ];
+    var pattern = '(?:' +
+      '(?:(?:^|[^0-9\.])\\.{1,3})|' +  // a dot that's not part of a number
+      '(?:(?:^|[^\\+])\\+)|' +  // allow + but not ++
+      '(?:(?:^|[^\\-])-)'  // allow - but not --
+      ;
+    for (var i = 0; i < preceders.length; ++i) {
+      var preceder = preceders[i];
+      if (PR_isWordChar(preceder.charAt(0))) {
+        pattern += '|\\b' + preceder;
+      } else {
+        pattern += '|' + preceder.replace(/([^=<>:&])/g, '\\$1');
+      }
+    }
+    pattern += ')\\s*$';  // matches at end
+    return new RegExp(pattern);
+    // CAVEAT: this does not properly handle the case where a regular expression
+    // immediately follows another since a regular expression may have flags
+    // for case-sensitivity and the like.  Having regexp tokens adjacent is not
+    // valid in any language I'm aware of, so I'm punting.
+    // TODO: maybe style special characters inside a regexp as punctuation.
+  })();
+
 /** true iff prefix matches the first prefix characters in chars[0:len].
   * @private
   */
@@ -679,6 +724,8 @@ function PR_splitStringAndCommentTokens(chunks) {
   var state = 0;  // FSM state variable
   var delim = -1;  // string delimiter
   var k = 0;  // absolute position of beginning of current chunk
+  var lookBehind = [];  // the last 16 characters processed collapsing space
+  var lastCh = '';
 
   for (var ci = 0, nc = chunks.length; ci < nc; ++ci) {
     var chunk = chunks[ci];
@@ -699,8 +746,8 @@ function PR_splitStringAndCommentTokens(chunks) {
           } else if (ch == '/') {
             state = 3;
           } else if (ch == '#') {
-            tokenEnds.push(new PR_TokenEnd(k + i, PR_PLAIN));
             state = 4;
+            tokenEnds.push(new PR_TokenEnd(k + i, PR_PLAIN));
           }
         } else if (1 == state) {
           if (ch == delim) {
@@ -719,10 +766,21 @@ function PR_splitStringAndCommentTokens(chunks) {
             state = 5;
             tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
           } else {
-            state = 0;
-            // next loop will reenter state 0 without same value of i, so
-            // ch will be reconsidered as start of new token.
-            next = i;
+            // check the last token and see if we should treat this as the start
+            // of a regular expression literal.
+            if ((!lookBehind.length ||
+                 REGEXP_PRECEDER_PATTERN.test(lookBehind.join('')))) {
+              // treat regular expression as a string with delimiter /
+              state = 1;
+              delim = '/';
+              tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
+            } else {
+              state = 0;
+              // next loop will reenter state 0 without same value of i, so
+              // ch will be reconsidered as start of new token.
+              next = i;
+              continue;
+            }
           }
         } else if (4 == state) {
           if (ch == '\r' || ch == '\n') {
@@ -737,8 +795,21 @@ function PR_splitStringAndCommentTokens(chunks) {
           if (ch == '/') {
             state = 0;
             tokenEnds.push(new PR_TokenEnd(k + next, PR_COMMENT));
+            continue;  // skip lookbehind
           } else if (ch != '*') {
             state = 5;
+          }
+        }
+
+        // push char on lookbehind if it's not a comment token.  Don't
+        // waste space with lots of space ; just leave enough to indicate
+        // boundaries.
+        if (3 > state || state > 6) {
+          var isSpace = PR_isSpaceChar(ch);
+          if (!(lastCh === ' ' && isSpace)) {
+            if (lookBehind.length > 16) { lookBehind.shift(); }
+            lastCh = isSpace ? ' ' : ch;
+            lookBehind.push(lastCh);
           }
         }
       }
