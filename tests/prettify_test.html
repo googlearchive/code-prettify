@@ -403,6 +403,18 @@ Six&#9;<b>seven</b>&#9;Eight&#9;nine&#9;Ten&#9;|
 <b>eleven</b>&#9;Twelve&#9;<b>thirteen</b>&#9;Fourteen&#9;fifteen&#9;|
 </pre>
 
+<h1>Bug 14a - does not recognize <code>&lt;br&gt;</code> as newline</h1>
+<pre class="prettyprint" id="issue14a"
+>//comment<br />int main(int argc, char **argv)
+{}</pre>
+
+<h1>Bug 14b - comments not ignored</h1>
+<pre class="prettyprint" id="issue14b"
+>&lt;!-- There's an <!-- BOO!! --><acronym title="tag soup">HTML</acronym> comment in my comment --&gt;
+&lt;p&gt;And another one inside the end tag&lt;/p<!-- GOTCHA!! -->&gt;
+</pre>
+
+
 </body>
 
 <script type="text/javascript">
@@ -927,7 +939,18 @@ var goldens = {
       '<br>' +
       '`END`COM// &amp; not used as prefix operator in javascript but this ' +
           'should still work`END`PLN<br>' +
-      '`END`PUN&amp;`END`STR/foo/`END`PUN;`END')
+      '`END`PUN&amp;`END`STR/foo/`END`PUN;`END'),
+  issue14a: (
+      '`COM//comment`END`PLN<br>' +
+      '`END`KWDint`END`PLN main`END`PUN(`END`KWDint`END`PLN argc`END`PUN,`END' +
+          '`PLN `END`KWDchar`END`PLN `END`PUN**`END`PLNargv`END`PUN)`END' +
+          '`PLN<br>' +
+      '`END`PUN{}`END'),
+  issue14b: (
+      '`COM&lt;!-- There\'s an `END<acronym title="tag soup">`COMHTML`END' +
+           '</acronym>`COM comment in my comment --&gt;`END`PLN<br>' +
+      '`END`TAG&lt;p&gt;`END`PLNAnd another one inside the end tag`END' +
+      '`TAG&lt;/p&gt;`END')
 };
 
 
