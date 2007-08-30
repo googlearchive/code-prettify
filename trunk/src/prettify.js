@@ -321,7 +321,7 @@ var PR_innerHtmlWorks = null;
 function PR_getInnerHtml(node) {
   // inner html is hopelessly broken in Safari 2.0.4 when the content is
   // an html description of well formed XML and the containing tag is a PRE
-   // tag, so we detect that case and emulate innerHTML.
+  // tag, so we detect that case and emulate innerHTML.
   if (null == PR_innerHtmlWorks) {
     var testNode = document.createElement('PRE');
     testNode.appendChild(
@@ -435,18 +435,20 @@ function PR_expandTabs(chunks, tabWidth) {
 }
 
 /** split markup into chunks of html tags (style null) and
-  * plain text (style {@link #PR_PLAIN}).
+  * plain text (style {@link #PR_PLAIN}), converting tags which are significant
+  * for tokenization (<br>) into their textual equivalent.
   *
-  * @param {String} s html.
+  * @param {String} s html where whitespace is considered significant.
   * @return {Array} of PR_Tokens of style PR_PLAIN, and null.
   * @private
   */
 function PR_chunkify(s) {
   // The below pattern matches one of the following
   // (1) /[^<]+/ : A run of characters other than '<'
-  // (2) /<\/?[a-zA-Z][^>]*>/ : A probably tag that should not be highlighted
-  // (3) /</ : A '<' that does not begin a larger chunk.  Treated as 1
-  var chunkPattern = /(?:[^<]+|<\/?[a-zA-Z][^>]*>|<)/g;
+  // (2) /<!--.*?-->/: an HTML comment
+  // (3) /<\/?[a-zA-Z][^>]*>/ : A probably tag that should not be highlighted
+  // (4) /</ : A '<' that does not begin a larger chunk.  Treated as 1
+  var chunkPattern = /(?:[^<]+|<!--.*?-->|<\/?[a-zA-Z][^>]*>|<)/g;
   // since the pattern has the 'g' modifier and defines no capturing groups,
   // this will return a list of all chunks which we then classify and wrap as
   // PR_Tokens
@@ -456,15 +458,24 @@ function PR_chunkify(s) {
     var lastChunk = null;
     for (var i = 0, n = matches.length; i < n; ++i) {
       var chunkText = matches[i];
-      var style;
-      if (chunkText.length < 2 || chunkText.charAt(0) !== '<') {
-        if (lastChunk && lastChunk.style === PR_PLAIN) {
-          lastChunk.token += chunkText;
-          continue;
+      if (!chunkText.length) { continue; }
+      var style = PR_PLAIN;
+      if (chunkText.charAt(0) === '<') {
+        if (/^<!--/.test(chunkText)) { continue; }
+        if (chunkText.length > 1) {  // a tag
+          if (/^<br\b/i.test(chunkText)) {
+            // <br> tags are lexically significant so convert them to text.
+            // This is undone later.
+            chunkText = '\n';
+          } else {
+            style = null;
+          }
         }
-        style = PR_PLAIN;
-      } else {  // a tag
-        style = null;
+      }
+      if (lastChunk && style == PR_PLAIN && lastChunk.style === PR_PLAIN) {
+        // combine into last chunk
+        lastChunk.token += chunkText;
+        continue;
       }
       lastChunk = new PR_Token(chunkText, style);
       chunks.push(lastChunk);
@@ -1104,7 +1115,7 @@ function PR_splitSourceNodes(tokens) {
     if (ci < nc) {
       tok = tokens[ci];
       if (null == tok.style) {
-        tokens.push(tok);
+        tokensOut.push(tok);
         continue;
       }
     } else if (!endScriptTag) {
@@ -1251,9 +1262,9 @@ function PR_splitAttributeQuotes(tokens) {
       tokensOut.push(tokens[i]);
     }
     if (lc) {
-      tokens.push(new PR_Token(ls.substring(0, lpos), PR_PLAIN));
+      tokensOut.push(new PR_Token(ls.substring(0, lpos), PR_PLAIN));
     } else {
-      tokens.push(tokens[lastPlain]);
+      tokensOut.push(tokens[lastPlain]);
     }
   }
   if (lc) {
@@ -1449,6 +1460,8 @@ function prettyPrintOne(s) {
         // It's necessary for IE though which seems to lose the preformattedness
         // of <pre> tags when their innerHTML is assigned.
         // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
+        // and it serves to undo the conversion of <br>s to newlines done in
+        // chunkify.
         html = html
                .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
                .replace(/\r\n?|\n/g, '<br>');
