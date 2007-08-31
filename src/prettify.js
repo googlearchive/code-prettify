@@ -110,133 +110,28 @@ var PR_ATTRIB_VALUE = 'atv';
 /** the number of characters between tab columns */
 var PR_TAB_WIDTH = 8;
 
-/** the position of the end of a token during.  A division of a string into
-  * n tokens can be represented as a series n - 1 token ends, as long as
-  * runs of whitespace warrant their own token.
-  * @private
-  */
-function PR_TokenEnd(end, style) {
-  if (undefined === style) { throw new Error('BAD'); }
-  if ('number' != typeof(end)) { throw new Error('BAD'); }
-  this.end = end;
-  this.style = style;
-}
-PR_TokenEnd.prototype.toString = function () {
-  return '[PR_TokenEnd ' + this.end +
-    (this.style ? ':' + this.style : '') + ']';
-};
-
-
-/** a chunk of text with a style.  These are used to represent both the output
-  * from the lexing functions as well as intermediate results.
-  * @constructor
-  * @param token the token text
-  * @param style one of the token styles defined in designdoc-template, or null
-  *   for a styleless token, such as an embedded html tag.
-  * @private
-  */
-function PR_Token(token, style) {
-  if (undefined === style) { throw new Error('BAD'); }
-  this.token = token;
-  this.style = style;
-}
-
-PR_Token.prototype.toString = function () {
-  return '[PR_Token ' + this.token + (this.style ? ':' + this.style : '') + ']';
-};
-
-
-/** a helper class that decodes common html entities used to escape special
-  * characters in source code.
-  * @constructor
-  * @private
-  */
-function PR_DecodeHelper() {
-  this.next = 0;
-  this.ch = '\0';
-}
-
-var PR_NAMED_ENTITIES = {
-  'lt':   '<',
-  'gt':   '>',
-  'quot': '"',
-  'apos': "'",
-  'amp':  '&'   // reencoding requires that & always be decoded properly
-};
-
-PR_DecodeHelper.prototype.decode = function (s, i) {
-  var next = i + 1;
-  var ch = s.charAt(i);
-  if ('&' === ch) {
-    var semi = s.indexOf(';', next);
-    if (semi >= 0 && semi < next + 4) {
-      var entityName = s.substring(next, semi);
-      var decoded = null;
-      if (entityName.charAt(0) === '#') {  // check for numeric entity
-        var ch1 = entityName.charAt(1);
-        var charCode;
-        if (ch1 === 'x' || ch1 === 'X') {  // like &#xA0;
-          charCode = parseInt(entityName.substring(2), 16);
-        } else {  // like &#160;
-          charCode = parseInt(entityName.substring(1), 10);
-        }
-        if (!isNaN(charCode)) {
-          decoded = String.fromCharCode(charCode);
-        }
-      }
-      if (!decoded) {
-        decoded = PR_NAMED_ENTITIES[entityName.toLowerCase()];
-      }
-      if (decoded) {
-        ch = decoded;
-        next = semi + 1;
-      } else {  // skip over unrecognized entity
-        next = i + 1;
-        ch = '\0';
-      }
-    }
-  }
-  this.next = next;
-  this.ch = ch;
-  return this.ch;
-};
-
-
 // some string utilities
 function PR_isWordChar(ch) {
   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
 }
 
-function PR_isIdentifierStart(ch) {
-  return PR_isWordChar(ch) || ch == '_' || ch == '$' || ch == '@';
-}
-
-function PR_isIdentifierPart(ch) {
-  return PR_isIdentifierStart(ch) || PR_isDigitChar(ch);
-}
-
-function PR_isSpaceChar(ch) {
-  return "\t \r\n".indexOf(ch) >= 0;
-}
-
-function PR_isDigitChar(ch) {
-  return ch >= '0' && ch <= '9';
-}
-
-function PR_trim(s) {
-  var i = 0, j = s.length - 1;
-  while (i <= j && PR_isSpaceChar(s.charAt(i))) { ++i; }
-  while (j > i && PR_isSpaceChar(s.charAt(j))) { --j; }
-  return s.substring(i, j + 1);
-}
-
-function PR_startsWith(s, prefix) {
-  return s.length >= prefix.length && prefix == s.substring(0, prefix.length);
-}
-
-function PR_endsWith(s, suffix) {
-  return s.length >= suffix.length &&
-         suffix == s.substring(s.length - suffix.length, s.length);
+/** Splice one array into another.
+  * Like the python <code>
+  * container[containerPosition:containerPosition + countReplaced] = inserted
+  * </code>
+  * @param {Array} inserted
+  * @param {Array} container modified in place
+  * @param {Number} containerPosition
+  * @param {Number} countReplaced
+  */
+function PR_spliceArrayInto(
+    inserted, container, containerPosition, countReplaced) {
+  inserted.unshift(containerPosition, countReplaced || 0);
+  try {
+    container.splice.apply(container, inserted);
+  } finally {
+    inserted.splice(0, 2);
+  }
 }
 
 /** a set of tokens that can precede a regular expression literal in javascript.
@@ -275,7 +170,7 @@ var REGEXP_PRECEDER_PATTERN = (function () {
         pattern += '|' + preceder.replace(/([^=<>:&])/g, '\\$1');
       }
     }
-    pattern += ')\\s*$';  // matches at end
+    pattern += '|^)\\s*$';  // matches at end, and matches empty string
     return new RegExp(pattern);
     // CAVEAT: this does not properly handle the case where a regular expression
     // immediately follows another since a regular expression may have flags
@@ -284,32 +179,64 @@ var REGEXP_PRECEDER_PATTERN = (function () {
     // TODO: maybe style special characters inside a regexp as punctuation.
   })();
 
-/** true iff prefix matches the first prefix characters in chars[0:len].
-  * @private
-  */
-function PR_prefixMatch(chars, len, prefix) {
-  if (len < prefix.length) { return false; }
-  for (var i = 0, n = prefix.length; i < n; ++i) {
-    if (prefix.charAt(i) != chars[i]) { return false; }
-  }
-  return true;
-}
-
+// Define regexps here so that the interpreter doesn't have to create an object
+// each time the function containing them is called.
+// The language spec requires a new object created even if you don't access the
+// $1 members.
+var pr_amp = /&/g;
+var pr_lt = /</g;
+var pr_gt = />/g;
+var pr_quot = /\"/g;
 /** like textToHtml but escapes double quotes to be attribute safe. */
 function PR_attribToHtml(str) {
-  return str.replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\"/g, '&quot;')
-    .replace(/\xa0/, '&nbsp;');
+  return str.replace(pr_amp, '&amp;')
+    .replace(pr_lt, '&lt;')
+    .replace(pr_gt, '&gt;')
+    .replace(pr_quot, '&quot;');
 }
 
 /** escapest html special characters to html. */
 function PR_textToHtml(str) {
-  return str.replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/\xa0/g, '&nbsp;');
+  return str.replace(pr_amp, '&amp;')
+    .replace(pr_lt, '&lt;')
+    .replace(pr_gt, '&gt;');
+}
+
+
+var pr_ltEnt = /&lt;/g;
+var pr_gtEnt = /&gt;/g;
+var pr_aposEnt = /&apos;/g;
+var pr_quotEnt = /&quot;/g;
+var pr_ampEnt = /&amp;/g;
+/** unescapes html to plain text. */
+function PR_htmlToText(html) {
+  var pos = html.indexOf('&');
+  if (pos < 0) { return html; }
+  // Handle numeric entities specially.  We can't use functional substitution
+  // since that doesn't work in older versions of Safari.
+  // These should be rare since most browsers convert them to normal chars.
+  for (--pos; (pos = html.indexOf('&#', pos + 1)) >= 0;) {
+    var end = html.indexOf(';', pos);
+    if (end >= 0) {
+      var num = html.substring(pos + 3, end);
+      var radix = 10;
+      if (num && num.charAt(0) == 'x') {
+        num = num.substring(1);
+        radix = 16;
+      }
+      var codePoint = parseInt(num, radix);
+      if (!isNaN(codePoint)) {
+        html = (html.substring(0, pos) + String.fromCharCode(codePoint) +
+                html.substring(end + 1));
+      }
+    }
+  }
+
+  return html.replace(pr_ltEnt, '<')
+    .replace(pr_gtEnt, '>')
+    .replace(pr_aposEnt, "'")
+    .replace(pr_quotEnt, '"')
+    .replace(pr_ampEnt, '&');
 }
 
 /** is the given node's innerHTML normally unescaped? */
@@ -322,7 +249,7 @@ function PR_getInnerHtml(node) {
   // inner html is hopelessly broken in Safari 2.0.4 when the content is
   // an html description of well formed XML and the containing tag is a PRE
   // tag, so we detect that case and emulate innerHTML.
-  if (null == PR_innerHtmlWorks) {
+  if (null === PR_innerHtmlWorks) {
     var testNode = document.createElement('PRE');
     testNode.appendChild(
         document.createTextNode('<!DOCTYPE foo PUBLIC "foo bar">\n<foo />'));
@@ -333,7 +260,7 @@ function PR_getInnerHtml(node) {
     var content = node.innerHTML;
     // XMP tags contain unescaped entities so require special handling.
     if (PR_isRawContent(node)) {
-       content = PR_textToHtml(content);
+      content = PR_textToHtml(content);
     }
     return content;
   }
@@ -345,9 +272,8 @@ function PR_getInnerHtml(node) {
   return out.join('');
 }
 
-/**
- * walks the DOM returning a properly escaped version of innerHTML.
- */
+/** walks the DOM returning a properly escaped version of innerHTML.
+  */
 function PR_normalizedHtml(node, out) {
   switch (node.nodeType) {
     case 1:  // an element
@@ -376,40 +302,30 @@ function PR_normalizedHtml(node, out) {
   }
 }
 
-/** expand tabs to spaces
-  * @param {Array} chunks PR_Tokens possibly containing tabs
-  * @param {Number} tabWidth number of spaces between tab columns
-  * @return {Array} chunks with tabs replaced with spaces
+/** returns a function that expand tabs to spaces.  This function can be fed
+  * successive chunks of text, and will maintain its own internal state to
+  * keep track of how tabs are expanded.
+  * @return {function (plainText : String) : String } a function that takes
+  *   plain text and return the text with tabs expanded.
+  * @private
   */
-function PR_expandTabs(chunks, tabWidth) {
+function PR_tabExpander(tabWidth) {
   var SPACES = '                ';
-
   var charInLine = 0;
-  var decodeHelper = new PR_DecodeHelper();
 
-  var chunksOut = []
-  for (var chunkIndex = 0; chunkIndex < chunks.length; ++chunkIndex) {
-    var chunk = chunks[chunkIndex];
-    if (chunk.style == null) {
-      chunksOut.push(chunk);
-      continue;
-    }
-
-    var s = chunk.token;
-    var pos = 0;  // index of last character output
-    var out = [];
-
+  return function (plainText) {
     // walk over each character looking for tabs and newlines.
     // On tabs, expand them.  On newlines, reset charInLine.
     // Otherwise increment charInLine
-    for (var charIndex = 0, n = s.length; charIndex < n;
-         charIndex = decodeHelper.next) {
-      decodeHelper.decode(s, charIndex);
-      var ch = decodeHelper.ch;
+    var out = null;
+    var pos = 0;
+    for (var i = 0, n = plainText.length; i < n; ++i) {
+      var ch = plainText.charAt(i);
 
       switch (ch) {
         case '\t':
-          out.push(s.substring(pos, charIndex));
+          if (!out) { out = []; }
+          out.push(plainText.substring(pos, i));
           // calculate how much space we need in front of this part
           // nSpaces is the amount of padding -- the number of spaces needed to
           // move us to the next column, where columns occur at factors of
@@ -419,918 +335,390 @@ function PR_expandTabs(chunks, tabWidth) {
           for (; nSpaces >= 0; nSpaces -= SPACES.length) {
             out.push(SPACES.substring(0, nSpaces));
           }
-          pos = decodeHelper.next;
+          pos = i + 1;
           break;
-        case '\n': case '\r':
+        case '\n':
           charInLine = 0;
           break;
         default:
           ++charInLine;
       }
     }
-    out.push(s.substring(pos));
-    chunksOut.push(new PR_Token(out.join(''), chunk.style));
-  }
-  return chunksOut
+    if (!out) { return plainText; }
+    out.push(plainText.substring(pos));
+    return out.join('');
+  };
 }
+
+// The below pattern matches one of the following
+// (1) /[^<]+/ : A run of characters other than '<'
+// (2) /<!--.*?-->/: an HTML comment
+// (3) /<!\[CDATA\[.*?\]\]>/: a cdata section
+// (3) /<\/?[a-zA-Z][^>]*>/ : A probably tag that should not be highlighted
+// (4) /</ : A '<' that does not begin a larger chunk.  Treated as 1
+var pr_chunkPattern =
+  /(?:[^<]+|<!--[\s\S]*?-->|<!\[CDATA\[([\s\S]*?)\]\]>|<\/?[a-zA-Z][^>]*>|<)/g;
+var pr_commentPrefix = /^<!--/;
+var pr_cdataPrefix = /^<\[CDATA\[/;
+var pr_brPrefix = /^<br\b/i;
 
 /** split markup into chunks of html tags (style null) and
   * plain text (style {@link #PR_PLAIN}), converting tags which are significant
   * for tokenization (<br>) into their textual equivalent.
   *
   * @param {String} s html where whitespace is considered significant.
-  * @return {Array} of PR_Tokens of style PR_PLAIN, and null.
+  * @return {Object} source code and extracted tags.
   * @private
   */
-function PR_chunkify(s) {
-  // The below pattern matches one of the following
-  // (1) /[^<]+/ : A run of characters other than '<'
-  // (2) /<!--.*?-->/: an HTML comment
-  // (3) /<\/?[a-zA-Z][^>]*>/ : A probably tag that should not be highlighted
-  // (4) /</ : A '<' that does not begin a larger chunk.  Treated as 1
-  var chunkPattern = /(?:[^<]+|<!--.*?-->|<\/?[a-zA-Z][^>]*>|<)/g;
+function PR_extractTags(s) {
+
   // since the pattern has the 'g' modifier and defines no capturing groups,
   // this will return a list of all chunks which we then classify and wrap as
   // PR_Tokens
-  var matches = s.match(chunkPattern);
-  var chunks = [];
+  var matches = s.match(pr_chunkPattern);
+  var sourceBuf = [];
+  var sourceBufLen = 0;
+  var extractedTags = [];
   if (matches) {
-    var lastChunk = null;
     for (var i = 0, n = matches.length; i < n; ++i) {
-      var chunkText = matches[i];
-      if (!chunkText.length) { continue; }
-      var style = PR_PLAIN;
-      if (chunkText.charAt(0) === '<') {
-        if (/^<!--/.test(chunkText)) { continue; }
-        if (chunkText.length > 1) {  // a tag
-          if (/^<br\b/i.test(chunkText)) {
-            // <br> tags are lexically significant so convert them to text.
-            // This is undone later.
-            chunkText = '\n';
-          } else {
-            style = null;
-          }
+      var match = matches[i];
+      if (match.length > 1 && match.charAt(0) === '<') {
+        if (pr_commentPrefix.test(match)) { continue; }
+        if (pr_cdataPrefix.test(match)) {
+          // strip CDATA prefix and suffix.  Don't unescape since it's CDATA
+          sourceBuf.push(match.substring(9, match.length - 3));
+          sourceBufLen += match.length - 12;
+        } else if (pr_brPrefix.test(match)) {
+          // <br> tags are lexically significant so convert them to text.
+          // This is undone later.
+          // <br> tags are lexically significant 
+          sourceBuf.push('\n');
+          sourceBufLen += 1;
+        } else {
+          extractedTags.push(sourceBufLen, match);
         }
+      } else {
+        var literalText = PR_htmlToText(match);
+        sourceBuf.push(literalText);
+        sourceBufLen += literalText.length;
       }
-      if (lastChunk && style == PR_PLAIN && lastChunk.style === PR_PLAIN) {
-        // combine into last chunk
-        lastChunk.token += chunkText;
-        continue;
-      }
-      lastChunk = new PR_Token(chunkText, style);
-      chunks.push(lastChunk);
     }
   }
-  return chunks;
+  return { source: sourceBuf.join(''), tags: extractedTags };
 }
 
-/** walk the tokenEnds list and the chunk list in parallel to generate a list
-  * of split tokens.
-  * @private
-  */
-function PR_splitChunks(chunks, tokenEnds) {
-  var tokens = [];  // the output
-
-  var ci = 0;  // index into chunks
-  // position of beginning of amount written so far in absolute space.
-  var posAbs = 0;
-  // position of amount written so far in chunk space
-  var posChunk = 0;
-
-  // current chunk
-  var chunk = new PR_Token('', null);
-
-  for (var ei = 0, ne = tokenEnds.length, lastEnd = 0; ei < ne; ++ei) {
-    var tokenEnd = tokenEnds[ei];
-    var end = tokenEnd.end;
-    if (end === lastEnd) { continue; }  // skip empty regions
-
-    var tokLen = end - posAbs;
-    var remainingInChunk = chunk.token.length - posChunk;
-    while (remainingInChunk <= tokLen) {
-      if (remainingInChunk > 0) {
-        tokens.push(
-            new PR_Token(chunk.token.substring(posChunk, chunk.token.length),
-                         null == chunk.style ? null : tokenEnd.style));
-      }
-      posAbs += remainingInChunk;
-      posChunk = 0;
-      if (ci < chunks.length) {
-        chunk = chunks[ci++];
-      }
-
-      tokLen = end - posAbs;
-      remainingInChunk = chunk.token.length - posChunk;
-    }
-
-    if (tokLen) {
-      tokens.push(
-          new PR_Token(chunk.token.substring(posChunk, posChunk + tokLen),
-                       tokenEnd.style));
-      posAbs += tokLen;
-      posChunk += tokLen;
-    }
-  }
-
-  return tokens;
-}
-
-/** splits markup tokens into declarations, tags, and source chunks.
-  * @private
-  */
-function PR_splitMarkup(chunks) {
-  // A state machine to split out declarations, tags, etc.
-  // This state machine deals with absolute space in the text, indexed by k,
-  // and position in the current chunk, indexed by pos and tokenStart to
-  // generate a list of the ends of tokens.
-  // Absolute space is calculated by considering the chunks as appended into
-  // one big string, as they were before being split.
-
-  // Known failure cases
-  // Server side scripting sections such as <?...?> in attributes.
-  // i.e. <span class="<? foo ?>">
-  // Handling this would require a stack, and we don't use PHP.
-
-  // The output: a list of pairs of PR_TokenEnd instances
-  var tokenEnds = [];
-
-  var state = 0;  // FSM state variable
-  var k = 0;  // position in absolute space of the start of the current chunk
-  var tokenStart = -1;  // the start of the current token
-
-  // Try to find a closing tag for any open <style> or <script> tags
-  // We can't do this at a later stage because then the following case
-  // would fail:
-  // <script>document.writeln('<!--');</script>
-
-  // We use tokenChars[:tokenCharsI] to accumulate the tag name so that we
-  // can check whether to enter into a no scripting section when the tag ends.
-  var tokenChars = new Array(12);
-  var tokenCharsI = 0;
-  // if non null, the tag prefix that we need to see to break out.
-  var endScriptTag = null;
-  var decodeHelper = new PR_DecodeHelper();
-
-  for (var ci = 0, nc = chunks.length; ci < nc; ++ci) {
-    var chunk = chunks[ci];
-    if (PR_PLAIN != chunk.style) {
-      k += chunk.token.length;
-      continue;
-    }
-
-    var s = chunk.token;
-    var pos = 0;  // the position past the last character processed so far in s
-
-    for (var i = 0, n = s.length; i < n; /* i = next at bottom */) {
-      decodeHelper.decode(s, i);
-      var ch = decodeHelper.ch;
-      var next = decodeHelper.next;
-
-      var tokenStyle = null;
-      switch (state) {
-        case 0:
-          if ('<' == ch) { state = 1; }
-          break;
-        case 1:
-          tokenCharsI = 0;
-          if ('/' == ch) {  // only consider close tags if we're in script/style
-            state = 7;
-          } else if (null == endScriptTag) {
-            if ('!' == ch) {
-              state = 2;
-            } else if (PR_isWordChar(ch)) {
-              state = 8;
-            } else if ('?' == ch) {
-              state = 9;
-            } else if ('%' == ch) {
-              state = 11;
-            } else if ('<' != ch) {
-              state = 0;
-            }
-          } else if ('<' != ch) {
-            state = 0;
-          }
-          break;
-        case 2:
-          if ('-' == ch) {
-            state = 4;
-          } else if (PR_isWordChar(ch)) {
-            state = 3;
-          } else if ('<' == ch) {
-            state = 1;
-          } else {
-            state = 0;
-          }
-          break;
-        case 3:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_DECLARATION;
-          }
-          break;
-        case 4:
-          if ('-' == ch) { state = 5; }
-          break;
-        case 5:
-          if ('-' == ch) { state = 6; }
-          break;
-        case 6:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_COMMENT;
-          } else if ('-' == ch) {
-            state = 6;
-          } else {
-            state = 4;
-          }
-          break;
-        case 7:
-          if (PR_isWordChar(ch)) {
-            state = 8;
-          } else if ('<' == ch) {
-            state = 1;
-          } else {
-            state = 0;
-          }
-          break;
-        case 8:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_TAG;
-          }
-          break;
-        case 9:
-          if ('?' == ch) { state = 10; }
-          break;
-        case 10:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_SOURCE;
-          } else if ('?' != ch) {
-            state = 9;
-          }
-          break;
-        case 11:
-          if ('%' == ch) { state = 12; }
-          break;
-        case 12:
-          if ('>' == ch) {
-            state = 0;
-            tokenStyle = PR_SOURCE;
-          } else if ('%' != ch) {
-            state = 11;
-          }
-          break;
-      }
-
-      if (tokenCharsI < tokenChars.length) {
-        tokenChars[tokenCharsI++] = ch.toLowerCase();
-      }
-      if (1 == state) { tokenStart = k + i; }
-      i = next;
-      if (tokenStyle != null) {
-        if (null != tokenStyle) {
-          if (endScriptTag) {
-            if (PR_prefixMatch(tokenChars, tokenCharsI, endScriptTag)) {
-              endScriptTag = null;
-            }
-          } else {
-            if (PR_prefixMatch(tokenChars, tokenCharsI, 'script')) {
-              endScriptTag = '/script';
-            } else if (PR_prefixMatch(tokenChars, tokenCharsI, 'style')) {
-              endScriptTag = '/style';
-            } else if (PR_prefixMatch(tokenChars, tokenCharsI, 'xmp')) {
-              endScriptTag = '/xmp';
-            }
-          }
-          // disallow the tag if endScriptTag is set and this was not an open
-          // tag.
-          if (endScriptTag && tokenCharsI && '/' == tokenChars[0]) {
-            tokenStyle = null;
-          }
-        }
-        if (null != tokenStyle) {
-          tokenEnds.push(new PR_TokenEnd(tokenStart, PR_PLAIN));
-          tokenEnds.push(new PR_TokenEnd(k + next, tokenStyle));
-        }
-      }
-    }
-    k += chunk.token.length;
-  }
-  tokenEnds.push(new PR_TokenEnd(k, PR_PLAIN));
-
-  return tokenEnds;
-}
-
-/** splits the given string into comment, string, and "other" tokens.
-  * @return {Array} of PR_Tokens with style in
-  *   (PR_STRING, PR_COMMENT, PR_PLAIN, null)
-  *   The result array may contain spurious zero length tokens.  Ignore them.
+/** Given triples of [style, pattern, context] returns a lexing function,
+  * The lexing function interprets the patterns to find token boundaries and
+  * returns a decoration list of the form
+  * [index_0, style_0, index_1, style_1, ..., index_n, style_n]
+  * where index_n is an index into the sourceCode, and style_n is a style
+  * constant like PR_PLAIN.  index_n-1 <= index_n, and style_n-1 applies to
+  * all characters in sourceCode[index_n-1:index_n].
   *
-  * @private
+  * The stylePatterns is a list whose elements have the form
+  * [style : String, pattern : RegExp, context : RegExp, shortcut : String].
+  &
+  * Style is a style constant like PR_PLAIN.
+  *
+  * Pattern must only match prefixes, and if it matches a prefix and context is
+  * null or matches the last non-comment token parsed, then that match is
+  * considered a token with the same style.
+  *
+  * Context is applied to the last non-whitespace, non-comment token recognized.
+  *
+  * Shortcut is an optional string of characters, any of which, if the first
+  * character, gurantee that this pattern and only this pattern matches.
+  *
+  * @param {Array} shortcutStylePatterns patterns that always start with
+  *   a known character.  Must have a shortcut string.
+  * @param {Array} fallthroughStylePatterns patterns that will be tried in order
+  *   if the shortcut ones fail.  May have shortcuts.
+  *
+  * @return {function (sourceCode : String) -> Array.<Number|String>} a function
+  *   that takes source code and a list of decorations to append to.
   */
-function PR_splitStringAndCommentTokens(chunks) {
-  // a state machine to split out comments, strings, and other stuff
-  var tokenEnds = [];  // positions of ends of tokens in absolute space
-  var state = 0;  // FSM state variable
-  var delim = -1;  // string delimiter
-  var k = 0;  // absolute position of beginning of current chunk
-  var lookBehind = [];  // the last 16 characters processed collapsing space
-  var lastCh = '';
-
-  for (var ci = 0, nc = chunks.length; ci < nc; ++ci) {
-    var chunk = chunks[ci];
-    var s = chunk.token;
-    if (PR_PLAIN == chunk.style) {
-      var decodeHelper = new PR_DecodeHelper();
-      var last = -1;
-      var next;
-      for (var i = 0, n = s.length; i < n; last = i, i = next) {
-        decodeHelper.decode(s, i);
-        var ch = decodeHelper.ch;
-        next = decodeHelper.next;
-        if (0 == state) {
-          if (ch == '"' || ch == '\'' || ch == '`') {
-            tokenEnds.push(new PR_TokenEnd(k + i, PR_PLAIN));
-            state = 1;
-            delim = ch;
-          } else if (ch == '/') {
-            state = 3;
-          } else if (ch == '#') {
-            state = 4;
-            tokenEnds.push(new PR_TokenEnd(k + i, PR_PLAIN));
-          }
-        } else if (1 == state) {
-          if (ch == delim) {
-            state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + next, PR_STRING));
-          } else if (ch == '\\') {
-            state = 2;
-          }
-        } else if (2 == state) {
-          state = 1;
-        } else if (3 == state) {
-          if (ch == '/') {
-            state = 4;
-            tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
-          } else if (ch == '*') {
-            state = 5;
-            tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
-          } else {
-            // check the last token and see if we should treat this as the start
-            // of a regular expression literal.
-            if ((!lookBehind.length ||
-                 REGEXP_PRECEDER_PATTERN.test(lookBehind.join('')))) {
-              // treat regular expression as a string with delimiter /
-              state = 1;
-              delim = '/';
-              tokenEnds.push(new PR_TokenEnd(k + last, PR_PLAIN));
-            } else {
-              state = 0;
-              // next loop will reenter state 0 without same value of i, so
-              // ch will be reconsidered as start of new token.
-              next = i;
-              continue;
-            }
-          }
-        } else if (4 == state) {
-          if (ch == '\r' || ch == '\n') {
-            state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + i, PR_COMMENT));
-          }
-        } else if (5 == state) {
-          if (ch == '*') {
-            state = 6;
-          }
-        } else if (6 == state) {
-          if (ch == '/') {
-            state = 0;
-            tokenEnds.push(new PR_TokenEnd(k + next, PR_COMMENT));
-            continue;  // skip lookbehind
-          } else if (ch != '*') {
-            state = 5;
-          }
-        }
-
-        // push char on lookbehind if it's not a comment token.  Don't
-        // waste space with lots of space ; just leave enough to indicate
-        // boundaries.
-        if (3 > state || state > 6) {
-          var isSpace = PR_isSpaceChar(ch);
-          if (!(lastCh === ' ' && isSpace)) {
-            if (lookBehind.length > 16) { lookBehind.shift(); }
-            lastCh = isSpace ? ' ' : ch;
-            lookBehind.push(lastCh);
-          }
+function PR_createSimpleLexer(shortcutStylePatterns,
+                              fallthroughStylePatterns) {
+  var shortcuts = {};
+  (function () {
+    var allPatterns = shortcutStylePatterns.concat(fallthroughStylePatterns);
+    for (var i = allPatterns.length; --i >= 0;) {
+      var patternParts = allPatterns[i];
+      var shortcutChars = patternParts[3];
+      if (shortcutChars) {
+        for (var c = shortcutChars.length; --c >= 0;) {
+          shortcuts[shortcutChars.charAt(c)] = patternParts;
         }
       }
     }
-    k += s.length;
-  }
-  var endTokenType;
-  switch (state) {
-    case 1: case 2:
-      endTokenType = PR_STRING;
-      break;
-    case 4: case 5: case 6:
-      endTokenType = PR_COMMENT;
-      break;
-    default:
-      endTokenType = PR_PLAIN;
-      break;
-  }
-  // handle unclosed token which can legally happen for line comments (state 4)
-  tokenEnds.push(new PR_TokenEnd(k, endTokenType));  // a token ends at the end
+  })();
 
-  return PR_splitChunks(chunks, tokenEnds);
-}
+  var nPatterns = fallthroughStylePatterns.length;
 
-/** used by lexSource to split a non string, non comment token.
-  * @private
-  */
-function PR_splitNonStringNonCommentToken(s, outlist) {
-  var pos = 0;
-  var state = 0;
+  return function (sourceCode, opt_basePos) {
+    opt_basePos = opt_basePos || 0;
+    var decorations = [opt_basePos, PR_PLAIN];
+    var lastToken = '';
+    var pos = 0;  // index into sourceCode
+    var tail = sourceCode;
 
-  var decodeHelper = new PR_DecodeHelper();
-  var next;
-  for (var i = 0; i <= s.length; i = next) {
-    if (i == s.length) {
-      // nstate will not be equal to state, so it will append the token
-      nstate = -2;
-      next = i + 1;
-    } else {
-      decodeHelper.decode(s, i);
-      next = decodeHelper.next;
-      var ch = decodeHelper.ch;
+    while (tail.length) {
+      var style;
+      var token = null;
 
-      // the next state.
-      // if set to -1 then it will cause a reentry to state 0 without consuming
-      // another character.
-      var nstate = state;
-
-      switch (state) {
-      case 0:  // whitespace state
-        if (PR_isIdentifierStart(ch)) {
-          nstate = 1;
-        } else if (PR_isDigitChar(ch)) {
-          nstate = 2;
-        } else if (!PR_isSpaceChar(ch)) {
-          nstate = 3;
-        }
-        if (nstate && pos < i) {
-          var t = s.substring(pos, i);
-          outlist.push(new PR_Token(t, PR_PLAIN));
-          pos = i;
-        }
-        break;
-      case 1:  // identifier state
-        if (!PR_isIdentifierPart(ch)) {
-          nstate = -1;
-        }
-        break;
-      case 2:  // number literal state
-        // handle numeric literals like
-        // 0x7f 300UL 100_000
-
-        // this does not treat floating point values as a single literal
-        //   0.1 and 3e-6
-        // are each split into multiple tokens
-        if (!(PR_isDigitChar(ch) || PR_isWordChar(ch) || ch == '_')) {
-          nstate = -1;
-        }
-        break;
-      case 3:  // punctuation state
-        if (PR_isIdentifierStart(ch) || PR_isDigitChar(ch) ||
-            PR_isSpaceChar(ch)) {
-          nstate = -1;
-        }
-        break;
-      }
-    }
-
-    if (nstate != state) {
-      if (nstate < 0) {
-        if (i > pos) {
-          var t = s.substring(pos, i);
-          var wordDecodeHelper = new PR_DecodeHelper();
-          wordDecodeHelper.decode(t, 0);
-          var ch0 = wordDecodeHelper.ch;
-          var isSingleCharacter = wordDecodeHelper.next == t.length;
-          var style;
-          if (PR_isIdentifierStart(ch0)) {
-            if (PR_keywords[t]) {
-              style = PR_KEYWORD;
-            } else if (ch0 === '@') {
-              style = PR_LITERAL;
-            } else {
-              // Treat any word that starts with an uppercase character and
-              // contains at least one lowercase character as a type, or
-              // ends with _t.
-              // This works perfectly for Java, pretty well for C++, and
-              // passably for Python.  The _t catches C structs.
-              var isType = false;
-              if (ch0 >= 'A' && ch0 <= 'Z') {
-                for (var j = wordDecodeHelper.next;
-                     j < t.length; j = wordDecodeHelper.next) {
-                  wordDecodeHelper.decode(t, j);
-                  var ch1 = wordDecodeHelper.ch;
-                  if (ch1 >= 'a' && ch1 <= 'z') {
-                    isType = true;
-                    break;
-                  }
-                }
-                if (!isType && !isSingleCharacter &&
-                    t.substring(t.length - 2) == '_t') {
-                  isType = true;
-                }
-              }
-              style = isType ? PR_TYPE : PR_PLAIN;
-            }
-          } else if (PR_isDigitChar(ch0)) {
-            style = PR_LITERAL;
-          } else if (!PR_isSpaceChar(ch0)) {
-            style = PR_PUNCTUATION;
-          } else {
-            style = PR_PLAIN;
+      var patternParts = shortcuts[tail.charAt(0)];
+      if (patternParts) {
+        var match = tail.match(patternParts[1]);
+        token = match[0];
+        style = patternParts[0];
+      } else {
+        for (var i = 0; i < nPatterns; ++i) {
+          patternParts = fallthroughStylePatterns[i];
+          var contextPattern = patternParts[2];
+          if (contextPattern && !contextPattern.test(lastToken)) {
+            // rule can't be used
+            continue;
           }
-          pos = i;
-          outlist.push(new PR_Token(t, style));
+          var match = tail.match(patternParts[1]);
+          if (match) {
+            token = match[0];
+            style = patternParts[0];
+            break;
+          }
         }
 
-        state = 0;
-        if (nstate == -1) {
-          // don't increment.  This allows us to use state 0 to redispatch based
-          // on the current character.
-          next = i;
-          continue;
+        if (!token) {  // make sure that we make progress
+          style = PR_PLAIN;
+          token = tail.substring(0, 1);
         }
       }
-      state = nstate;
-    }
-  }
 
+      decorations.push(opt_basePos + pos, style);
+      pos += token.length;
+      tail = tail.substring(token.length);
+      if (style !== PR_COMMENT && /\S/.test(token)) { lastToken = token; }
+    }
+    return decorations;
+  };
 }
 
-/** split a group of chunks of markup.
+var PR_C_STYLE_STRING_AND_COMMENT_LEXER = PR_createSimpleLexer([
+    [PR_STRING,  /^\'(?:[^\\\']|\\[\s\S])*(?:\'|$)/, null, "'"],
+    [PR_STRING,  /^\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)/, null, '"'],
+    [PR_STRING,  /^\`(?:[^\\\`]|\\[\s\S])*(?:\`|$)/, null, '`']
+    ], [
+    [PR_PLAIN,   /^(?:[^\'\"\`\/\#]+)/, null, ' \r\n'],
+    [PR_COMMENT, /^#[^\r\n]*/, null, '#'],
+    [PR_COMMENT, /^\/\/[^\r\n]*/, null],
+    [PR_STRING,  /^\/(?:[^\\\*\/]|\\[\s\S])+(?:\/|$)/, REGEXP_PRECEDER_PATTERN],
+    [PR_COMMENT, /^\/\*[\s\S]*?(?:\*\/|$)/, null]
+    ]);
+/** splits the given string into comment, string, and "other" tokens.
+  * @param {String} sourceCode as plain text
+  * @return {Array.<Number|String>} a decoration list.
   * @private
   */
-function PR_tokenizeMarkup(chunks) {
-  if (!(chunks && chunks.length)) { return chunks; }
-
-  var tokenEnds = PR_splitMarkup(chunks);
-  return PR_splitChunks(chunks, tokenEnds);
+function PR_splitStringAndCommentTokens(sourceCode) {
+  return PR_C_STYLE_STRING_AND_COMMENT_LEXER(sourceCode);
 }
 
+var PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER = PR_createSimpleLexer([], [
+    [PR_PLAIN,       /^\s+/, null, ' \r\n'],
+    // TODO(mikesamuel): recognize non-latin letters and numerals in identifiers
+    [PR_PLAIN,       /^[a-z_$@][a-z_$@0-9]*/i, null],
+    // A hex number
+    [PR_LITERAL,     /^0x[a-f0-9]+[a-z]/i, null],
+    // An octal or decimal number, possibly in scientific notation
+    [PR_LITERAL,     /^(?:\d(?:_\d+)*\d*(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?[a-z]*/i,
+     null, '123456789'],
+    [PR_PUNCTUATION, /^[^\s\w\.$@]+/, null]
+    // Fallback will handle decimal points not adjacent to a digit
+    ]);
+    
+/** splits plain text tokens into more specific tokens, and then tries to
+  * recognize keywords, and types.
+  * @private
+  */
+function PR_splitNonStringNonCommentTokens(source, decorations) {
+  for (var i = 0; i < decorations.length; i += 2) {
+    var style = decorations[i + 1];
+    if (style === PR_PLAIN) {
+      var start = decorations[i];
+      var end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+      var chunk = source.substring(start, end);
+      var subDecs = PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER(chunk, start);
+      for (var j = 0, m = subDecs.length; j < m; j += 2) {
+        var subStyle = subDecs[j + 1];
+        if (subStyle === PR_PLAIN) {
+          var subStart = subDecs[j];
+          var subEnd = j + 2 < m ? subDecs[j + 2] : chunk.length;
+          var token = source.substring(subStart, subEnd);
+          if (token == '.') {
+            subDecs[j + 1] = PR_PUNCTUATION;
+          } else if (token in PR_keywords) {
+            subDecs[j + 1] = PR_KEYWORD;
+          } else if (/^@?[A-Z][A-Z$]*[a-z][A-Za-z$]*$/.test(token)) {
+            // classify types and annotations using Java's style conventions
+            subDecs[j + 1] = token.charAt(0) == '@' ? PR_LITERAL : PR_TYPE;
+          }
+        }
+      }
+      PR_spliceArrayInto(subDecs, decorations, i, 2);
+      i += subDecs.length - 2;
+    }
+  }
+  return decorations;
+}
+
+var PR_MARKUP_LEXER = PR_createSimpleLexer([], [
+    [PR_PLAIN,       /^[^<]+/, null],
+    [PR_DECLARATION, /^<!\w[^>]*(?:>|$)/, null],
+    [PR_COMMENT,     /^<!--[\s\S]*?(?:-->|$)/, null],
+    [PR_SOURCE,      /^<\?[\s\S]*?(?:\?>|$)/, null],
+    [PR_SOURCE,      /^<%[\s\S]*?(?:%>|$)/, null],
+    [PR_SOURCE,
+     // Tags whose content is not escaped, and which contain source code.
+     /^<(script|style|xmp)\b[^>]*>[\s\S]*?<\/\1\b[^>]*>/i, null],
+    [PR_TAG,         /^<\/?\w[^<>]*>/, null]
+    ]);
+// Splits any of the source|style|xmp entries above into a start tag,
+// source content, and end tag.
+var PR_SOURCE_CHUNK_PARTS = /^(<[^>]*>)([\s\S]*)(<\/[^>]*>)$/;
+/** split markup on tags, comments, application directives, and other top level
+  * constructs.  Tags are returned as a single token - attributes are not yet
+  * broken out.
+  * @private
+  */
+function PR_tokenizeMarkup(source) {
+  var decorations = PR_MARKUP_LEXER(source);
+  for (var i = 0; i < decorations.length; i += 2) {
+    if (decorations[i + 1] === PR_SOURCE) {
+      var start = decorations[i];
+      var end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+      // Split out start and end script tags as actual tags, and leave the body
+      // with style SCRIPT.
+      var sourceChunk = source.substring(start, end);
+      var match = (sourceChunk.match(PR_SOURCE_CHUNK_PARTS)
+                   //|| sourceChunk.match(/^(<[?%])([\s\S]*)([?%]>)$/)
+                   );
+      if (match) {
+        decorations.splice(
+            i, 2,
+            start, PR_TAG,  // the open chunk
+            start + match[1].length, PR_SOURCE,
+            start + match[1].length + (match[2] || '').length, PR_TAG);
+      }
+    }
+  }
+  return decorations;
+}
+
+var PR_TAG_LEXER = PR_createSimpleLexer([
+    [PR_ATTRIB_VALUE, /^\'[^\']*(?:\'|$)/, null, "'"],
+    [PR_ATTRIB_VALUE, /^\"[^\"]*(?:\"|$)/, null, '"'],
+    [PR_PUNCTUATION,  /^[<>\/=]+/, null, '<>/=']
+    ], [
+    [PR_TAG,          /^[\w-]+/, /^</],
+    [PR_ATTRIB_VALUE, /^[\w-]+/, /^=/], 
+    [PR_ATTRIB_NAME,  /^[\w-]+/, null], 
+    [PR_PLAIN,        /^\s+/, null, ' \r\n']
+    ]);
 /** split tags attributes and their values out from the tag name, and
   * recursively lex source chunks.
   * @private
   */
-function PR_splitTagAttributes(tokens) {
-  var tokensOut = [];
-  var state = 0;
-  var stateStyle = PR_TAG;
-  var delim = null;  // attribute delimiter for quoted value state.
-  var decodeHelper = new PR_DecodeHelper();
-  for (var ci = 0; ci < tokens.length; ++ci) {
-    var tok = tokens[ci];
-    if (PR_TAG == tok.style) {
-      var s = tok.token;
-      var start = 0;
-      for (var i = 0; i < s.length; /* i = next at bottom */) {
-        decodeHelper.decode(s, i);
-        var ch = decodeHelper.ch;
-        var next = decodeHelper.next;
-
-        var emitEnd = null;  // null or position of end of chunk to emit.
-        var nextStyle = null;  // null or next value of stateStyle
-        if (ch == '>') {
-          if (PR_TAG != stateStyle) {
-            emitEnd = i;
-            nextStyle = PR_TAG;
-          }
-        } else {
-          switch (state) {
-            case 0:
-              if ('<' == ch) { state = 1; }
-              break;
-            case 1:
-              if (PR_isSpaceChar(ch)) { state = 2; }
-              break;
-            case 2:
-              if (!PR_isSpaceChar(ch)) {
-                nextStyle = PR_ATTRIB_NAME;
-                emitEnd = i;
-                state = 3;
-              }
-              break;
-            case 3:
-              if ('=' == ch) {
-                emitEnd = i;
-                nextStyle = PR_TAG;
-                state = 5;
-              } else if (PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_TAG;
-                state = 4;
-              }
-              break;
-            case 4:
-              if ('=' == ch) {
-                state = 5;
-              } else if (!PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_ATTRIB_NAME;
-                state = 3;
-              }
-              break;
-            case 5:
-              if ('"' == ch || '\'' == ch) {
-                emitEnd = i;
-                nextStyle = PR_ATTRIB_VALUE;
-                state = 6;
-                delim = ch;
-              } else if (!PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_ATTRIB_VALUE;
-                state = 7;
-              }
-              break;
-            case 6:
-              if (ch == delim) {
-                emitEnd = next;
-                nextStyle = PR_TAG;
-                state = 2;
-              }
-              break;
-            case 7:
-              if (PR_isSpaceChar(ch)) {
-                emitEnd = i;
-                nextStyle = PR_TAG;
-                state = 2;
-              }
-              break;
-          }
-        }
-        if (emitEnd) {
-          if (emitEnd > start) {
-            tokensOut.push(
-                new PR_Token(s.substring(start, emitEnd), stateStyle));
-            start = emitEnd;
-          }
-          stateStyle = nextStyle;
-        }
-        i = next;
-      }
-      if (s.length > start) {
-        tokensOut.push(new PR_Token(s.substring(start, s.length), stateStyle));
-      }
-    } else {
-      if (tok.style) {
-        state = 0;
-        stateStyle = PR_TAG;
-      }
-      tokensOut.push(tok);
+function PR_splitTagAttributes(source, decorations) {
+  for (var i = 0; i < decorations.length; i += 2) {
+    var style = decorations[i + 1];
+    if (style === PR_TAG) {
+      var start = decorations[i];
+      var end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+      var chunk = source.substring(start, end);
+      var subDecorations = PR_TAG_LEXER(chunk, start);
+      PR_spliceArrayInto(subDecorations, decorations, i, 2);
+      i += subDecorations.length - 2;
     }
   }
-  return tokensOut;
+  return decorations;
 }
 
 /** identify regions of markup that are really source code, and recursivley
   * lex them.
   * @private
   */
-function PR_splitSourceNodes(tokens) {
-  var tokensOut = [];
-  // when we see a <script> tag, store '/' here so that we know to end the
-  // source processing
-  var endScriptTag = null;
-  var decodeHelper = new PR_DecodeHelper();
-
-  var sourceChunks = null;
-
-  for (var ci = 0, nc = tokens.length; /* break below */; ++ci) {
-    var tok;
-
-    if (ci < nc) {
-      tok = tokens[ci];
-      if (null == tok.style) {
-        tokensOut.push(tok);
-        continue;
+function PR_splitSourceNodes(source, decorations) {
+  for (var i = 0; i < decorations.length; i += 2) {
+    var style = decorations[i + 1];
+    if (style == PR_SOURCE) {
+      // Recurse using the non-markup lexer
+      var start = decorations[i];
+      var end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+      var subDecorations = PR_decorateSource(source.substring(start, end));
+      for (var j = 0, m = subDecorations.length; j < m; j += 2) {
+        subDecorations[j] += start;
       }
-    } else if (!endScriptTag) {
-      break;
-    } else {
-      // else pretend there's an end tag so we can gracefully handle
-      // unclosed source blocks
-      tok = new PR_Token('', null);
-    }
-
-    var s = tok.token;
-
-    if (null == endScriptTag) {
-      if (PR_SOURCE == tok.style) {
-        // split off any starting and trailing <?, <%
-        if ('<' == decodeHelper.decode(s, 0)) {
-          decodeHelper.decode(s, decodeHelper.next);
-          if ('%' == decodeHelper.ch || '?' == decodeHelper.ch) {
-            endScriptTag = decodeHelper.ch;
-            tokensOut.push(new PR_Token(s.substring(0, decodeHelper.next),
-                                        PR_TAG));
-            s = s.substring(decodeHelper.next, s.length);
-          }
-        }
-      } else if (PR_TAG == tok.style) {
-        if ('<' == decodeHelper.decode(s, 0) &&
-            '/' != s.charAt(decodeHelper.next)) {
-          var tagContent = s.substring(decodeHelper.next).toLowerCase();
-          // FIXME(msamuel): this does not mirror exactly the code in
-          // in PR_splitMarkup that defers splitting tags inside script and
-          // style blocks.
-          if (PR_startsWith(tagContent, 'script') ||
-              PR_startsWith(tagContent, 'style') ||
-              PR_startsWith(tagContent, 'xmp')) {
-            endScriptTag = '/';
-          }
-        }
-      }
-    }
-
-    if (null != endScriptTag) {
-      var endTok = null;
-      if (PR_SOURCE == tok.style) {
-        if (endScriptTag == '%' || endScriptTag == '?') {
-          var pos = s.lastIndexOf(endScriptTag);
-          if (pos >= 0 && '>' == decodeHelper.decode(s, pos + 1) &&
-              s.length == decodeHelper.next) {
-            endTok = new PR_Token(s.substring(pos, s.length), PR_TAG);
-            s = s.substring(0, pos);
-          }
-        }
-        if (null == sourceChunks) { sourceChunks = []; }
-        sourceChunks.push(new PR_Token(s, PR_PLAIN));
-      } else if (PR_PLAIN == tok.style) {
-        if (null == sourceChunks) { sourceChunks = []; }
-        sourceChunks.push(tok);
-      } else if (PR_TAG == tok.style) {
-        // if it starts with </ then it must be the end tag.
-        if ('<' == decodeHelper.decode(tok.token, 0) &&
-            tok.token.length > decodeHelper.next &&
-            '/' == decodeHelper.decode(tok.token, decodeHelper.next)) {
-          endTok = tok;
-        } else {
-          tokensOut.push(tok);
-        }
-      } else if (ci >= nc) {
-        // force the token to close
-        endTok = tok;
-      } else {
-        if (sourceChunks) {
-          sourceChunks.push(tok);
-        } else {
-          // push remaining tag and attribute tokens from the opening tag
-          tokensOut.push(tok);
-        }
-      }
-      if (endTok) {
-        if (sourceChunks) {
-          var sourceTokens = PR_lexSource(sourceChunks);
-          tokensOut.push(new PR_Token('<span class=embsrc>', null));
-          for (var si = 0, ns = sourceTokens.length; si < ns; ++si) {
-            tokensOut.push(sourceTokens[si]);
-          }
-          tokensOut.push(new PR_Token('</span>', null));
-          sourceChunks = null;
-        }
-        if (endTok.token) { tokensOut.push(endTok); }
-        endScriptTag = null;
-      }
-    } else {
-      tokensOut.push(tok);
+      PR_spliceArrayInto(subDecorations, decorations, i, 2);
+      i += subDecorations.length - 2;
     }
   }
-  return tokensOut;
-}
-
-/** splits the quotes from an attribute value.
-  * ['"foo"'] -> ['"', 'foo', '"']
-  * @private
-  */
-function PR_splitAttributeQuotes(tokens) {
-  var firstPlain = null, lastPlain = null;
-  for (var i = 0; i < tokens.length; ++i) {
-    if (PR_PLAIN == tokens[i].style) {
-      firstPlain = i;
-      break;
-    }
-  }
-  for (var i = tokens.length; --i >= 0;) {
-    if (PR_PLAIN == tokens[i].style) {
-      lastPlain = i;
-      break;
-    }
-  }
-  if (null == firstPlain) { return tokens; }
-
-  var decodeHelper = new PR_DecodeHelper();
-  var fs = tokens[firstPlain].token;
-  var fc = decodeHelper.decode(fs, 0);
-  if ('"' != fc && '\'' != fc) {
-    return tokens;
-  }
-  var fpos = decodeHelper.next;
-
-  var ls = tokens[lastPlain].token;
-  var lpos = ls.lastIndexOf('&');
-  if (lpos < 0) { lpos = ls.length - 1; }
-  var lc = decodeHelper.decode(ls, lpos);
-  if (lc != fc || decodeHelper.next != ls.length) {
-    lc = null;
-    lpos = ls.length;
-  }
-
-  var tokensOut = [];
-  for (var i = 0; i < firstPlain; ++i) {
-    tokensOut.push(tokens[i]);
-  }
-  tokensOut.push(new PR_Token(fs.substring(0, fpos), PR_ATTRIB_VALUE));
-  if (lastPlain == firstPlain) {
-    tokensOut.push(new PR_Token(fs.substring(fpos, lpos), PR_PLAIN));
-  } else {
-    tokensOut.push(new PR_Token(fs.substring(fpos, fs.length), PR_PLAIN));
-    for (var i = firstPlain + 1; i < lastPlain; ++i) {
-      tokensOut.push(tokens[i]);
-    }
-    if (lc) {
-      tokensOut.push(new PR_Token(ls.substring(0, lpos), PR_PLAIN));
-    } else {
-      tokensOut.push(tokens[lastPlain]);
-    }
-  }
-  if (lc) {
-    tokensOut.push(new PR_Token(ls.substring(lpos, ls.length), PR_PLAIN));
-  }
-  for (var i = lastPlain + 1; i < tokens.length; ++i) {
-    tokensOut.push(tokens[i]);
-  }
-  return tokensOut;
+  return decorations;
 }
 
 /** identify attribute values that really contain source code and recursively
   * lex them.
   * @private
   */
-function PR_splitSourceAttributes(tokens) {
-  var tokensOut = [];
+function PR_splitSourceAttributes(source, decorations) {
+  var nextValueIsSource = false;
+  for (var i = 0; i < decorations.length; i += 2) {
+    var style = decorations[i + 1];
+    if (style === PR_ATTRIB_NAME) {
+      var start = decorations[i];
+      var end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+      nextValueIsSource = /^on|^style$/i.test(source.substring(start, end));
+    } else if (style == PR_ATTRIB_VALUE) {
+      if (nextValueIsSource) {
+        var start = decorations[i];
+        var end
+            = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+        var attribValue = source.substring(start, end);
+        var attribLen = attribValue.length;
+        var quoted =
+            (attribLen >= 2 && /^[\"\']/.test(attribValue) &&
+             attribValue.charAt(0) === attribValue.charAt(attribLen - 1));
 
-  var sourceChunks = null;
-  var inSource = false;
-  var name = '';
+        var attribSource;
+        var attribSourceStart;
+        var attribSourceEnd;
+        if (quoted) {
+          attribSourceStart = start + 1;
+          attribSourceEnd = end - 1;
+          attribSource = attribValue;
+        } else {
+          attribSourceStart = start + 1;
+          attribSourceEnd = end - 1;
+          attribSource = attribValue.substring(1, attribValue.length - 1);
+        }
 
-  for (var ci = 0, nc = tokens.length; ci < nc; ++ci) {
-    var tok = tokens[ci];
-    var outList = tokensOut;
-    if (PR_TAG == tok.style) {
-      if (inSource) {
-        inSource = false;
-        name = '';
-        if (sourceChunks) {
-          tokensOut.push(new PR_Token('<span class=embsrc>', null));
-          var sourceTokens =
-            PR_lexSource(PR_splitAttributeQuotes(sourceChunks));
-          for (var si = 0, ns = sourceTokens.length; si < ns; ++si) {
-            tokensOut.push(sourceTokens[si]);
-          }
-          tokensOut.push(new PR_Token('</span>', null));
-          sourceChunks = null;
+        var attribSourceDecorations = PR_decorateSource(attribSource);
+        for (var j = 0, m = attribSourceDecorations.length; j < m; j += 2) {
+          attribSourceDecorations[j] += attribSourceStart;
         }
-      } else if (name && tok.token.indexOf('=') >= 0) {
-        var nameLower = name.toLowerCase();
-        if (PR_startsWith(nameLower, 'on') || 'style' == nameLower) {
-          inSource = true;
+
+        if (quoted) {
+          attribSourceDecorations.push(attribSourceEnd, PR_ATTRIB_VALUE);
+          PR_spliceArrayInto(attribSourceDecorations, decorations, i + 2, 0);
+        } else {
+          PR_spliceArrayInto(attribSourceDecorations, decorations, i, 2);
         }
-      } else {
-        name = '';
       }
-    } else if (PR_ATTRIB_NAME == tok.style) {
-      name += tok.token;
-    } else if (PR_ATTRIB_VALUE == tok.style) {
-      if (inSource) {
-        if (null == sourceChunks) { sourceChunks = []; }
-        outList = sourceChunks;
-        tok = new PR_Token(tok.token, PR_PLAIN);
-      }
-    } else {
-      if (sourceChunks) {
-        outList = sourceChunks;
-      }
+      nextValueIsSource = false;
     }
-    outList.push(tok);
   }
-  return tokensOut;
+  return decorations;
 }
 
-/** returns a list of PR_Token objects given chunks of source code.
+/** returns a list of decorations, where even entries
   *
   * This code treats ", ', and ` as string delimiters, and \ as a string escape.
   * It does not recognize perl's qq() style strings.  It has no special handling
@@ -1340,34 +728,23 @@ function PR_splitSourceAttributes(tokens) {
   *
   * It recognizes C, C++, and shell style comments.
   *
-  * @param chunks PR_Tokens with style in (null, PR_PLAIN)
+  * @param {String} sourceCode as plain text
+  * @return {Array.<String,Number>} a  decoration list
   */
-function PR_lexSource(chunks) {
-  // split into strings, comments, and other.
+function PR_decorateSource(sourceCode) {
+  // Split into strings, comments, and other.
   // We do this because strings and comments are easily recognizable and can
   // contain stuff that looks like other tokens, so we want to mark those early
   // so we don't recurse into them.
-  var tokens = PR_splitStringAndCommentTokens(chunks);
-
-  // split non comment|string tokens on whitespace and word boundaries
-  var tokensOut = [];
-  for (var i = 0; i < tokens.length; ++i) {
-    var tok = tokens[i];
-    if (PR_PLAIN === tok.style) {
-      PR_splitNonStringNonCommentToken(tok.token, tokensOut);
-      continue;
-    }
-    tokensOut.push(tok);
-  }
-
-  return tokensOut;
+  var decorations = PR_splitStringAndCommentTokens(sourceCode);
+  
+  // Split non comment|string tokens on whitespace and word boundaries
+  decorations = PR_splitNonStringNonCommentTokens(sourceCode, decorations);
+  
+  return decorations;
 }
 
-/** returns a list of PR_Token objects given a string of markup.
-  *
-  * This code assumes that < tokens are html escaped, but " are not.
-  * It will do a resonable job with <, but will not recognize an &quot;
-  * as starting a string.
+/** returns a decoration list given a string of markup.
   *
   * This code recognizes a number of constructs.
   * <!-- ... --> comment
@@ -1375,14 +752,15 @@ function PR_lexSource(chunks) {
   * <\w ... >    tag
   * </\w ... >   tag
   * <?...?>      embedded source
+  * <%...%>      embedded source
   * &[#\w]...;   entity
   *
-  * It does not recognizes %foo; entities.
+  * It does not recognizes %foo; doctype entities from  .
   *
   * It will recurse into any <style>, <script>, and on* attributes using
   * PR_lexSource.
   */
-function PR_lexMarkup(chunks) {
+function PR_decorateMarkup(sourceCode) {
   // This function works as follows:
   // 1) Start by splitting the markup into text and tag chunks
   //    Input:  String s
@@ -1398,93 +776,158 @@ function PR_lexMarkup(chunks) {
   //    Input:  List<PR_Token>
   //    Output: List<PR_Token> where style in
   //            (PR_TAG, PR_PLAIN, PR_SOURCE, NAME, VALUE, null)
-  var tokensOut = PR_tokenizeMarkup(chunks);
-  tokensOut = PR_splitTagAttributes(tokensOut);
-  tokensOut = PR_splitSourceNodes(tokensOut);
-  tokensOut = PR_splitSourceAttributes(tokensOut);
-  return tokensOut;
+  var decorations = PR_tokenizeMarkup(sourceCode);
+  decorations = PR_splitTagAttributes(sourceCode, decorations);
+  decorations = PR_splitSourceNodes(sourceCode, decorations);
+  decorations = PR_splitSourceAttributes(sourceCode, decorations);
+  return decorations;
 }
 
 /**
- * classify the string as either source or markup and lex appropriately.
- * @param {String} html
- */
-function PR_lexOne(html) {
-  var chunks = PR_expandTabs(PR_chunkify(html), PR_TAB_WIDTH);
+  * @param {String} sourceText plain text
+  * @param {Array.<Number|String>} extractedTags chunks of raw html preceded by
+  *   their position in sourceText in order.
+  * @param {Array.<Number|String> decorations style classes preceded by their
+  *   position in sourceText in order.
+  * @return {String} html
+  * @private
+  */
+function PR_recombineTagsAndDecorations(
+    sourceText, extractedTags, decorations) {
+  var html = [];
+  var outputIdx = 0;  // index past the last char in sourceText written to html
 
-  // treat it as markup if the first non whitespace character is a < and the
-  // last non-whitespace character is a >
-  var isMarkup = false;
-  for (var i = 0; i < chunks.length; ++i) {
-    if (PR_PLAIN == chunks[i].style) {
-      if (PR_startsWith(PR_trim(chunks[i].token), '&lt;')) {
-        for (var j = chunks.length; --j >= 0;) {
-          if (PR_PLAIN == chunks[j].style) {
-            isMarkup = PR_endsWith(PR_trim(chunks[j].token), '&gt;');
-            break;
-          }
-        }
+  var openDecoration = null;
+  var currentDecoration = null;
+  var tagPos = 0;  // index into extractedTags
+  var decPos = 0;  // index into decorations
+  var tabExpander = PR_tabExpander(PR_TAB_WIDTH);
+
+  // A helper function that is responsible for opening sections of decoration
+  // and outputing properly escaped chunks of source
+  function emitTextUpTo(sourceIdx) {
+    if (sourceIdx > outputIdx) {
+      if (openDecoration && openDecoration !== currentDecoration) {
+        // Close the current decoration
+        html.push('</span>');
+        openDecoration = null;
       }
-      break;
+      if (!openDecoration && currentDecoration) {
+        openDecoration = currentDecoration;
+        html.push('<span class="', openDecoration, '">');
+      }
+      // This interacts badly with some wikis which introduces paragraph tags
+      // into pre blocks for some strange reason.
+      // It's necessary for IE though which seems to lose the preformattednes
+
+      // of <pre> tags when their innerHTML is assigned.
+      // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
+      // and it serves to undo the conversion of <br>s to newlines done in
+      // chunkify.
+      var htmlChunk = PR_textToHtml(
+          tabExpander(sourceText.substring(outputIdx, sourceIdx)))
+          .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
+          .replace(/\r\n?|\n/g, '<br>');
+      html.push(htmlChunk);
+      outputIdx = sourceIdx;
     }
   }
 
-  return isMarkup ? PR_lexMarkup(chunks) : PR_lexSource(chunks);
+  while (true) {
+    // Determine if we're going to consume a tag this time around.  Otherwise we
+    // consume a decoration or exit.
+    var outputTag;
+    if (tagPos < extractedTags.length) {
+      if (decPos < decorations.length) {
+        // Pick one giving preference to extractedTags since we shouldn't open
+        // a new style that we're going to have to immediately close in order
+        // to output a tag.
+        outputTag = extractedTags[tagPos] <= decorations[decPos];
+      } else {
+        outputTag = true;
+      }
+    } else {
+      outputTag = false;
+    }
+    // Consume either a decoration or a tag or exit.
+    if (outputTag) {
+      emitTextUpTo(extractedTags[tagPos]);
+      if (openDecoration) {
+        // Close the current decoration
+        html.push('</span>');
+        openDecoration = null;
+      } 
+      html.push(extractedTags[tagPos + 1]);
+      tagPos += 2;
+    } else if (decPos < decorations.length) {
+      emitTextUpTo(decorations[decPos]);
+      currentDecoration = decorations[decPos + 1];
+      decPos += 2;
+    } else {
+      break;
+    }
+  }
+  emitTextUpTo(sourceText.length);
+  if (openDecoration) {
+    html.push('</span>');
+  }
+
+  return html.join('');
 }
 
 /** pretty print a chunk of code.
   *
-  * @param s code as html
-  * @return code as html, but prettier
+  * @param {String} sourceCodeHtml code as html
+  * @return {String} code as html, but prettier
   */
-function prettyPrintOne(s) {
+function prettyPrintOne(sourceCodeHtml) {
   try {
-    var tokens = PR_lexOne(s);
-    var out = [];
-    var lastStyle = null;
-    for (var i = 0; i < tokens.length; i++) {
-      var t = tokens[i];
-      if (t.style != lastStyle) {
-        if (lastStyle != null) {
-          out.push('</span>');
-        }
-        if (t.style != null) {
-          out.push('<span class=', t.style, '>');
-        }
-        lastStyle = t.style;
-      }
-      var html = t.token;
-      if (null != t.style) {
-        // This interacts badly with some wikis which introduces paragraph tags
-        // into pre blocks for some strange reason.
-        // It's necessary for IE though which seems to lose the preformattedness
-        // of <pre> tags when their innerHTML is assigned.
-        // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
-        // and it serves to undo the conversion of <br>s to newlines done in
-        // chunkify.
-        html = html
-               .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
-               .replace(/\r\n?|\n/g, '<br>');
-      }
-      out.push(html);
-    }
-    if (lastStyle != null) {
-      out.push('</span>');
-    }
-    return out.join('');
+    // Extract tags, and convert the source code to plain text.
+    var sourceAndExtractedTags = PR_extractTags(sourceCodeHtml);
+    /** Plain text. @type {String} */
+    var source = sourceAndExtractedTags.source;
+
+    /** Even entries are positions in source in ascending order.  Odd entries
+      * are tags that were extracted at that position.
+      * @type {Array.<Number|String>}
+      */
+    var extractedTags = sourceAndExtractedTags.tags;
+
+    // Pick a lexer and apply it.
+    /** Treat it as markup if the first non whitespace character is a < and the
+      * last non-whitespace character is a >.
+      * @type {Boolean}
+      */
+    var isMarkup = /^\s*</.test(source) && />\s*$/.test(source);
+
+    /** Even entires are positions in source in ascending order.  Odd enties are
+      * style markers (e.g., PR_COMMENT) that run from that position until the
+      * end.
+      * @type {Array.<Number|String>}
+      */
+    var decorations = isMarkup
+        ? PR_decorateMarkup(source)
+        : PR_decorateSource(source);
+
+    // Integrate the decorations and tags back into the source code to produce
+    // a decorated html string.
+    return PR_recombineTagsAndDecorations(source, extractedTags, decorations);
   } catch (e) {
     if ('console' in window) {
       console.log(e);
       console.trace();
     }
-    return s;
+    return sourceCodeHtml;
   }
 }
 
+var PR_SHOULD_USE_CONTINUATION = true;
 /** find all the < pre > and < code > tags in the DOM with class=prettyprint and
   * prettify them.
+  * @param {Function} opt_whenDone if specified, called when the last entry
+  *     has been finished.
   */
-function prettyPrint() {
+function prettyPrint(opt_whenDone) {
   // fetch a list of nodes to rewrite
   var codeSegments = [
       document.getElementsByTagName('pre'),
@@ -1503,7 +946,9 @@ function prettyPrint() {
   var k = 0;
 
   function doWork() {
-    var endTime = new Date().getTime() + 250;
+    var endTime = (PR_SHOULD_USE_CONTINUATION
+                   ? new Date().getTime() + 250
+                   : Infinity);
     for (; k < elements.length && new Date().getTime() < endTime; k++) {
       var cs = elements[k];
       if (cs.className && cs.className.indexOf('prettyprint') >= 0) {
@@ -1552,6 +997,8 @@ function prettyPrint() {
     if (k < elements.length) {
       // finish up in a continuation
       setTimeout(doWork, 250);
+    } else if (opt_whenDone) {
+      opt_whenDone();
     }
   }
 

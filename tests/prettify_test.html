@@ -4,13 +4,20 @@
 <title>Code Prettifier</title>
 <script src="../src/prettify.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script type="Text/javascript">
+// get accurate timing
+PR_SHOULD_USE_CONTINUATION = false;
+</script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css" />
 <style type="text/css">
 .mismatch { background: #fee; }
 </style>
 </head>
 
-<body onload="prettyPrint(); setTimeout(runTests, 2000/*ms*/)" bgcolor="white">
+<body
+ onload="startClock(); prettyPrint(function () { stopClock(); runTests(); })"
+ bgcolor="white">
+<div id="timing"></div>
 <div id="errorReport" style="white-space: pre"></div>
 
 <h1>Bash</h1>
@@ -332,6 +339,32 @@ document.writeln(fib(10));
 </html>
 </xmp>
 
+<h1>XHTML</h1>
+<pre class="prettyprint" id="xhtml"
+>&lt;xhtml&gt;
+  &lt;head&gt;
+    &lt;title&gt;Fibonacci number&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body>
+    &lt;script type="text/javascript"&gt;&lt;![CDATA[
+function fib(n) {
+  var a = 1, b = 1;
+  var tmp;
+  while (--n &gt;= 0) {
+    tmp = a;
+    a += b;
+    b = tmp;
+  }
+  return a;
+}
+
+document.writeln(fib(10));
+]]&gt;
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/xhtml&gt;
+</pre>
+
 <h1>PHP</h1>
 <pre class="prettyprint" id ="PHP">
 &lt;html>
@@ -356,7 +389,7 @@ document.writeln(fib(10));
     ?>
   &lt;/head>
   &lt;body>
-    &lt;? fib(10); ?>
+    &lt;?= fib(10) ?>
   &lt;/body>
 &lt;/html>
 </pre>
@@ -671,53 +704,65 @@ var goldens = {
   xml: (
       '`DEC&lt;!DOCTYPE series PUBLIC "fibonacci numbers"&gt;`END`PLN<br>' +
       '<br>' +
-      '`END`TAG&lt;series `END`ATNbase`END`TAG=`END`ATV"1"`END`TAG `END' +
-          '`ATNstep`END`TAG=`END`ATV"s(n-2) + s(n-1)"`END`TAG&gt;`END' +
+      '`END`PUN&lt;`END`TAGseries`END`PLN `END`ATNbase`END`PUN=`END' +
+          '`ATV"1"`END`PLN `END' +
+          '`ATNstep`END`PUN=`END`ATV"s(n-2) + s(n-1)"`END`PUN&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`TAG&lt;element `END`ATNi`END`TAG=`END`ATV"0"`END' +
-          '`TAG&gt;`END`PLN1`END`TAG&lt;/element&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;element `END`ATNi`END`TAG=`END`ATV"1"`END' +
-          '`TAG&gt;`END`PLN1`END`TAG&lt;/element&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;element `END`ATNi`END`TAG=`END`ATV"2"`END' +
-          '`TAG&gt;`END`PLN2`END`TAG&lt;/element&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;element `END`ATNi`END`TAG=`END`ATV"3"`END' +
-          '`TAG&gt;`END`PLN3`END`TAG&lt;/element&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;element `END`ATNi`END`TAG=`END`ATV"4"`END' +
-          '`TAG&gt;`END`PLN5`END`TAG&lt;/element&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;element `END`ATNi`END`TAG=`END`ATV"5"`END' +
-          '`TAG&gt;`END`PLN8`END`TAG&lt;/element&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+          '`ATV"0"`END' +
+          '`PUN&gt;`END`PLN1`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+          '`ATV"1"`END' +
+          '`PUN&gt;`END`PLN1`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+          '`ATV"2"`END' +
+          '`PUN&gt;`END`PLN2`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+          '`ATV"3"`END' +
+          '`PUN&gt;`END`PLN3`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+          '`ATV"4"`END' +
+          '`PUN&gt;`END`PLN5`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+          '`ATV"5"`END' +
+          '`PUN&gt;`END`PLN8`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`PLN<br>' +
       '&nbsp; ...<br>' +
-      '`END`TAG&lt;/series&gt;`END'),
+      '`END`PUN&lt;/`END`TAGseries`END`PUN&gt;`END'),
   html: (
-      '`TAG&lt;html&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;title&gt;`END`PLNFibonacci number`END' +
-          '`TAG&lt;/title&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;body&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;noscript&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;dl&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dt&gt;`END' +
-          '`PLNFibonacci numbers`END`TAG&lt;/dt&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN2`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN3`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN5`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN8`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNFibonacci number`END' +
+          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
+          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN2`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN3`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN5`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN8`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; &amp;hellip;<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;/dl&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;/noscript&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;/`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;script `END`ATNtype`END`TAG=`END' +
-          '`ATV"text/javascript"`END`TAG&gt;`END' +
-          '<span class="embsrc">`PUN&lt;!--`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
+          '`ATV"text/javascript"`END`PUN&gt;&lt;!--`END`PLN<br>' +
       '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
       '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
@@ -735,39 +780,38 @@ var goldens = {
       'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`COM// --&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`END`TAG&lt;/script&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
-      '`END`TAG&lt;/html&gt;`END'),
+      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
   htmlXmp: (
-      '`TAG&lt;html&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;title&gt;`END`PLNFibonacci number`END' +
-          '`TAG&lt;/title&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;body&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;noscript&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;dl&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dt&gt;`END' +
-          '`PLNFibonacci numbers`END`TAG&lt;/dt&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN2`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN3`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN5`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN8`END' +
-          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNFibonacci number`END' +
+          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
+          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN2`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN3`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN5`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN8`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; &amp;hellip;<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;/dl&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;/noscript&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;/`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;script `END`ATNtype`END`TAG=`END' +
-          '`ATV"text/javascript"`END`TAG&gt;`END' +
-          '<span class="embsrc">`PUN&lt;!--`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
+          '`ATV"text/javascript"`END`PUN&gt;&lt;!--`END`PLN<br>' +
       '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
       '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
@@ -785,18 +829,48 @@ var goldens = {
       'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`COM// --&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`END`TAG&lt;/script&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
-      '`END`TAG&lt;/html&gt;`END'),
-  PHP: (
-      '`TAG&lt;html&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;title&gt;&lt;?`END' +
-          '<span class="embsrc">`PUN=`END`PLN `END' +
-          '`STR\'Fibonacci numbers\'`END`PLN `END`END' +
-          '`TAG?&gt;&lt;/title&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+  xhtml: (
+      '`PUN&lt;`END`TAGxhtml`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNFibonacci number`END' +
+          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
+          '`ATV"text/javascript"`END`PUN&gt;' +
+          '&lt;![`END`PLNCDATA`END`PUN[`END`PLN<br>' +
+      '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
+          '`PUN{`END`PLN<br>' +
+      '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
+          '`PLN b `END`PUN=`END`PLN `END`LIT1`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDvar`END`PLN tmp`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END`PUN&gt;=`END' +
+          '`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; tmp `END`PUN=`END`PLN a`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; a `END`PUN+=`END`PLN b`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; b `END`PUN=`END`PLN tmp`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END`PLN<br>' +
+      '`END`PUN}`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;?`END<span class="embsrc">`PLNphp<br>' +
+      'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
+          '`LIT10`END`PUN));`END`PLN<br>' +
+      '`END`PUN]]&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGxhtml`END`PUN&gt;`END'),
+  PHP: (
+      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;&lt;?=`END' +
+          '`PLN `END' +
+          '`STR\'Fibonacci numbers\'`END`PLN `END' +
+          '`PUN?&gt;&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;?`END`PLNphp<br>' +
       '&nbsp; &nbsp; &nbsp; `END`COM// PHP has a plethora of comment types' +
           '`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; `END`COM\/* What is a<br>' +
@@ -821,54 +895,54 @@ var goldens = {
           '`PUN;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`END`TAG?&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;body&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;?`END<span class="embsrc">`PLN fib`END' +
-          '`PUN(`END`LIT10`END`PUN);`END`PLN `END`END`TAG?&gt;`END`PLN<br>' +
-      '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
-      '`END`TAG&lt;/html&gt;`END'),
+      '&nbsp; &nbsp; `END`PUN?&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;?=`END`PLN fib`END' +
+          '`PUN(`END`LIT10`END`PUN)`END`PLN `END`PUN?&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
   whitespace: '',
   misc1: '`COM// ends with line comment token`END`PLN<br>' +
       '`END`COM//`END',
   issue4: (
-      '`TAG&lt;script `END`ATNtype`END`TAG=`END`ATV"text/javascript"`END' +
-          '`TAG&gt;`END<span class="embsrc">`PLN<br>' +
-      '&nbsp; &nbsp;`END`KWDvar`END`PLN savedTarget`END`PUN=`END`KWDnull`END' +
-          '`PUN;`END`PLN &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
-          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`COM// The target ' +
-          'layer (effectively vidPane)`END`PLN<br>' +
-      '&nbsp; &nbsp;`END`KWDvar`END`PLN orgCursor`END`PUN=`END`KWDnull`END' +
-          '`PUN;`END`PLN &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
-          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`COM// The ' +
-          'original mouse style so we can restore it`END`PLN<br>' +
-      '&nbsp; &nbsp;`END`KWDvar`END`PLN dragOK`END`PUN=`END`KWDfalse`END' +
-          '`PUN;`END`PLN &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
-          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END' +
-          '`COM// True if we\'re allowed to move the element under mouse' +
-          '`END`PLN<br>' +
-      '&nbsp; &nbsp;`END`KWDvar`END`PLN dragXoffset`END`PUN=`END`LIT0`END' +
-          '`PUN;`END`PLN &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
-          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`END' +
-          '`COM// How much we\'ve moved the element on the horozontal`END' +
-          '`PLN<br>' +
-      '&nbsp; &nbsp;`END`KWDvar`END`PLN dragYoffset`END`PUN=`END`LIT0`END' +
-          '`PUN;`END`PLN &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
-          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`END' +
-          '`COM// How much we\'ve moved the element on the verticle`END' +
-          '`PLN<br>' +
-      '&nbsp; &nbsp;vidPaneID `END`PUN=`END`PLN document`END`PUN.`END' +
-          '`PLNgetElementById`END`PUN(`END`STR\'vidPane\'`END`PUN);`END' +
-          '`PLN `END`COM// Our movable layer`END`PLN<br>' +
-      '&nbsp; &nbsp;vidPaneID`END`PUN.`END`PLNstyle`END`PUN.`END`PLNtop`END' +
-          '`PUN=`END`STR\'75px\'`END`PUN;`END`PLN &nbsp; &nbsp; &nbsp; ' +
-          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`COM// ' +
-          'Starting location horozontal`END`PLN<br>' +
-      '&nbsp; &nbsp;vidPaneID`END`PUN.`END`PLNstyle`END`PUN.`END`PLNleft`END' +
-          '`PUN=`END`STR\'75px\'`END`PUN;`END`PLN &nbsp; &nbsp; &nbsp; ' +
-          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;`END`COM// ' +
-          'Starting location verticle`END`PLN<br>' +
-      '`END`PUN&lt;`END`PLNscript`END`PUN&gt;`END</span>'),
+      '`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END`ATV"text/javascript"`END' +
+          '`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp;var savedTarget=null' +
+          '; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
+          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // The target ' +
+          'layer (effectively vidPane)<br>' +
+      '&nbsp; &nbsp;var orgCursor=null' +
+          '; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
+          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // The ' +
+          'original mouse style so we can restore it<br>' +
+      '&nbsp; &nbsp;var dragOK=false' +
+          '; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
+          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
+          '// True if we\'re allowed to move the element under mouse' +
+          '<br>' +
+      '&nbsp; &nbsp;var dragXoffset=0' +
+          '; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
+          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;' +
+          '// How much we\'ve moved the element on the horozontal' +
+          '<br>' +
+      '&nbsp; &nbsp;var dragYoffset=0' +
+          '; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
+          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;' +
+          '// How much we\'ve moved the element on the verticle' +
+          '<br>' +
+      '&nbsp; &nbsp;vidPaneID = document.' +
+          'getElementById(\'vidPane\');' +
+          ' // Our movable layer<br>' +
+      '&nbsp; &nbsp;vidPaneID.style.top' +
+          '=\'75px\'; &nbsp; &nbsp; &nbsp; ' +
+          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // ' +
+          'Starting location horozontal<br>' +
+      '&nbsp; &nbsp;vidPaneID.style.left' +
+          '=\'75px\'; &nbsp; &nbsp; &nbsp; ' +
+          '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// ' +
+          'Starting location verticle<br>' +
+      '`END`PUN&lt;`END`TAGscript`END`PUN&gt;`END'),
   issue8: (
       '<b>`PLNone`END</b>`PLN &nbsp; &nbsp; `END<b>`TYPTwo`END</b>`PLN' +
           ' &nbsp; &nbsp; `END<b>`PLNthree`END</b>`PLN &nbsp; `END`TYPFour' +
@@ -901,16 +975,16 @@ var goldens = {
       '`END`COM// test that slash used in numeric context treated as an ' +
           'operator`END`PLN<br>' +
       '`END`LIT1`END`PLN `END`PUN/`END`PLN `END`LIT2`END`PUN;`END`PLN<br>' +
-      '`END`LIT1`END`PUN.`END`PLN `END`PUN/`END`PLN x`END`PUN;`END`PLN<br>' +
+      '`END`LIT1.`END`PLN `END`PUN/`END`PLN x`END`PUN;`END`PLN<br>' +
       'x `END`PUN/`END`PLN y`END`PUN;`END`PLN<br>' +
       '`END`PUN(`END`PLNx`END`PUN)`END`PLN `END`PUN/`END`PLN y`END`PUN;`END' +
           '`PLN<br>' +
-      '`END`LIT1`END`PLN `END`COM/* foo */`END`PLN `END`PUN/`END`PLN `END' +
+      '`END`LIT1`END`PLN `END`COM/* foo *\/`END`PLN `END`PUN/`END`PLN `END' +
           '`LIT2`END`PUN;`END`PLN<br>' +
-      '`END`LIT1`END`PLN `END`COM/* foo */`END`PUN/`END`PLN `END`LIT2`END' +
+      '`END`LIT1`END`PLN `END`COM/* foo *\/`END`PUN/`END`PLN `END`LIT2`END' +
           '`PUN;`END`PLN<br>' +
       '`END`LIT1`END`PUN/`END`LIT2`END`PUN;`END`PLN<br>' +
-      '`END`LIT1`END`PUN./`END`PLNx`END`PUN;`END`PLN<br>' +
+      '`END`LIT1.`END`PUN/`END`PLNx`END`PUN;`END`PLN<br>' +
       'x`END`PUN/`END`PLNy`END`PUN;`END`PLN<br>' +
       '`END`PUN(`END`PLNx`END`PUN)/`END`PLNy`END`PUN;`END`PLN<br>' +
       '<br>' +
@@ -949,8 +1023,8 @@ var goldens = {
   issue14b: (
       '`COM&lt;!-- There\'s an `END<acronym title="tag soup">`COMHTML`END' +
            '</acronym>`COM comment in my comment --&gt;`END`PLN<br>' +
-      '`END`TAG&lt;p&gt;`END`PLNAnd another one inside the end tag`END' +
-      '`TAG&lt;/p&gt;`END')
+      '`END`PUN&lt;`END`TAGp`END`PUN&gt;`END`PLNAnd another one inside the end tag`END' +
+      '`PUN&lt;/`END`TAGp`END`PUN&gt;`END')
 };
 
 
@@ -988,7 +1062,7 @@ function runTests() {
    * get normalized markup.  innerHTML varies enough across browsers that we
    * can't use it.
    */
-  function normalizedInnerHtml(node, opt_out) {
+  function normalizedInnerHtml(node) {
     var out = [];
     for (var child = node.firstChild; child; child = child.nextSibling) {
       PR_normalizedHtml(child, out);
@@ -1043,6 +1117,17 @@ function runTests() {
                '<\/h2>');
   document.getElementById('errorReport').innerHTML =
       htmlOut.join('').replace(/&lt;br&gt;/g, '&lt;br&gt;\n');
+}
+
+var startTime = null;
+function startClock() {
+  startTime = (new Date).getTime();
+}
+
+function stopClock() {
+  var delta = (new Date).getTime() - startTime;
+  startTime = null;
+  document.getElementById('timing').innerHTML = 'Took ' + delta + ' ms';
 }
 </script>
 
