@@ -391,7 +391,7 @@ function PR_extractTags(s) {
         } else if (pr_brPrefix.test(match)) {
           // <br> tags are lexically significant so convert them to text.
           // This is undone later.
-          // <br> tags are lexically significant 
+          // <br> tags are lexically significant
           sourceBuf.push('\n');
           sourceBufLen += 1;
         } else {
@@ -534,7 +534,7 @@ var PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER = PR_createSimpleLexer([], [
     [PR_PUNCTUATION, /^[^\s\w\.$@]+/, null]
     // Fallback will handle decimal points not adjacent to a digit
     ]);
-    
+
 /** splits plain text tokens into more specific tokens, and then tries to
   * recognize keywords, and types.
   * @private
@@ -618,10 +618,10 @@ var PR_TAG_LEXER = PR_createSimpleLexer([
     [PR_ATTRIB_VALUE, /^\"[^\"]*(?:\"|$)/, null, '"'],
     [PR_PUNCTUATION,  /^[<>\/=]+/, null, '<>/=']
     ], [
-    [PR_TAG,          /^[\w-]+/, /^</],
-    [PR_ATTRIB_VALUE, /^[\w-]+/, /^=/], 
-    [PR_ATTRIB_NAME,  /^[\w-]+/, null], 
-    [PR_PLAIN,        /^\s+/, null, ' \r\n']
+    [PR_TAG,          /^[\w:-]+/, /^</],
+    [PR_ATTRIB_VALUE, /^[\w-]+/, /^=/],
+    [PR_ATTRIB_NAME,  /^[\w:-]+/, null],
+    [PR_PLAIN,        /^\s+/, null, ' \t\r\n']
     ]);
 /** split tags attributes and their values out from the tag name, and
   * recursively lex source chunks.
@@ -737,10 +737,10 @@ function PR_decorateSource(sourceCode) {
   // contain stuff that looks like other tokens, so we want to mark those early
   // so we don't recurse into them.
   var decorations = PR_splitStringAndCommentTokens(sourceCode);
-  
+
   // Split non comment|string tokens on whitespace and word boundaries
   decorations = PR_splitNonStringNonCommentTokens(sourceCode, decorations);
-  
+
   return decorations;
 }
 
@@ -856,7 +856,7 @@ function PR_recombineTagsAndDecorations(
         // Close the current decoration
         html.push('</span>');
         openDecoration = null;
-      } 
+      }
       html.push(extractedTags[tagPos + 1]);
       tagPos += 2;
     } else if (decPos < decorations.length) {
