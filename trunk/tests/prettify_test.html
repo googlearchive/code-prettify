@@ -366,7 +366,7 @@ document.writeln(fib(10));
 </pre>
 
 <h1>PHP</h1>
-<pre class="prettyprint" id ="PHP">
+<pre class="prettyprint" id="PHP">
 &lt;html>
   &lt;head>
     &lt;title>&lt;?= 'Fibonacci numbers' ?>&lt;/title>
@@ -392,6 +392,17 @@ document.writeln(fib(10));
     &lt;?= fib(10) ?>
   &lt;/body>
 &lt;/html>
+</pre>
+
+<h1>XSL (Issue 19)</h1>
+<pre class="prettyprint" id="xsl">
+&lt;!-- Test elements and attributes with namespaces --&gt;
+
+&lt;xsl:stylesheet xml:lang="en"&gt;
+  &lt;xsl:template match="."&gt;
+    &lt;xsl:text&gt;Hello World&lt;/xsl:text&gt;
+  &lt;/xsl:template&gt;
+&lt;/xsl:stylesheet&gt;
 </pre>
 
 <h1>Whitespace</h1>
@@ -902,11 +913,27 @@ var goldens = {
           '`PUN(`END`LIT10`END`PUN)`END`PLN `END`PUN?&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
       '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+  xsl: (
+      '`COM&lt;!-- Test elements and attributes with namespaces --&gt;' +
+          '`END`PLN<br>' +
+      '<br>' +
+      '`END`PUN&lt;`END`TAGxsl:stylesheet`END`PLN `END`ATNxml:lang`END' +
+          '`PUN=`END`ATV"en"`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGxsl:template`END' +
+          '`PLN `END`ATNmatch`END`PUN=`END`ATV"."`END' +
+          '`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGxsl:text`END`PUN&gt;`END' +
+          '`PLNHello World`END' +
+          '`PUN&lt;/`END`TAGxsl:text`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGxsl:template`END`PUN&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGxsl:stylesheet`END`PUN&gt;`END'
+      ),
   whitespace: '',
   misc1: '`COM// ends with line comment token`END`PLN<br>' +
       '`END`COM//`END',
   issue4: (
-      '`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END`ATV"text/javascript"`END' +
+      '`PUN&lt;`END`TAGscript`END`PLN `END' +
+          '`ATNtype`END`PUN=`END`ATV"text/javascript"`END' +
           '`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp;var savedTarget=null' +
           '; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
