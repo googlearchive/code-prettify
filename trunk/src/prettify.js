@@ -110,9 +110,15 @@ var PR_ATTRIB_VALUE = 'atv';
 /** the number of characters between tab columns */
 var PR_TAB_WIDTH = 8;
 
-// some string utilities
 function PR_isWordChar(ch) {
   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+}
+
+function PR_isIE6() {
+  var isIE6 = navigator && navigator.userAgent
+      && /\bMSIE 6\./.test(navigator.userAgent);
+  PR_isIE6 = function () { return isIE6; }
+  return isIE6;
 }
 
 /** Splice one array into another.
@@ -827,7 +833,7 @@ function PR_recombineTagsAndDecorations(
       var htmlChunk = PR_textToHtml(
           tabExpander(sourceText.substring(outputIdx, sourceIdx)))
           .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
-          .replace(/\r\n?|\n/g, '<br>');
+          .replace(/\r\n?|\n/g, '<br />');
       html.push(htmlChunk);
       outputIdx = sourceIdx;
     }
@@ -928,6 +934,8 @@ var PR_SHOULD_USE_CONTINUATION = true;
   *     has been finished.
   */
 function prettyPrint(opt_whenDone) {
+  var isIE6 = PR_isIE6();
+  
   // fetch a list of nodes to rewrite
   var codeSegments = [
       document.getElementsByTagName('pre'),
@@ -988,8 +996,24 @@ function prettyPrint(opt_whenDone) {
               }
             }
             pre.innerHTML = newContent;
+
             // remove the old
             cs.parentNode.replaceChild(pre, cs);
+            pre = cs;
+          }
+
+          // Replace <br>s with line-feeds so that copying and pasting works on
+          // IE 6.
+          // Doing this on other browsers breaks lots of stuff since \r\n is
+          // treated as two newlines on Firefox, and doing this also slows down
+          // rendering.
+          if (isIE6 && cs.tagName === 'PRE') {
+            var lineBreaks = cs.getElementsByTagName('br');
+            for (var i = lineBreaks.length; --i >= 0;) {
+              var lineBreak = lineBreaks[i];
+              lineBreak.parentNode.replaceChild(
+                  document.createTextNode('\r\n'), lineBreak);
+            }
           }
         }
       }

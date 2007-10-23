@@ -4,9 +4,10 @@
 <title>Code Prettifier</title>
 <script src="../src/prettify.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
-<script type="Text/javascript">
+<script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
+function PR_isIE6() { return false; }  // Ensure consistent output.
 </script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css" />
 <style type="text/css">
@@ -458,6 +459,21 @@ Six&#9;<b>seven</b>&#9;Eight&#9;nine&#9;Ten&#9;|
 &lt;p&gt;And another one inside the end tag&lt;/p<!-- GOTCHA!! -->&gt;
 </pre>
 
+<h1>Bug 20 - missing blank lines</h1>
+<pre class="prettyprint" id="issue20"
+>&lt;html&gt;
+
+&lt;head&gt;</pre>
+
+<h1>Bug 21 - code doesn't copy and paste well in IE</h1>
+<pre class="prettyprint" id="issue21"
+>&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Test&lt;/title&gt;
+  &lt;/head&gt;
+&lt;/html&gt;</pre>
+<p>To test this bug, disable overriding of PR_isIE6 above, and copy and paste
+the above into Notepad.</p>
 
 </body>
 
@@ -1049,9 +1065,21 @@ var goldens = {
       '`END`PUN{}`END'),
   issue14b: (
       '`COM&lt;!-- There\'s an `END<acronym title="tag soup">`COMHTML`END' +
-           '</acronym>`COM comment in my comment --&gt;`END`PLN<br>' +
-      '`END`PUN&lt;`END`TAGp`END`PUN&gt;`END`PLNAnd another one inside the end tag`END' +
-      '`PUN&lt;/`END`TAGp`END`PUN&gt;`END')
+          '</acronym>`COM comment in my comment --&gt;`END`PLN<br>' +
+      '`END`PUN&lt;`END`TAGp`END`PUN&gt;`END' +
+          '`PLNAnd another one inside the end tag`END' +
+      '`PUN&lt;/`END`TAGp`END`PUN&gt;`END'),
+  issue20: (
+      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
+      '<br>' +
+      '`END`PUN&lt;`END`TAGhead`END`PUN&gt;`END'),
+  issue21: (
+      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNTest`END' +
+          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END')
 };
 
 
