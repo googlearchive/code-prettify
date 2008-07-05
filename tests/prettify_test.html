@@ -41,6 +41,26 @@ function fib() {
 fib | head -10 | tail -1
 </pre>
 
+<h1>Bash w/ language specified</h1>
+<pre class="prettyprint lang-sh" id="bash_lang">#!/bin/bash
+
+# Fibonacci numbers
+# Writes an infinite series to stdout, one entry per line
+function fib() {
+  local a=1
+  local b=1
+  while true ; do
+    echo $a
+    local tmp=$a
+    a=$(( $a + $b ))
+    b=$tmp
+  done
+}
+
+# output the 10th element of the series and halt
+fib | head -10 | tail -1
+</pre>
+
 <h1>C</h1>
 
 <pre class="prettyprint" id="C">
@@ -64,6 +84,28 @@ main() {
 }
 </pre>
 
+<h1>C w/ language specified</h1>
+
+<pre class="prettyprint lang-c" id="C_lang">
+#include &lt;stdio.h&gt;
+
+/* the n<sup>th</sup> fibonacci number. */
+unsigned int fib(unsigned int n) {
+  unsigned int a = 1, b = 1;
+  unsigned int tmp;
+  while (--n >= 0) {
+    tmp = a;
+    a += b;
+    b = tmp;
+  }
+  return a;
+}
+
+void main() {
+  printf("%u", fib(10));
+}
+</pre>
+
 <h1>C++</h1>
 <pre class="prettyprint" id="Cpp">
 #include &lt;iostream&gt;
@@ -77,7 +119,33 @@ using namespace std;
 template &lt;class T>
 T fib(unsigned int n, const T&amp; fib0) {
   T a(fib0), b(fib0);
-  while (--n &gt;= 0) {
+  for (; n; --n) {
+    T tmp(a);
+    a += b;
+    b = tmp;
+  }
+  return a;
+}
+
+int main(int argc, char **argv) {
+  cout &lt;&lt; fib(10, 1U);
+}
+</pre>
+
+<h1>C++ w/ language specified</h1>
+<pre class="prettyprint lang-cc" id="Cpp_lang">
+#include &lt;iostream&gt;
+
+using namespace std;
+
+//! fibonacci numbers with gratuitous use of templates.
+//! \param n an index into the fibonacci series
+//! \param fib0 element 0 of the series
+//! \return the nth element of the fibonacci series
+template &lt;class T>
+T fib(int n, const T&amp; fib0) {
+  T a(fib0), b(fib0);
+  while (--n >= 0) {
     T tmp(a);
     a += b;
     b = tmp;
@@ -103,6 +171,7 @@ public final class Fibonacci implements Iterable&lt;Integer> {
   /** the next and previous members of the series. */
   private int a = 1, b = 1;
 
+  @Override
   public Iterator&lt;Integer> iterator() {
     return new Iterator&lt;Integer>() {
       /** the series is infinite. */
@@ -137,6 +206,57 @@ public final class Fibonacci implements Iterable&lt;Integer> {
 }
 </pre>
 
+<h1>Java w/ language specified</h1>
+<pre class="prettyprint lang-java" id="java_lang">
+package foo;
+
+import java.util.Iterator;
+
+/**
+ * the fibonacci series implemented as an Iterable.
+ */
+public final class Fibonacci implements Iterable&lt;Integer> {
+  /** the next and previous members of the series. */
+  private int a = 1, b = 1;
+
+  @Override
+  public Iterator&lt;Integer> iterator() {
+    return new Iterator&lt;Integer>() {
+      /** the series is infinite. */
+      public boolean hasNext() { return true; }
+      public Integer next() {
+        int tmp = a;
+        a += b;
+        b = tmp;
+        return a;
+      }
+      public void remove() { throw new UnsupportedOperationException(); }
+    };
+  }
+
+  /**
+   * the n&lt;sup>th&lt;/sup> element of the given series.
+   * @throws NoSuchElementException if there are less than n elements in the
+   *   given Iterable's {@link Iterable#iterator iterator}.
+   */
+  public static &lt;T>
+  T nth(int n, Iterable&lt;T> iterable) {
+    Iterator&lt;? extends T> in = iterable.iterator();
+    while (--n > 0) {
+      in.next();
+    }
+    return in.next();
+  }
+
+  public static void main(String[] args) {
+    System.out.print(nth(10, new Fibonacci()));
+  }
+}
+
+# not a java comment
+# not keywords: static_cast and namespace
+</pre>
+
 <h1>Javascript</h1>
 <pre class="prettyprint" id="javascript">
 /**
@@ -166,6 +286,7 @@ document.write(fib(10));
 "foo /bar/".test(/"baz"/);  // test string and regexp boundaries
 var division = /\b\d+\/\d+/g;  // test char sets and escaping of specials
 var allSpecials = /([^\(\)\[\]\{\}\-\?\+\*\.\^\$\/]+)\\/;
+var slashInCharset = /[^/]/g, notCloseSq = /[^\]]/;
 
 // test that slash used in numeric context treated as an operator
 1 / 2;
@@ -197,6 +318,52 @@ division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
 
 // & not used as prefix operator in javascript but this should still work
 &/foo/;
+
+extends = /extends/;
+</pre>
+
+<h1>Issue 12 - Javascript Regular Expressions w/ language specified</h1>
+<pre class="prettyprint lang-js" id="issue12_lang">
+/foo/;  // a slash starting a line treated as a regexp beginning
+"foo".match(/fo+$/);
+// this line comment not treated as a regular expressions
+"foo /bar/".test(/"baz"/);  // test string and regexp boundaries
+var division = /\b\d+\/\d+/g;  // test char sets and escaping of specials
+var allSpecials = /([^\(\)\[\]\{\}\-\?\+\*\.\^\$\/]+)\\/;
+var slashInCharset = /[^/]/g, notCloseSq = /[^\]]/;
+
+// test that slash used in numeric context treated as an operator
+1 / 2;
+1. / x;
+x / y;
+(x) / y;
+1 /* foo */ / 2;
+1 /* foo *// 2;
+1/2;
+1./x;
+x/y;
+(x)/y;
+
+// test split over two lines.  line comment should not fool it
+1//
+/2;
+
+x++/y;
+x--/y;
+x[y] / z;
+f() / n;
+
+// test that slash after non postfix operator is start of regexp
+log('matches = ' + /foo/.test(foo));
+
+// test keyword preceders
+return /a regexp/;
+division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
+
+// & not used as prefix operator in javascript but this should still work
+&/foo/;
+
+extends = /extends/;
 </pre>
 
 <h1>Perl</h1>
@@ -244,6 +411,36 @@ def nth(series, n):
     if n <= 0: return x
 
 print nth(fib(), 10)
+</pre>
+
+<h1>Python w/ language specified</h1>
+<pre class="prettyprint lang-py" id="python_lang">
+#!/usr/bin/python2.4
+
+def fib():
+  '''
+  a generator that produces the fibonacci series's elements
+  '''
+
+  a = 1
+  b = 1
+  while True:
+    a, b = a + b, a
+    yield a
+
+def nth(series, n):
+  '''
+  returns the nth element of a series,
+  consuming the earlier elements of the series
+  '''
+
+  for x in series:
+    n -= 1
+    if n <= 0: return x
+
+print nth(fib(), 10)
+
+/* not a comment and not keywords: null char true */
 </pre>
 
 <h1>XML</h1>
@@ -298,6 +495,40 @@ document.writeln(fib(10));
     &lt;/script>
   &lt;/body&gt;
 &lt;/html&gt;
+</pre>
+
+<h1>HTML w/ language specified</h1>
+<pre class="prettyprint lang-html" id="html_lang">
+Fibonacci Numbers
+
+&lt;noscript&gt;
+  &lt;dl&gt;
+    &lt;dt&gt;Fibonacci numbers&lt;/dt&gt;
+    &lt;dd&gt;1&lt;/dd&gt;
+    &lt;dd&gt;1&lt;/dd&gt;
+    &lt;dd&gt;2&lt;/dd&gt;
+    &lt;dd&gt;3&lt;/dd&gt;
+    &lt;dd&gt;5&lt;/dd&gt;
+    &lt;dd&gt;8&lt;/dd&gt;
+    &amp;hellip;
+  &lt;/dl&gt;
+&lt;/noscript&gt;
+
+&lt;script type="text/javascript">&lt;!--
+function fib(n) {
+  var a = 1, b = 1;
+  var tmp;
+  while (--n >= 0) {
+    tmp = a;
+    a += b;
+    b = tmp;
+  }
+  return a;
+}
+
+document.writeln(fib(10));
+// --&gt;
+&lt;/script>
 </pre>
 
 
@@ -506,6 +737,28 @@ var goldens = {
       '`END`COM# output the 10th element of the series and halt`END`PLN<br>' +
       'fib `END`PUN|`END`PLN head `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
           '`PLN tail `END`PUN-`END`LIT1`END'),
+  bash_lang: (
+      '`COM#!/bin/bash`END`PLN<br>' +
+      '<br>' +
+      '`END`COM# Fibonacci numbers`END`PLN<br>' +
+      '`END`COM# Writes an infinite series to stdout, one entry per line`END' +
+          '`PLN<br>' +
+      '`END`KWDfunction`END`PLN fib`END`PUN()`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; `END`KWDlocal`END`PLN a`END`PUN=`END`LIT1`END`PLN<br>' +
+      '&nbsp; `END`KWDlocal`END`PLN b`END`PUN=`END`LIT1`END`PLN<br>' +
+      '&nbsp; `END`KWDwhile`END`PLN true `END`PUN;`END' +
+          '`PLN `END`KWDdo`END`PLN<br>' +
+      '&nbsp; &nbsp; echo $a<br>' +
+      '&nbsp; &nbsp; `END`KWDlocal`END`PLN tmp`END`PUN=`END`PLN$a<br>' +
+      '&nbsp; &nbsp; a`END`PUN=`END`PLN$`END`PUN((`END`PLN $a `END`PUN+`END' +
+          '`PLN $b `END`PUN))`END`PLN<br>' +
+      '&nbsp; &nbsp; b`END`PUN=`END`PLN$tmp<br>' +
+      '&nbsp; `END`KWDdone`END`PLN<br>' +
+      '`END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '`END`COM# output the 10th element of the series and halt`END`PLN<br>' +
+      'fib `END`PUN|`END`PLN head `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
+          '`PLN tail `END`PUN-`END`LIT1`END'),
   C: (
       '`COM#include &lt;stdio.h&gt;`END`PLN<br>' +
       '<br>' +
@@ -532,6 +785,31 @@ var goldens = {
       '&nbsp; printf`END`PUN(`END`STR"%u"`END`PUN,`END`PLN fib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`PUN}`END'),
+  C_lang: (
+      '`COM#include &lt;stdio.h&gt;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM/* the n`END<sup>`COMth`END<\/sup>`COM fibonacci number. *\/`END`PLN<br>' +
+      '`END`KWDunsigned`END`PLN `END`KWDint`END`PLN fib`END`PUN(`END' +
+          '`KWDunsigned`END`PLN `END`KWDint`END`PLN n`END`PUN)`END`PLN `END' +
+          '`PUN{`END`PLN<br>' +
+      '&nbsp; `END`KWDunsigned`END`PLN `END`KWDint`END`PLN a `END`PUN=`END' +
+          '`PLN `END`LIT1`END`PUN,`END`PLN b `END`PUN=`END`PLN `END`LIT1`END' +
+          '`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDunsigned`END`PLN `END`KWDint`END`PLN tmp`END`PUN;`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END`PUN&gt;=`END' +
+          '`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; tmp `END`PUN=`END`PLN a`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; a `END`PUN+=`END`PLN b`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; b `END`PUN=`END`PLN tmp`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END`PLN<br>' +
+      '`END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDvoid`END`PLN main`END`PUN()`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; printf`END`PUN(`END`STR"%u"`END`PUN,`END`PLN fib`END`PUN(`END' +
+          '`LIT10`END`PUN));`END`PLN<br>' +
+      '`END`PUN}`END'),
   Cpp: (
       '`COM#include &lt;iostream&gt;`END`PLN<br>' +
       '<br>' +
@@ -547,6 +825,41 @@ var goldens = {
       '`END`KWDtemplate`END`PLN `END`PUN&lt;`END`KWDclass`END`PLN T`END' +
           '`PUN&gt;`END`PLN<br>' +
       'T fib`END`PUN(`END`KWDunsigned`END`PLN `END`KWDint`END`PLN n`END' +
+          '`PUN,`END`PLN `END`KWDconst`END`PLN T`END`PUN&amp;`END`PLN fib0' +
+          '`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; T a`END`PUN(`END`PLNfib0`END`PUN),`END`PLN b`END`PUN(`END' +
+          '`PLNfib0`END`PUN);`END`PLN<br>' +
+      '&nbsp; `END`KWDfor`END`PLN `END`PUN(;`END`PLN n`END`PUN;`END' +
+          '`PLN `END`PUN--`END`PLNn`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; T tmp`END`PUN(`END`PLNa`END`PUN);`END`PLN<br>' +
+      '&nbsp; &nbsp; a `END`PUN+=`END`PLN b`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; b `END`PUN=`END`PLN tmp`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END`PLN<br>' +
+      '`END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDint`END`PLN main`END`PUN(`END`KWDint`END`PLN argc`END' +
+          '`PUN,`END`PLN `END`KWDchar`END`PLN `END`PUN**`END`PLNargv`END' +
+          '`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; cout `END`PUN&lt;&lt;`END`PLN fib`END`PUN(`END`LIT10`END' +
+          '`PUN,`END`PLN `END`LIT1U`END`PUN);`END`PLN<br>' +
+      '`END`PUN}`END'),
+
+  Cpp_lang: (
+      '`COM#include &lt;iostream&gt;`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDusing`END`PLN `END`KWDnamespace`END`PLN std`END`PUN;`END' +
+          '`PLN<br>' +
+      '<br>' +
+      '`END`COM//! fibonacci numbers with gratuitous use of templates.`END' +
+          '`PLN<br>' +
+      '`END`COM//! \\param n an index into the fibonacci series`END`PLN<br>' +
+      '`END`COM//! \\param fib0 element 0 of the series`END`PLN<br>' +
+      '`END`COM//! \\return the nth element of the fibonacci series`END' +
+          '`PLN<br>' +
+      '`END`KWDtemplate`END`PLN `END`PUN&lt;`END`KWDclass`END`PLN T`END' +
+          '`PUN&gt;`END`PLN<br>' +
+      'T fib`END`PUN(`END`KWDint`END`PLN n`END' +
           '`PUN,`END`PLN `END`KWDconst`END`PLN T`END`PUN&amp;`END`PLN fib0' +
           '`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
       '&nbsp; T a`END`PUN(`END`PLNfib0`END`PUN),`END`PLN b`END`PUN(`END' +
@@ -587,6 +900,7 @@ var goldens = {
           '`PLN `END`LIT1`END`PUN,`END`PLN b `END`PUN=`END`PLN `END`LIT1`END' +
           '`PUN;`END`PLN<br>' +
       '<br>' +
+      '&nbsp; `END`LIT@Override`END`PLN<br>' +
       '&nbsp; `END`KWDpublic`END`PLN `END`TYPIterator`END`PUN&lt;`END' +
           '`TYPInteger`END`PUN&gt;`END`PLN iterator`END`PUN()`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
@@ -651,6 +965,95 @@ var goldens = {
           '`PLN<br>' +
       '&nbsp; `END`PUN}`END`PLN<br>' +
       '`END`PUN}`END'),
+  java_lang: (
+      '`KWDpackage`END`PLN foo`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDimport`END`PLN java`END`PUN.`END`PLNutil`END`PUN.`END' +
+          '`TYPIterator`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM/**<br>' +
+      '&nbsp;* the fibonacci series implemented as an Iterable.<br>' +
+      '&nbsp;*\/`END`PLN<br>' +
+      '`END`KWDpublic`END`PLN `END`KWDfinal`END`PLN `END`KWDclass`END' +
+          '`PLN `END`TYPFibonacci`END`PLN `END`KWDimplements`END`PLN `END' +
+          '`TYPIterable`END`PUN&lt;`END`TYPInteger`END`PUN&gt;`END`PLN `END`' +
+          'PUN{`END`PLN<br>' +
+      '&nbsp; `END' +
+          '`COM/** the next and previous members of the series. *\/`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`KWDprivate`END`PLN `END`KWDint`END`PLN a `END`PUN=`END' +
+          '`PLN `END`LIT1`END`PUN,`END`PLN b `END`PUN=`END`PLN `END`LIT1`END' +
+          '`PUN;`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; `END`LIT@Override`END`PLN<br>' +
+      '&nbsp; `END`KWDpublic`END`PLN `END`TYPIterator`END`PUN&lt;`END' +
+          '`TYPInteger`END`PUN&gt;`END`PLN iterator`END`PUN()`END`PLN `END' +
+          '`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDreturn`END`PLN `END`KWDnew`END`PLN `END' +
+          '`TYPIterator`END`PUN&lt;`END`TYPInteger`END`PUN&gt;()`END`PLN `END' +
+          '`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`COM/** the series is infinite. *\/`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`KWDboolean`END' +
+          '`PLN hasNext`END`PUN()`END`PLN `END`PUN{`END`PLN `END' +
+          '`KWDreturn`END`PLN `END`KWDtrue`END`PUN;`END`PLN `END`PUN}`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`TYPInteger`END' +
+          '`PLN next`END`PUN()`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDint`END`PLN tmp `END`PUN=`END' +
+          '`PLN a`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; a `END`PUN+=`END`PLN b`END`PUN;`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; b `END`PUN=`END`PLN tmp`END`PUN;`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`KWDvoid`END' +
+          '`PLN remove`END`PUN()`END`PLN `END`PUN{`END`PLN `END`KWDthrow`END' +
+          '`PLN `END`KWDnew`END`PLN `END' +
+          '`TYPUnsupportedOperationException`END`PUN();`END`PLN `END' +
+          '`PUN}`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN};`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; `END`COM/**<br>' +
+      '&nbsp; &nbsp;* the n&lt;sup&gt;th&lt;/sup&gt; element of the given ' +
+          'series.<br>' +
+      '&nbsp; &nbsp;* @throws NoSuchElementException if there are less than ' +
+          'n elements in the<br>' +
+      '&nbsp; &nbsp;* &nbsp; given Iterable\'s {@link Iterable#iterator ' +
+          'iterator}.<br>' +
+      '&nbsp; &nbsp;*\/`END`PLN<br>' +
+      '&nbsp; `END`KWDpublic`END`PLN `END`KWDstatic`END`PLN `END' +
+          '`PUN&lt;`END`PLNT`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; T nth`END`PUN(`END`KWDint`END`PLN n`END`PUN,`END`PLN `END' +
+          '`TYPIterable`END`PUN&lt;`END`PLNT`END`PUN&gt;`END' +
+          '`PLN iterable`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TYPIterator`END`PUN&lt;?`END`PLN `END' +
+          '`KWDextends`END`PLN T`END`PUN&gt;`END`PLN in `END`PUN=`END' +
+          '`PLN iterable`END`PUN.`END`PLNiterator`END`PUN();`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END' +
+          '`PUN&gt;`END`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; in`END`PUN.`END`PLNnext`END`PUN();`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDreturn`END`PLN in`END`PUN.`END`PLNnext`END' +
+          '`PUN();`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; `END`KWDpublic`END`PLN `END`KWDstatic`END`PLN `END`KWDvoid`END' +
+          '`PLN main`END`PUN(`END`TYPString`END`PUN[]`END`PLN args`END' +
+          '`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TYPSystem`END`PUN.`END`PLNout`END`PUN.`END' +
+          '`PLNprint`END`PUN(`END`PLNnth`END`PUN(`END`LIT10`END`PUN,`END' +
+          '`PLN `END`KWDnew`END`PLN `END`TYPFibonacci`END`PUN()));`END' +
+          '`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '`END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '`END`PUN#`END`PLN not a java comment<br>' +
+      '`END`PUN#`END`PLN not keywords`END`PUN:`END' +
+          '`PLN static_cast and namespace`END'),
   javascript: (
       '`COM/**<br>' +
       '&nbsp;* nth element in the fibonacci series.<br>' +
@@ -728,6 +1131,42 @@ var goldens = {
       '<br>' +
       '`END`KWDprint`END`PLN nth`END`PUN(`END`PLNfib`END`PUN(),`END`PLN `END' +
           '`LIT10`END`PUN)`END'),
+  python_lang: (
+      '`COM#!/usr/bin/python2.4`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDdef`END`PLN fib`END`PUN():`END`PLN<br>' +
+      '&nbsp; `END`STR\'\'\'<br>' +
+      '&nbsp; a generator that produces the fibonacci series\'s elements' +
+          '<br>' +
+      '&nbsp; \'\'\'`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; a `END`PUN=`END`PLN `END`LIT1`END`PLN<br>' +
+      '&nbsp; b `END`PUN=`END`PLN `END`LIT1`END`PLN<br>' +
+      '&nbsp; `END`KWDwhile`END`PLN `END`KWDTrue`END`PUN:`END`PLN<br>' +
+      '&nbsp; &nbsp; a`END`PUN,`END`PLN b `END`PUN=`END`PLN a `END`PUN+`END' +
+          '`PLN b`END`PUN,`END`PLN a<br>' +
+      '&nbsp; &nbsp; `END`KWDyield`END`PLN a<br>' +
+      '<br>' +
+      '`END`KWDdef`END`PLN nth`END`PUN(`END`PLNseries`END`PUN,`END`PLN n`END' +
+          '`PUN):`END`PLN<br>' +
+      '&nbsp; `END`STR\'\'\'<br>' +
+      '&nbsp; returns the nth element of a series,<br>' +
+      '&nbsp; consuming the earlier elements of the series<br>' +
+      '&nbsp; \'\'\'`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; `END`KWDfor`END`PLN x `END`KWDin`END`PLN series`END`PUN:`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; n `END`PUN-=`END`PLN `END`LIT1`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDif`END`PLN n `END`PUN&lt;=`END`PLN `END' +
+          '`LIT0`END`PUN:`END`PLN `END`KWDreturn`END`PLN x<br>' +
+      '<br>' +
+      '`END`KWDprint`END`PLN nth`END`PUN(`END`PLNfib`END`PUN(),`END`PLN `END' +
+          '`LIT10`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '`END`PUN/*`END`PLN `END`KWDnot`END`PLN a comment `END`KWDand`END' +
+          '`PLN `END`KWDnot`END`PLN keywords`END`PUN:`END' +
+          '`PLN null char true `END`PUN*/`END'),
   xml: (
       '`DEC&lt;!DOCTYPE series PUBLIC "fibonacci numbers"&gt;`END`PLN<br>' +
       '<br>' +
@@ -810,6 +1249,49 @@ var goldens = {
       '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
       '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+  html_lang: (
+      '`PLNFibonacci Numbers<br>' +
+      '<br>' +
+      '`END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
+          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN2`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN3`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN5`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN8`END' +
+          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &amp;hellip;<br>' +
+      '&nbsp; `END`PUN&lt;/`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
+      '<br>' +
+      '`END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
+          '`ATV"text/javascript"`END`PUN&gt;&lt;!--`END`PLN<br>' +
+      '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
+          '`PUN{`END`PLN<br>' +
+      '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
+          '`PLN b `END`PUN=`END`PLN `END`LIT1`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDvar`END`PLN tmp`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END`PUN&gt;=`END' +
+          '`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; tmp `END`PUN=`END`PLN a`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; a `END`PUN+=`END`PLN b`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; b `END`PUN=`END`PLN tmp`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END`PLN<br>' +
+      '`END`PUN}`END`PLN<br>' +
+      '<br>' +
+      'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
+          '`LIT10`END`PUN));`END`PLN<br>' +
+      '`END`COM// --&gt;`END`PLN<br>' +
+      '`END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END'),
   htmlXmp: (
       '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
@@ -1014,6 +1496,9 @@ var goldens = {
       '`END`KWDvar`END`PLN allSpecials `END`PUN=`END`PLN `END' +
           '`STR/([^\\(\\)\\[\\]\\{\\}\\-\\?\\+\\*\\.\\^\\$\\/]+)\\\\/`END' +
           '`PUN;`END`PLN<br>' +
+      '`END`KWDvar`END`PLN slashInCharset `END`PUN=`END`PLN `END' +
+          '`STR/[^/]/`END`PLNg`END`PUN,`END`PLN notCloseSq `END`PUN=`END' +
+          '`PLN `END`STR/[^\\]]/`END`PUN;`END`PLN<br>' +
       '<br>' +
       '`END`COM// test that slash used in numeric context treated as an ' +
           'operator`END`PLN<br>' +
@@ -1056,7 +1541,74 @@ var goldens = {
       '<br>' +
       '`END`COM// &amp; not used as prefix operator in javascript but this ' +
           'should still work`END`PLN<br>' +
-      '`END`PUN&amp;`END`STR/foo/`END`PUN;`END'),
+      '`END`PUN&amp;`END`STR/foo/`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDextends`END`PLN `END`PUN=`END`PLN `END`STR/extends/`END' +
+          '`PUN;`END'),
+  issue12_lang: (
+      '`STR/foo/`END`PUN;`END`PLN &nbsp;`END`COM// a slash starting a line ' +
+          'treated as a regexp beginning`END`PLN<br>' +
+      '`END`STR"foo"`END`PUN.`END`PLNmatch`END`PUN(`END`STR/fo+$/`END' +
+          '`PUN);`END`PLN<br>' +
+      '`END`COM// this line comment not treated as a regular expressions`END' +
+          '`PLN<br>' +
+      '`END`STR"foo /bar/"`END`PUN.`END`PLNtest`END`PUN(`END`STR/"baz"/`END' +
+          '`PUN);`END`PLN &nbsp;`END`COM// test string and regexp boundaries' +
+          '`END`PLN<br>' +
+      '`END`KWDvar`END`PLN division `END`PUN=`END`PLN `END' +
+          '`STR/\\b\\d+\\/\\d+/`END`PLNg`END`PUN;`END`PLN &nbsp;`END' +
+          '`COM// test char sets and escaping of specials`END`PLN<br>' +
+      '`END`KWDvar`END`PLN allSpecials `END`PUN=`END`PLN `END' +
+          '`STR/([^\\(\\)\\[\\]\\{\\}\\-\\?\\+\\*\\.\\^\\$\\/]+)\\\\/`END' +
+          '`PUN;`END`PLN<br>' +
+      '`END`KWDvar`END`PLN slashInCharset `END`PUN=`END`PLN `END' +
+          '`STR/[^/]/`END`PLNg`END`PUN,`END`PLN notCloseSq `END`PUN=`END' +
+          '`PLN `END`STR/[^\\]]/`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// test that slash used in numeric context treated as an ' +
+          'operator`END`PLN<br>' +
+      '`END`LIT1`END`PLN `END`PUN/`END`PLN `END`LIT2`END`PUN;`END`PLN<br>' +
+      '`END`LIT1.`END`PLN `END`PUN/`END`PLN x`END`PUN;`END`PLN<br>' +
+      'x `END`PUN/`END`PLN y`END`PUN;`END`PLN<br>' +
+      '`END`PUN(`END`PLNx`END`PUN)`END`PLN `END`PUN/`END`PLN y`END`PUN;`END' +
+          '`PLN<br>' +
+      '`END`LIT1`END`PLN `END`COM/* foo *\/`END`PLN `END`PUN/`END`PLN `END' +
+          '`LIT2`END`PUN;`END`PLN<br>' +
+      '`END`LIT1`END`PLN `END`COM/* foo *\/`END`PUN/`END`PLN `END`LIT2`END' +
+          '`PUN;`END`PLN<br>' +
+      '`END`LIT1`END`PUN/`END`LIT2`END`PUN;`END`PLN<br>' +
+      '`END`LIT1.`END`PUN/`END`PLNx`END`PUN;`END`PLN<br>' +
+      'x`END`PUN/`END`PLNy`END`PUN;`END`PLN<br>' +
+      '`END`PUN(`END`PLNx`END`PUN)/`END`PLNy`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// test split over two lines. &nbsp;line comment should not ' +
+          'fool it`END`PLN<br>' +
+      '`END`LIT1`END`COM//`END`PLN<br>' +
+      '`END`PUN/`END`LIT2`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      'x`END`PUN++/`END`PLNy`END`PUN;`END`PLN<br>' +
+      'x`END`PUN--/`END`PLNy`END`PUN;`END`PLN<br>' +
+      'x`END`PUN[`END`PLNy`END`PUN]`END`PLN `END`PUN/`END`PLN z`END`PUN;`END' +
+          '`PLN<br>' +
+      'f`END`PUN()`END`PLN `END`PUN/`END`PLN n`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// test that slash after non postfix operator is start of ' +
+          'regexp`END`PLN<br>' +
+      'log`END`PUN(`END`STR\'matches = \'`END`PLN `END`PUN+`END`PLN `END' +
+          '`STR/foo/`END`PUN.`END`PLNtest`END`PUN(`END`PLNfoo`END`PUN));`END' +
+          '`PLN<br>' +
+      '<br>' +
+      '`END`COM// test keyword preceders`END`PLN<br>' +
+      '`END`KWDreturn`END`PLN `END`STR/a regexp/`END`PUN;`END`PLN<br>' +
+      'division `END`PUN=`END`PLN notreturn `END`PUN/`END`PLN not_a_regexp ' +
+          '`END`PUN/`END`PLN `END`LIT2`END`PUN;`END`PLN &nbsp;`END`COM// ' +
+          'keyword suffix does not match`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// &amp; not used as prefix operator in javascript but this ' +
+          'should still work`END`PLN<br>' +
+      '`END`PUN&amp;`END`STR/foo/`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      'extends `END`PUN=`END`PLN `END`STR/extends/`END`PUN;`END'),
   issue14a: (
       '`COM//comment`END`PLN<br>' +
       '`END`KWDint`END`PLN main`END`PUN(`END`KWDint`END`PLN argc`END`PUN,`END' +

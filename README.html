@@ -71,8 +71,17 @@ public:
     CAML-like languages.</p>
 
     <h3>How do I specify which language my code is in?</h3>
-    <p>There's no way to tell it which language because would complicate the
-    interface.  If it doesn't guess the language properly, that's a bug.</p>
+    <p>You don't need to specify the language since <code>prettyprint()</code>
+    will guess.  You can specify a language by specifying the language extension
+    along with the <code>prettyprint</code> class like so:</p>
+    <code class="prettyprint lang-html">
+    &lt;pre class=&quot;prettyprint <b>lang-html</b>&quot;&gt;<br>
+    &nbsp; The lang-* class specifies the language file extensions.<br>
+    &nbsp; Supported file extensions include<br>
+    &nbsp; &nbsp; "c", "cc", "cpp", "cs", "cyc", "java", "bsh", "csh", "sh",<br>
+    &nbsp; &nbsp; "cv", "py", "perl", "pl", "pm", "rb", "js",<br>
+    &nbsp; &nbsp; "html", "html", "xhtml", "xml", "xsl".<br>
+    &lt;/pre&gt;</code>
 
     <h3>It doesn't work on <tt>&lt;obfuscated code sample&gt;</tt>?</h3>
     <p>Yes.  Prettifying obfuscated code is like putting lipstick on a pig
@@ -93,7 +102,7 @@ public:
     <div class="footer">
 <!-- Created: Tue Oct  3 17:51:56 PDT 2006 -->
 <!-- hhmts start -->
-Last modified: Mon Oct  9 16:47:24 PDT 2006
+Last modified: Fri Jul  4 20:49:30 PDT 2008
 <!-- hhmts end -->
     </div>
   </body>

@@ -140,7 +140,7 @@ function pr_isIE6() {
       "BEGIN END ";
   var SH_KEYWORDS = "break case continue do done elif else esac eval fi for " +
       "function if in local set then until while ";
-  var ALL_KEYWORD_SET = wordSet(
+  var ALL_KEYWORDS = (
       CPP_KEYWORDS + CSHARP_KEYWORDS + JSCRIPT_KEYWORDS + PERL_KEYWORDS +
       PYTHON_KEYWORDS + RUBY_KEYWORDS + SH_KEYWORDS);
 
@@ -270,6 +270,7 @@ function pr_isIE6() {
   var pr_aposEnt = /&apos;/g;
   var pr_quotEnt = /&quot;/g;
   var pr_ampEnt = /&amp;/g;
+  var pr_nbspEnt = /&nbsp;/g;
   /** unescapes html to plain text. */
   function htmlToText(html) {
     var pos = html.indexOf('&');
@@ -298,7 +299,8 @@ function pr_isIE6() {
         .replace(pr_gtEnt, '>')
         .replace(pr_aposEnt, "'")
         .replace(pr_quotEnt, '"')
-        .replace(pr_ampEnt, '&');
+        .replace(pr_ampEnt, '&')
+        .replace(pr_nbspEnt, ' ');
   }
 
   /** is the given node's innerHTML normally unescaped? */
@@ -333,7 +335,7 @@ function pr_isIE6() {
         break;
     }
   }
-  
+
   var PR_innerHtmlWorks = null;
   function getInnerHtml(node) {
     // inner html is hopelessly broken in Safari 2.0.4 when the content is
@@ -497,7 +499,7 @@ function pr_isIE6() {
     *   function that takes source code and returns a list of decorations.
     */
   function createSimpleLexer(shortcutStylePatterns,
-                                fallthroughStylePatterns) {
+                             fallthroughStylePatterns) {
     var shortcuts = {};
     (function () {
       var allPatterns = shortcutStylePatterns.concat(fallthroughStylePatterns);
@@ -560,76 +562,6 @@ function pr_isIE6() {
       }
       return decorations;
     };
-  }
-
-  var PR_C_STYLE_STRING_AND_COMMENT_LEXER = createSimpleLexer([
-      [PR_STRING,  /^\'(?:[^\\\']|\\[\s\S])*(?:\'|$)/, null, "'"],
-      [PR_STRING,  /^\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)/, null, '"'],
-      [PR_STRING,  /^\`(?:[^\\\`]|\\[\s\S])*(?:\`|$)/, null, '`']
-      ], [
-      [PR_PLAIN,   /^(?:[^\'\"\`\/\#]+)/, null, ' \r\n'],
-      [PR_COMMENT, /^#[^\r\n]*/, null, '#'],
-      [PR_COMMENT, /^\/\/[^\r\n]*/, null],
-      [PR_STRING,  /^\/(?:[^\\\*\/]|\\[\s\S])+(?:\/|$)/,
-       REGEXP_PRECEDER_PATTERN],
-      [PR_COMMENT, /^\/\*[\s\S]*?(?:\*\/|$)/, null]
-      ]);
-  /** splits the given string into comment, string, and "other" tokens.
-    * @param {string} sourceCode as plain text
-    * @return {Array.<number|string>} a decoration list.
-    * @private
-    */
-  function splitStringAndCommentTokens(sourceCode) {
-    return PR_C_STYLE_STRING_AND_COMMENT_LEXER(sourceCode);
-  }
-
-  var PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER = createSimpleLexer([], [
-      [PR_PLAIN,       /^\s+/, null, ' \r\n'],
-      // TODO(mikesamuel): recognize non-latin letters and numerals in idents
-      [PR_PLAIN,       /^[a-z_$@][a-z_$@0-9]*/i, null],
-      // A hex number
-      [PR_LITERAL,     /^0x[a-f0-9]+[a-z]/i, null],
-      // An octal or decimal number, possibly in scientific notation
-      [PR_LITERAL,  /^(?:\d(?:_\d+)*\d*(?:\.\d*)?|\.\d+)(?:e[+\-]?\d+)?[a-z]*/i,
-       null, '123456789'],
-      [PR_PUNCTUATION, /^[^\s\w\.$@]+/, null]
-      // Fallback will handle decimal points not adjacent to a digit
-      ]);
-
-  /** splits plain text tokens into more specific tokens, and then tries to
-    * recognize keywords, and types.
-    * @private
-    */
-  function splitNonStringNonCommentTokens(source, decorations) {
-    for (var i = 0; i < decorations.length; i += 2) {
-      var style = decorations[i + 1];
-      if (style === PR_PLAIN) {
-        var start, end, chunk, subDecs;
-        start = decorations[i];
-        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
-        chunk = source.substring(start, end);
-        subDecs = PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER(chunk, start);
-        for (var j = 0, m = subDecs.length; j < m; j += 2) {
-          var subStyle = subDecs[j + 1];
-          if (subStyle === PR_PLAIN) {
-            var subStart = subDecs[j];
-            var subEnd = j + 2 < m ? subDecs[j + 2] : chunk.length;
-            var token = source.substring(subStart, subEnd);
-            if (token === '.') {
-              subDecs[j + 1] = PR_PUNCTUATION;
-            } else if (token in ALL_KEYWORD_SET) {
-              subDecs[j + 1] = PR_KEYWORD;
-            } else if (/^@?[A-Z][A-Z$]*[a-z][A-Za-z$]*$/.test(token)) {
-              // classify types and annotations using Java's style conventions
-              subDecs[j + 1] = token.charAt(0) === '@' ? PR_LITERAL : PR_TYPE;
-            }
-          }
-        }
-        spliceArrayInto(subDecs, decorations, i, 2);
-        i += subDecs.length - 2;
-      }
-    }
-    return decorations;
   }
 
   var PR_MARKUP_LEXER = createSimpleLexer([], [
@@ -704,7 +636,7 @@ function pr_isIE6() {
     return decorations;
   }
 
-  /** returns a list of decorations, where even entries
+  /** returns a function that produces a list of decorations from source text.
     *
     * This code treats ", ', and ` as string delimiters, and \ as a string
     * escape.  It does not recognize perl's qq() style strings.
@@ -715,29 +647,129 @@ function pr_isIE6() {
     *
     * It recognizes C, C++, and shell style comments.
     *
-    * @param {string} sourceCode as plain text
-    * @return {Array.<string|number>} a  decoration list
+    * @param {Object} options a set of optional parameters.
+    * @return {function (sourceCode : string) : Array.<string|number>} a
+    *     decorator that takes sourceCode as plain text and that returns a
+    *     decoration list
     */
-  function decorateSource(sourceCode) {
-    // Split into strings, comments, and other.
-    // We do this because strings and comments are easily recognizable and can
-    // contain stuff that looks like other tokens, so we want to mark those
-    // early so we don't recurse into them.
-    var decorations = splitStringAndCommentTokens(sourceCode);
+  function sourceDecorator(options) {
+    var shortcutStylePatterns = [], fallthroughStylePatterns = [];
+    if (options.tripleQuotedStrings) {
+      shortcutStylePatterns.push(
+          [PR_STRING,  /^(?:\'\'\'(?:[^\'\\]|\\[\s\S]|\'{1,2}(?=[^\']))*(?:\'\'\'|$)|\"\"\"(?:[^\"\\]|\\[\s\S]|\"{1,2}(?=[^\"]))*(?:\"\"\"|$)|\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$))/,
+           null, '\'"']);
+    } else if (options.multiLineStrings) {
+      shortcutStylePatterns.push(
+          [PR_STRING,  /^(?:\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)|\`(?:[^\\\`]|\\[\s\S])*(?:\`|$))/,
+           null, '\'"`']);
+    } else {
+      shortcutStylePatterns.push(
+          [PR_STRING,
+           /^(?:\'(?:[^\\\'\r\n]|\\.)*(?:\'|$)|\"(?:[^\\\"\r\n]|\\.)*(?:\"|$))/,
+           null, '"\'']);
+    }
+    fallthroughStylePatterns.push(
+        [PR_PLAIN,   /^(?:[^\'\"\`\/\#]+)/, null, ' \r\n']);
+    if (options.hashComments) {
+      shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
+    }
+    if (options.cStyleComments) {
+      fallthroughStylePatterns.push([PR_COMMENT, /^\/\/[^\r\n]*/, null]);
+    }
+    if (options.regexLiterals) {
+      fallthroughStylePatterns.push(
+          [PR_STRING,
+           /^\/(?:[^\\\*\/\[]|\\[\s\S]|\[(?:[^\]\\]|\\.)*(?:\]|$))+(?:\/|$)/,
+           REGEXP_PRECEDER_PATTERN]);
+    }
+    if (options.cStyleComments) {
+      fallthroughStylePatterns.push(
+          [PR_COMMENT, /^\/\*[\s\S]*?(?:\*\/|$)/, null]);
+    }
 
-    // Split non comment|string tokens on whitespace and word boundaries
-    decorations = splitNonStringNonCommentTokens(sourceCode, decorations);
+    var keywords = wordSet(options.keywords);
 
-    return decorations;
+    options = null;
+
+    /** splits the given string into comment, string, and "other" tokens.
+      * @param {string} sourceCode as plain text
+      * @return {Array.<number|string>} a decoration list.
+      * @private
+      */
+    var splitStringAndCommentTokens = createSimpleLexer(
+        shortcutStylePatterns, fallthroughStylePatterns);
+
+    var styleLiteralIdentifierPuncRecognizer = createSimpleLexer([], [
+        [PR_PLAIN,       /^\s+/, null, ' \r\n'],
+        // TODO(mikesamuel): recognize non-latin letters and numerals in idents
+        [PR_PLAIN,       /^[a-z_$@][a-z_$@0-9]*/i, null],
+        // A hex number
+        [PR_LITERAL,     /^0x[a-f0-9]+[a-z]/i, null],
+        // An octal or decimal number, possibly in scientific notation
+        [PR_LITERAL,
+         /^(?:\d(?:_\d+)*\d*(?:\.\d*)?|\.\d+)(?:e[+\-]?\d+)?[a-z]*/i,
+         null, '123456789'],
+        [PR_PUNCTUATION, /^[^\s\w\.$@]+/, null]
+        // Fallback will handle decimal points not adjacent to a digit
+      ]);
+
+    /** splits plain text tokens into more specific tokens, and then tries to
+      * recognize keywords, and types.
+      * @private
+      */
+    function splitNonStringNonCommentTokens(source, decorations) {
+      for (var i = 0; i < decorations.length; i += 2) {
+        var style = decorations[i + 1];
+        if (style === PR_PLAIN) {
+          var start, end, chunk, subDecs;
+          start = decorations[i];
+          end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+          chunk = source.substring(start, end);
+          subDecs = styleLiteralIdentifierPuncRecognizer(chunk, start);
+          for (var j = 0, m = subDecs.length; j < m; j += 2) {
+            var subStyle = subDecs[j + 1];
+            if (subStyle === PR_PLAIN) {
+              var subStart = subDecs[j];
+              var subEnd = j + 2 < m ? subDecs[j + 2] : chunk.length;
+              var token = source.substring(subStart, subEnd);
+              if (token === '.') {
+                subDecs[j + 1] = PR_PUNCTUATION;
+              } else if (token in keywords) {
+                subDecs[j + 1] = PR_KEYWORD;
+              } else if (/^@?[A-Z][A-Z$]*[a-z][A-Za-z$]*$/.test(token)) {
+                // classify types and annotations using Java's style conventions
+                subDecs[j + 1] = token.charAt(0) === '@' ? PR_LITERAL : PR_TYPE;
+              }
+            }
+          }
+          spliceArrayInto(subDecs, decorations, i, 2);
+          i += subDecs.length - 2;
+        }
+      }
+      return decorations;
+    }
+
+    return function (sourceCode) {
+      // Split into strings, comments, and other.
+      // We do this because strings and comments are easily recognizable and can
+      // contain stuff that looks like other tokens, so we want to mark those
+      // early so we don't recurse into them.
+      var decorations = splitStringAndCommentTokens(sourceCode);
+
+      // Split non comment|string tokens on whitespace and word boundaries
+      decorations = splitNonStringNonCommentTokens(sourceCode, decorations);
+
+      return decorations;
+    };
   }
 
-  function cSourceDecorator(keywords, opt_options) {
-    return decorateSource;  // TODO: implement me
-  }
-
-  function shellSourceDecorator(keywords, opt_options) {
-    return decorateSource;  // TODO: implement me
-  }
+  var decorateSource = sourceDecorator({
+        keywords: ALL_KEYWORDS,
+        hashComments: true,
+        cStyleComments: true,
+        multiLineStrings: true,
+        regexLiterals: true
+      });
 
   /** identify regions of markup that are really source code, and recursivley
     * lex them.
@@ -958,22 +990,44 @@ function pr_isIE6() {
   }
   registerLangHandler(decorateSource, ['default-code']);
   registerLangHandler(decorateMarkup,
-                      ['default-markup', 'html', 'htm', 'xhtml', 'xml']);
-  registerLangHandler(cSourceDecorator(CPP_KEYWORDS),
-                      ['c', 'cc', 'cpp', 'cs', 'cxx', 'cyc']);
-  registerLangHandler(cSourceDecorator(JAVA_KEYWORDS), ['java']);
-  registerLangHandler(shellSourceDecorator(SH_KEYWORDS), ['csh', 'sh']);
-  registerLangHandler(
-      shellSourceDecorator(PYTHON_KEYWORDS), ['cv', 'py'],
-      { tripleQuotedStrings: true });
-  registerLangHandler(
-      shellSourceDecorator(PERL_KEYWORDS,
-      { regexLiteral: true, multiLineStrings: true }), ['pl']);
-  registerLangHandler(
-      shellSourceDecorator(RUBY_KEYWORDS,
-      { regexLiteral: true, multiLineStrings: true }), ['rb']);
-  registerLangHandler(
-      cSourceDecorator(JSCRIPT_KEYWORDS, { regexLiteral: true }), ['js']);
+                      ['default-markup', 'html', 'htm', 'xhtml', 'xml', 'xsl']);
+  registerLangHandler(sourceDecorator({
+          keywords: CPP_KEYWORDS,
+          hashComments: true,
+          cStyleComments: true
+        }), ['c', 'cc', 'cpp', 'cs', 'cxx', 'cyc']);
+  registerLangHandler(sourceDecorator({
+          keywords: JAVA_KEYWORDS,
+          cStyleComments: true
+        }), ['java']);
+  registerLangHandler(sourceDecorator({
+          keywords: SH_KEYWORDS,
+          hashComments: true,
+          multiLineStrings: true
+        }), ['bsh', 'csh', 'sh']);
+  registerLangHandler(sourceDecorator({
+          keywords: PYTHON_KEYWORDS,
+          hashComments: true,
+          multiLineStrings: true,
+          tripleQuotedStrings: true
+        }), ['cv', 'py']);
+  registerLangHandler(sourceDecorator({
+          keywords: PERL_KEYWORDS,
+          hashComments: true,
+          multiLineStrings: true,
+          regexLiterals: true
+        }), ['perl', 'pl', 'pm']);
+  registerLangHandler(sourceDecorator({
+          keywords: RUBY_KEYWORDS,
+          hashComments: true,
+          multiLineStrings: true,
+          regexLiterals: true
+        }), ['rb']);
+  registerLangHandler(sourceDecorator({
+          keywords: JSCRIPT_KEYWORDS,
+          cStyleComments: true,
+          regexLiterals: true
+        }), ['js']);
 
   function prettyPrintOne(sourceCodeHtml, opt_langExtension) {
     try {
