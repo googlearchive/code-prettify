@@ -43,6 +43,9 @@
  *   Java annotations (start with "@") are now captured as literals ("lit")
  */
 
+// JSLint declarations
+/*global console, document, navigator, setTimeout, window */
+
 /**
  * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
  * UI events.
@@ -59,6 +62,13 @@ var PR_TAB_WIDTH = 8;
   */
 var PR_normalizedHtml;
 
+/** Register a language handler for the given file extensions.
+  * @param {function (sourceCode : string) : Array.<number|string>} a function
+  *     from source code to a list of decorations.
+  * @param {Array.<string>} fileExtensions
+  */
+var PR_registerLangHandler;
+
 /** Pretty print a chunk of code.
   *
   * @param {string} sourceCodeHtml code as html
@@ -72,52 +82,67 @@ var prettyPrintOne;
   */
 var prettyPrint;
 
-function PR_isIE6() {
-  var isIE6 = navigator && navigator.userAgent
-      && /\bMSIE 6\./.test(navigator.userAgent);
-  PR_isIE6 = function () { return isIE6; }
+/** browser detection. */
+function pr_isIE6() {
+  var isIE6 = navigator && navigator.userAgent &&
+      /\bMSIE 6\./.test(navigator.userAgent);
+  pr_isIE6 = function () { return isIE6; };
   return isIE6;
 }
 
 
 (function () {
-  var PR_keywords = {};
-  /** initialize the keyword list for our target languages. */
-  (function () {
-    var CPP_KEYWORDS = "abstract bool break case catch char class const " +
-      "const_cast continue default delete deprecated dllexport dllimport do " +
-      "double dynamic_cast else enum explicit extern false float for friend " +
-      "goto if inline int long mutable naked namespace new noinline noreturn " +
-      "nothrow novtable operator private property protected public register " +
-      "reinterpret_cast return selectany short signed sizeof static " +
-      "static_cast struct switch template this thread throw true try typedef " +
-      "typeid typename union unsigned using declaration directive uuid " +
-      "virtual void volatile while typeof";
-    var CSHARP_KEYWORDS = "as base by byte checked decimal delegate " +
-      "descending event finally fixed foreach from group implicit in " +
-      "interface internal into is lock null object out override orderby " +
-      "params readonly ref sbyte sealed stackalloc string select uint ulong " +
-      "unchecked unsafe ushort var";
-    var JAVA_KEYWORDS = "package synchronized boolean implements import " +
-      "throws instanceof transient extends final strictfp native super";
-    var JSCRIPT_KEYWORDS = "debugger export function with NaN Infinity";
-    var PERL_KEYWORDS = "require sub unless until use elsif BEGIN END";
-    var PYTHON_KEYWORDS = "and assert def del elif except exec global lambda " +
-      "not or pass print raise yield False True None";
-    var RUBY_KEYWORDS = "then end begin rescue ensure module when undef next " +
-      "redo retry alias defined";
-    var SH_KEYWORDS = "done esac fi";
-
-    var KEYWORDS = [CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS,
-                    JSCRIPT_KEYWORDS, PERL_KEYWORDS, PYTHON_KEYWORDS,
-                    RUBY_KEYWORDS, SH_KEYWORDS];
-    for (var k = 0; k < KEYWORDS.length; k++) {
-      var kw = KEYWORDS[k].split(' ');
-      for (var i = 0; i < kw.length; i++) {
-        if (kw[i]) { PR_keywords[kw[i]] = true; }
-      }
+  /** Splits input on space and returns an Object mapping each non-empty part to
+    * true.
+    */
+  function wordSet(words) {
+    words = words.split(/ /g);
+    var set = {};
+    for (var i = words.length; --i >= 0;) {
+      var w = words[i];
+      if (w) { set[w] = null; }
     }
-  }).call(this);
+    return set;
+  }
+
+  // Keyword lists for various languages.
+  var C_KEYWORDS = "auto break case char const continue default do double " +
+      "else enum extern float for goto if int long register return short " +
+      "signed sizeof static struct switch typedef union unsigned void " +
+      "volatile while ";
+  var COMMON_KEYWORDS = C_KEYWORDS + "catch class delete false import " +
+      "new operator private protected public this throw true try ";
+  var CPP_KEYWORDS = COMMON_KEYWORDS + "alignof align_union asm axiom bool " +
+      "concept concept_map const_cast constexpr decltype " +
+      "dynamic_cast explicit export friend inline late_check " +
+      "mutable namespace nullptr reinterpret_cast static_assert static_cast " +
+      "template typeid typename typeof using virtual wchar_t where ";
+  var JAVA_KEYWORDS = COMMON_KEYWORDS +
+      "boolean byte extends final finally implements import instanceof null " +
+      "native package strictfp super synchronized throws transient ";
+  var CSHARP_KEYWORDS = JAVA_KEYWORDS +
+      "as base by checked decimal delegate descending event " +
+      "fixed foreach from group implicit in interface internal into is lock " +
+      "object out override orderby params readonly ref sbyte sealed " +
+      "stackalloc string select uint ulong unchecked unsafe ushort var ";
+  var JSCRIPT_KEYWORDS = COMMON_KEYWORDS +
+      "debugger eval export function get null set undefined var with " +
+      "Infinity NaN ";
+  var PERL_KEYWORDS = "caller delete die do dump elsif eval exit foreach for " +
+      "goto if import last local my next no our package redo require sub " +
+      "undef unless until use wantarray while BEGIN END ";
+  var PYTHON_KEYWORDS = "and as assert break class continue def del elif " +
+      "else except exec finally for from global if import in is lambda not " +
+      "or pass print raise return try while with yield False True None ";
+  var RUBY_KEYWORDS = "alias and begin break case class def defined do else " +
+      "elsif end ensure false for if in module next nil not or redo rescue " +
+      "retry return self super then true undef unless until when while yield " +
+      "BEGIN END ";
+  var SH_KEYWORDS = "break case continue do done elif else esac eval fi for " +
+      "function if in local set then until while ";
+  var ALL_KEYWORD_SET = wordSet(
+      CPP_KEYWORDS + CSHARP_KEYWORDS + JSCRIPT_KEYWORDS + PERL_KEYWORDS +
+      PYTHON_KEYWORDS + RUBY_KEYWORDS + SH_KEYWORDS);
 
   // token style names.  correspond to css classes
   /** token style for a string literal */
@@ -146,7 +171,7 @@ function PR_isIE6() {
   /** token style for an sgml attribute value. */
   var PR_ATTRIB_VALUE = 'atv';
 
-  function PR_isWordChar(ch) {
+  function isWordChar(ch) {
     return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
   }
 
@@ -159,7 +184,7 @@ function PR_isIE6() {
     * @param {Number} containerPosition
     * @param {Number} countReplaced
     */
-  function PR_spliceArrayInto(
+  function spliceArrayInto(
       inserted, container, containerPosition, countReplaced) {
     inserted.unshift(containerPosition, countReplaced || 0);
     try {
@@ -181,7 +206,7 @@ function PR_isIE6() {
     * as a count of inches.
     * @private
     */
-  var REGEXP_PRECEDER_PATTERN = (function () {
+  var REGEXP_PRECEDER_PATTERN = function () {
       var preceders = [
           "!", "!=", "!==", "#", "%", "%=", "&", "&&", "&&=",
           "&=", "(", "*", "*=", /* "+", */ "+=", ",", /* "-", */ "-=",
@@ -189,18 +214,18 @@ function PR_isIE6() {
           "<", "<<", "<<=", "<=", "=", "==", "===", ">",
           ">=", ">>", ">>=", ">>>", ">>>=", "?", "@", "[",
           "^", "^=", "^^", "^^=", "{", "|", "|=", "||",
-          "||=", "~", "break", "case", "continue", "delete",
+          "||=", "~" /* handles =~ and !~ */,
+          "break", "case", "continue", "delete",
           "do", "else", "finally", "instanceof",
           "return", "throw", "try", "typeof"
           ];
       var pattern = '(?:' +
-        '(?:(?:^|[^0-9\.])\\.{1,3})|' +  // a dot that's not part of a number
-        '(?:(?:^|[^\\+])\\+)|' +  // allow + but not ++
-        '(?:(?:^|[^\\-])-)'  // allow - but not --
-        ;
+          '(?:(?:^|[^0-9.])\\.{1,3})|' +  // a dot that's not part of a number
+          '(?:(?:^|[^\\+])\\+)|' +  // allow + but not ++
+          '(?:(?:^|[^\\-])-)';  // allow - but not --
       for (var i = 0; i < preceders.length; ++i) {
         var preceder = preceders[i];
-        if (PR_isWordChar(preceder.charAt(0))) {
+        if (isWordChar(preceder.charAt(0))) {
           pattern += '|\\b' + preceder;
         } else {
           pattern += '|' + preceder.replace(/([^=<>:&])/g, '\\$1');
@@ -214,7 +239,7 @@ function PR_isIE6() {
       // adjacent is not
       // valid in any language I'm aware of, so I'm punting.
       // TODO: maybe style special characters inside a regexp as punctuation.
-    })();
+    }();
 
   // Define regexps here so that the interpreter doesn't have to create an
   // object each time the function containing them is called.
@@ -225,18 +250,18 @@ function PR_isIE6() {
   var pr_gt = />/g;
   var pr_quot = /\"/g;
   /** like textToHtml but escapes double quotes to be attribute safe. */
-  function PR_attribToHtml(str) {
+  function attribToHtml(str) {
     return str.replace(pr_amp, '&amp;')
-      .replace(pr_lt, '&lt;')
-      .replace(pr_gt, '&gt;')
-      .replace(pr_quot, '&quot;');
+        .replace(pr_lt, '&lt;')
+        .replace(pr_gt, '&gt;')
+        .replace(pr_quot, '&quot;');
   }
 
   /** escapest html special characters to html. */
-  function PR_textToHtml(str) {
+  function textToHtml(str) {
     return str.replace(pr_amp, '&amp;')
-      .replace(pr_lt, '&lt;')
-      .replace(pr_gt, '&gt;');
+        .replace(pr_lt, '&lt;')
+        .replace(pr_gt, '&gt;');
   }
 
 
@@ -246,7 +271,7 @@ function PR_isIE6() {
   var pr_quotEnt = /&quot;/g;
   var pr_ampEnt = /&amp;/g;
   /** unescapes html to plain text. */
-  function PR_htmlToText(html) {
+  function htmlToText(html) {
     var pos = html.indexOf('&');
     if (pos < 0) { return html; }
     // Handle numeric entities specially.  We can't use functional substitution
@@ -257,7 +282,7 @@ function PR_isIE6() {
       if (end >= 0) {
         var num = html.substring(pos + 3, end);
         var radix = 10;
-        if (num && num.charAt(0) == 'x') {
+        if (num && num.charAt(0) === 'x') {
           num = num.substring(1);
           radix = 16;
         }
@@ -270,19 +295,47 @@ function PR_isIE6() {
     }
 
     return html.replace(pr_ltEnt, '<')
-      .replace(pr_gtEnt, '>')
-      .replace(pr_aposEnt, "'")
-      .replace(pr_quotEnt, '"')
-      .replace(pr_ampEnt, '&');
+        .replace(pr_gtEnt, '>')
+        .replace(pr_aposEnt, "'")
+        .replace(pr_quotEnt, '"')
+        .replace(pr_ampEnt, '&');
   }
 
   /** is the given node's innerHTML normally unescaped? */
-  function PR_isRawContent(node) {
-    return 'XMP' == node.tagName;
+  function isRawContent(node) {
+    return 'XMP' === node.tagName;
   }
 
+  function normalizedHtml(node, out) {
+    switch (node.nodeType) {
+      case 1:  // an element
+        var name = node.tagName.toLowerCase();
+        out.push('<', name);
+        for (var i = 0; i < node.attributes.length; ++i) {
+          var attr = node.attributes[i];
+          if (!attr.specified) { continue; }
+          out.push(' ');
+          normalizedHtml(attr, out);
+        }
+        out.push('>');
+        for (var child = node.firstChild; child; child = child.nextSibling) {
+          normalizedHtml(child, out);
+        }
+        if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
+          out.push('<\/', name, '>');
+        }
+        break;
+      case 2: // an attribute
+        out.push(node.name.toLowerCase(), '="', attribToHtml(node.value), '"');
+        break;
+      case 3: case 4: // text
+        out.push(textToHtml(node.nodeValue));
+        break;
+    }
+  }
+  
   var PR_innerHtmlWorks = null;
-  function PR_getInnerHtml(node) {
+  function getInnerHtml(node) {
     // inner html is hopelessly broken in Safari 2.0.4 when the content is
     // an html description of well formed XML and the containing tag is a PRE
     // tag, so we detect that case and emulate innerHTML.
@@ -296,46 +349,17 @@ function PR_isIE6() {
     if (PR_innerHtmlWorks) {
       var content = node.innerHTML;
       // XMP tags contain unescaped entities so require special handling.
-      if (PR_isRawContent(node)) {
-        content = PR_textToHtml(content);
+      if (isRawContent(node)) {
+        content = textToHtml(content);
       }
       return content;
     }
 
     var out = [];
     for (var child = node.firstChild; child; child = child.nextSibling) {
-      PR_normalizedHtml(child, out);
+      normalizedHtml(child, out);
     }
     return out.join('');
-  }
-
-  function PR_normalizedHtml(node, out) {
-    switch (node.nodeType) {
-      case 1:  // an element
-        var name = node.tagName.toLowerCase();
-        out.push('\074', name);
-        for (var i = 0; i < node.attributes.length; ++i) {
-          var attr = node.attributes[i];
-          if (!attr.specified) { continue; }
-          out.push(' ');
-          PR_normalizedHtml(attr, out);
-        }
-        out.push('>');
-        for (var child = node.firstChild; child; child = child.nextSibling) {
-          PR_normalizedHtml(child, out);
-        }
-        if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
-          out.push('<\/', name, '>');
-        }
-        break;
-      case 2: // an attribute
-        out.push(node.name.toLowerCase(),
-                 '="', PR_attribToHtml(node.value), '"');
-        break;
-      case 3: case 4: // text
-        out.push(PR_textToHtml(node.nodeValue));
-        break;
-    }
   }
 
   /** returns a function that expand tabs to spaces.  This function can be fed
@@ -345,7 +369,7 @@ function PR_isIE6() {
     *   plain text and return the text with tabs expanded.
     * @private
     */
-  function PR_tabExpander(tabWidth) {
+  function makeTabExpander(tabWidth) {
     var SPACES = '                ';
     var charInLine = 0;
 
@@ -406,8 +430,7 @@ function PR_isIE6() {
     * @return {Object} source code and extracted tags.
     * @private
     */
-  function PR_extractTags(s) {
-
+  function extractTags(s) {
     // since the pattern has the 'g' modifier and defines no capturing groups,
     // this will return a list of all chunks which we then classify and wrap as
     // PR_Tokens
@@ -427,14 +450,13 @@ function PR_isIE6() {
           } else if (pr_brPrefix.test(match)) {
             // <br> tags are lexically significant so convert them to text.
             // This is undone later.
-            // <br> tags are lexically significant
             sourceBuf.push('\n');
-            sourceBufLen += 1;
+            ++sourceBufLen;
           } else {
             extractedTags.push(sourceBufLen, match);
           }
         } else {
-          var literalText = PR_htmlToText(match);
+          var literalText = htmlToText(match);
           sourceBuf.push(literalText);
           sourceBufLen += literalText.length;
         }
@@ -472,9 +494,9 @@ function PR_isIE6() {
     *   order if the shortcut ones fail.  May have shortcuts.
     *
     * @return {function (sourceCode : string) -> Array.<number|string>} a
-    *   function that takes source code and a list of decorations to append to.
+    *   function that takes source code and returns a list of decorations.
     */
-  function PR_createSimpleLexer(shortcutStylePatterns,
+  function createSimpleLexer(shortcutStylePatterns,
                                 fallthroughStylePatterns) {
     var shortcuts = {};
     (function () {
@@ -502,10 +524,11 @@ function PR_isIE6() {
       while (tail.length) {
         var style;
         var token = null;
+        var match;
 
         var patternParts = shortcuts[tail.charAt(0)];
         if (patternParts) {
-          var match = tail.match(patternParts[1]);
+          match = tail.match(patternParts[1]);
           token = match[0];
           style = patternParts[0];
         } else {
@@ -516,7 +539,7 @@ function PR_isIE6() {
               // rule can't be used
               continue;
             }
-            var match = tail.match(patternParts[1]);
+            match = tail.match(patternParts[1]);
             if (match) {
               token = match[0];
               style = patternParts[0];
@@ -539,7 +562,7 @@ function PR_isIE6() {
     };
   }
 
-  var PR_C_STYLE_STRING_AND_COMMENT_LEXER = PR_createSimpleLexer([
+  var PR_C_STYLE_STRING_AND_COMMENT_LEXER = createSimpleLexer([
       [PR_STRING,  /^\'(?:[^\\\']|\\[\s\S])*(?:\'|$)/, null, "'"],
       [PR_STRING,  /^\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)/, null, '"'],
       [PR_STRING,  /^\`(?:[^\\\`]|\\[\s\S])*(?:\`|$)/, null, '`']
@@ -556,18 +579,18 @@ function PR_isIE6() {
     * @return {Array.<number|string>} a decoration list.
     * @private
     */
-  function PR_splitStringAndCommentTokens(sourceCode) {
+  function splitStringAndCommentTokens(sourceCode) {
     return PR_C_STYLE_STRING_AND_COMMENT_LEXER(sourceCode);
   }
 
-  var PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER = PR_createSimpleLexer([], [
+  var PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER = createSimpleLexer([], [
       [PR_PLAIN,       /^\s+/, null, ' \r\n'],
       // TODO(mikesamuel): recognize non-latin letters and numerals in idents
       [PR_PLAIN,       /^[a-z_$@][a-z_$@0-9]*/i, null],
       // A hex number
       [PR_LITERAL,     /^0x[a-f0-9]+[a-z]/i, null],
       // An octal or decimal number, possibly in scientific notation
-      [PR_LITERAL,   /^(?:\d(?:_\d+)*\d*(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?[a-z]*/i,
+      [PR_LITERAL,  /^(?:\d(?:_\d+)*\d*(?:\.\d*)?|\.\d+)(?:e[+\-]?\d+)?[a-z]*/i,
        null, '123456789'],
       [PR_PUNCTUATION, /^[^\s\w\.$@]+/, null]
       // Fallback will handle decimal points not adjacent to a digit
@@ -577,41 +600,39 @@ function PR_isIE6() {
     * recognize keywords, and types.
     * @private
     */
-  function PR_splitNonStringNonCommentTokens(source, decorations) {
+  function splitNonStringNonCommentTokens(source, decorations) {
     for (var i = 0; i < decorations.length; i += 2) {
       var style = decorations[i + 1];
       if (style === PR_PLAIN) {
-        var start = decorations[i];
-        var end = i + 2 < decorations.length
-                ? decorations[i + 2]
-                : source.length;
-        var chunk = source.substring(start, end);
-        var subDecs = PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER(
-            chunk, start);
+        var start, end, chunk, subDecs;
+        start = decorations[i];
+        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+        chunk = source.substring(start, end);
+        subDecs = PR_C_STYLE_LITERAL_IDENTIFIER_PUNC_RECOGNIZER(chunk, start);
         for (var j = 0, m = subDecs.length; j < m; j += 2) {
           var subStyle = subDecs[j + 1];
           if (subStyle === PR_PLAIN) {
             var subStart = subDecs[j];
             var subEnd = j + 2 < m ? subDecs[j + 2] : chunk.length;
             var token = source.substring(subStart, subEnd);
-            if (token == '.') {
+            if (token === '.') {
               subDecs[j + 1] = PR_PUNCTUATION;
-            } else if (token in PR_keywords) {
+            } else if (token in ALL_KEYWORD_SET) {
               subDecs[j + 1] = PR_KEYWORD;
             } else if (/^@?[A-Z][A-Z$]*[a-z][A-Za-z$]*$/.test(token)) {
               // classify types and annotations using Java's style conventions
-              subDecs[j + 1] = token.charAt(0) == '@' ? PR_LITERAL : PR_TYPE;
+              subDecs[j + 1] = token.charAt(0) === '@' ? PR_LITERAL : PR_TYPE;
             }
           }
         }
-        PR_spliceArrayInto(subDecs, decorations, i, 2);
+        spliceArrayInto(subDecs, decorations, i, 2);
         i += subDecs.length - 2;
       }
     }
     return decorations;
   }
 
-  var PR_MARKUP_LEXER = PR_createSimpleLexer([], [
+  var PR_MARKUP_LEXER = createSimpleLexer([], [
       [PR_PLAIN,       /^[^<]+/, null],
       [PR_DECLARATION, /^<!\w[^>]*(?:>|$)/, null],
       [PR_COMMENT,     /^<!--[\s\S]*?(?:-->|$)/, null],
@@ -630,20 +651,17 @@ function PR_isIE6() {
     * not yet broken out.
     * @private
     */
-  function PR_tokenizeMarkup(source) {
+  function tokenizeMarkup(source) {
     var decorations = PR_MARKUP_LEXER(source);
     for (var i = 0; i < decorations.length; i += 2) {
       if (decorations[i + 1] === PR_SOURCE) {
-        var start = decorations[i];
-        var end = i + 2 < decorations.length
-                ? decorations[i + 2]
-                : source.length;
+        var start, end;
+        start = decorations[i];
+        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
         // Split out start and end script tags as actual tags, and leave the
         // body with style SCRIPT.
         var sourceChunk = source.substring(start, end);
-        var match = (sourceChunk.match(PR_SOURCE_CHUNK_PARTS)
-                     //|| sourceChunk.match(/^(<[?%])([\s\S]*)([?%]>)$/)
-                     );
+        var match = sourceChunk.match(PR_SOURCE_CHUNK_PARTS);
         if (match) {
           decorations.splice(
               i, 2,
@@ -656,112 +674,31 @@ function PR_isIE6() {
     return decorations;
   }
 
-  var PR_TAG_LEXER = PR_createSimpleLexer([
+  var PR_TAG_LEXER = createSimpleLexer([
       [PR_ATTRIB_VALUE, /^\'[^\']*(?:\'|$)/, null, "'"],
       [PR_ATTRIB_VALUE, /^\"[^\"]*(?:\"|$)/, null, '"'],
       [PR_PUNCTUATION,  /^[<>\/=]+/, null, '<>/=']
       ], [
-      [PR_TAG,          /^[\w:-]+/, /^</],
-      [PR_ATTRIB_VALUE, /^[\w-]+/, /^=/],
-      [PR_ATTRIB_NAME,  /^[\w:-]+/, null],
+      [PR_TAG,          /^[\w:\-]+/, /^</],
+      [PR_ATTRIB_VALUE, /^[\w\-]+/, /^=/],
+      [PR_ATTRIB_NAME,  /^[\w:\-]+/, null],
       [PR_PLAIN,        /^\s+/, null, ' \t\r\n']
       ]);
   /** split tags attributes and their values out from the tag name, and
     * recursively lex source chunks.
     * @private
     */
-  function PR_splitTagAttributes(source, decorations) {
+  function splitTagAttributes(source, decorations) {
     for (var i = 0; i < decorations.length; i += 2) {
       var style = decorations[i + 1];
       if (style === PR_TAG) {
-        var start = decorations[i];
-        var end = i + 2 < decorations.length
-                ? decorations[i + 2]
-                : source.length;
+        var start, end;
+        start = decorations[i];
+        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
         var chunk = source.substring(start, end);
         var subDecorations = PR_TAG_LEXER(chunk, start);
-        PR_spliceArrayInto(subDecorations, decorations, i, 2);
+        spliceArrayInto(subDecorations, decorations, i, 2);
         i += subDecorations.length - 2;
-      }
-    }
-    return decorations;
-  }
-
-  /** identify regions of markup that are really source code, and recursivley
-    * lex them.
-    * @private
-    */
-  function PR_splitSourceNodes(source, decorations) {
-    for (var i = 0; i < decorations.length; i += 2) {
-      var style = decorations[i + 1];
-      if (style == PR_SOURCE) {
-        // Recurse using the non-markup lexer
-        var start = decorations[i];
-        var end = i + 2 < decorations.length
-                ? decorations[i + 2]
-                : source.length;
-        var subDecorations = PR_decorateSource(source.substring(start, end));
-        for (var j = 0, m = subDecorations.length; j < m; j += 2) {
-          subDecorations[j] += start;
-        }
-        PR_spliceArrayInto(subDecorations, decorations, i, 2);
-        i += subDecorations.length - 2;
-      }
-    }
-    return decorations;
-  }
-
-  /** identify attribute values that really contain source code and recursively
-    * lex them.
-    * @private
-    */
-  function PR_splitSourceAttributes(source, decorations) {
-    var nextValueIsSource = false;
-    for (var i = 0; i < decorations.length; i += 2) {
-      var style = decorations[i + 1];
-      if (style === PR_ATTRIB_NAME) {
-        var start = decorations[i];
-        var end = i + 2 < decorations.length
-                ? decorations[i + 2]
-                : source.length;
-        nextValueIsSource = /^on|^style$/i.test(source.substring(start, end));
-      } else if (style == PR_ATTRIB_VALUE) {
-        if (nextValueIsSource) {
-          var start = decorations[i];
-          var end
-              = i + 2 < decorations.length ? decorations[i + 2] : source.length;
-          var attribValue = source.substring(start, end);
-          var attribLen = attribValue.length;
-          var quoted =
-              (attribLen >= 2 && /^[\"\']/.test(attribValue) &&
-               attribValue.charAt(0) === attribValue.charAt(attribLen - 1));
-
-          var attribSource;
-          var attribSourceStart;
-          var attribSourceEnd;
-          if (quoted) {
-            attribSourceStart = start + 1;
-            attribSourceEnd = end - 1;
-            attribSource = attribValue;
-          } else {
-            attribSourceStart = start + 1;
-            attribSourceEnd = end - 1;
-            attribSource = attribValue.substring(1, attribValue.length - 1);
-          }
-
-          var attribSourceDecorations = PR_decorateSource(attribSource);
-          for (var j = 0, m = attribSourceDecorations.length; j < m; j += 2) {
-            attribSourceDecorations[j] += attribSourceStart;
-          }
-
-          if (quoted) {
-            attribSourceDecorations.push(attribSourceEnd, PR_ATTRIB_VALUE);
-            PR_spliceArrayInto(attribSourceDecorations, decorations, i + 2, 0);
-          } else {
-            PR_spliceArrayInto(attribSourceDecorations, decorations, i, 2);
-          }
-        }
-        nextValueIsSource = false;
       }
     }
     return decorations;
@@ -781,16 +718,101 @@ function PR_isIE6() {
     * @param {string} sourceCode as plain text
     * @return {Array.<string|number>} a  decoration list
     */
-  function PR_decorateSource(sourceCode) {
+  function decorateSource(sourceCode) {
     // Split into strings, comments, and other.
     // We do this because strings and comments are easily recognizable and can
     // contain stuff that looks like other tokens, so we want to mark those
     // early so we don't recurse into them.
-    var decorations = PR_splitStringAndCommentTokens(sourceCode);
+    var decorations = splitStringAndCommentTokens(sourceCode);
 
     // Split non comment|string tokens on whitespace and word boundaries
-    decorations = PR_splitNonStringNonCommentTokens(sourceCode, decorations);
+    decorations = splitNonStringNonCommentTokens(sourceCode, decorations);
 
+    return decorations;
+  }
+
+  function cSourceDecorator(keywords, opt_options) {
+    return decorateSource;  // TODO: implement me
+  }
+
+  function shellSourceDecorator(keywords, opt_options) {
+    return decorateSource;  // TODO: implement me
+  }
+
+  /** identify regions of markup that are really source code, and recursivley
+    * lex them.
+    * @private
+    */
+  function splitSourceNodes(source, decorations) {
+    for (var i = 0; i < decorations.length; i += 2) {
+      var style = decorations[i + 1];
+      if (style === PR_SOURCE) {
+        // Recurse using the non-markup lexer
+        var start, end;
+        start = decorations[i];
+        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+        var subDecorations = decorateSource(source.substring(start, end));
+        for (var j = 0, m = subDecorations.length; j < m; j += 2) {
+          subDecorations[j] += start;
+        }
+        spliceArrayInto(subDecorations, decorations, i, 2);
+        i += subDecorations.length - 2;
+      }
+    }
+    return decorations;
+  }
+
+  /** identify attribute values that really contain source code and recursively
+    * lex them.
+    * @private
+    */
+  function splitSourceAttributes(source, decorations) {
+    var nextValueIsSource = false;
+    for (var i = 0; i < decorations.length; i += 2) {
+      var style = decorations[i + 1];
+      var start, end;
+      if (style === PR_ATTRIB_NAME) {
+        start = decorations[i];
+        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+        nextValueIsSource = /^on|^style$/i.test(source.substring(start, end));
+      } else if (style === PR_ATTRIB_VALUE) {
+        if (nextValueIsSource) {
+          start = decorations[i];
+          end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+          var attribValue = source.substring(start, end);
+          var attribLen = attribValue.length;
+          var quoted =
+              (attribLen >= 2 && /^[\"\']/.test(attribValue) &&
+               attribValue.charAt(0) === attribValue.charAt(attribLen - 1));
+
+          var attribSource;
+          var attribSourceStart;
+          var attribSourceEnd;
+          if (quoted) {
+            attribSourceStart = start + 1;
+            attribSourceEnd = end - 1;
+            attribSource = attribValue;
+          } else {
+            attribSourceStart = start + 1;
+            attribSourceEnd = end - 1;
+            attribSource = attribValue.substring(1, attribValue.length - 1);
+          }
+
+          var attribSourceDecorations = decorateSource(attribSource);
+          for (var j = 0, m = attribSourceDecorations.length; j < m; j += 2) {
+            attribSourceDecorations[j] += attribSourceStart;
+          }
+
+          if (quoted) {
+            attribSourceDecorations.push(attribSourceEnd, PR_ATTRIB_VALUE);
+            spliceArrayInto(attribSourceDecorations, decorations, i + 2, 0);
+          } else {
+            spliceArrayInto(attribSourceDecorations, decorations, i, 2);
+          }
+        }
+        nextValueIsSource = false;
+      }
+    }
     return decorations;
   }
 
@@ -810,7 +832,7 @@ function PR_isIE6() {
     * It will recurse into any <style>, <script>, and on* attributes using
     * PR_lexSource.
     */
-  function PR_decorateMarkup(sourceCode) {
+  function decorateMarkup(sourceCode) {
     // This function works as follows:
     // 1) Start by splitting the markup into text and tag chunks
     //    Input:  string s
@@ -828,10 +850,10 @@ function PR_isIE6() {
     //    Input:  List<PR_Token>
     //    Output: List<PR_Token> where style in
     //            (PR_TAG, PR_PLAIN, PR_SOURCE, NAME, VALUE, null)
-    var decorations = PR_tokenizeMarkup(sourceCode);
-    decorations = PR_splitTagAttributes(sourceCode, decorations);
-    decorations = PR_splitSourceNodes(sourceCode, decorations);
-    decorations = PR_splitSourceAttributes(sourceCode, decorations);
+    var decorations = tokenizeMarkup(sourceCode);
+    decorations = splitTagAttributes(sourceCode, decorations);
+    decorations = splitSourceNodes(sourceCode, decorations);
+    decorations = splitSourceAttributes(sourceCode, decorations);
     return decorations;
   }
 
@@ -844,8 +866,7 @@ function PR_isIE6() {
     * @return {string} html
     * @private
     */
-  function PR_recombineTagsAndDecorations(
-      sourceText, extractedTags, decorations) {
+  function recombineTagsAndDecorations(sourceText, extractedTags, decorations) {
     var html = [];
     // index past the last char in sourceText written to html
     var outputIdx = 0;
@@ -854,7 +875,7 @@ function PR_isIE6() {
     var currentDecoration = null;
     var tagPos = 0;  // index into extractedTags
     var decPos = 0;  // index into decorations
-    var tabExpander = PR_tabExpander(PR_TAB_WIDTH);
+    var tabExpander = makeTabExpander(PR_TAB_WIDTH);
 
     // A helper function that is responsible for opening sections of decoration
     // and outputing properly escaped chunks of source
@@ -877,7 +898,7 @@ function PR_isIE6() {
         // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
         // and it serves to undo the conversion of <br>s to newlines done in
         // chunkify.
-        var htmlChunk = PR_textToHtml(
+        var htmlChunk = textToHtml(
             tabExpander(sourceText.substring(outputIdx, sourceIdx)))
             .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
             .replace(/\r\n?|\n/g, '<br />');
@@ -928,10 +949,36 @@ function PR_isIE6() {
     return html.join('');
   }
 
-  function prettyPrintOne(sourceCodeHtml) {
+  /** Maps language-specific file extensions to handlers. */
+  var langHandlerRegistry = {};
+  function registerLangHandler(handler, fileExtensions) {
+    for (var i = fileExtensions.length; --i >= 0;) {
+      langHandlerRegistry[fileExtensions[i]] = handler;
+    }
+  }
+  registerLangHandler(decorateSource, ['default-code']);
+  registerLangHandler(decorateMarkup,
+                      ['default-markup', 'html', 'htm', 'xhtml', 'xml']);
+  registerLangHandler(cSourceDecorator(CPP_KEYWORDS),
+                      ['c', 'cc', 'cpp', 'cs', 'cxx', 'cyc']);
+  registerLangHandler(cSourceDecorator(JAVA_KEYWORDS), ['java']);
+  registerLangHandler(shellSourceDecorator(SH_KEYWORDS), ['csh', 'sh']);
+  registerLangHandler(
+      shellSourceDecorator(PYTHON_KEYWORDS), ['cv', 'py'],
+      { tripleQuotedStrings: true });
+  registerLangHandler(
+      shellSourceDecorator(PERL_KEYWORDS,
+      { regexLiteral: true, multiLineStrings: true }), ['pl']);
+  registerLangHandler(
+      shellSourceDecorator(RUBY_KEYWORDS,
+      { regexLiteral: true, multiLineStrings: true }), ['rb']);
+  registerLangHandler(
+      cSourceDecorator(JSCRIPT_KEYWORDS, { regexLiteral: true }), ['js']);
+
+  function prettyPrintOne(sourceCodeHtml, opt_langExtension) {
     try {
       // Extract tags, and convert the source code to plain text.
-      var sourceAndExtractedTags = PR_extractTags(sourceCodeHtml);
+      var sourceAndExtractedTags = extractTags(sourceCodeHtml);
       /** Plain text. @type {string} */
       var source = sourceAndExtractedTags.source;
 
@@ -942,24 +989,23 @@ function PR_isIE6() {
       var extractedTags = sourceAndExtractedTags.tags;
 
       // Pick a lexer and apply it.
-      /** Treat it as markup if the first non whitespace character is a < and
-        * the last non-whitespace character is a >.
-        * @type {boolean}
-        */
-      var isMarkup = /^\s*</.test(source) && />\s*$/.test(source);
+      if (!langHandlerRegistry.hasOwnProperty(opt_langExtension)) {
+        // Treat it as markup if the first non whitespace character is a < and
+        // the last non-whitespace character is a >.
+        opt_langExtension =
+            /^\s*</.test(source) ? 'default-markup' : 'default-code';
+      }
 
-      /** Even entires are positions in source in ascending order.  Odd enties
+      /** Even entries are positions in source in ascending order.  Odd enties
         * are style markers (e.g., PR_COMMENT) that run from that position until
         * the end.
         * @type {Array.<number|string>}
         */
-      var decorations = isMarkup
-          ? PR_decorateMarkup(source)
-          : PR_decorateSource(source);
+      var decorations = langHandlerRegistry[opt_langExtension].call({}, source);
 
       // Integrate the decorations and tags back into the source code to produce
       // a decorated html string.
-      return PR_recombineTagsAndDecorations(source, extractedTags, decorations);
+      return recombineTagsAndDecorations(source, extractedTags, decorations);
     } catch (e) {
       if ('console' in window) {
         console.log(e);
@@ -970,7 +1016,7 @@ function PR_isIE6() {
   }
 
   function prettyPrint(opt_whenDone) {
-    var isIE6 = PR_isIE6();
+    var isIE6 = pr_isIE6();
 
     // fetch a list of nodes to rewrite
     var codeSegments = [
@@ -990,18 +1036,25 @@ function PR_isIE6() {
     var k = 0;
 
     function doWork() {
-      var endTime = (PR_SHOULD_USE_CONTINUATION
-                     ? new Date().getTime() + 250 /* ms */
-                     : Infinity);
+      var endTime = (PR_SHOULD_USE_CONTINUATION ?
+                     new Date().getTime() + 250 /* ms */ :
+                     Infinity);
       for (; k < elements.length && new Date().getTime() < endTime; k++) {
         var cs = elements[k];
         if (cs.className && cs.className.indexOf('prettyprint') >= 0) {
+          // If the classes includes a language extensions, use it.
+          // Language extensions can be specified like
+          //     <pre class="prettyprint lang-cpp">
+          // the language extension "cpp" is used to find a language handler as
+          // passed to PR_registerLangHandler.
+          var langExtension = cs.className.match(/\blang-(\w+)\b/);
+          if (langExtension) { langExtension = langExtension[1]; }
 
           // make sure this is not nested in an already prettified element
           var nested = false;
-          for (var p = cs.parentNode; p != null; p = p.parentNode) {
-            if ((p.tagName == 'pre' || p.tagName == 'code' ||
-                 p.tagName == 'xmp') &&
+          for (var p = cs.parentNode; p; p = p.parentNode) {
+            if ((p.tagName === 'pre' || p.tagName === 'code' ||
+                 p.tagName === 'xmp') &&
                 p.className && p.className.indexOf('prettyprint') >= 0) {
               nested = true;
               break;
@@ -1010,14 +1063,14 @@ function PR_isIE6() {
           if (!nested) {
             // fetch the content as a snippet of properly escaped HTML.
             // Firefox adds newlines at the end.
-            var content = PR_getInnerHtml(cs);
+            var content = getInnerHtml(cs);
             content = content.replace(/(?:\r\n?|\n)$/, '');
 
             // do the pretty printing
-            var newContent = prettyPrintOne(content);
+            var newContent = prettyPrintOne(content, langExtension);
 
             // push the prettified html back into the tag.
-            if (!PR_isRawContent(cs)) {
+            if (!isRawContent(cs)) {
               // just replace the old html with the new
               cs.innerHTML = newContent;
             } else {
@@ -1045,8 +1098,8 @@ function PR_isIE6() {
             // down rendering.
             if (isIE6 && cs.tagName === 'PRE') {
               var lineBreaks = cs.getElementsByTagName('br');
-              for (var i = lineBreaks.length; --i >= 0;) {
-                var lineBreak = lineBreaks[i];
+              for (var j = lineBreaks.length; --j >= 0;) {
+                var lineBreak = lineBreaks[j];
                 lineBreak.parentNode.replaceChild(
                     document.createTextNode('\r\n'), lineBreak);
               }
@@ -1065,7 +1118,8 @@ function PR_isIE6() {
     doWork();
   }
 
-  this.PR_normalizedHtml = PR_normalizedHtml;
+  this.PR_normalizedHtml = normalizedHtml;
   this.prettyPrintOne = prettyPrintOne;
   this.prettyPrint = prettyPrint;
+  this.PR_registerLangHandler = registerLangHandler;
 })();
