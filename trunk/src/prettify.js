@@ -104,10 +104,11 @@ function pr_isIE6() {
   }
 
   // Keyword lists for various languages.
-  var C_KEYWORDS = "auto break case char const continue default do double " +
-      "else enum extern float for goto if int long register return short " +
-      "signed sizeof static struct switch typedef union unsigned void " +
-      "volatile while ";
+  var FLOW_CONTROL_KEYWORDS =
+      "break continue do else for if return while ";
+  var C_KEYWORDS = FLOW_CONTROL_KEYWORDS + "auto case char const default " +
+      "double enum extern float goto int long register short signed sizeof " +
+      "static struct switch typedef union unsigned void volatile ";
   var COMMON_KEYWORDS = C_KEYWORDS + "catch class delete false import " +
       "new operator private protected public this throw true try ";
   var CPP_KEYWORDS = COMMON_KEYWORDS + "alignof align_union asm axiom bool " +
@@ -127,17 +128,17 @@ function pr_isIE6() {
       "debugger eval export function get null set undefined var with " +
       "Infinity NaN ";
   var PERL_KEYWORDS = "caller delete die do dump elsif eval exit foreach for " +
-      "goto if import last local my next no our package redo require sub " +
-      "undef unless until use wantarray while BEGIN END ";
-  var PYTHON_KEYWORDS = "and as assert break class continue def del elif " +
-      "else except exec finally for from global if import in is lambda not " +
-      "or pass print raise return try while with yield False True None ";
-  var RUBY_KEYWORDS = "alias and begin break case class def defined do else " +
-      "elsif end ensure false for if in module next nil not or redo rescue " +
-      "retry return self super then true undef unless until when while yield " +
-      "BEGIN END ";
-  var SH_KEYWORDS = "break case continue do done elif else esac eval fi for " +
-      "function if in local set then until while ";
+      "goto if import last local my next no our print package redo require " +
+      "sub undef unless until use wantarray while BEGIN END ";
+  var PYTHON_KEYWORDS = FLOW_CONTROL_KEYWORDS + "and as assert class def del " +
+      "elif except exec finally from global import in is lambda " +
+      "nonlocal not or pass print raise try with yield " +
+      "False True None ";
+  var RUBY_KEYWORDS = FLOW_CONTROL_KEYWORDS + "alias and begin case class def" +
+      " defined elsif end ensure false in module next nil not or redo rescue " +
+      "retry self super then true undef unless until when yield BEGIN END ";
+  var SH_KEYWORDS = FLOW_CONTROL_KEYWORDS + "case done elif esac eval fi " +
+      "function in local set then until ";
   var ALL_KEYWORDS = (
       CPP_KEYWORDS + CSHARP_KEYWORDS + JSCRIPT_KEYWORDS + PERL_KEYWORDS +
       PYTHON_KEYWORDS + RUBY_KEYWORDS + SH_KEYWORDS);

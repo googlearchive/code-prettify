@@ -6,6 +6,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-lisp.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-lua.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
@@ -708,6 +710,58 @@ Six&#9;<b>seven</b>&#9;Eight&#9;nine&#9;Ten&#9;|
 <p>To test this bug, disable overriding of PR_isIE6 above, and copy and paste
 the above into Notepad.</p>
 
+<h1>Bug 24 - LUA Syntax Highlighting</h1>
+<pre class="prettyprint lang-lua" id="issue24"
+>
+-- Examples from the language reference
+     a = 'alo\n123"'
+     a = "alo\n123\&quot;"
+     a = '\97lo\10\04923"'
+     a = [[alo
+     123&quot;]]
+     a = [==[
+     alo
+     123&quot;]==]
+
+3   3.0   3.1416   314.16e-2   0.31416E1   0xff   0x56
+
+-- Some comments that demonstrate long brackets
+double_quoted = "Not a long bracket [=["
+--[=[ quoting out
+ [[ foo ]]
+ [==[does not end comment either]==]
+]=]
+past_end_of_comment
+--]=]
+
+-- Example code courtesy Joseph Harmbruster
+#
+do
+  local function ssgeneral(t, n, before)
+    for _, h in ipairs(incs) do
+      for i = h + 1, n do
+        local v = t[i]
+        for j = i - h, 1, -h do
+          local testval = t[j]
+          if not before(v, testval) then break end
+          t[i] = testval; i = j
+        end
+        t[i] = v
+      end 
+    end
+    return t
+  end
+
+  function shellsort(t, before, n)
+    n = n or #t
+    if not before or before == "<" then return ssup(t, n)
+    elseif before == ">" then return ssdown(t, n)
+    else return ssgeneral(t, n, before)
+    end
+  end
+  return shellsort
+end</pre>
+
 <h1>Bug 42 - Lisp Syntax Highlighting</h1>
 <pre class="prettyprint lang-el" id="issue42"
 >; -*- mode: lisp -*-
@@ -750,9 +804,9 @@ the above into Notepad.</p>
 
 <h1>Bug 45 - Square brackets in strings</h1>
 <pre class="prettyprint" id="issue45">
-  throw new RuntimeException("Element [" + element.getName() + 
-    "] missing attribute.");
-  variable++;
+throw new RuntimeException("Element [" + element.getName() + 
+  "] missing attribute.");
+variable++;
 </pre>
 
 </body>
@@ -1681,6 +1735,55 @@ var goldens = {
           '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
       '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+  issue24: (
+      '`COM-- Examples from the language reference`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR\'alo\\n123"\'`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR"alo\\n123\\""`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR\'\\97lo\\10\\04923"\'`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR[[alo<br>' +
+      '&nbsp; &nbsp; &nbsp;123"]]`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR[==[<br>' +
+      '&nbsp; &nbsp; &nbsp;alo<br>' +
+      '&nbsp; &nbsp; &nbsp;123"]==]`END`PLN<br>' +
+      '<br>' +
+      '`END`LIT3`END`PLN &nbsp; `END`LIT3.0`END`PLN &nbsp; `END`LIT3.1416`END`PLN &nbsp; `END`LIT314.16e-2`END`PLN &nbsp; `END`LIT0.31416E1`END`PLN &nbsp; `END`LIT0xff`END`PLN &nbsp; `END`LIT0x56`END`PLN<br>' +
+      '<br>' +
+      '`END`COM-- Some comments that demonstrate long brackets`END`PLN<br>' +
+      'double_quoted `END`PUN=`END`PLN `END`STR"Not a long bracket [=["`END`PLN<br>' +
+      '`END`COM--[=[ quoting out<br>' +
+      '&nbsp;[[ foo ]]<br>' +
+      '&nbsp;[==[does not end comment either]==]<br>' +
+      ']=]`END`PLN<br>' +
+      'past_end_of_comment<br>' +
+      '`END`COM--]=]`END`PLN<br>' +
+      '<br>' +
+      '`END`COM-- Example code courtesy Joseph Harmbruster`END`PLN<br>' +
+      '`END`PUN#`END`PLN<br>' +
+      '`END`KWDdo`END`PLN<br>' +
+      '&nbsp; `END`KWDlocal`END`PLN `END`KWDfunction`END`PLN ssgeneral`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN,`END`PLN before`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDfor`END`PLN _`END`PUN,`END`PLN h `END`KWDin`END`PLN ipairs`END`PUN(`END`PLNincs`END`PUN)`END`PLN `END`KWDdo`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDfor`END`PLN i `END`PUN=`END`PLN h `END`PUN+`END`PLN `END`LIT1`END`PUN,`END`PLN n `END`KWDdo`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDlocal`END`PLN v `END`PUN=`END`PLN t`END`PUN[`END`PLNi`END`PUN]`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDfor`END`PLN j `END`PUN=`END`PLN i `END`PUN-`END`PLN h`END`PUN,`END`PLN `END`LIT1`END`PUN,`END`PLN `END`PUN-`END`PLNh `END`KWDdo`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`KWDlocal`END`PLN testval `END`PUN=`END`PLN t`END`PUN[`END`PLNj`END`PUN]`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`KWDif`END`PLN `END`KWDnot`END`PLN before`END`PUN(`END`PLNv`END`PUN,`END`PLN testval`END`PUN)`END`PLN `END`KWDthen`END`PLN `END`KWDbreak`END`PLN `END`KWDend`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; t`END`PUN[`END`PLNi`END`PUN]`END`PLN `END`PUN=`END`PLN testval`END`PUN;`END`PLN i `END`PUN=`END`PLN j<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDend`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; t`END`PUN[`END`PLNi`END`PUN]`END`PLN `END`PUN=`END`PLN v<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDend`END`PLN <br>' +
+      '&nbsp; &nbsp; `END`KWDend`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDreturn`END`PLN t<br>' +
+      '&nbsp; `END`KWDend`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; `END`KWDfunction`END`PLN shellsort`END`PUN(`END`PLNt`END`PUN,`END`PLN before`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; n `END`PUN=`END`PLN n `END`KWDor`END`PLN `END`PUN#`END`PLNt<br>' +
+      '&nbsp; &nbsp; `END`KWDif`END`PLN `END`KWDnot`END`PLN before `END`KWDor`END`PLN before `END`PUN==`END`PLN `END`STR"&lt;"`END`PLN `END`KWDthen`END`PLN `END`KWDreturn`END`PLN ssup`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDelseif`END`PLN before `END`PUN==`END`PLN `END`STR"&gt;"`END`PLN `END`KWDthen`END`PLN `END`KWDreturn`END`PLN ssdown`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDelse`END`PLN `END`KWDreturn`END`PLN ssgeneral`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN,`END`PLN before`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDend`END`PLN<br>' +
+      '&nbsp; `END`KWDend`END`PLN<br>' +
+      '&nbsp; `END`KWDreturn`END`PLN shellsort<br>' +
+      '`END`KWDend`END'),
   issue42: (
       '`COM; -*- mode: lisp -*-`END`PLN<br>' +
       '<br>' +
@@ -1719,9 +1822,9 @@ var goldens = {
       '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
       '`END`CLO)`END'),
   issue45: (
-      '`PLN &nbsp;`END`KWDthrow`END`PLN `END`KWDnew`END`PLN `END`TYPRuntimeException`END`PUN(`END`STR"Element ["`END`PLN `END`PUN+`END`PLN element`END`PUN.`END`PLNgetName`END`PUN()`END`PLN `END`PUN+`END`PLN <br>' +
-      '&nbsp; &nbsp; `END`STR"] missing attribute."`END`PUN);`END`PLN<br>' +
-      '&nbsp; variable`END`PUN++;`END')
+      '`KWDthrow`END`PLN `END`KWDnew`END`PLN `END`TYPRuntimeException`END`PUN(`END`STR"Element ["`END`PLN `END`PUN+`END`PLN element`END`PUN.`END`PLNgetName`END`PUN()`END`PLN `END`PUN+`END`PLN <br>' +
+      '&nbsp; `END`STR"] missing attribute."`END`PUN);`END`PLN<br>' +
+      'variable`END`PUN++;`END')
 };
 
 
