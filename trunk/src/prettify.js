@@ -62,12 +62,10 @@ var PR_TAB_WIDTH = 8;
   */
 var PR_normalizedHtml;
 
-/** Register a language handler for the given file extensions.
-  * @param {function (sourceCode : string) : Array.<number|string>} a function
-  *     from source code to a list of decorations.
-  * @param {Array.<string>} fileExtensions
+/** Contains functions for creating and registering new language handlers.
+  * @namespace
   */
-var PR_registerLangHandler;
+var PR;
 
 /** Pretty print a chunk of code.
   *
@@ -655,14 +653,17 @@ function pr_isIE6() {
   function sourceDecorator(options) {
     var shortcutStylePatterns = [], fallthroughStylePatterns = [];
     if (options.tripleQuotedStrings) {
+      // '''multi-line-string''', 'single-line-string', and double-quoted
       shortcutStylePatterns.push(
           [PR_STRING,  /^(?:\'\'\'(?:[^\'\\]|\\[\s\S]|\'{1,2}(?=[^\']))*(?:\'\'\'|$)|\"\"\"(?:[^\"\\]|\\[\s\S]|\"{1,2}(?=[^\"]))*(?:\"\"\"|$)|\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$))/,
            null, '\'"']);
     } else if (options.multiLineStrings) {
+      // 'multi-line-string', "multi-line-string"
       shortcutStylePatterns.push(
           [PR_STRING,  /^(?:\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)|\`(?:[^\\\`]|\\[\s\S])*(?:\`|$))/,
            null, '\'"`']);
     } else {
+      // 'single-line-string', "single-line-string"
       shortcutStylePatterns.push(
           [PR_STRING,
            /^(?:\'(?:[^\\\'\r\n]|\\.)*(?:\'|$)|\"(?:[^\\\"\r\n]|\\.)*(?:\"|$))/,
@@ -983,9 +984,19 @@ function pr_isIE6() {
 
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
+  /** Register a language handler for the given file extensions.
+    * @param {function (sourceCode : string) : Array.<number|string>} a function
+    *     from source code to a list of decorations.
+    * @param {Array.<string>} fileExtensions
+    */
   function registerLangHandler(handler, fileExtensions) {
     for (var i = fileExtensions.length; --i >= 0;) {
-      langHandlerRegistry[fileExtensions[i]] = handler;
+      var ext = fileExtensions[i];
+      if (!langHandlerRegistry.hasOwnProperty(ext)) {
+        langHandlerRegistry[ext] = handler;
+      } else if ('console' in window) {
+        console.log('cannot override language handler %s', ext);
+      }
     }
   }
   registerLangHandler(decorateSource, ['default-code']);
@@ -1175,5 +1186,21 @@ function pr_isIE6() {
   window.PR_normalizedHtml = normalizedHtml;
   window.prettyPrintOne = prettyPrintOne;
   window.prettyPrint = prettyPrint;
-  window.PR_registerLangHandler = registerLangHandler;
+  window.PR = {
+        createSimpleLexer: createSimpleLexer,
+        registerLangHandler: registerLangHandler,
+        sourceDecorator: sourceDecorator,
+        PR_ATTRIB_NAME: PR_ATTRIB_NAME,
+        PR_ATTRIB_VALUE: PR_ATTRIB_VALUE,
+        PR_COMMENT: PR_COMMENT,
+        PR_DECLARATION: PR_DECLARATION,
+        PR_KEYWORD: PR_KEYWORD,
+        PR_LITERAL: PR_LITERAL,
+        PR_PLAIN: PR_PLAIN,
+        PR_PUNCTUATION: PR_PUNCTUATION,
+        PR_SOURCE: PR_SOURCE,
+        PR_STRING: PR_STRING,
+        PR_TAG: PR_TAG,
+        PR_TYPE: PR_TYPE
+      };
 })();

@@ -4,6 +4,8 @@
 <title>Code Prettifier</title>
 <script src="../src/prettify.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-lisp.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
@@ -705,6 +707,46 @@ Six&#9;<b>seven</b>&#9;Eight&#9;nine&#9;Ten&#9;|
 &lt;/html&gt;</pre>
 <p>To test this bug, disable overriding of PR_isIE6 above, and copy and paste
 the above into Notepad.</p>
+
+<h1>Bug 42 - Lisp Syntax Highlighting</h1>
+<pre class="prettyprint lang-el" id="issue42"
+>; -*- mode: lisp -*-
+
+(defun back-six-lines () (interactive) (forward-line -6))
+(defun forward-six-lines () (interactive) (forward-line 6))
+
+(global-set-key "\M-l" 'goto-line)
+(global-set-key "\C-z" 'advertised-undo)
+(global-set-key [C-insert] 'clipboard-kill-ring-save)
+(global-set-key [S-insert] 'clipboard-yank)
+(global-set-key [C-up] 'back-six-lines)
+(global-set-key [C-down] 'forward-six-lines)
+
+(setq visible-bell t)
+(setq user-mail-address "foo@bar.com")
+(setq default-major-mode 'text-mode)
+
+(setenv "TERM" "emacs")
+(c-set-offset 'case-label 2)
+(setq c-basic-offset 2)
+(setq perl-indent-level 2)
+(setq delete-key-deletes-forward t)
+(setq indent-tabs-mode nil)
+
+;; Text mode
+(add-hook 'text-mode-hook 
+  '(lambda ()
+     (turn-on-auto-fill)
+   )
+)
+
+;; Fundamental mode
+(add-hook 'fundamental-mode-hook 
+  '(lambda ()
+     (turn-on-auto-fill)
+   )
+)
+</pre>
 
 </body>
 
@@ -1631,7 +1673,44 @@ var goldens = {
       '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNTest`END' +
           '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END')
+      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+  issue42: (
+      '`COM; -*- mode: lisp -*-`END`PLN<br>' +
+      '<br>' +
+      '`END`OPN(`END`KWDdefun`END`PLN back-six-lines `END`OPN(`END`CLO)`END`PLN `END`OPN(`END`PLNinteractive`END`CLO)`END`PLN `END`OPN(`END`PLNforward-line `END`LIT-6`END`CLO))`END`PLN<br>' +
+      '`END`OPN(`END`KWDdefun`END`PLN forward-six-lines `END`OPN(`END`CLO)`END`PLN `END`OPN(`END`PLNinteractive`END`CLO)`END`PLN `END`OPN(`END`PLNforward-line `END`LIT6`END`CLO))`END`PLN<br>' +
+      '<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`STR"\\M-l"`END`PLN `END`LIT\'goto-line`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`STR"\\C-z"`END`PLN `END`LIT\'advertised-undo`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-insert`END`PUN]`END`PLN `END`LIT\'clipboard-kill-ring-save`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNS-insert`END`PUN]`END`PLN `END`LIT\'clipboard-yank`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-up`END`PUN]`END`PLN `END`LIT\'back-six-lines`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-down`END`PUN]`END`PLN `END`LIT\'forward-six-lines`END`CLO)`END`PLN<br>' +
+      '<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN visible-bell `END`KWDt`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN user-mail-address `END`STR"foo@bar.com"`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN default-major-mode `END`LIT\'text-mode`END`CLO)`END`PLN<br>' +
+      '<br>' +
+      '`END`OPN(`END`PLNsetenv `END`STR"TERM"`END`PLN `END`STR"emacs"`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNc-set-offset `END`LIT\'case-label`END`PLN `END`LIT2`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN c-basic-offset `END`LIT2`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN perl-indent-level `END`LIT2`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN delete-key-deletes-forward `END`KWDt`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN indent-tabs-mode `END`KWDnil`END`CLO)`END`PLN<br>' +
+      '<br>' +
+      '`END`COM;; Text mode`END`PLN<br>' +
+      '`END`OPN(`END`PLNadd-hook `END`LIT\'text-mode-hook`END`PLN <br>' +
+      '&nbsp; `END`LIT\'`END`OPN(`END`KWDlambda`END`PLN `END`OPN(`END`CLO)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END`CLO)`END`PLN<br>' +
+      '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
+      '`END`CLO)`END`PLN<br>' +
+      '<br>' +
+      '`END`COM;; Fundamental mode`END`PLN<br>' +
+      '`END`OPN(`END`PLNadd-hook `END`LIT\'fundamental-mode-hook`END`PLN <br>' +
+      '&nbsp; `END`LIT\'`END`OPN(`END`KWDlambda`END`PLN `END`OPN(`END`CLO)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END`CLO)`END`PLN<br>' +
+      '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
+      '`END`CLO)`END')
 };
 
 
