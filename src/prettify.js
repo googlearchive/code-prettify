@@ -893,7 +893,7 @@ function pr_isIE6() {
     * @param {string} sourceText plain text
     * @param {Array.<number|string>} extractedTags chunks of raw html preceded
     *   by their position in sourceText in order.
-    * @param {Array.<number|string> decorations style classes preceded by their
+    * @param {Array.<number|string>} decorations style classes preceded by their
     *   position in sourceText in order.
     * @return {string} html
     * @private
@@ -1172,8 +1172,8 @@ function pr_isIE6() {
     doWork();
   }
 
-  this.PR_normalizedHtml = normalizedHtml;
-  this.prettyPrintOne = prettyPrintOne;
-  this.prettyPrint = prettyPrint;
-  this.PR_registerLangHandler = registerLangHandler;
+  window.PR_normalizedHtml = normalizedHtml;
+  window.prettyPrintOne = prettyPrintOne;
+  window.prettyPrint = prettyPrint;
+  window.PR_registerLangHandler = registerLangHandler;
 })();
