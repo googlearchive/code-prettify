@@ -748,6 +748,13 @@ the above into Notepad.</p>
 )
 </pre>
 
+<h1>Bug 45 - Square brackets in strings</h1>
+<pre class="prettyprint" id="issue45">
+  throw new RuntimeException("Element [" + element.getName() + 
+    "] missing attribute.");
+  variable++;
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -1710,7 +1717,11 @@ var goldens = {
       '&nbsp; `END`LIT\'`END`OPN(`END`KWDlambda`END`PLN `END`OPN(`END`CLO)`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END`CLO)`END`PLN<br>' +
       '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
-      '`END`CLO)`END')
+      '`END`CLO)`END'),
+  issue45: (
+      '`PLN &nbsp;`END`KWDthrow`END`PLN `END`KWDnew`END`PLN `END`TYPRuntimeException`END`PUN(`END`STR"Element ["`END`PLN `END`PUN+`END`PLN element`END`PUN.`END`PLNgetName`END`PUN()`END`PLN `END`PUN+`END`PLN <br>' +
+      '&nbsp; &nbsp; `END`STR"] missing attribute."`END`PUN);`END`PLN<br>' +
+      '&nbsp; variable`END`PUN++;`END')
 };
 
 
