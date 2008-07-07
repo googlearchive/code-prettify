@@ -1147,14 +1147,19 @@ function pr_isIE6() {
               for (var i = 0; i < cs.attributes.length; ++i) {
                 var a = cs.attributes[i];
                 if (a.specified) {
-                  pre.setAttribute(a.name, a.value);
+                  var aname = a.name.toLowerCase();
+                  if (aname === 'class') {
+                    pre.className = a.value;  // For IE 6
+                  } else {
+                    pre.setAttribute(a.name, a.value);
+                  }
                 }
               }
               pre.innerHTML = newContent;
 
               // remove the old
               cs.parentNode.replaceChild(pre, cs);
-              pre = cs;
+              cs = pre;
             }
 
             // Replace <br>s with line-feeds so that copying and pasting works
