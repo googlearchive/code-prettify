@@ -86,7 +86,7 @@ PR.registerLangHandler(
           /^\'(?:-*(?:\w|\\[\x21-\x7e])(?:[\w-]*|\\[\x21-\x7e])[=!?]?)?/],
          // A word that optionally ends with = ! or ?.
          [PR.PR_PLAIN,
-          /^-*(?:\w|\\[\x21-\x7e])(?:[\w-]*|\\[\x21-\x7e])[=!?]?/],
+          /^-*(?:[a-z_]|\\[\x21-\x7e])(?:[\w-]*|\\[\x21-\x7e])[=!?]?/i],
          // A printable non-space non-special character
          [PR.PR_PUNCTUATION, /^[^\w\t\n\r \xA0()\"\\\';]+/]
         ]),

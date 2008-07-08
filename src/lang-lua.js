@@ -50,10 +50,9 @@ PR.registerLangHandler(
          // A number is a hex integer literal, a decimal real literal, or in
          // scientific notation.
          [PR.PR_LITERAL,
-          /^[+-]?(?:0x[\da-f]+|(?:(?:\.\d+|\d+(?:\.\d*)?)(?:[eE][+\-]?\d+)?))/i
-          ],
+          /^[+-]?(?:0x[\da-f]+|(?:(?:\.\d+|\d+(?:\.\d*)?)(?:e[+\-]?\d+)?))/i],
          // An identifier
-         [PR.PR_PLAIN, /^\w+/],
+         [PR.PR_PLAIN, /^[a-z_]\w*/i],
          // A run of punctuation
          [PR.PR_PUNCTUATION, /^[^\w\t\n\r \xA0]+/]
         ]),
