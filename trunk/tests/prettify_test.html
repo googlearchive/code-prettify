@@ -8,6 +8,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-lua.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-ml.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
@@ -801,6 +803,26 @@ end</pre>
    )
 )
 </pre>
+
+<h1>Bug 33 - OCaml and F#</h1>
+<pre class="prettyprint lang-ml" id="issue33">
+(*
+ * Print the 10th fibonacci number
+ *)
+
+//// A line comment
+"A string";;
+(0, 125, 0xa0, -1.0, 1e6, 1.2e-3);;  // number literals
+
+#if fibby
+  let
+    rec fib = function (0, a, _) -> a
+                     | (n, a, b) -> fib(n - 1, a + b, a)
+  in
+    print_int(fib(10, 1, 1));;
+#endif
+</pre>
+<p>Still TODO: handle nested <code>(* (* comments *) *)</code> properly.</p>
 
 <h1>Bug 45 - Square brackets in strings</h1>
 <pre class="prettyprint" id="issue45">
@@ -1784,41 +1806,94 @@ var goldens = {
       '&nbsp; `END`KWDend`END`PLN<br>' +
       '&nbsp; `END`KWDreturn`END`PLN shellsort<br>' +
       '`END`KWDend`END'),
+  issue33: (
+      '`COM(*<br>' +
+      '&nbsp;* Print the 10th fibonacci number<br>' +
+      '&nbsp;*)`END`PLN<br>' +
+      '<br>' +
+      '`END`COM//// A line comment`END`PLN<br>' +
+      '`END`STR"A string"`END`PUN;;`END`PLN<br>' +
+      '`END`PUN(`END`LIT0`END`PUN,`END`PLN `END`LIT125`END`PUN,`END' +
+           '`PLN `END`LIT0xa0`END`PUN,`END`PLN `END`LIT-1.0`END`PUN,`END' +
+           '`PLN `END`LIT1e6`END`PUN,`END`PLN `END`LIT1.2e-3`END`PUN);;`END' +
+           '`PLN &nbsp;`END`COM// number literals`END`PLN<br>' +
+      '<br>' +
+      '`END`COM#if fibby`END`PLN<br>' +
+      '&nbsp; `END`KWDlet`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDrec`END`PLN fib `END`PUN=`END`PLN `END' +
+           '`KWDfunction`END`PLN `END`PUN(`END`LIT0`END`PUN,`END`PLN a`END' +
+           '`PUN,`END`PLN _`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN a<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
+           '&nbsp;`END`PUN|`END`PLN `END`PUN(`END`PLNn`END`PUN,`END`PLN a`END' +
+           '`PUN,`END`PLN b`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN fib`END' +
+           '`PUN(`END`PLNn `END`PUN-`END`PLN `END`LIT1`END`PUN,`END' +
+           '`PLN a `END`PUN+`END`PLN b`END`PUN,`END`PLN a`END`PUN)`END' +
+           '`PLN<br>' +
+      '&nbsp; `END`KWDin`END`PLN<br>' +
+      '&nbsp; &nbsp; print_int`END`PUN(`END`PLNfib`END`PUN(`END`LIT10`END' +
+           '`PUN,`END`PLN `END`LIT1`END`PUN,`END`PLN `END`LIT1`END' +
+           '`PUN));;`END`PLN<br>' +
+      '`END`COM#endif`END'),
   issue42: (
       '`COM; -*- mode: lisp -*-`END`PLN<br>' +
       '<br>' +
-      '`END`OPN(`END`KWDdefun`END`PLN back-six-lines `END`OPN(`END`CLO)`END`PLN `END`OPN(`END`PLNinteractive`END`CLO)`END`PLN `END`OPN(`END`PLNforward-line `END`LIT-6`END`CLO))`END`PLN<br>' +
-      '`END`OPN(`END`KWDdefun`END`PLN forward-six-lines `END`OPN(`END`CLO)`END`PLN `END`OPN(`END`PLNinteractive`END`CLO)`END`PLN `END`OPN(`END`PLNforward-line `END`LIT6`END`CLO))`END`PLN<br>' +
+      '`END`OPN(`END`KWDdefun`END`PLN back-six-lines `END`OPN(`END`CLO)`END' +
+           '`PLN `END`OPN(`END`PLNinteractive`END`CLO)`END`PLN `END`OPN(`END' +
+           '`PLNforward-line `END`LIT-6`END`CLO))`END`PLN<br>' +
+      '`END`OPN(`END`KWDdefun`END`PLN forward-six-lines `END`OPN(`END' +
+           '`CLO)`END`PLN `END`OPN(`END`PLNinteractive`END`CLO)`END`PLN `END' +
+           '`OPN(`END`PLNforward-line `END`LIT6`END`CLO))`END`PLN<br>' +
       '<br>' +
-      '`END`OPN(`END`PLNglobal-set-key `END`STR"\\M-l"`END`PLN `END`LIT\'goto-line`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`PLNglobal-set-key `END`STR"\\C-z"`END`PLN `END`LIT\'advertised-undo`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-insert`END`PUN]`END`PLN `END`LIT\'clipboard-kill-ring-save`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNS-insert`END`PUN]`END`PLN `END`LIT\'clipboard-yank`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-up`END`PUN]`END`PLN `END`LIT\'back-six-lines`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-down`END`PUN]`END`PLN `END`LIT\'forward-six-lines`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`STR"\\M-l"`END`PLN `END' +
+           '`LIT\'goto-line`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`STR"\\C-z"`END`PLN `END' +
+           '`LIT\'advertised-undo`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-insert`END' +
+           '`PUN]`END`PLN `END`LIT\'clipboard-kill-ring-save`END`CLO)`END' +
+           '`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNS-insert`END`PUN]`END' +
+           '`PLN `END`LIT\'clipboard-yank`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-up`END`PUN]`END' +
+           '`PLN `END`LIT\'back-six-lines`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNglobal-set-key `END`PUN[`END`PLNC-down`END`PUN]`END' +
+           '`PLN `END`LIT\'forward-six-lines`END`CLO)`END`PLN<br>' +
       '<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN visible-bell `END`KWDt`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN user-mail-address `END`STR"foo@bar.com"`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN default-major-mode `END`LIT\'text-mode`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN visible-bell `END`KWDt`END`CLO)`END' +
+           '`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN user-mail-address `END' +
+           '`STR"foo@bar.com"`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN default-major-mode `END' +
+           '`LIT\'text-mode`END`CLO)`END`PLN<br>' +
       '<br>' +
-      '`END`OPN(`END`PLNsetenv `END`STR"TERM"`END`PLN `END`STR"emacs"`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`PLNc-set-offset `END`LIT\'case-label`END`PLN `END`LIT2`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN c-basic-offset `END`LIT2`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN perl-indent-level `END`LIT2`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN delete-key-deletes-forward `END`KWDt`END`CLO)`END`PLN<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN indent-tabs-mode `END`KWDnil`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNsetenv `END`STR"TERM"`END`PLN `END' +
+           '`STR"emacs"`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNc-set-offset `END`LIT\'case-label`END`PLN `END' +
+           '`LIT2`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN c-basic-offset `END`LIT2`END`CLO)`END' +
+           '`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN perl-indent-level `END`LIT2`END`CLO)`END' +
+           '`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN delete-key-deletes-forward `END`KWDt`END' +
+           '`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`KWDsetq`END`PLN indent-tabs-mode `END`KWDnil`END' +
+           '`CLO)`END`PLN<br>' +
       '<br>' +
       '`END`COM;; Text mode`END`PLN<br>' +
       '`END`OPN(`END`PLNadd-hook `END`LIT\'text-mode-hook`END`PLN <br>' +
-      '&nbsp; `END`LIT\'`END`OPN(`END`KWDlambda`END`PLN `END`OPN(`END`CLO)`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END`CLO)`END`PLN<br>' +
+      '&nbsp; `END`LIT\'`END`OPN(`END`KWDlambda`END`PLN `END`OPN(`END' +
+           '`CLO)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END`CLO)`END' +
+           '`PLN<br>' +
       '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
       '`END`CLO)`END`PLN<br>' +
       '<br>' +
       '`END`COM;; Fundamental mode`END`PLN<br>' +
-      '`END`OPN(`END`PLNadd-hook `END`LIT\'fundamental-mode-hook`END`PLN <br>' +
-      '&nbsp; `END`LIT\'`END`OPN(`END`KWDlambda`END`PLN `END`OPN(`END`CLO)`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END`CLO)`END`PLN<br>' +
+      '`END`OPN(`END`PLNadd-hook `END`LIT\'fundamental-mode-hook`END' +
+           '`PLN <br>' +
+      '&nbsp; `END`LIT\'`END`OPN(`END`KWDlambda`END`PLN `END`OPN(`END' +
+           '`CLO)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END' +
+           '`CLO)`END`PLN<br>' +
       '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
       '`END`CLO)`END'),
   issue45: (
