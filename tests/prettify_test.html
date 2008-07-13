@@ -10,6 +10,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-ml.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-sql.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
@@ -447,6 +449,19 @@ def nth(series, n):
 print nth(fib(), 10)
 
 /* not a comment and not keywords: null char true */
+</pre>
+
+<h1>SQL w/ language specified</h1>
+<pre class="prettyprint lang-sql" id="sql_lang">
+/* A multi-line
+ * comment */
+'Another string /* Isn\'t a comment',
+"A string */"
+-- A line comment
+SELECT * FROM users WHERE id IN (1, 2.0, +30e-1);
+-- keywords are case-insensitive.
+-- Note: user-table is a single identifier, not a pair of keywords
+select * from user-table where id in (x, y, z);
 </pre>
 
 <h1>XML</h1>
@@ -1292,6 +1307,23 @@ var goldens = {
       '`END`PUN/*`END`PLN `END`KWDnot`END`PLN a comment `END`KWDand`END' +
           '`PLN `END`KWDnot`END`PLN keywords`END`PUN:`END' +
           '`PLN null char true `END`PUN*/`END'),
+  sql_lang: (
+      '`COM/* A multi-line<br>' +
+      '&nbsp;* comment */`END`PLN<br>' +
+      '`END`STR\'Another string /* Isn\\\'t a comment\'`END`PUN,`END`PLN<br>' +
+      '`END`STR"A string */"`END`PLN<br>' +
+      '`END`COM-- A line comment`END`PLN<br>' +
+      '`END`KWDSELECT`END`PLN `END`PUN*`END`PLN `END`KWDFROM`END' +
+          '`PLN users `END`KWDWHERE`END`PLN id `END`KWDIN`END`PLN `END' +
+          '`PUN(`END`LIT1`END`PUN,`END`PLN `END`LIT2.0`END`PUN,`END`PLN `END' +
+          '`LIT+30e-1`END`PUN);`END`PLN<br>' +
+      '`END`COM-- keywords are case-insensitive.`END`PLN<br>' +
+      '`END`COM-- Note: user-table is a single identifier, not a pair of' +
+          ' keywords`END`PLN<br>' +
+      '`END`KWDselect`END`PLN `END`PUN*`END`PLN `END`KWDfrom`END' +
+          '`PLN user-table `END`KWDwhere`END`PLN id `END`KWDin`END`PLN `END' +
+          '`PUN(`END`PLNx`END`PUN,`END`PLN y`END`PUN,`END`PLN z`END`PUN);`END'
+      ),
   xml: (
       '`DEC&lt;!DOCTYPE series PUBLIC "fibonacci numbers"&gt;`END`PLN<br>' +
       '<br>' +
