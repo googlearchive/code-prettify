@@ -514,6 +514,7 @@ function pr_isIE6() {
     })();
 
     var nPatterns = fallthroughStylePatterns.length;
+    var notWs = /\S/;
 
     return function (sourceCode, opt_basePos) {
       opt_basePos = opt_basePos || 0;
@@ -557,7 +558,7 @@ function pr_isIE6() {
         decorations.push(opt_basePos + pos, style);
         pos += token.length;
         tail = tail.substring(token.length);
-        if (style !== PR_COMMENT && /\S/.test(token)) { lastToken = token; }
+        if (style !== PR_COMMENT && notWs.test(token)) { lastToken = token; }
       }
       return decorations;
     };
@@ -677,16 +678,25 @@ function pr_isIE6() {
     }
     if (options.cStyleComments) {
       fallthroughStylePatterns.push([PR_COMMENT, /^\/\/[^\r\n]*/, null]);
-    }
-    if (options.regexLiterals) {
-      fallthroughStylePatterns.push(
-          [PR_STRING,
-           /^\/(?:[^\\\*\/\[]|\\[\s\S]|\[(?:[^\]\\]|\\.)*(?:\]|$))+(?:\/|$)/,
-           REGEXP_PRECEDER_PATTERN]);
-    }
-    if (options.cStyleComments) {
       fallthroughStylePatterns.push(
           [PR_COMMENT, /^\/\*[\s\S]*?(?:\*\/|$)/, null]);
+    }
+    if (options.regexLiterals) {
+      var REGEX_LITERAL = (
+          // A regular expression literal starts with a slash that is
+          // not followed by * or / so that it is not confused with
+          // comments.
+          '^/(?=[^/*])'
+          // and then contains any number of raw characters,
+          + '(?:[^/\\x5B\\x5C]'
+          // escape sequences (\x5C),
+          +    '|\\x5C[\\s\\S]'
+          // or non-nesting character sets (\x5B\x5D);
+          +    '|\\x5B(?:[^\\x5C\\x5D]|\\x5C[\\s\\S])*(?:\\x5D|$))+'
+          // finally closed by a /.
+          + '(?:/|$)');
+      fallthroughStylePatterns.push(
+          [PR_STRING, new RegExp(REGEX_LITERAL), REGEXP_PRECEDER_PATTERN]);
     }
 
     var keywords = wordSet(options.keywords);
