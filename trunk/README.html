@@ -118,6 +118,24 @@ public:
     >WordPress's help center</a> for info on how to stop smart quoting of code
     snippets.</p>
 
+    <h3>How do I put line numbers in my code?</h3>
+    <p>You can use the <code>nocode</code> class to identify a span of markup
+    that is not code.
+<pre>&lt;pre class=prettyprint&gt;
+&lt;span class="<b>nocode</b>"&gt;1:&lt;/span&gt; /* This is line 1 of my code
+&lt;span class="<b>nocode</b>"&gt;2:&lt;/span&gt;  * and here's line 2 */
+&lt;span class="<b>nocode</b>"&gt;3:&lt;/span&gt; print("I'm line number 3");
+&lt;/pre&gt;</pre>
+produces
+<pre class=prettyprint>
+<span class="nocode">1:</span> /* This is line 1 of my code
+<span class="nocode">2:</span>  * and here's line 2 */
+<span class="nocode">3:</span> print("I'm line number 3");
+</pre>
+
+    <p>For a more complete example see the issue22
+    <a href="tests/prettify_test.html#issue22">testcase</a>.</p>
+
     <br><br><br>
 
 

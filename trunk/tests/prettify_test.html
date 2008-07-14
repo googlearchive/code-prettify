@@ -15,11 +15,14 @@
 <script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
-function pr_isIE6() { return false; }  // Ensure consistent output.
+function _pr_isIE6() { return false; }  // Ensure consistent output.
 </script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css" />
 <style type="text/css">
 .mismatch { background: #fee; }
+span.annot { margin:2px 2px 2px 3em; border:1px dotted #88f; background:#eef;
+             padding: 0 2px 0 2px }
+.nocode { background: #f8f8f8 }
 </style>
 </head>
 
@@ -724,8 +727,23 @@ Six&#9;<b>seven</b>&#9;Eight&#9;nine&#9;Ten&#9;|
     &lt;title&gt;Test&lt;/title&gt;
   &lt;/head&gt;
 &lt;/html&gt;</pre>
-<p>To test this bug, disable overriding of PR_isIE6 above, and copy and paste
+<p>To test this bug, disable overriding of _pr_isIE6 above, and copy and paste
 the above into Notepad.</p>
+
+<h1>Bug 22 - Line numbers and other non-code spans in code</h1>
+<pre class="prettyprint" id="issue22"
+><span class=nocode>01: </span>// This is a line of code
+<span class=nocode>02: </span>/* Multiline comments can
+<span class=nocode>03: </span> * span over and around
+<span class=nocode>04: </span> * line markers
+<span class="nocode annot">And can even be interrupted</span>
+<span class="nocode annot">by inline code annotations</span>
+<span class=nocode>05: </span> */
+<span class=nocode>06: </span>class MyClass extends Foo {
+<span class=nocode>07: </span>  public static void main(String... argv) {
+<span class=nocode>08: </span>    System.out.print("Hello World");
+<span class=nocode>09: </span>  }
+<span class=nocode>10: </span>}</pre>
 
 <h1>Bug 24 - LUA Syntax Highlighting</h1>
 <pre class="prettyprint lang-lua" id="issue24"
@@ -1789,21 +1807,48 @@ var goldens = {
           '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
       '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+  issue22: (
+      '<span class="nocode">01: `END`COM// This is a line of code`END`PLN<br>' +
+      '`END<span class="nocode">02: `END`COM/* Multiline comments can<br>' +
+      '`END<span class="nocode">03: `END`COM&nbsp;* span over and around<br>' +
+      '`END<span class="nocode">04: `END`COM&nbsp;* line markers<br>' +
+      '`END<span class="nocode annot">And can even be interrupted`END`COM<br>' +
+      '`END<span class="nocode annot">by inline code annotations`END`COM<br>' +
+      '`END<span class="nocode">05: `END`COM&nbsp;*/`END`PLN<br>' +
+      '`END<span class="nocode">06: `END`KWDclass`END`PLN `END`TYPMyClass`END' +
+          '`PLN `END`KWDextends`END`PLN `END`TYPFoo`END`PLN `END`PUN{`END' +
+          '`PLN<br>' +
+      '`END<span class="nocode">07: `END`PLN&nbsp; `END`KWDpublic`END' +
+          '`PLN `END`KWDstatic`END`PLN `END`KWDvoid`END`PLN main`END`PUN(`END' +
+          '`TYPString`END`PUN...`END`PLN argv`END`PUN)`END`PLN `END`PUN{`END' +
+          '`PLN<br>' +
+      '`END<span class="nocode">08: `END`PLN&nbsp; &nbsp; `END`TYPSystem`END' +
+          '`PUN.`END`KWDout`END`PUN.`END`KWDprint`END`PUN(`END' +
+          '`STR"Hello World"`END`PUN);`END`PLN<br>' +
+      '`END<span class="nocode">09: `END`PLN&nbsp; `END`PUN}`END`PLN<br>' +
+      '`END<span class="nocode">10: `END`PUN}`END'
+      ),
   issue24: (
       '`COM-- Examples from the language reference`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR\'alo\\n123"\'`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR"alo\\n123\\""`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR\'\\97lo\\10\\04923"\'`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR\'alo\\n123"\'`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR"alo\\n123\\""`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END' +
+          '`STR\'\\97lo\\10\\04923"\'`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR[[alo<br>' +
       '&nbsp; &nbsp; &nbsp;123"]]`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR[==[<br>' +
       '&nbsp; &nbsp; &nbsp;alo<br>' +
       '&nbsp; &nbsp; &nbsp;123"]==]`END`PLN<br>' +
       '<br>' +
-      '`END`LIT3`END`PLN &nbsp; `END`LIT3.0`END`PLN &nbsp; `END`LIT3.1416`END`PLN &nbsp; `END`LIT314.16e-2`END`PLN &nbsp; `END`LIT0.31416E1`END`PLN &nbsp; `END`LIT0xff`END`PLN &nbsp; `END`LIT0x56`END`PLN<br>' +
+      '`END`LIT3`END`PLN &nbsp; `END`LIT3.0`END`PLN &nbsp; `END`LIT3.1416`END' +
+          '`PLN &nbsp; `END`LIT314.16e-2`END`PLN &nbsp; `END`LIT0.31416E1`END' +
+          '`PLN &nbsp; `END`LIT0xff`END`PLN &nbsp; `END`LIT0x56`END`PLN<br>' +
       '<br>' +
       '`END`COM-- Some comments that demonstrate long brackets`END`PLN<br>' +
-      'double_quoted `END`PUN=`END`PLN `END`STR"Not a long bracket [=["`END`PLN<br>' +
+      'double_quoted `END`PUN=`END`PLN `END`STR"Not a long bracket [=["`END' +
+          '`PLN<br>' +
       '`END`COM--[=[ quoting out<br>' +
       '&nbsp;[[ foo ]]<br>' +
       '&nbsp;[==[does not end comment either]==]<br>' +
@@ -1814,26 +1859,51 @@ var goldens = {
       '`END`COM-- Example code courtesy Joseph Harmbruster`END`PLN<br>' +
       '`END`PUN#`END`PLN<br>' +
       '`END`KWDdo`END`PLN<br>' +
-      '&nbsp; `END`KWDlocal`END`PLN `END`KWDfunction`END`PLN ssgeneral`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN,`END`PLN before`END`PUN)`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`KWDfor`END`PLN _`END`PUN,`END`PLN h `END`KWDin`END`PLN ipairs`END`PUN(`END`PLNincs`END`PUN)`END`PLN `END`KWDdo`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`KWDfor`END`PLN i `END`PUN=`END`PLN h `END`PUN+`END`PLN `END`LIT1`END`PUN,`END`PLN n `END`KWDdo`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDlocal`END`PLN v `END`PUN=`END`PLN t`END`PUN[`END`PLNi`END`PUN]`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDfor`END`PLN j `END`PUN=`END`PLN i `END`PUN-`END`PLN h`END`PUN,`END`PLN `END`LIT1`END`PUN,`END`PLN `END`PUN-`END`PLNh `END`KWDdo`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`KWDlocal`END`PLN testval `END`PUN=`END`PLN t`END`PUN[`END`PLNj`END`PUN]`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`KWDif`END`PLN `END`KWDnot`END`PLN before`END`PUN(`END`PLNv`END`PUN,`END`PLN testval`END`PUN)`END`PLN `END`KWDthen`END`PLN `END`KWDbreak`END`PLN `END`KWDend`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; t`END`PUN[`END`PLNi`END`PUN]`END`PLN `END`PUN=`END`PLN testval`END`PUN;`END`PLN i `END`PUN=`END`PLN j<br>' +
+      '&nbsp; `END`KWDlocal`END`PLN `END`KWDfunction`END`PLN ssgeneral`END' +
+          '`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN,`END`PLN before`END' +
+          '`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDfor`END`PLN _`END`PUN,`END`PLN h `END`KWDin`END' +
+          '`PLN ipairs`END`PUN(`END`PLNincs`END`PUN)`END`PLN `END`KWDdo`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDfor`END`PLN i `END`PUN=`END`PLN h `END' +
+          '`PUN+`END`PLN `END`LIT1`END`PUN,`END`PLN n `END`KWDdo`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDlocal`END`PLN v `END`PUN=`END' +
+          '`PLN t`END`PUN[`END`PLNi`END`PUN]`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDfor`END`PLN j `END`PUN=`END' +
+          '`PLN i `END`PUN-`END`PLN h`END`PUN,`END`PLN `END`LIT1`END`PUN,`END' +
+          '`PLN `END`PUN-`END`PLNh `END`KWDdo`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`KWDlocal`END`PLN testval `END' +
+          '`PUN=`END`PLN t`END`PUN[`END`PLNj`END`PUN]`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`KWDif`END`PLN `END`KWDnot`END' +
+          '`PLN before`END`PUN(`END`PLNv`END`PUN,`END`PLN testval`END' +
+          '`PUN)`END`PLN `END`KWDthen`END`PLN `END`KWDbreak`END`PLN `END' +
+          '`KWDend`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; t`END`PUN[`END`PLNi`END`PUN]`END' +
+          '`PLN `END`PUN=`END`PLN testval`END`PUN;`END`PLN i `END`PUN=`END' +
+          '`PLN j<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDend`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; t`END`PUN[`END`PLNi`END`PUN]`END`PLN `END`PUN=`END`PLN v<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; t`END`PUN[`END`PLNi`END`PUN]`END`PLN `END' +
+          '`PUN=`END`PLN v<br>' +
       '&nbsp; &nbsp; &nbsp; `END`KWDend`END`PLN <br>' +
       '&nbsp; &nbsp; `END`KWDend`END`PLN<br>' +
       '&nbsp; &nbsp; `END`KWDreturn`END`PLN t<br>' +
       '&nbsp; `END`KWDend`END`PLN<br>' +
       '<br>' +
-      '&nbsp; `END`KWDfunction`END`PLN shellsort`END`PUN(`END`PLNt`END`PUN,`END`PLN before`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
-      '&nbsp; &nbsp; n `END`PUN=`END`PLN n `END`KWDor`END`PLN `END`PUN#`END`PLNt<br>' +
-      '&nbsp; &nbsp; `END`KWDif`END`PLN `END`KWDnot`END`PLN before `END`KWDor`END`PLN before `END`PUN==`END`PLN `END`STR"&lt;"`END`PLN `END`KWDthen`END`PLN `END`KWDreturn`END`PLN ssup`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`KWDelseif`END`PLN before `END`PUN==`END`PLN `END`STR"&gt;"`END`PLN `END`KWDthen`END`PLN `END`KWDreturn`END`PLN ssdown`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`KWDelse`END`PLN `END`KWDreturn`END`PLN ssgeneral`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN,`END`PLN before`END`PUN)`END`PLN<br>' +
+      '&nbsp; `END`KWDfunction`END`PLN shellsort`END`PUN(`END`PLNt`END' +
+          '`PUN,`END`PLN before`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; n `END`PUN=`END`PLN n `END`KWDor`END`PLN `END`PUN#`END' +
+          '`PLNt<br>' +
+      '&nbsp; &nbsp; `END`KWDif`END`PLN `END`KWDnot`END`PLN before `END' +
+          '`KWDor`END`PLN before `END`PUN==`END`PLN `END`STR"&lt;"`END' +
+          '`PLN `END`KWDthen`END`PLN `END`KWDreturn`END`PLN ssup`END`PUN(`END' +
+          '`PLNt`END`PUN,`END`PLN n`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDelseif`END`PLN before `END`PUN==`END`PLN `END' +
+          '`STR"&gt;"`END`PLN `END`KWDthen`END`PLN `END`KWDreturn`END' +
+          '`PLN ssdown`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN)`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDelse`END`PLN `END`KWDreturn`END' +
+          '`PLN ssgeneral`END`PUN(`END`PLNt`END`PUN,`END`PLN n`END`PUN,`END' +
+          '`PLN before`END`PUN)`END`PLN<br>' +
       '&nbsp; &nbsp; `END`KWDend`END`PLN<br>' +
       '&nbsp; `END`KWDend`END`PLN<br>' +
       '&nbsp; `END`KWDreturn`END`PLN shellsort<br>' +
