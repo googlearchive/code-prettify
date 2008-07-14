@@ -27,9 +27,9 @@
         (<a href="tests/prettify_test.html#issue8">test</a>)
       <li>Fixed entity handling so that the caveat
         <blockquote>
-    <p>Caveats: please properly escape less-thans.  <tt>x&amp;lt;y</tt>
-    instead of <tt>x&lt;y</tt>, and use <tt>&quot;</tt> instead of 
-    <tt>&amp;quot;</tt> for string delimiters.</p>
+          <p>Caveats: please properly escape less-thans.  <tt>x&amp;lt;y</tt>
+          instead of <tt>x&lt;y</tt>, and use <tt>&quot;</tt> instead of 
+          <tt>&amp;quot;</tt> for string delimiters.</p>
         </blockquote>
         is no longer applicable.
       <li>Added noisefree's C#
@@ -48,6 +48,14 @@
     <h2>5 Jul 2008</h2>
     <ul>
       <li>Defined language extensions for Lisp and LUA</code>
+    </ul>
+    <h2>14 Jul 2008</h2>
+    <ul>
+      <li>Language handlers for F#, OCAML, SQL</code>
+      <li>Support for <code>nocode</code> spans to allow embedding of line
+      numbers and code annotations which should not be styled or otherwise
+      affect the tokenization of prettified code.
+      See the issue 22 <a href="tests/prettify_test.html#issue22">testcase</a>.</code>
     </ul>
   </body>
 </html>

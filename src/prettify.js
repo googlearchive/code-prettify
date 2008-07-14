@@ -63,7 +63,7 @@ var PR_TAB_WIDTH = 8;
 var PR_normalizedHtml;
 
 /** Contains functions for creating and registering new language handlers.
-  * @namespace
+  * @type {Object}
   */
 var PR;
 
@@ -80,11 +80,11 @@ var prettyPrintOne;
   */
 var prettyPrint;
 
-/** browser detection. */
-function pr_isIE6() {
+/** browser detection. @extern */
+function _pr_isIE6() {
   var isIE6 = navigator && navigator.userAgent &&
       /\bMSIE 6\./.test(navigator.userAgent);
-  pr_isIE6 = function () { return isIE6; };
+  _pr_isIE6 = function () { return isIE6; };
   return isIE6;
 }
 
@@ -169,6 +169,12 @@ function pr_isIE6() {
   var PR_ATTRIB_NAME = 'atn';
   /** token style for an sgml attribute value. */
   var PR_ATTRIB_VALUE = 'atv';
+
+  /**
+   * A class that indicates a section of markup that is not code, e.g. to allow
+   * embedding of line numbers within code listings.
+   */
+  var PR_NOCODE = 'nocode';
 
   function isWordChar(ch) {
     return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
@@ -366,7 +372,7 @@ function pr_isIE6() {
   /** returns a function that expand tabs to spaces.  This function can be fed
     * successive chunks of text, and will maintain its own internal state to
     * keep track of how tabs are expanded.
-    * @return {function (plainText : string) : string} a function that takes
+    * @return {function (string) : string} a function that takes
     *   plain text and return the text with tabs expanded.
     * @private
     */
@@ -422,6 +428,7 @@ function pr_isIE6() {
   var pr_commentPrefix = /^<!--/;
   var pr_cdataPrefix = /^<\[CDATA\[/;
   var pr_brPrefix = /^<br\b/i;
+  var pr_tagNameRe = /^<(\/?)([a-zA-Z]+)/;
 
   /** split markup into chunks of html tags (style null) and
     * plain text (style {@link #PR_PLAIN}), converting tags which are
@@ -454,7 +461,33 @@ function pr_isIE6() {
             sourceBuf.push('\n');
             ++sourceBufLen;
           } else {
-            extractedTags.push(sourceBufLen, match);
+            if (match.indexOf(PR_NOCODE) >= 0 && isNoCodeTag(match)) {
+              // A <span class="nocode"> will start a section that should be
+              // ignored.  Continue walking the list until we see a matching end
+              // tag.
+              var name = match.match(pr_tagNameRe)[2];
+              var depth = 1;
+              end_tag_loop:
+              for (var j = i + 1; j < n; ++j) {
+                var name2 = matches[j].match(pr_tagNameRe);
+                if (name2 && name2[2] === name) {
+                  if (name2[1] === '/') {
+                    if (--depth === 0) { break end_tag_loop; }
+                  } else {
+                    ++depth;
+                  }
+                }
+              }
+              if (j < n) {
+                extractedTags.push(
+                    sourceBufLen, matches.slice(i, j + 1).join(''));
+                i = j;
+              } else {  // Ignore unclosed sections.
+                extractedTags.push(sourceBufLen, match);
+              }
+            } else {
+              extractedTags.push(sourceBufLen, match);
+            }
           }
         } else {
           var literalText = htmlToText(match);
@@ -464,6 +497,16 @@ function pr_isIE6() {
       }
     }
     return { source: sourceBuf.join(''), tags: extractedTags };
+  }
+
+  /** True if the given tag contains a class attribute with the nocode class. */
+  function isNoCodeTag(tag) {
+    return !!tag
+        // First canonicalize the representation of attributes
+        .replace(/\s(\w+)\s*=\s*(?:\"([^\"]*)\"|'([^\']*)'|(\S+))/g,
+                 ' $1="$2$3$4"')
+        // Then look for the attribute we want.
+        .match(/[cC][lL][aA][sS][sS]=\"[^\"]*\bnocode\b/);
   }
 
   /** Given triples of [style, pattern, context] returns a lexing function,
@@ -494,7 +537,7 @@ function pr_isIE6() {
     * @param {Array} fallthroughStylePatterns patterns that will be tried in
     *   order if the shortcut ones fail.  May have shortcuts.
     *
-    * @return {function (sourceCode : string) -> Array.<number|string>} a
+    * @return {function (string, number?) : Array.<number|string>} a
     *   function that takes source code and returns a list of decorations.
     */
   function createSimpleLexer(shortcutStylePatterns,
@@ -648,7 +691,7 @@ function pr_isIE6() {
     * It recognizes C, C++, and shell style comments.
     *
     * @param {Object} options a set of optional parameters.
-    * @return {function (sourceCode : string) : Array.<string|number>} a
+    * @return {function (string) : Array.<string|number>} a
     *     decorator that takes sourceCode as plain text and that returns a
     *     decoration list
     */
@@ -921,6 +964,12 @@ function pr_isIE6() {
     var decPos = 0;  // index into decorations
     var tabExpander = makeTabExpander(PR_TAB_WIDTH);
 
+    var adjacentSpaceRe = /([\r\n ]) /g;
+    var startOrSpaceRe = /(^| ) /gm;
+    var newlineRe = /\r\n?|\n/g;
+    var trailingSpaceRe = /[ \r\n]$/;
+    var lastWasSpace = true;  // the last text chunk emitted ended with a space.
+    
     // A helper function that is responsible for opening sections of decoration
     // and outputing properly escaped chunks of source
     function emitTextUpTo(sourceIdx) {
@@ -936,17 +985,20 @@ function pr_isIE6() {
         }
         // This interacts badly with some wikis which introduces paragraph tags
         // into pre blocks for some strange reason.
-        // It's necessary for IE though which seems to lose the preformattednes
-
+        // It's necessary for IE though which seems to lose the preformattedness
         // of <pre> tags when their innerHTML is assigned.
         // http://stud3.tuwien.ac.at/~e0226430/innerHtmlQuirk.html
         // and it serves to undo the conversion of <br>s to newlines done in
         // chunkify.
         var htmlChunk = textToHtml(
             tabExpander(sourceText.substring(outputIdx, sourceIdx)))
-            .replace(/(\r\n?|\n| ) /g, '$1&nbsp;')
-            .replace(/\r\n?|\n/g, '<br />');
-        html.push(htmlChunk);
+            .replace(lastWasSpace
+                     ? startOrSpaceRe
+                     : adjacentSpaceRe, '$1&nbsp;');
+        // Keep track of whether we need to escape space at the beginning of the
+        // next chunk.
+        lastWasSpace = trailingSpaceRe.test(htmlChunk);
+        html.push(htmlChunk.replace(newlineRe, '<br />'));
         outputIdx = sourceIdx;
       }
     }
@@ -996,7 +1048,7 @@ function pr_isIE6() {
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
   /** Register a language handler for the given file extensions.
-    * @param {function (sourceCode : string) : Array.<number|string>} handler
+    * @param {function (string) : Array.<number|string>} handler
     *     a function from source code to a list of decorations.
     * @param {Array.<string>} fileExtensions
     */
@@ -1092,7 +1144,7 @@ function pr_isIE6() {
   }
 
   function prettyPrint(opt_whenDone) {
-    var isIE6 = pr_isIE6();
+    var isIE6 = _pr_isIE6();
 
     // fetch a list of nodes to rewrite
     var codeSegments = [
@@ -1212,6 +1264,7 @@ function pr_isIE6() {
         'PR_DECLARATION': PR_DECLARATION,
         'PR_KEYWORD': PR_KEYWORD,
         'PR_LITERAL': PR_LITERAL,
+        'PR_NOCODE': PR_NOCODE,
         'PR_PLAIN': PR_PLAIN,
         'PR_PUNCTUATION': PR_PUNCTUATION,
         'PR_SOURCE': PR_SOURCE,
