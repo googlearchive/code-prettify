@@ -996,8 +996,8 @@ function pr_isIE6() {
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
   /** Register a language handler for the given file extensions.
-    * @param {function (sourceCode : string) : Array.<number|string>} a function
-    *     from source code to a list of decorations.
+    * @param {function (sourceCode : string) : Array.<number|string>} handler
+    *     a function from source code to a list of decorations.
     * @param {Array.<string>} fileExtensions
     */
   function registerLangHandler(handler, fileExtensions) {
@@ -1199,24 +1199,24 @@ function pr_isIE6() {
     doWork();
   }
 
-  window.PR_normalizedHtml = normalizedHtml;
-  window.prettyPrintOne = prettyPrintOne;
-  window.prettyPrint = prettyPrint;
-  window.PR = {
-        createSimpleLexer: createSimpleLexer,
-        registerLangHandler: registerLangHandler,
-        sourceDecorator: sourceDecorator,
-        PR_ATTRIB_NAME: PR_ATTRIB_NAME,
-        PR_ATTRIB_VALUE: PR_ATTRIB_VALUE,
-        PR_COMMENT: PR_COMMENT,
-        PR_DECLARATION: PR_DECLARATION,
-        PR_KEYWORD: PR_KEYWORD,
-        PR_LITERAL: PR_LITERAL,
-        PR_PLAIN: PR_PLAIN,
-        PR_PUNCTUATION: PR_PUNCTUATION,
-        PR_SOURCE: PR_SOURCE,
-        PR_STRING: PR_STRING,
-        PR_TAG: PR_TAG,
-        PR_TYPE: PR_TYPE
+  window['PR_normalizedHtml'] = normalizedHtml;
+  window['prettyPrintOne'] = prettyPrintOne;
+  window['prettyPrint'] = prettyPrint;
+  window['PR'] = {
+        'createSimpleLexer': createSimpleLexer,
+        'registerLangHandler': registerLangHandler,
+        'sourceDecorator': sourceDecorator,
+        'PR_ATTRIB_NAME': PR_ATTRIB_NAME,
+        'PR_ATTRIB_VALUE': PR_ATTRIB_VALUE,
+        'PR_COMMENT': PR_COMMENT,
+        'PR_DECLARATION': PR_DECLARATION,
+        'PR_KEYWORD': PR_KEYWORD,
+        'PR_LITERAL': PR_LITERAL,
+        'PR_PLAIN': PR_PLAIN,
+        'PR_PUNCTUATION': PR_PUNCTUATION,
+        'PR_SOURCE': PR_SOURCE,
+        'PR_STRING': PR_STRING,
+        'PR_TAG': PR_TAG,
+        'PR_TYPE': PR_TYPE
       };
 })();
