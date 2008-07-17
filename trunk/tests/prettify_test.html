@@ -10,6 +10,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-ml.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-proto.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-sql.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script type="text/javascript">
@@ -863,6 +865,24 @@ throw new RuntimeException("Element [" + element.getName() +
   "] missing attribute.");
 variable++;
 </pre>
+
+<h1>Protocol Buffers</h1>
+<pre class="prettyprint lang-proto" id="proto"
+>message SearchRequest {
+  required string query = 1;
+  optional int32 page_number = 2;
+  optional int32 result_per_page = 3 [default = 10];
+  enum Corpus {
+    UNIVERSAL = 0;
+    WEB = 1;
+    IMAGES = 2;
+    LOCAL = 3;
+    NEWS = 4;
+    PRODUCTS = 5;
+    VIDEO = 6;
+  }
+  optional Corpus corpus = 4 [default = UNIVERSAL];
+}</pre>
 
 </body>
 
@@ -1999,9 +2019,38 @@ var goldens = {
       '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
       '`END`CLO)`END'),
   issue45: (
-      '`KWDthrow`END`PLN `END`KWDnew`END`PLN `END`TYPRuntimeException`END`PUN(`END`STR"Element ["`END`PLN `END`PUN+`END`PLN element`END`PUN.`END`PLNgetName`END`PUN()`END`PLN `END`PUN+`END`PLN <br>' +
+      '`KWDthrow`END`PLN `END`KWDnew`END`PLN `END`TYPRuntimeException`END' +
+           '`PUN(`END`STR"Element ["`END`PLN `END`PUN+`END`PLN element`END' +
+           '`PUN.`END`PLNgetName`END`PUN()`END`PLN `END`PUN+`END`PLN <br>' +
       '&nbsp; `END`STR"] missing attribute."`END`PUN);`END`PLN<br>' +
-      'variable`END`PUN++;`END')
+      'variable`END`PUN++;`END'),
+  proto: (
+      '`KWDmessage`END`PLN `END`TYPSearchRequest`END`PLN `END`PUN{`END' +
+           '`PLN<br>' +
+      '&nbsp; `END`KWDrequired`END`PLN `END`KWDstring`END`PLN query `END' +
+           '`PUN=`END`PLN `END`LIT1`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDoptional`END`PLN `END`KWDint32`END`PLN page_number `END' +
+           '`PUN=`END`PLN `END`LIT2`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDoptional`END`PLN `END`KWDint32`END' +
+           '`PLN result_per_page `END`PUN=`END`PLN `END`LIT3`END`PLN `END' +
+           '`PUN[`END`KWDdefault`END`PLN `END`PUN=`END`PLN `END`LIT10`END' +
+           '`PUN];`END`PLN<br>' +
+      '&nbsp; `END`KWDenum`END`PLN `END`TYPCorpus`END`PLN `END`PUN{`END' +
+           '`PLN<br>' +
+      '&nbsp; &nbsp; UNIVERSAL `END`PUN=`END`PLN `END`LIT0`END`PUN;`END' +
+           '`PLN<br>' +
+      '&nbsp; &nbsp; WEB `END`PUN=`END`PLN `END`LIT1`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; IMAGES `END`PUN=`END`PLN `END`LIT2`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; LOCAL `END`PUN=`END`PLN `END`LIT3`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; NEWS `END`PUN=`END`PLN `END`LIT4`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; PRODUCTS `END`PUN=`END`PLN `END`LIT5`END`PUN;`END' +
+           '`PLN<br>' +
+      '&nbsp; &nbsp; VIDEO `END`PUN=`END`PLN `END`LIT6`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; `END`KWDoptional`END`PLN `END`TYPCorpus`END`PLN corpus `END' +
+           '`PUN=`END`PLN `END`LIT4`END`PLN `END`PUN[`END`KWDdefault`END' +
+           '`PLN `END`PUN=`END`PLN UNIVERSAL`END`PUN];`END`PLN<br>' +
+      '`END`PUN}`END')
 };
 
 
