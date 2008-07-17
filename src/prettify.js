@@ -1069,7 +1069,12 @@ function _pr_isIE6() {
           keywords: CPP_KEYWORDS,
           hashComments: true,
           cStyleComments: true
-        }), ['c', 'cc', 'cpp', 'cs', 'cxx', 'cyc']);
+        }), ['c', 'cc', 'cpp', 'cxx', 'cyc']);
+  registerLangHandler(sourceDecorator({
+          keywords: CSHARP_KEYWORDS,
+          hashComments: true,
+          cStyleComments: true
+        }), ['cs']);
   registerLangHandler(sourceDecorator({
           keywords: JAVA_KEYWORDS,
           cStyleComments: true
