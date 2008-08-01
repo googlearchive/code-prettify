@@ -71,7 +71,7 @@ function fib() {
 }
 
 # output the 10th element of the series and halt
-fib | head -10 | tail -1
+fib | /usr/bin/*head -10 | tail -1
 </pre>
 
 <h1>C</h1>
@@ -935,7 +935,8 @@ var goldens = {
       '`END`PUN}`END`PLN<br>' +
       '<br>' +
       '`END`COM# output the 10th element of the series and halt`END`PLN<br>' +
-      'fib `END`PUN|`END`PLN head `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
+      'fib `END`PUN|`END`PLN `END`PUN/`END`PLNusr`END`PUN/`END`PLNbin`END' +
+          '`PUN/*`END`PLNhead `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
           '`PLN tail `END`PUN-`END`LIT1`END'),
   C: (
       '`COM#include &lt;stdio.h&gt;`END`PLN<br>' +
