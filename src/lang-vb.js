@@ -37,7 +37,7 @@ PR.registerLangHandler(
          [PR.PR_PLAIN,       /^[\t\n\r \xA0\u2028\u2029]+/, null, '\t\n\r \xA0\u2028\u2029'],
          // A double quoted string with quotes escaped by doubling them.
          // A single character can be suffixed with C.
-         [PR.PR_STRING,      /^(?:[\"\u201C\u201D](?:[^\"\u201C\u201D]|[\"\u201C\u201D]{2})[\"\u201C\u201D][cC]|[\"\u201C\u201D](?:[^\"\u201C\u201D]|[\"\u201C\u201D]{2})*[\"\u201C\u201D])/, null,
+         [PR.PR_STRING,      /^(?:[\"\u201C\u201D](?:[^\"\u201C\u201D]|[\"\u201C\u201D]{2})(?:[\"\u201C\u201D][cC]|$)|[\"\u201C\u201D](?:[^\"\u201C\u201D]|[\"\u201C\u201D]{2})*(?:[\"\u201C\u201D]|$))/, null,
           '"\u201C\u201D'],
          // A comment starts with a single quote and runs until the end of the
          // line.

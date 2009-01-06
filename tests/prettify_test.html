@@ -4,6 +4,8 @@
 <title>Code Prettifier</title>
 <script src="../src/prettify.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-hs.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-lisp.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-lua.js" type="text/javascript"
@@ -886,6 +888,36 @@ n = (0.0, .99F, 1.0E-2D, 1.0E+3D, .5E4, 1E3R, 4D)
 
 Dim i As Integer
 i = (0, 123, 45L, &amp;HA0I, &amp;O177S)
+</pre>
+
+<h1>Bug 30 - Haskell w/ language specified</h1>
+<pre class="prettyprint lang-hs" id="issue30">
+-- A comment
+Not(--"a comment&quot;)
+Also.not(--(A.comment))
+
+module Foo(bar) where
+import Blah
+import BlahBlah(blah)
+import Monads(Exception(..), FIO(..),unFIO,handle,runFIO,fixFIO,fio,
+              write,writeln,HasNext(..),HasOutput(..))
+
+{- nested comments
+ - don't work {-yet-} -}
+instance Thingy Foo where
+  a = b
+
+data Foo :: (* -> * -> *) -&gt; * > * -> * where
+  Nil :: Foo a b c
+  Cons :: a b c -> Foo abc -> Foo a b c
+
+str = "Foo\\Bar"
+char = 'x'
+Not.A.Char = 'too long'  -- Don't barf.  Show that 't is a lexical error.
+
+(ident, ident', Fo''o.b'ar)
+
+(0, 12, 0x45, 0xA7, 0o177, 0O377, 0.1, 1.0, 1e3, 0.5E-3, 1.0E+45)
 </pre>
 
 <h1>Bug 33 - OCaml and F#</h1>
@@ -1982,30 +2014,45 @@ var goldens = {
       '`KWDImports`END`PLN System<br>' +
       '<br>' +
       '`END`KWDClass`END`PLN [class]<br>' +
-      '&nbsp; &nbsp; `END`KWDShared`END`PLN `END`KWDSub`END`PLN [shared]`END`PUN(`END`KWDByVal`END`PLN [boolean] `END`KWDAs`END`PLN `END`KWDBoolean`END`PUN)`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDIf`END`PLN [boolean] `END`KWDThen`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"true"`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDShared`END`PLN `END`KWDSub`END`PLN [shared]`END' +
+          '`PUN(`END`KWDByVal`END`PLN [boolean] `END`KWDAs`END`PLN `END' +
+          '`KWDBoolean`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDIf`END`PLN [boolean] `END' +
+          '`KWDThen`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END' +
+          '`PLNWriteLine`END`PUN(`END`STR"true"`END`PUN)`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDElse`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"false"`END`PUN)`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDEnd`END`PLN `END`KWDIf`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END' +
+          '`PLNWriteLine`END`PUN(`END`STR"false"`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDEnd`END`PLN `END`KWDIf`END' +
+          '`PLN<br>' +
       '&nbsp; &nbsp; `END`KWDEnd`END`PLN `END`KWDSub`END`PLN<br>' +
       '`END`KWDEnd`END`PLN `END`KWDClass`END`PLN<br>' +
       '<br>' +
       '`END`KWDModule`END`PLN [module]<br>' +
       '&nbsp; &nbsp; `END`KWDSub`END`PLN Main`END`PUN()`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; [class]`END`PUN.`END`PLN[shared]`END`PUN(`END`LITTrue`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; [class]`END`PUN.`END`PLN[shared]`END' +
+          '`PUN(`END`LITTrue`END`PUN)`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: \".`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR""""`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: \".`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END' +
+          '`PUN(`END`STR""""`END`PUN)`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: a"b.`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"a""b"`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: a"b.`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END' +
+          '`PUN(`END`STR"a""b"`END`PUN)`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: a.`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"a"c`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: a.`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END' +
+          '`PUN(`END`STR"a"c`END`PUN)`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: ".`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR""""c`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: ".`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END' +
+          '`PUN(`END`STR""""c`END`PUN)`END`PLN<br>' +
       '&nbsp; &nbsp; `END`KWDEnd`END`PLN `END`KWDSub`END`PLN<br>' +
       '`END`KWDEnd`END`PLN `END`KWDModule`END`PLN<br>' +
       '<br>' +
@@ -2018,10 +2065,63 @@ var goldens = {
       'd `END`PUN=`END`PLN `END`LIT# 13:45:39PM #`END`PLN<br>' +
       '<br>' +
       '`END`KWDDim`END`PLN n `END`KWDAs`END`PLN Float<br>' +
-      'n `END`PUN=`END`PLN `END`PUN(`END`LIT0.0`END`PUN,`END`PLN `END`LIT.99F`END`PUN,`END`PLN `END`LIT1.0E-2D`END`PUN,`END`PLN `END`LIT1.0E+3D`END`PUN,`END`PLN `END`LIT.5E4`END`PUN,`END`PLN `END`LIT1E3R`END`PUN,`END`PLN `END`LIT4D`END`PUN)`END`PLN<br>' +
+      'n `END`PUN=`END`PLN `END`PUN(`END`LIT0.0`END`PUN,`END`PLN `END' +
+          '`LIT.99F`END`PUN,`END`PLN `END`LIT1.0E-2D`END`PUN,`END`PLN `END' +
+          '`LIT1.0E+3D`END`PUN,`END`PLN `END`LIT.5E4`END`PUN,`END`PLN `END' +
+          '`LIT1E3R`END`PUN,`END`PLN `END`LIT4D`END`PUN)`END`PLN<br>' +
       '<br>' +
       '`END`KWDDim`END`PLN i `END`KWDAs`END`PLN `END`KWDInteger`END`PLN<br>' +
-      'i `END`PUN=`END`PLN `END`PUN(`END`LIT0`END`PUN,`END`PLN `END`LIT123`END`PUN,`END`PLN `END`LIT45L`END`PUN,`END`PLN `END`LIT&amp;HA0I`END`PUN,`END`PLN `END`LIT&amp;O177S`END`PUN)`END'),
+      'i `END`PUN=`END`PLN `END`PUN(`END`LIT0`END`PUN,`END`PLN `END' +
+          '`LIT123`END`PUN,`END`PLN `END`LIT45L`END`PUN,`END`PLN `END' +
+          '`LIT&amp;HA0I`END`PUN,`END`PLN `END`LIT&amp;O177S`END`PUN)`END'),
+  issue30: (
+      '`COM-- A comment`END`PLN<br>' +
+      'Not`END`PUN(--`END`STR"a comment"`END`PUN)`END`PLN<br>' +
+      'Also.not`END`PUN(--(`END`PLNA.comment`END`PUN))`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDmodule`END`PLN Foo`END`PUN(`END`PLNbar`END`PUN)`END`PLN `END' +
+          '`KWDwhere`END`PLN<br>' +
+      '`END`KWDimport`END`PLN Blah<br>' +
+      '`END`KWDimport`END`PLN BlahBlah`END`PUN(`END`PLNblah`END`PUN)`END' +
+          '`PLN<br>' +
+      '`END`KWDimport`END`PLN Monads`END`PUN(`END`PLNException`END' +
+          '`PUN(..),`END`PLN FIO`END`PUN(..),`END`PLNunFIO`END`PUN,`END' +
+          '`PLNhandle`END`PUN,`END`PLNrunFIO`END`PUN,`END`PLNfixFIO`END' +
+          '`PUN,`END`PLNfio`END`PUN,`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; write`END`PUN,`END' +
+          '`PLNwriteln`END`PUN,`END`PLNHasNext`END`PUN(..),`END' +
+          '`PLNHasOutput`END`PUN(..))`END`PLN<br>' +
+      '<br>' +
+      '`END`COM{- nested comments<br>' +
+      '&nbsp;- don\'t work {-yet-}`END`PLN `END`PUN-}`END`PLN<br>' +
+      '`END`KWDinstance`END`PLN Thingy Foo `END`KWDwhere`END`PLN<br>' +
+      '&nbsp; a `END`PUN=`END`PLN b<br>' +
+      '<br>' +
+      '`END`KWDdata`END`PLN Foo `END`PUN::`END`PLN `END`PUN(*`END`PLN `END' +
+          '`PUN-&gt;`END`PLN `END`PUN*`END`PLN `END`PUN-&gt;`END`PLN `END' +
+          '`PUN*)`END`PLN `END`PUN-&gt;`END`PLN `END`PUN*`END`PLN `END' +
+          '`PUN&gt;`END`PLN `END`PUN*`END`PLN `END`PUN-&gt;`END`PLN `END' +
+          '`PUN*`END`PLN `END`KWDwhere`END`PLN<br>' +
+      '&nbsp; Nil `END`PUN::`END`PLN Foo a b c<br>' +
+      '&nbsp; Cons `END`PUN::`END`PLN a b c `END`PUN-&gt;`END' +
+          '`PLN Foo abc `END`PUN-&gt;`END`PLN Foo a b c<br>' +
+      '<br>' +
+      'str `END`PUN=`END`PLN `END`STR"Foo\\\\Bar"`END`PLN<br>' +
+      'char `END`PUN=`END`PLN `END`STR\'x\'`END`PLN<br>' +
+      'Not.A.Char `END`PUN=`END`PLN `END`STR\'t`END`PLNoo long\' &nbsp;`END' +
+          '`COM-- Don\'t barf. &nbsp;Show that \'t is a lexical error.`END' +
+          '`PLN<br>' +
+      '<br>' +
+      '`END`PUN(`END`PLNident`END`PUN,`END`PLN ident\'`END`PUN,`END' +
+          '`PLN Fo\'\'o.b\'ar`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '`END`PUN(`END`LIT0`END`PUN,`END`PLN `END`LIT12`END`PUN,`END`PLN `END' +
+          '`LIT0x45`END`PUN,`END`PLN `END`LIT0xA7`END`PUN,`END`PLN `END' +
+          '`LIT0o177`END`PUN,`END`PLN `END`LIT0O377`END`PUN,`END`PLN `END' +
+          '`LIT0.1`END`PUN,`END`PLN `END`LIT1.0`END`PUN,`END`PLN `END' +
+          '`LIT1e3`END`PUN,`END`PLN `END`LIT0.5E-3`END`PUN,`END`PLN `END' +
+          '`LIT1.0E+45`END`PUN)`END'
+       ),
   issue33: (
       '`COM(*<br>' +
       '&nbsp;* Print the 10th fibonacci number<br>' +
