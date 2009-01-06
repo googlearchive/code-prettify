@@ -73,7 +73,8 @@ public:
     <p>LISPy languages are supported via an extension:
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-lisp.js"
      ><code>lang-lisp.js</code></a>.</p>
-    <p>And similarly for <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-lua.js"
+    <p>And similarly for <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-hs"
+     ><code>Haskell</code></a>, <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-lua.js"
      ><code>LUA</code></a>, <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-ml.js"
      ><code>OCAML, SML, F#</code></a>,
      <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-vb.js"
@@ -84,7 +85,7 @@ public:
      ><code>Protocol Buffers</code></a>.
 
     <p>If you'd like to add an extension for your favorite language, please
-    look at lang-lisp.js and file an
+    look at <tt>src/lang-lisp.js</tt> and file an
     <a href="http://code.google.com/p/google-code-prettify/issues/list"
      >issue</a> including your language extension, and a testcase.</p>
 
@@ -95,7 +96,7 @@ public:
     <pre class="prettyprint lang-html"
 >&lt;pre class=&quot;prettyprint <b>lang-html</b>&quot;&gt;
   The lang-* class specifies the language file extensions.
-  Supported file extensions include
+  File extensions supported by default include
     "c", "cc", "cpp", "cs", "cyc", "java", "bsh", "csh", "sh",
     "cv", "py", "perl", "pl", "pm", "rb", "js",
     "html", "html", "xhtml", "xml", "xsl".
