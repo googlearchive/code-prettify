@@ -14,6 +14,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-sql.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-vb.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
@@ -837,6 +839,53 @@ end</pre>
      (turn-on-auto-fill)
    )
 )
+</pre>
+
+<h1>Bug 27 - VBScript w/ language specified</h1>
+<pre class="prettyprint lang-vb" id="issue27">
+Imports System
+
+Class [class]
+    Shared Sub [shared](ByVal [boolean] As Boolean)
+        If [boolean] Then
+            Console.WriteLine("true")
+        Else
+            Console.WriteLine("false")
+        End If
+    End Sub
+End Class
+
+Module [module]
+    Sub Main()
+        [class].[shared](True)
+
+        ' This prints out: &quot;.
+        Console.WriteLine("""")
+
+        ' This prints out: a&quot;b.
+        Console.WriteLine("a""b")
+
+        ' This prints out: a.
+        Console.WriteLine("a"c)
+
+        ' This prints out: &quot;.
+        Console.WriteLine(""""c)
+    End Sub
+End Module
+
+Dim d As Date
+d = # 8/23/1970 3:45:39AM #
+d = # 8/23/1970 #
+d = # 3:45:39AM #
+d = # 3:45:39 #
+d = # 13:45:39 #
+d = # 13:45:39PM #
+
+Dim n As Float
+n = (0.0, .99F, 1.0E-2D, 1.0E+3D, .5E4, 1E3R, 4D)
+
+Dim i As Integer
+i = (0, 123, 45L, &amp;HA0I, &amp;O177S)
 </pre>
 
 <h1>Bug 33 - OCaml and F#</h1>
@@ -1929,6 +1978,50 @@ var goldens = {
       '&nbsp; `END`KWDend`END`PLN<br>' +
       '&nbsp; `END`KWDreturn`END`PLN shellsort<br>' +
       '`END`KWDend`END'),
+  issue27: (
+      '`KWDImports`END`PLN System<br>' +
+      '<br>' +
+      '`END`KWDClass`END`PLN [class]<br>' +
+      '&nbsp; &nbsp; `END`KWDShared`END`PLN `END`KWDSub`END`PLN [shared]`END`PUN(`END`KWDByVal`END`PLN [boolean] `END`KWDAs`END`PLN `END`KWDBoolean`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDIf`END`PLN [boolean] `END`KWDThen`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"true"`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDElse`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"false"`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDEnd`END`PLN `END`KWDIf`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDEnd`END`PLN `END`KWDSub`END`PLN<br>' +
+      '`END`KWDEnd`END`PLN `END`KWDClass`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDModule`END`PLN [module]<br>' +
+      '&nbsp; &nbsp; `END`KWDSub`END`PLN Main`END`PUN()`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; [class]`END`PUN.`END`PLN[shared]`END`PUN(`END`LITTrue`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: \".`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR""""`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: a"b.`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"a""b"`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: a.`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR"a"c`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`COM\' This prints out: ".`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; Console`END`PUN.`END`PLNWriteLine`END`PUN(`END`STR""""c`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDEnd`END`PLN `END`KWDSub`END`PLN<br>' +
+      '`END`KWDEnd`END`PLN `END`KWDModule`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDDim`END`PLN d `END`KWDAs`END`PLN `END`KWDDate`END`PLN<br>' +
+      'd `END`PUN=`END`PLN `END`LIT# 8/23/1970 3:45:39AM #`END`PLN<br>' +
+      'd `END`PUN=`END`PLN `END`LIT# 8/23/1970 #`END`PLN<br>' +
+      'd `END`PUN=`END`PLN `END`LIT# 3:45:39AM #`END`PLN<br>' +
+      'd `END`PUN=`END`PLN `END`LIT# 3:45:39 #`END`PLN<br>' +
+      'd `END`PUN=`END`PLN `END`LIT# 13:45:39 #`END`PLN<br>' +
+      'd `END`PUN=`END`PLN `END`LIT# 13:45:39PM #`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDDim`END`PLN n `END`KWDAs`END`PLN Float<br>' +
+      'n `END`PUN=`END`PLN `END`PUN(`END`LIT0.0`END`PUN,`END`PLN `END`LIT.99F`END`PUN,`END`PLN `END`LIT1.0E-2D`END`PUN,`END`PLN `END`LIT1.0E+3D`END`PUN,`END`PLN `END`LIT.5E4`END`PUN,`END`PLN `END`LIT1E3R`END`PUN,`END`PLN `END`LIT4D`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDDim`END`PLN i `END`KWDAs`END`PLN `END`KWDInteger`END`PLN<br>' +
+      'i `END`PUN=`END`PLN `END`PUN(`END`LIT0`END`PUN,`END`PLN `END`LIT123`END`PUN,`END`PLN `END`LIT45L`END`PUN,`END`PLN `END`LIT&amp;HA0I`END`PUN,`END`PLN `END`LIT&amp;O177S`END`PUN)`END'),
   issue33: (
       '`COM(*<br>' +
       '&nbsp;* Print the 10th fibonacci number<br>' +
