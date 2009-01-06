@@ -519,8 +519,13 @@ function _pr_isIE6() {
     *
     * The stylePatterns is a list whose elements have the form
     * [style : string, pattern : RegExp, context : RegExp, shortcut : string].
-    &
-    * Style is a style constant like PR_PLAIN.
+    *
+    * Style is a style constant like PR_PLAIN, or can be a string of the
+    * form 'lang-FOO', where FOO is a language extension describing the
+    * language of the portion of the token in $1 after pattern executes.
+    * E.g., if style is 'lang-lisp', and group 1 contains the text
+    * '(hello (world))', then that portion of the token will be passed to the
+    * registered lisp handler for formatting.
     *
     * Pattern must only match prefixes, and if it matches a prefix and context
     * is null or matches the last non-comment token parsed, then that match is
@@ -598,7 +603,32 @@ function _pr_isIE6() {
           }
         }
 
-        decorations.push(opt_basePos + pos, style);
+        if (!match || !match[1] || 'lang-' !== style.substring(0, 5)) {
+          decorations.push(opt_basePos + pos, style);
+        } else {  // Treat group 1 as an embedded block of source code.
+          var lang = style.substring(5);
+          var embeddedSource = match[1];
+          var embeddedSourceStart = token.indexOf(embeddedSource);
+          var embeddedSourceEnd = embeddedSourceStart + embeddedSource.length;
+          if (embeddedSourceStart) {
+            decorations.push(opt_basePos + pos, PR_SOURCE);
+          }
+          if (!langHandlerRegistry.hasOwnProperty(lang)) {
+            lang = /^\s*</.test(embeddedSource)
+                ? 'default-markup'
+                : 'default-code'
+          }
+          var delegate = langHandlerRegistry[lang];
+          var embeddedOffset = opt_basePos + pos + embeddedSourceStart;
+          var embeddedDecorations = delegate.call({}, embeddedSource);
+          for (var i = 0, n = embeddedDecorations.length; i < n; i += 2) {
+            decorations.push(embeddedOffset + embeddedDecorations[i],
+                             embeddedDecorations[i + 1]);
+          }
+          if (embeddedSourceEnd < token.length) {
+            decorations.push(opt_basePos + pos + embeddedSourceEnd, PR_SOURCE);
+          }
+        }
         pos += token.length;
         tail = tail.substring(token.length);
         if (style !== PR_COMMENT && notWs.test(token)) { lastToken = token; }
@@ -969,7 +999,7 @@ function _pr_isIE6() {
     var newlineRe = /\r\n?|\n/g;
     var trailingSpaceRe = /[ \r\n]$/;
     var lastWasSpace = true;  // the last text chunk emitted ended with a space.
-    
+
     // A helper function that is responsible for opening sections of decoration
     // and outputing properly escaped chunks of source
     function emitTextUpTo(sourceIdx) {
