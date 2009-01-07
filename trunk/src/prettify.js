@@ -1093,8 +1093,9 @@ function _pr_isIE6() {
     }
   }
   registerLangHandler(decorateSource, ['default-code']);
-  registerLangHandler(decorateMarkup,
-                      ['default-markup', 'html', 'htm', 'xhtml', 'xml', 'xsl']);
+  registerLangHandler(
+      decorateMarkup,
+      ['default-markup', 'htm', 'html', 'mxml', 'xhtml', 'xml', 'xsl']);
   registerLangHandler(sourceDecorator({
           keywords: CPP_KEYWORDS,
           hashComments: true,
