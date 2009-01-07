@@ -4,6 +4,8 @@
 <title>Code Prettifier</title>
 <script src="../src/prettify.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-css.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-hs.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-lisp.js" type="text/javascript"
@@ -992,6 +994,29 @@ Lorem Ipsum `while (1) print("blah blah");`
   &lt;!-- Embedded XML --&gt;
   &lt;foo bar="baz"&gt;&lt;boo /&gt;&lt;foo&gt;
 }}}
+</pre>
+
+<h1>CSS w/ language specified</h1>
+<pre class="prettyprint lang-css" id="css">
+&lt;!--
+@charset('UTF-8');
+
+/** A url that is not quoted. */
+@import(url(/more-styles.css));
+
+HTML { content-before: 'hello\20'; content-after: 'w\6f rld';
+       -moz-spiff: inherit !important }
+
+/* Test units on numbers. */
+BODY { margin-bottom: 4px; margin-left: 3in; margin-bottom: 0; margin-top: 5% }
+
+/** Test number literals and quoted values. */
+TABLE.foo TR.bar A#visited { color: #001123; font-family: "monospace" }
+/** bolder is not a name, so should be plain.  !IMPORTANT is a keyword
+  * regardless of case.
+  */
+blink { text-decoration: BLINK !IMPORTANT; font-weight: bolder }
+--&gt;
 </pre>
 </body>
 
@@ -2307,6 +2332,42 @@ var goldens = {
            '`ATV"baz"`END`PUN&gt;&lt;`END`TAGboo`END`PLN `END' +
            '`PUN/&gt;&lt;`END`TAGfoo`END`PUN&gt;`END`PLN<br>' +
       '`END`SRC}}}`END'
+      ),
+  css: (
+      '`COM&lt;!--`END`PLN<br>' +
+      '`END`KWD@charset`END`PUN(`END`STR\'UTF-8\'`END`PUN);`END`PLN<br>' +
+      '<br>' +
+      '`END`COM/** A url that is not quoted. */`END`PLN<br>' +
+      '`END`KWD@import`END`PUN(`END`KWDurl`END`STR(/more-styles.css)`END' +
+          '`PUN);`END`PLN<br>' +
+      '<br>' +
+      'HTML `END`PUN{`END`PLN `END`KWDcontent-before`END`PUN:`END`PLN `END' +
+          '`STR\'hello\20\'`END`PUN;`END`PLN `END`KWDcontent-after`END' +
+          '`PUN:`END`PLN `END`STR\'w\6f rld\'`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp;`END`KWD-moz-spiff`END`PUN:`END`PLN `END' +
+          '`KWDinherit`END`PLN `END`KWD!important`END`PLN `END`PUN}`END' +
+          '`PLN<br>' +
+      '<br>' +
+      '`END`COM/* Test units on numbers. */`END`PLN<br>' +
+      'BODY `END`PUN{`END`PLN `END`KWDmargin-bottom`END`PUN:`END`PLN `END' +
+          '`LIT4px`END`PUN;`END`PLN `END`KWDmargin-left`END`PUN:`END' +
+          '`PLN `END`LIT3in`END`PUN;`END`PLN `END`KWDmargin-bottom`END' +
+          '`PUN:`END`PLN `END`LIT0`END`PUN;`END`PLN `END`KWDmargin-top`END' +
+          '`PUN:`END`PLN `END`LIT5%`END`PLN `END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '`END`COM/** Test number literals and quoted values. */`END`PLN<br>' +
+      'TABLE`END`PUN.`END`PLNfoo TR`END`PUN.`END`PLNbar A`END`PUN#`END' +
+          '`PLNvisited `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END`PLN `END' +
+          '`LIT#001123`END`PUN;`END`PLN `END`KWDfont-family`END`PUN:`END' +
+          '`PLN `END`STR"monospace"`END`PLN `END`PUN}`END`PLN<br>' +
+      '`END`COM/** bolder is not a name, so should be plain. ' +
+          '&nbsp;!IMPORTANT is a keyword<br>' +
+      '&nbsp; * regardless of case.<br>' +
+      '&nbsp; */`END`PLN<br>' +
+      'blink `END`PUN{`END`PLN `END`KWDtext-decoration`END`PUN:`END' +
+          '`PLN BLINK `END`KWD!IMPORTANT`END`PUN;`END`PLN `END' +
+          '`KWDfont-weight`END`PUN:`END`PLN bolder `END`PUN}`END`PLN<br>' +
+      '`END`COM--&gt;`END'
       )
 };
 
