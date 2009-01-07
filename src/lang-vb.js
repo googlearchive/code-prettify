@@ -55,7 +55,7 @@ PR.registerLangHandler(
          // A run of punctuation
          [PR.PR_PUNCTUATION,
           /^[^\w\t\n\r \"\'\[\]\xA0\u2018\u2019\u201C\u201D\u2028\u2029]+/],
-         // A run of punctuation
+         // Square brackets
          [PR.PR_PUNCTUATION, /^(?:\[|\])/]
         ]),
     ['vb', 'vbs']);
