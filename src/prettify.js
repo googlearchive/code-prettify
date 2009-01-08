@@ -209,6 +209,11 @@ function _pr_isIE6() {
     * literal in a syntactically legal javascript program, and I've removed the
     * "in" keyword since it's not a keyword in many languages, and might be used
     * as a count of inches.
+    *
+    * <p>The link a above does not accurately describe EcmaScript rules since
+    * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
+    * very well in practice.
+    *
     * @private
     */
   var REGEXP_PRECEDER_PATTERN = function () {
@@ -241,8 +246,7 @@ function _pr_isIE6() {
       // CAVEAT: this does not properly handle the case where a regular
       // expression immediately follows another since a regular expression may
       // have flags for case-sensitivity and the like.  Having regexp tokens
-      // adjacent is not
-      // valid in any language I'm aware of, so I'm punting.
+      // adjacent is not valid in any language I'm aware of, so I'm punting.
       // TODO: maybe style special characters inside a regexp as punctuation.
     }();
 
@@ -467,8 +471,9 @@ function _pr_isIE6() {
               // tag.
               var name = match.match(pr_tagNameRe)[2];
               var depth = 1;
+              var j;
               end_tag_loop:
-              for (var j = i + 1; j < n; ++j) {
+              for (j = i + 1; j < n; ++j) {
                 var name2 = matches[j].match(pr_tagNameRe);
                 if (name2 && name2[2] === name) {
                   if (name2[1] === '/') {
@@ -509,6 +514,23 @@ function _pr_isIE6() {
         .match(/[cC][lL][aA][sS][sS]=\"[^\"]*\bnocode\b/);
   }
 
+  /**
+   * Apply the given language handler to sourceCode and add the resulting
+   * decorations to out.
+   * @param {number} offset the index of sourceCode within the chunk of source
+   *    whose decorations are already present on out.
+   */
+  function appendDecorations(offset, sourceCode, langHandler, out) {
+    if (!sourceCode) { return; }
+    var decorations = langHandler.call({}, sourceCode);
+    if (offset) {
+      for (var i = decorations.length; (i -= 2) >= 0;) {
+        decorations[i] += offset;
+      }
+    }
+    out.push.apply(out, decorations);
+  }
+
   /** Given triples of [style, pattern, context] returns a lexing function,
     * The lexing function interprets the patterns to find token boundaries and
     * returns a decoration list of the form
@@ -526,6 +548,17 @@ function _pr_isIE6() {
     * E.g., if style is 'lang-lisp', and group 1 contains the text
     * '(hello (world))', then that portion of the token will be passed to the
     * registered lisp handler for formatting.
+    * The text before and after group 1 will be restyled using this decorator
+    * so decorators should take care that this doesn't result in infinite
+    * recursion.  For example, the HTML lexer rule for SCRIPT elements looks
+    * something like ['lang-js', /<[s]cript>(.+?)<\/script>/].  This may match
+    * '<script>foo()<\/script>', which would cause the current decorator to
+    * be called with '<script>' which would not match the same rule since
+    * group 1 must not be empty, so it would be instead styled as PR_TAG by
+    * the generic tag rule.  The handler registered for the 'js' extension would
+    * then be called with 'foo()', and finally, the current decorator would
+    * be called with '<\/script>' which would not match the original rule and
+    * so the generic tag rule would identify it as a tag.
     *
     * Pattern must only match prefixes, and if it matches a prefix and context
     * is null or matches the last non-comment token parsed, then that match is
@@ -564,7 +597,7 @@ function _pr_isIE6() {
     var nPatterns = fallthroughStylePatterns.length;
     var notWs = /\S/;
 
-    return function (sourceCode, opt_basePos) {
+    return function decorate(sourceCode, opt_basePos) {
       opt_basePos = opt_basePos || 0;
       var decorations = [opt_basePos, PR_PLAIN];
       var lastToken = '';
@@ -603,31 +636,36 @@ function _pr_isIE6() {
           }
         }
 
-        if (!match || !match[1] || 'lang-' !== style.substring(0, 5)) {
+        var isEmbedded = 'lang-' === style.substring(0, 5);
+        if (isEmbedded && !(match && match[1])) {
+          isEmbedded = false;
+          style = PR_SOURCE;
+        }
+        if (!isEmbedded) {
           decorations.push(opt_basePos + pos, style);
         } else {  // Treat group 1 as an embedded block of source code.
-          var lang = style.substring(5);
           var embeddedSource = match[1];
           var embeddedSourceStart = token.indexOf(embeddedSource);
           var embeddedSourceEnd = embeddedSourceStart + embeddedSource.length;
-          if (embeddedSourceStart) {
-            decorations.push(opt_basePos + pos, PR_SOURCE);
-          }
+          var lang = style.substring(5);
           if (!langHandlerRegistry.hasOwnProperty(lang)) {
             lang = /^\s*</.test(embeddedSource)
                 ? 'default-markup'
-                : 'default-code'
+                : 'default-code';
           }
-          var delegate = langHandlerRegistry[lang];
-          var embeddedOffset = opt_basePos + pos + embeddedSourceStart;
-          var embeddedDecorations = delegate.call({}, embeddedSource);
-          for (var i = 0, n = embeddedDecorations.length; i < n; i += 2) {
-            decorations.push(embeddedOffset + embeddedDecorations[i],
-                             embeddedDecorations[i + 1]);
-          }
-          if (embeddedSourceEnd < token.length) {
-            decorations.push(opt_basePos + pos + embeddedSourceEnd, PR_SOURCE);
-          }
+          var size = decorations.length - 10;
+          appendDecorations(
+              opt_basePos + pos,
+              token.substring(0, embeddedSourceStart),
+              decorate, decorations);
+          appendDecorations(
+              opt_basePos + pos + embeddedSourceStart,
+              token.substring(embeddedSourceStart, embeddedSourceEnd),
+              langHandlerRegistry[lang], decorations);
+          appendDecorations(
+              opt_basePos + pos + embeddedSourceEnd,
+              token.substring(embeddedSourceEnd),
+              decorate, decorations);
         }
         pos += token.length;
         tail = tail.substring(token.length);
@@ -638,14 +676,18 @@ function _pr_isIE6() {
   }
 
   var PR_MARKUP_LEXER = createSimpleLexer([], [
-      [PR_PLAIN,       /^[^<]+/, null],
+      [PR_PLAIN,       /^[^<?]+/, null],
       [PR_DECLARATION, /^<!\w[^>]*(?:>|$)/, null],
       [PR_COMMENT,     /^<!--[\s\S]*?(?:-->|$)/, null],
-      [PR_SOURCE,      /^<\?[\s\S]*?(?:\?>|$)/, null],
-      [PR_SOURCE,      /^<%[\s\S]*?(?:%>|$)/, null],
-      [PR_SOURCE,
-       // Tags whose content is not escaped, and which contain source code.
-       /^<(script|style|xmp)\b[^>]*>[\s\S]*?<\/\1\b[^>]*>/i, null],
+       // Unescaped content in an unknown language
+      ['lang-',        /^<\?([\s\S]+?)(?:\?>|$)/, null],
+      ['lang-',        /^<%([\s\S]+?)(?:%>|$)/, null],
+      [PR_PUNCTUATION, /^(?:<[%?]|[%?]>)/, null],
+      ['lang-',        /^<xmp\b[^>]*>([\s\S]+?)<\/xmp\b[^>]*>/i, null],
+      // Unescaped content in javascript.  (Or possibly vbscript).
+      ['lang-js',      /^<script\b[^>]*>([\s\S]+?)<\/script\b[^>]*>/i, null],
+      // Contains unescaped stylesheet content
+      ['lang-css',     /^<style\b[^>]*>([\s\S]+?)<\/style\b[^>]*>/i, null],
       [PR_TAG,         /^<\/?\w[^<>]*>/, null]
       ]);
   // Splits any of the source|style|xmp entries above into a start tag,
@@ -856,29 +898,6 @@ function _pr_isIE6() {
         regexLiterals: true
       });
 
-  /** identify regions of markup that are really source code, and recursivley
-    * lex them.
-    * @private
-    */
-  function splitSourceNodes(source, decorations) {
-    for (var i = 0; i < decorations.length; i += 2) {
-      var style = decorations[i + 1];
-      if (style === PR_SOURCE) {
-        // Recurse using the non-markup lexer
-        var start, end;
-        start = decorations[i];
-        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
-        var subDecorations = decorateSource(source.substring(start, end));
-        for (var j = 0, m = subDecorations.length; j < m; j += 2) {
-          subDecorations[j] += start;
-        }
-        spliceArrayInto(subDecorations, decorations, i, 2);
-        i += subDecorations.length - 2;
-      }
-    }
-    return decorations;
-  }
-
   /** identify attribute values that really contain source code and recursively
     * lex them.
     * @private
@@ -969,7 +988,6 @@ function _pr_isIE6() {
     //            (PR_TAG, PR_PLAIN, PR_SOURCE, NAME, VALUE, null)
     var decorations = tokenizeMarkup(sourceCode);
     decorations = splitTagAttributes(sourceCode, decorations);
-    decorations = splitSourceNodes(sourceCode, decorations);
     decorations = splitSourceAttributes(sourceCode, decorations);
     return decorations;
   }
@@ -1189,7 +1207,7 @@ function _pr_isIE6() {
         document.getElementsByTagName('xmp') ];
     var elements = [];
     for (var i = 0; i < codeSegments.length; ++i) {
-      for (var j = 0; j < codeSegments[i].length; ++j) {
+      for (var j = 0, n = codeSegments[i].length; j < n; ++j) {
         elements.push(codeSegments[i][j]);
       }
     }
