@@ -497,6 +497,7 @@ select * from user-table where id in (x, y, z);
 &lt;html&gt;
   &lt;head>
     &lt;title&gt;Fibonacci number&lt;/title&gt;
+    &lt;style&gt;&lt;!-- BODY { text-decoration: blink } --&gt;&lt;/style&gt;
   &lt;/head&gt;
   &lt;body>
     &lt;noscript&gt;
@@ -1533,14 +1534,20 @@ var goldens = {
   html: (
       '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNFibonacci number`END' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END' +
+          '`PLNFibonacci number`END' +
           '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGstyle`END`PUN&gt;`END`COM&lt;!--`END' +
+          '`PLN BODY `END`PUN{`END`PLN `END`KWDtext-decoration`END`PUN:`END' +
+          '`PLN blink `END`PUN}`END`PLN `END`COM--&gt;`END`PUN&lt;/`END' +
+          '`TAGstyle`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
-          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END`PLN<br>' +
+          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END' +
+          '`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
           '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
@@ -2307,9 +2314,9 @@ var goldens = {
            '`STRhttp://www.google.com/?q=WikiSyntax+site:code.google.com`END' +
            '`PLN `END`LITWikiSyntax`END`PUN]`END`PLN<br>' +
       '<br>' +
-      'Lorem Ipsum `END`SRC``END`KWDwhile`END`PLN `END`PUN(`END`LIT1`END' +
+      'Lorem Ipsum ``END`KWDwhile`END`PLN `END`PUN(`END`LIT1`END' +
            '`PUN)`END`PLN `END`KWDprint`END`PUN(`END`STR"blah blah"`END' +
-           '`PUN);`END`SRC``END`PLN<br>' +
+           '`PUN);`END`PLN`<br>' +
       '<br>' +
       '&nbsp; &nbsp;`END`PUN*`END`PLN Bullet<br>' +
       '&nbsp; &nbsp;`END`PUN*`END`PLN Points<br>' +
@@ -2317,21 +2324,21 @@ var goldens = {
            '`PLN<br>' +
       '<br>' +
       '`END`PUN==`END`LITDroningOnAndOn`END`PUN==`END`PLN<br>' +
-      '`END`SRC{{{`END`PLN<br>' +
+      '{{{<br>' +
       '&nbsp; `END`COM// Some EmbeddedSourceCode`END`PLN<br>' +
       '&nbsp; `END`KWDvoid`END`PLN main`END`PUN()`END`PLN `END`PUN{`END' +
            '`PLN<br>' +
       '&nbsp; &nbsp; `END`TYPPrint`END`PUN(`END`STR\'hello world\'`END' +
            '`PUN);`END`PLN<br>' +
       '&nbsp; `END`PUN}`END`PLN<br>' +
-      '`END`SRC}}}`END`PLN<br>' +
+      '}}}<br>' +
       '<br>' +
-      '`END`SRC{{{`END`PLN<br>' +
+      '{{{<br>' +
       '&nbsp; `END`COM&lt;!-- Embedded XML --&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;`END`TAGfoo`END`PLN `END`ATNbar`END`PUN=`END' +
            '`ATV"baz"`END`PUN&gt;&lt;`END`TAGboo`END`PLN `END' +
            '`PUN/&gt;&lt;`END`TAGfoo`END`PUN&gt;`END`PLN<br>' +
-      '`END`SRC}}}`END'
+      '}}}`END'
       ),
   css: (
       '`COM&lt;!--`END`PLN<br>' +
@@ -2342,8 +2349,8 @@ var goldens = {
           '`PUN);`END`PLN<br>' +
       '<br>' +
       'HTML `END`PUN{`END`PLN `END`KWDcontent-before`END`PUN:`END`PLN `END' +
-          '`STR\'hello\20\'`END`PUN;`END`PLN `END`KWDcontent-after`END' +
-          '`PUN:`END`PLN `END`STR\'w\6f rld\'`END`PUN;`END`PLN<br>' +
+          '`STR\'hello\\20\'`END`PUN;`END`PLN `END`KWDcontent-after`END' +
+          '`PUN:`END`PLN `END`STR\'w\\6f rld\'`END`PUN;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp;`END`KWD-moz-spiff`END`PUN:`END`PLN `END' +
           '`KWDinherit`END`PLN `END`KWD!important`END`PLN `END`PUN}`END' +
           '`PLN<br>' +
@@ -2457,8 +2464,9 @@ function runTests() {
       htmlOut.push('<h2>' + html(lang) + ' OK<\/h1>');
     }
   }
-  htmlOut.push('<h2>' + (failures ? (failures + ' test(s) failed') : 'Pass') +
-               '<\/h2>');
+  var summary = (failures ? (failures + ' test(s) failed') : 'Tests Passed');
+  htmlOut.push('<h2>' + summary + '<\/h2>');
+  document.title += ' \u2014 ' + summary;
   document.getElementById('errorReport').innerHTML =
       htmlOut.join('').replace(/&lt;br&gt;/g, '&lt;br&gt;\n');
 }
