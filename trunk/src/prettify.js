@@ -51,42 +51,42 @@
  * UI events.
  * If set to {@code false}, {@code prettyPrint()} is synchronous.
  */
-var PR_SHOULD_USE_CONTINUATION = true;
+window['PR_SHOULD_USE_CONTINUATION'] = true;
 
 /** the number of characters between tab columns */
-var PR_TAB_WIDTH = 8;
+window['PR_TAB_WIDTH'] = 8;
 
 /** Walks the DOM returning a properly escaped version of innerHTML.
   * @param {Node} node
   * @param {Array.<string>} out output buffer that receives chunks of HTML.
   */
-var PR_normalizedHtml;
+window['PR_normalizedHtml']
 
 /** Contains functions for creating and registering new language handlers.
   * @type {Object}
   */
-var PR;
+  = window['PR']
 
 /** Pretty print a chunk of code.
   *
   * @param {string} sourceCodeHtml code as html
   * @return {string} code as html, but prettier
   */
-var prettyPrintOne;
+  = window['prettyPrintOne']
 /** find all the < pre > and < code > tags in the DOM with class=prettyprint
   * and prettify them.
   * @param {Function} opt_whenDone if specified, called when the last entry
   *     has been finished.
   */
-var prettyPrint;
+  = window['prettyPrint'] = void 0;
 
 /** browser detection. @extern */
-function _pr_isIE6() {
+window['_pr_isIE6'] = function () {
   var isIE6 = navigator && navigator.userAgent &&
       /\bMSIE 6\./.test(navigator.userAgent);
-  _pr_isIE6 = function () { return isIE6; };
+  window['_pr_isIE6'] = function () { return isIE6; };
   return isIE6;
-}
+};
 
 
 (function () {
@@ -597,7 +597,7 @@ function _pr_isIE6() {
     var nPatterns = fallthroughStylePatterns.length;
     var notWs = /\S/;
 
-    return function decorate(sourceCode, opt_basePos) {
+    var decorate = function (sourceCode, opt_basePos) {
       opt_basePos = opt_basePos || 0;
       var decorations = [opt_basePos, PR_PLAIN];
       var lastToken = '';
@@ -673,6 +673,7 @@ function _pr_isIE6() {
       }
       return decorations;
     };
+    return decorate;
   }
 
   var PR_MARKUP_LEXER = createSimpleLexer([], [
@@ -769,12 +770,12 @@ function _pr_isIE6() {
     */
   function sourceDecorator(options) {
     var shortcutStylePatterns = [], fallthroughStylePatterns = [];
-    if (options.tripleQuotedStrings) {
+    if (options['tripleQuotedStrings']) {
       // '''multi-line-string''', 'single-line-string', and double-quoted
       shortcutStylePatterns.push(
           [PR_STRING,  /^(?:\'\'\'(?:[^\'\\]|\\[\s\S]|\'{1,2}(?=[^\']))*(?:\'\'\'|$)|\"\"\"(?:[^\"\\]|\\[\s\S]|\"{1,2}(?=[^\"]))*(?:\"\"\"|$)|\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$))/,
            null, '\'"']);
-    } else if (options.multiLineStrings) {
+    } else if (options['multiLineStrings']) {
       // 'multi-line-string', "multi-line-string"
       shortcutStylePatterns.push(
           [PR_STRING,  /^(?:\'(?:[^\\\']|\\[\s\S])*(?:\'|$)|\"(?:[^\\\"]|\\[\s\S])*(?:\"|$)|\`(?:[^\\\`]|\\[\s\S])*(?:\`|$))/,
@@ -788,15 +789,15 @@ function _pr_isIE6() {
     }
     fallthroughStylePatterns.push(
         [PR_PLAIN,   /^(?:[^\'\"\`\/\#]+)/, null, ' \r\n']);
-    if (options.hashComments) {
+    if (options['hashComments']) {
       shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
     }
-    if (options.cStyleComments) {
+    if (options['cStyleComments']) {
       fallthroughStylePatterns.push([PR_COMMENT, /^\/\/[^\r\n]*/, null]);
       fallthroughStylePatterns.push(
           [PR_COMMENT, /^\/\*[\s\S]*?(?:\*\/|$)/, null]);
     }
-    if (options.regexLiterals) {
+    if (options['regexLiterals']) {
       var REGEX_LITERAL = (
           // A regular expression literal starts with a slash that is
           // not followed by * or / so that it is not confused with
@@ -814,7 +815,7 @@ function _pr_isIE6() {
           [PR_STRING, new RegExp(REGEX_LITERAL), REGEXP_PRECEDER_PATTERN]);
     }
 
-    var keywords = wordSet(options.keywords);
+    var keywords = wordSet(options['keywords']);
 
     options = null;
 
@@ -891,11 +892,11 @@ function _pr_isIE6() {
   }
 
   var decorateSource = sourceDecorator({
-        keywords: ALL_KEYWORDS,
-        hashComments: true,
-        cStyleComments: true,
-        multiLineStrings: true,
-        regexLiterals: true
+        'keywords': ALL_KEYWORDS,
+        'hashComments': true,
+        'cStyleComments': true,
+        'multiLineStrings': true,
+        'regexLiterals': true
       });
 
   /** identify attribute values that really contain source code and recursively
@@ -1010,7 +1011,7 @@ function _pr_isIE6() {
     var currentDecoration = null;
     var tagPos = 0;  // index into extractedTags
     var decPos = 0;  // index into decorations
-    var tabExpander = makeTabExpander(PR_TAB_WIDTH);
+    var tabExpander = makeTabExpander(window['PR_TAB_WIDTH']);
 
     var adjacentSpaceRe = /([\r\n ]) /g;
     var startOrSpaceRe = /(^| ) /gm;
@@ -1115,46 +1116,46 @@ function _pr_isIE6() {
       decorateMarkup,
       ['default-markup', 'htm', 'html', 'mxml', 'xhtml', 'xml', 'xsl']);
   registerLangHandler(sourceDecorator({
-          keywords: CPP_KEYWORDS,
-          hashComments: true,
-          cStyleComments: true
+          'keywords': CPP_KEYWORDS,
+          'hashComments': true,
+          'cStyleComments': true
           }), ['c', 'cc', 'cpp', 'cxx', 'cyc', 'm']);
   registerLangHandler(sourceDecorator({
-          keywords: CSHARP_KEYWORDS,
-          hashComments: true,
-          cStyleComments: true
+          'keywords': CSHARP_KEYWORDS,
+          'hashComments': true,
+          'cStyleComments': true
         }), ['cs']);
   registerLangHandler(sourceDecorator({
-          keywords: JAVA_KEYWORDS,
-          cStyleComments: true
+          'keywords': JAVA_KEYWORDS,
+          'cStyleComments': true
         }), ['java']);
   registerLangHandler(sourceDecorator({
-          keywords: SH_KEYWORDS,
-          hashComments: true,
-          multiLineStrings: true
+          'keywords': SH_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true
         }), ['bsh', 'csh', 'sh']);
   registerLangHandler(sourceDecorator({
-          keywords: PYTHON_KEYWORDS,
-          hashComments: true,
-          multiLineStrings: true,
-          tripleQuotedStrings: true
+          'keywords': PYTHON_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true,
+          'tripleQuotedStrings': true
         }), ['cv', 'py']);
   registerLangHandler(sourceDecorator({
-          keywords: PERL_KEYWORDS,
-          hashComments: true,
-          multiLineStrings: true,
-          regexLiterals: true
+          'keywords': PERL_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true,
+          'regexLiterals': true
         }), ['perl', 'pl', 'pm']);
   registerLangHandler(sourceDecorator({
-          keywords: RUBY_KEYWORDS,
-          hashComments: true,
-          multiLineStrings: true,
-          regexLiterals: true
+          'keywords': RUBY_KEYWORDS,
+          'hashComments': true,
+          'multiLineStrings': true,
+          'regexLiterals': true
         }), ['rb']);
   registerLangHandler(sourceDecorator({
-          keywords: JSCRIPT_KEYWORDS,
-          cStyleComments: true,
-          regexLiterals: true
+          'keywords': JSCRIPT_KEYWORDS,
+          'cStyleComments': true,
+          'regexLiterals': true
         }), ['js']);
 
   function prettyPrintOne(sourceCodeHtml, opt_langExtension) {
@@ -1198,7 +1199,7 @@ function _pr_isIE6() {
   }
 
   function prettyPrint(opt_whenDone) {
-    var isIE6 = _pr_isIE6();
+    var isIE6 = window['_pr_isIE6']();
 
     // fetch a list of nodes to rewrite
     var codeSegments = [
@@ -1218,7 +1219,7 @@ function _pr_isIE6() {
     var k = 0;
 
     function doWork() {
-      var endTime = (PR_SHOULD_USE_CONTINUATION ?
+      var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
                      new Date().getTime() + 250 /* ms */ :
                      Infinity);
       for (; k < elements.length && new Date().getTime() < endTime; k++) {
