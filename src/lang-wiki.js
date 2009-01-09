@@ -43,7 +43,7 @@ PR.registerLangHandler(
          ['lang-',           /^`([^\r\n`]+)`/],
          // An inline URL.
          [PR.PR_STRING,
-          /^https?:\/\/[^/?#\s]*(?:\/[^?#\s]*)?(?:\?[^#\s]*)?(?:#\S*)?/i],
+          /^https?:\/\/[^\/?#\s]*(?:\/[^?#\s]*)?(?:\?[^#\s]*)?(?:#\S*)?/i],
          [PR.PR_PLAIN,       /^[\s\S][^#=*~^A-Zh\{`\[]+/]
         ]),
     ['wiki']);
