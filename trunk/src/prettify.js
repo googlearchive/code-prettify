@@ -1289,7 +1289,7 @@ window['_pr_isIE6'] = function () {
               for (var j = lineBreaks.length; --j >= 0;) {
                 var lineBreak = lineBreaks[j];
                 lineBreak.parentNode.replaceChild(
-                    document.createTextNode('\r\n'), lineBreak);
+                    document.createTextNode('\r'), lineBreak);
               }
             }
           }

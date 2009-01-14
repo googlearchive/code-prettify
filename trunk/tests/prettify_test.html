@@ -25,7 +25,9 @@
 <script type="text/javascript">
 // get accurate timing
 PR_SHOULD_USE_CONTINUATION = false;
-_pr_isIE6 = function() { return false; };  // Ensure consistent output.
+if (!/[?&]testcopypaste\b/.test(location.search)) {
+  _pr_isIE6 = function() { return false; };  // Ensure consistent output.
+}
 </script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css" />
 <style type="text/css">
