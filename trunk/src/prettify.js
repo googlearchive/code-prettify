@@ -90,19 +90,6 @@ window['_pr_isIE6'] = function () {
 
 
 (function () {
-  /** Splits input on space and returns an Object mapping each non-empty part to
-    * true.
-    */
-  function wordSet(words) {
-    words = words.split(/ /g);
-    var set = {};
-    for (var i = words.length; --i >= 0;) {
-      var w = words[i];
-      if (w) { set[w] = null; }
-    }
-    return set;
-  }
-
   // Keyword lists for various languages.
   var FLOW_CONTROL_KEYWORDS =
       "break continue do else for if return while ";
@@ -809,8 +796,6 @@ window['_pr_isIE6'] = function () {
            /^(?:\'(?:[^\\\'\r\n]|\\.)*(?:\'|$)|\"(?:[^\\\"\r\n]|\\.)*(?:\"|$))/,
            null, '"\'']);
     }
-    fallthroughStylePatterns.push(
-        [PR_PLAIN,   /^(?:[^\'\"\`\/\#]+)/, null, ' \r\n']);
     if (options['hashComments']) {
       shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
     }
@@ -837,85 +822,35 @@ window['_pr_isIE6'] = function () {
           [PR_STRING, new RegExp(REGEX_LITERAL), REGEXP_PRECEDER_PATTERN]);
     }
 
-    var keywords = wordSet(options['keywords']);
-
-    options = null;
-
-    /** splits the given string into comment, string, and "other" tokens.
-      * @param {string} sourceCode as plain text
-      * @return {Array.<number|string>} a decoration list.
-      * @private
-      */
-    var splitStringAndCommentTokens = createSimpleLexer(
-        shortcutStylePatterns, fallthroughStylePatterns);
-
-    var styleLiteralIdentifierPuncRecognizer = createSimpleLexer([], [
-        [PR_PLAIN,       /^\s+/, null, ' \r\n'],
-        // TODO(mikesamuel): recognize non-latin letters and numerals in idents
-        [PR_PLAIN,       /^[a-z_$@][a-z_$@0-9]*/i, null],
-        // A hex number
-        [PR_LITERAL,     /^0x[a-f0-9]+[a-z]/i, null],
-        // An octal or decimal number, possibly in scientific notation
-        [PR_LITERAL,
-         /^(?:\d(?:_\d+)*\d*(?:\.\d*)?|\.\d+)(?:e[+\-]?\d+)?[a-z]*/i,
-         null, '123456789'],
-        [PR_PUNCTUATION, /^[^\s\w\.$@]+/, null]
-        // Fallback will handle decimal points not adjacent to a digit
-      ]);
-
-    /** splits plain text tokens into more specific tokens, and then tries to
-      * recognize keywords, and types.
-      * @private
-      */
-    function splitNonStringNonCommentTokens(job) {
-      var source = job.source, decorations = job.decorations;
-      var basePos = job.basePos;
-      for (var i = 0; i < decorations.length; i += 2) {
-        var style = decorations[i + 1];
-        if (style === PR_PLAIN) {
-          var start, end, chunk, subDecs;
-          start = decorations[i] - basePos;
-          end = i + 2 < decorations.length
-              ? decorations[i + 2] - basePos
-              : source.length;
-          chunk = source.substring(start, end);
-          var subJob = { source: chunk, basePos: start + basePos };
-          styleLiteralIdentifierPuncRecognizer(subJob);
-          subDecs = subJob.decorations;
-          for (var j = 0, m = subDecs.length; j < m; j += 2) {
-            var subStyle = subDecs[j + 1];
-            if (subStyle === PR_PLAIN) {
-              var subStart = subDecs[j] - basePos;
-              var subEnd = j + 2 < m ? subDecs[j + 2] - basePos : end;
-              var token = source.substring(subStart, subEnd);
-              if (token === '.') {
-                subDecs[j + 1] = PR_PUNCTUATION;
-              } else if (token in keywords) {
-                subDecs[j + 1] = PR_KEYWORD;
-              } else if (/^@?[A-Z][A-Z$]*[a-z][A-Za-z$]*$/.test(token)) {
-                // classify types and annotations using Java's style
-                // conventions
-                subDecs[j + 1] = token.charCodeAt(0) === 64
-                    ? PR_LITERAL : PR_TYPE;
-              }
-            }
-          }
-          spliceArrayInto(subDecs, decorations, i, 2);
-          i += subDecs.length - 2;
-        }
-      }
-      job.decorations = decorations;
+    var keywords = options['keywords'].replace(/^\s+|\s+$/g, '');
+    if (keywords.length) {
+      fallthroughStylePatterns.push(
+          [PR_KEYWORD,
+           new RegExp('^(?:' + keywords.replace(/\s+/g, '|') + ')\\b'), null]);
     }
 
-    return function (job) {
-      // Split into strings, comments, and other.
-      // We do this because strings and comments are easily recognizable and can
-      // contain stuff that looks like other tokens, so we want to mark those
-      // early so we don't recurse into them.
-      splitStringAndCommentTokens(job);
-      // Split non comment|string tokens on whitespace and word boundaries
-      splitNonStringNonCommentTokens(job);
-    };
+    shortcutStylePatterns.push([PR_PLAIN,       /^\s+/, null, ' \r\n\t\xA0']);
+    fallthroughStylePatterns.push(
+        // TODO(mikesamuel): recognize non-latin letters and numerals in idents
+        [PR_LITERAL,     /^@[a-z_$][a-z_$@0-9]*/i, null, '@'],
+        [PR_TYPE,        /^@?[A-Z]+[a-z][A-Za-z_$@0-9]*/, null],
+        [PR_PLAIN,       /^[a-z_$][a-z_$@0-9]*/i, null],
+        [PR_LITERAL,
+         new RegExp(
+             '^(?:'
+             // A hex number
+             + '0x[a-f0-9]+'
+             // or an octal or decimal number, 
+             + '|(?:\\d(?:_\\d+)*\\d*(?:\\.\\d*)?|\\.\\d\\+)'
+             // possibly in scientific notation
+             + '(?:e[+\\-]?\\d+)?'
+             + ')'
+             // with an optional modifier like UL for unsigned long
+             + '[a-z]*', 'i'),
+         null, '0123456789'],
+        [PR_PUNCTUATION, /^.[^\s\w\.$@\'\"\`\/\#]*/, null]);
+
+    return createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns);
   }
 
   var decorateSource = sourceDecorator({
@@ -1026,8 +961,7 @@ window['_pr_isIE6'] = function () {
     splitSourceAttributes(source, decorations, basePos);
   }
 
-  /**
-    * Breaks {@code job.source} around style boundaries in
+  /** Breaks {@code job.source} around style boundaries in
     * {@code job.decorations} while re-interleaving {@code job.extractedTags},
     * and leaves the result in {@code job.prettyPrintedHtml}.
     * @param {Object} job like {
