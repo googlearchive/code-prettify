@@ -539,7 +539,7 @@ document.writeln(fib(10));
 Fibonacci Numbers
 
 &lt;noscript&gt;
-  &lt;dl&gt;
+  &lt;dl style="list-style: disc"&gt;
     &lt;dt&gt;Fibonacci numbers&lt;/dt&gt;
     &lt;dd&gt;1&lt;/dd&gt;
     &lt;dd&gt;1&lt;/dd&gt;
@@ -614,7 +614,7 @@ document.writeln(fib(10));
   &lt;head&gt;
     &lt;title&gt;Fibonacci number&lt;/title&gt;
   &lt;/head&gt;
-  &lt;body>
+  &lt;body onload="alert(fib(10))">
     &lt;script type="text/javascript"&gt;&lt;![CDATA[
 function fib(n) {
   var a = 1, b = 1;
@@ -626,8 +626,6 @@ function fib(n) {
   }
   return a;
 }
-
-document.writeln(fib(10));
 ]]&gt;
     &lt;/script&gt;
   &lt;/body&gt;
@@ -1592,9 +1590,12 @@ var goldens = {
       '`PLNFibonacci Numbers<br>' +
       '<br>' +
       '`END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`PUN&lt;`END`TAGdl`END`PLN `END`ATNstyle`END`PUN=`END' +
+          '`ATV"`END`KWDlist-style`END`PUN:`END`PLN disc`END`ATV"`END' +
+          '`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
-          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END`PLN<br>' +
+          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END' +
+          '`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
           '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
@@ -1683,12 +1684,15 @@ var goldens = {
   xhtml: (
       '`PUN&lt;`END`TAGxhtml`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNFibonacci number`END' +
-          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END' +
+          '`PLNFibonacci number`END`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END' +
+          '`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
-          '`ATV"text/javascript"`END`PUN&gt;' +
+      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PLN `END`ATNonload`END`PUN=`END' +
+          '`ATV"`END`PLNalert`END`PUN(`END`PLNfib`END`PUN(`END`LIT10`END' +
+          '`PUN))`END`ATV"`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END' +
+          '`PUN=`END`ATV"text/javascript"`END`PUN&gt;' +
           '&lt;![`END`PLNCDATA`END`PUN[`END`PLN<br>' +
       '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
@@ -1703,9 +1707,6 @@ var goldens = {
       '&nbsp; `END`PUN}`END`PLN<br>' +
       '&nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END`PLN<br>' +
       '`END`PUN}`END`PLN<br>' +
-      '<br>' +
-      'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
-          '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`PUN]]&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
       '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
@@ -2447,7 +2448,9 @@ function runTests() {
       var post = commonSuffix(golden, actual, pre);
 
       ++failures;
-      htmlOut.push('<h2>' + html(lang) + ' Failed<\/h1>');
+      htmlOut.push(
+          '<h2><a href="#' + html(lang) + '">'
+          + html(lang) + '<\/a> Failed<\/h2>');
       htmlOut.push(
           '<tt>' + html(golden.substring(0, pre)) +
           '&raquo;<span class="mismatch">' +
@@ -2463,7 +2466,8 @@ function runTests() {
           '<\/span>&laquo;' +
           html(actual.substring(actual.length - post)) + '<\/tt>');
     } else {
-      htmlOut.push('<h2>' + html(lang) + ' OK<\/h1>');
+      htmlOut.push(
+          '<h2><a href="#' + html(lang) + '">' + html(lang) + '<\/a> OK<\/h2>');
     }
   }
   var summary = (failures ? (failures + ' test(s) failed') : 'Tests Passed');

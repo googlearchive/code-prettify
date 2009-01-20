@@ -186,8 +186,8 @@ window['_pr_isIE6'] = function () {
     * </code>
     * @param {Array} inserted
     * @param {Array} container modified in place
-    * @param {Number} containerPosition
-    * @param {Number} countReplaced
+    * @param {number} containerPosition
+    * @param {number} countReplaced
     */
   function spliceArrayInto(
       inserted, container, containerPosition, countReplaced) {
@@ -517,18 +517,17 @@ window['_pr_isIE6'] = function () {
   /**
    * Apply the given language handler to sourceCode and add the resulting
    * decorations to out.
-   * @param {number} offset the index of sourceCode within the chunk of source
+   * @param {number} basePos the index of sourceCode within the chunk of source
    *    whose decorations are already present on out.
    */
-  function appendDecorations(offset, sourceCode, langHandler, out) {
+  function appendDecorations(basePos, sourceCode, langHandler, out) {
     if (!sourceCode) { return; }
-    var decorations = langHandler.call({}, sourceCode);
-    if (offset) {
-      for (var i = decorations.length; (i -= 2) >= 0;) {
-        decorations[i] += offset;
-      }
-    }
-    out.push.apply(out, decorations);
+    var job = {
+      source: sourceCode,
+      basePos: basePos
+    };
+    langHandler(job);
+    out.push.apply(out, job.decorations);
   }
 
   /** Given triples of [style, pattern, context] returns a lexing function,
@@ -578,8 +577,7 @@ window['_pr_isIE6'] = function () {
     * @return {function (string, number?) : Array.<number|string>} a
     *   function that takes source code and returns a list of decorations.
     */
-  function createSimpleLexer(shortcutStylePatterns,
-                             fallthroughStylePatterns) {
+  function createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns) {
     var shortcuts = {};
     (function () {
       var allPatterns = shortcutStylePatterns.concat(fallthroughStylePatterns);
@@ -597,9 +595,25 @@ window['_pr_isIE6'] = function () {
     var nPatterns = fallthroughStylePatterns.length;
     var notWs = /\S/;
 
-    var decorate = function (sourceCode, opt_basePos) {
-      opt_basePos = opt_basePos || 0;
-      var decorations = [opt_basePos, PR_PLAIN];
+    /**
+     * Lexes job.source and produces an output array job.decorations of style
+     * classes preceded by the position at which they start in job.source in
+     * order.
+     *
+     * @param {Object} job an object like {@code
+     *    source: {string} sourceText plain text,
+     *    basePos: {int} position of job.source in the larger chunk of
+     *        sourceCode.
+     * }
+     */
+    var decorate = function (job) {
+      var sourceCode = job.source, basePos = job.basePos;
+      /** Even entries are positions in source in ascending order.  Odd enties
+        * are style markers (e.g., PR_COMMENT) that run from that position until
+        * the end.
+        * @type {Array.<number|string>}
+        */
+      var decorations = [basePos, PR_PLAIN];
       var lastToken = '';
       var pos = 0;  // index into sourceCode
       var tail = sourceCode;
@@ -641,37 +655,39 @@ window['_pr_isIE6'] = function () {
           isEmbedded = false;
           style = PR_SOURCE;
         }
+
+        var tokenStart = pos;
+        pos += token.length;
+        tail = tail.substring(token.length);
+        if (style !== PR_COMMENT && notWs.test(token)) { lastToken = token; }
+
         if (!isEmbedded) {
-          decorations.push(opt_basePos + pos, style);
+          decorations.push(basePos + tokenStart, style);
         } else {  // Treat group 1 as an embedded block of source code.
           var embeddedSource = match[1];
           var embeddedSourceStart = token.indexOf(embeddedSource);
           var embeddedSourceEnd = embeddedSourceStart + embeddedSource.length;
           var lang = style.substring(5);
-          if (!langHandlerRegistry.hasOwnProperty(lang)) {
-            lang = /^\s*</.test(embeddedSource)
-                ? 'default-markup'
-                : 'default-code';
-          }
           var size = decorations.length - 10;
+          // Decorate the left of the embedded source
           appendDecorations(
-              opt_basePos + pos,
+              basePos + tokenStart,
               token.substring(0, embeddedSourceStart),
               decorate, decorations);
+          // Decorate the embedded source
           appendDecorations(
-              opt_basePos + pos + embeddedSourceStart,
-              token.substring(embeddedSourceStart, embeddedSourceEnd),
-              langHandlerRegistry[lang], decorations);
+              basePos + tokenStart + embeddedSourceStart,
+              embeddedSource,
+              langHandlerForExtension(lang, embeddedSource),
+              decorations);
+          // Decorate the right of the embedded section
           appendDecorations(
-              opt_basePos + pos + embeddedSourceEnd,
+              basePos + tokenStart + embeddedSourceEnd,
               token.substring(embeddedSourceEnd),
               decorate, decorations);
         }
-        pos += token.length;
-        tail = tail.substring(token.length);
-        if (style !== PR_COMMENT && notWs.test(token)) { lastToken = token; }
       }
-      return decorations;
+      job.decorations = decorations;
     };
     return decorate;
   }
@@ -699,13 +715,18 @@ window['_pr_isIE6'] = function () {
     * not yet broken out.
     * @private
     */
-  function tokenizeMarkup(source) {
-    var decorations = PR_MARKUP_LEXER(source);
+  function tokenizeMarkup(job) {
+    PR_MARKUP_LEXER(job);
+
+    var decorations = job.decorations;
+    var source = job.source;
+    var basePos = job.basePos;
     for (var i = 0; i < decorations.length; i += 2) {
       if (decorations[i + 1] === PR_SOURCE) {
         var start, end;
-        start = decorations[i];
-        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+        start = decorations[i] - basePos;
+        end = i + 2 < decorations.length
+            ? decorations[i + 2] - basePos : source.length;
         // Split out start and end script tags as actual tags, and leave the
         // body with style SCRIPT.
         var sourceChunk = source.substring(start, end);
@@ -719,7 +740,6 @@ window['_pr_isIE6'] = function () {
         }
       }
     }
-    return decorations;
   }
 
   var PR_TAG_LEXER = createSimpleLexer([
@@ -736,20 +756,22 @@ window['_pr_isIE6'] = function () {
     * recursively lex source chunks.
     * @private
     */
-  function splitTagAttributes(source, decorations) {
+  function splitTagAttributes(source, decorations, basePos) {
     for (var i = 0; i < decorations.length; i += 2) {
       var style = decorations[i + 1];
       if (style === PR_TAG) {
         var start, end;
-        start = decorations[i];
-        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+        start = decorations[i] - basePos;
+        end = i + 2 < decorations.length
+            ? decorations[i + 2] - basePos : source.length;
         var chunk = source.substring(start, end);
-        var subDecorations = PR_TAG_LEXER(chunk, start);
+        var subJob = { source: chunk, basePos: start + basePos };
+        PR_TAG_LEXER(subJob);
+        var subDecorations = subJob.decorations;
         spliceArrayInto(subDecorations, decorations, i, 2);
         i += subDecorations.length - 2;
       }
     }
-    return decorations;
   }
 
   /** returns a function that produces a list of decorations from source text.
@@ -845,28 +867,36 @@ window['_pr_isIE6'] = function () {
       * recognize keywords, and types.
       * @private
       */
-    function splitNonStringNonCommentTokens(source, decorations) {
+    function splitNonStringNonCommentTokens(job) {
+      var source = job.source, decorations = job.decorations;
+      var basePos = job.basePos;
       for (var i = 0; i < decorations.length; i += 2) {
         var style = decorations[i + 1];
         if (style === PR_PLAIN) {
           var start, end, chunk, subDecs;
-          start = decorations[i];
-          end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+          start = decorations[i] - basePos;
+          end = i + 2 < decorations.length
+              ? decorations[i + 2] - basePos
+              : source.length;
           chunk = source.substring(start, end);
-          subDecs = styleLiteralIdentifierPuncRecognizer(chunk, start);
+          var subJob = { source: chunk, basePos: start + basePos };
+          styleLiteralIdentifierPuncRecognizer(subJob);
+          subDecs = subJob.decorations;
           for (var j = 0, m = subDecs.length; j < m; j += 2) {
             var subStyle = subDecs[j + 1];
             if (subStyle === PR_PLAIN) {
-              var subStart = subDecs[j];
-              var subEnd = j + 2 < m ? subDecs[j + 2] : chunk.length;
+              var subStart = subDecs[j] - basePos;
+              var subEnd = j + 2 < m ? subDecs[j + 2] - basePos : end;
               var token = source.substring(subStart, subEnd);
               if (token === '.') {
                 subDecs[j + 1] = PR_PUNCTUATION;
               } else if (token in keywords) {
                 subDecs[j + 1] = PR_KEYWORD;
               } else if (/^@?[A-Z][A-Z$]*[a-z][A-Za-z$]*$/.test(token)) {
-                // classify types and annotations using Java's style conventions
-                subDecs[j + 1] = token.charAt(0) === '@' ? PR_LITERAL : PR_TYPE;
+                // classify types and annotations using Java's style
+                // conventions
+                subDecs[j + 1] = token.charCodeAt(0) === 64
+                    ? PR_LITERAL : PR_TYPE;
               }
             }
           }
@@ -874,20 +904,17 @@ window['_pr_isIE6'] = function () {
           i += subDecs.length - 2;
         }
       }
-      return decorations;
+      job.decorations = decorations;
     }
 
-    return function (sourceCode) {
+    return function (job) {
       // Split into strings, comments, and other.
       // We do this because strings and comments are easily recognizable and can
       // contain stuff that looks like other tokens, so we want to mark those
       // early so we don't recurse into them.
-      var decorations = splitStringAndCommentTokens(sourceCode);
-
+      splitStringAndCommentTokens(job);
       // Split non comment|string tokens on whitespace and word boundaries
-      decorations = splitNonStringNonCommentTokens(sourceCode, decorations);
-
-      return decorations;
+      splitNonStringNonCommentTokens(job);
     };
   }
 
@@ -903,24 +930,32 @@ window['_pr_isIE6'] = function () {
     * lex them.
     * @private
     */
-  function splitSourceAttributes(source, decorations) {
-    var nextValueIsSource = false;
+  function splitSourceAttributes(source, decorations, basePos) {
+    var nextValueLang = null;
     for (var i = 0; i < decorations.length; i += 2) {
       var style = decorations[i + 1];
       var start, end;
       if (style === PR_ATTRIB_NAME) {
-        start = decorations[i];
-        end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
-        nextValueIsSource = /^on|^style$/i.test(source.substring(start, end));
+        start = decorations[i] - basePos;
+        end = i + 2 < decorations.length
+            ? decorations[i + 2] - basePos
+            : source.length;
+        var name = source.substring(start, end);
+        if (/^on|^style$/i.test(name)) {
+          nextValueLang = /^on/i.test(name.substring(0, 2)) ? 'js' : 'css';
+        }
       } else if (style === PR_ATTRIB_VALUE) {
-        if (nextValueIsSource) {
-          start = decorations[i];
-          end = i + 2 < decorations.length ? decorations[i + 2] : source.length;
+        if (nextValueLang) {
+          start = decorations[i] - basePos;
+          end = i + 2 < decorations.length
+              ? decorations[i + 2] - basePos
+              : source.length;
           var attribValue = source.substring(start, end);
           var attribLen = attribValue.length;
-          var quoted =
-              (attribLen >= 2 && /^[\"\']/.test(attribValue) &&
-               attribValue.charAt(0) === attribValue.charAt(attribLen - 1));
+          var quoted = (
+              attribLen >= 2 && /^[\"\']/.test(attribValue) &&
+              (attribValue.charCodeAt(0)
+               === attribValue.charCodeAt(attribLen - 1)));
 
           var attribSource;
           var attribSourceStart;
@@ -928,17 +963,21 @@ window['_pr_isIE6'] = function () {
           if (quoted) {
             attribSourceStart = start + 1;
             attribSourceEnd = end - 1;
-            attribSource = attribValue;
-          } else {
-            attribSourceStart = start + 1;
-            attribSourceEnd = end - 1;
             attribSource = attribValue.substring(1, attribValue.length - 1);
+          } else {
+            attribSourceStart = start;
+            attribSourceEnd = end;
+            attribSource = attribValue;
           }
 
-          var attribSourceDecorations = decorateSource(attribSource);
-          for (var j = 0, m = attribSourceDecorations.length; j < m; j += 2) {
-            attribSourceDecorations[j] += attribSourceStart;
-          }
+          var attribJob = {
+            source: attribSource,
+            basePos: attribSourceStart + basePos
+          };
+          var langHandler = langHandlerForExtension(
+              nextValueLang, attribSource);
+          langHandler(attribJob);
+          var attribSourceDecorations = attribJob.decorations;
 
           if (quoted) {
             attribSourceDecorations.push(attribSourceEnd, PR_ATTRIB_VALUE);
@@ -947,10 +986,9 @@ window['_pr_isIE6'] = function () {
             spliceArrayInto(attribSourceDecorations, decorations, i, 2);
           }
         }
-        nextValueIsSource = false;
+        nextValueLang = null;
       }
     }
-    return decorations;
   }
 
   /** returns a decoration list given a string of markup.
@@ -969,40 +1007,44 @@ window['_pr_isIE6'] = function () {
     * It will recurse into any <style>, <script>, and on* attributes using
     * PR_lexSource.
     */
-  function decorateMarkup(sourceCode) {
+  function decorateMarkup(job) {
     // This function works as follows:
     // 1) Start by splitting the markup into text and tag chunks
-    //    Input:  string s
-    //    Output: List<PR_Token> where style in (PR_PLAIN, null)
     // 2) Then split the text chunks further into comments, declarations,
     //    tags, etc.
     //    After each split, consider whether the token is the start of an
     //    embedded source section, i.e. is an open <script> tag.  If it is, find
     //    the corresponding close token, and don't bother to lex in between.
-    //    Input:  List<string>
-    //    Output: List<PR_Token> with style in
-    //            (PR_TAG, PR_PLAIN, PR_SOURCE, null)
     // 3) Finally go over each tag token and split out attribute names and
     //    values.
-    //    Input:  List<PR_Token>
-    //    Output: List<PR_Token> where style in
-    //            (PR_TAG, PR_PLAIN, PR_SOURCE, NAME, VALUE, null)
-    var decorations = tokenizeMarkup(sourceCode);
-    decorations = splitTagAttributes(sourceCode, decorations);
-    decorations = splitSourceAttributes(sourceCode, decorations);
-    return decorations;
+
+    tokenizeMarkup(job);
+    var source = job.source,
+        decorations = job.decorations,
+        basePos = job.basePos;
+    splitTagAttributes(source, decorations, basePos);
+    splitSourceAttributes(source, decorations, basePos);
   }
 
   /**
-    * @param {string} sourceText plain text
-    * @param {Array.<number|string>} extractedTags chunks of raw html preceded
-    *   by their position in sourceText in order.
-    * @param {Array.<number|string>} decorations style classes preceded by their
-    *   position in sourceText in order.
-    * @return {string} html
+    * Breaks {@code job.source} around style boundaries in
+    * {@code job.decorations} while re-interleaving {@code job.extractedTags},
+    * and leaves the result in {@code job.prettyPrintedHtml}.
+    * @param {Object} job like {
+    *    source: {string} source as plain text,
+    *    extractedTags: {Array.<number|string>} extractedTags chunks of raw
+    *                   html preceded by their position in {@code job.source}
+    *                   in order
+    *    decorations: {Array.<number|string} an array of style classes preceded
+    *                 by the position at which they start in job.source in order
+    * }
     * @private
     */
-  function recombineTagsAndDecorations(sourceText, extractedTags, decorations) {
+  function recombineTagsAndDecorations(job) {
+    var sourceText = job.source;
+    var extractedTags = job.extractedTags;
+    var decorations = job.decorations;
+
     var html = [];
     // index past the last char in sourceText written to html
     var outputIdx = 0;
@@ -1090,15 +1132,26 @@ window['_pr_isIE6'] = function () {
     if (openDecoration) {
       html.push('</span>');
     }
-
-    return html.join('');
+    job.prettyPrintedHtml = html.join('');
   }
 
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
   /** Register a language handler for the given file extensions.
-    * @param {function (string) : Array.<number|string>} handler
-    *     a function from source code to a list of decorations.
+    * @param {function (Object) handler a function from source code to a list of
+    *      decorations.  Takes a single argument job which describes the state
+    *      of the computation so that language handlers may be written in a
+    *      continuation passing style.   The single parameter has the form
+    *      {@code {
+    *        source: {string} as plain text.
+    *        decorations: {Array.<number|string>} an array of style classes
+    *                     preceded by the position at which they start in
+    *                     job.source in order.
+    *                     The language handler should assigned this field.
+    *        basePos: {int} the position of source in the larger source chunk.
+    *                 All positions in the output decorations array are relative
+    *                 to the larger source chunk.
+    *      } }
     * @param {Array.<string>} fileExtensions
     */
   function registerLangHandler(handler, fileExtensions) {
@@ -1107,9 +1160,19 @@ window['_pr_isIE6'] = function () {
       if (!langHandlerRegistry.hasOwnProperty(ext)) {
         langHandlerRegistry[ext] = handler;
       } else if ('console' in window) {
-        console.log('cannot override language handler %s', ext);
+        console.warn('cannot override language handler %s', ext);
       }
     }
+  }
+  function langHandlerForExtension(extension, source) {
+    if (!(extension && langHandlerRegistry.hasOwnProperty(extension))) {
+      // Treat it as markup if the first non whitespace character is a < and
+      // the last non-whitespace character is a >.
+      extension = /^\s*</.test(source)
+          ? 'default-markup'
+          : 'default-code';
+    }
+    return langHandlerRegistry[extension];
   }
   registerLangHandler(decorateSource, ['default-code']);
   registerLangHandler(
@@ -1158,44 +1221,47 @@ window['_pr_isIE6'] = function () {
           'regexLiterals': true
         }), ['js']);
 
-  function prettyPrintOne(sourceCodeHtml, opt_langExtension) {
+  function applyDecorator(job) {
+    var sourceCodeHtml = job.sourceCodeHtml;
+    var opt_langExtension = job.langExtension;
+
+    // Prepopulate output in case processing fails with an exception.
+    job.prettyPrintedHtml = sourceCodeHtml;
+    
     try {
       // Extract tags, and convert the source code to plain text.
       var sourceAndExtractedTags = extractTags(sourceCodeHtml);
       /** Plain text. @type {string} */
       var source = sourceAndExtractedTags.source;
+      job.source = source;
+      job.basePos = 0;
 
       /** Even entries are positions in source in ascending order.  Odd entries
         * are tags that were extracted at that position.
         * @type {Array.<number|string>}
         */
-      var extractedTags = sourceAndExtractedTags.tags;
+      job.extractedTags = sourceAndExtractedTags.tags;
 
-      // Pick a lexer and apply it.
-      if (!langHandlerRegistry.hasOwnProperty(opt_langExtension)) {
-        // Treat it as markup if the first non whitespace character is a < and
-        // the last non-whitespace character is a >.
-        opt_langExtension =
-            /^\s*</.test(source) ? 'default-markup' : 'default-code';
-      }
-
-      /** Even entries are positions in source in ascending order.  Odd enties
-        * are style markers (e.g., PR_COMMENT) that run from that position until
-        * the end.
-        * @type {Array.<number|string>}
-        */
-      var decorations = langHandlerRegistry[opt_langExtension].call({}, source);
-
+      // Apply the appropriate language handler
+      langHandlerForExtension(opt_langExtension, source)(job);
       // Integrate the decorations and tags back into the source code to produce
-      // a decorated html string.
-      return recombineTagsAndDecorations(source, extractedTags, decorations);
+      // a decorated html string which is left in job.prettyPrintedHtml.
+      recombineTagsAndDecorations(job);
     } catch (e) {
       if ('console' in window) {
         console.log(e);
         console.trace();
       }
-      return sourceCodeHtml;
     }
+  }
+
+  function prettyPrintOne(sourceCodeHtml, opt_langExtension) {
+    var job = {
+      sourceCodeHtml: sourceCodeHtml,
+      langExtension: opt_langExtension
+    };
+    applyDecorator(job);
+    return job.prettyPrintedHtml;
   }
 
   function prettyPrint(opt_whenDone) {
@@ -1214,15 +1280,21 @@ window['_pr_isIE6'] = function () {
     }
     codeSegments = null;
 
-    // the loop is broken into a series of continuations to make sure that we
+    var clock = Date;
+    if (!clock['now']) {
+      clock = { 'now': function () { return (new Date).getTime(); } };
+    }
+    
+    // The loop is broken into a series of continuations to make sure that we
     // don't make the browser unresponsive when rewriting a large page.
     var k = 0;
+    var prettyPrintingJob;
 
     function doWork() {
       var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
-                     new Date().getTime() + 250 /* ms */ :
+                     clock.now() + 250 /* ms */ :
                      Infinity);
-      for (; k < elements.length && new Date().getTime() < endTime; k++) {
+      for (; k < elements.length && clock.now() < endTime; k++) {
         var cs = elements[k];
         if (cs.className && cs.className.indexOf('prettyprint') >= 0) {
           // If the classes includes a language extensions, use it.
@@ -1250,48 +1322,13 @@ window['_pr_isIE6'] = function () {
             content = content.replace(/(?:\r\n?|\n)$/, '');
 
             // do the pretty printing
-            var newContent = prettyPrintOne(content, langExtension);
-
-            // push the prettified html back into the tag.
-            if (!isRawContent(cs)) {
-              // just replace the old html with the new
-              cs.innerHTML = newContent;
-            } else {
-              // we need to change the tag to a <pre> since <xmp>s do not allow
-              // embedded tags such as the span tags used to attach styles to
-              // sections of source code.
-              var pre = document.createElement('PRE');
-              for (var i = 0; i < cs.attributes.length; ++i) {
-                var a = cs.attributes[i];
-                if (a.specified) {
-                  var aname = a.name.toLowerCase();
-                  if (aname === 'class') {
-                    pre.className = a.value;  // For IE 6
-                  } else {
-                    pre.setAttribute(a.name, a.value);
-                  }
-                }
-              }
-              pre.innerHTML = newContent;
-
-              // remove the old
-              cs.parentNode.replaceChild(pre, cs);
-              cs = pre;
-            }
-
-            // Replace <br>s with line-feeds so that copying and pasting works
-            // on IE 6.
-            // Doing this on other browsers breaks lots of stuff since \r\n is
-            // treated as two newlines on Firefox, and doing this also slows
-            // down rendering.
-            if (isIE6 && cs.tagName === 'PRE') {
-              var lineBreaks = cs.getElementsByTagName('br');
-              for (var j = lineBreaks.length; --j >= 0;) {
-                var lineBreak = lineBreaks[j];
-                lineBreak.parentNode.replaceChild(
-                    document.createTextNode('\r'), lineBreak);
-              }
-            }
+            prettyPrintingJob = {
+              sourceCodeHtml: content,
+              langExtension: langExtension,
+              sourceNode: cs
+            };
+            applyDecorator(prettyPrintingJob);
+            replaceWithPrettyPrintedHtml();
           }
         }
       }
@@ -1300,6 +1337,53 @@ window['_pr_isIE6'] = function () {
         setTimeout(doWork, 250);
       } else if (opt_whenDone) {
         opt_whenDone();
+      }
+    }
+
+    function replaceWithPrettyPrintedHtml() {
+      var newContent = prettyPrintingJob.prettyPrintedHtml;
+      if (!newContent) { return; }
+      var cs = prettyPrintingJob.sourceNode;
+
+      // push the prettified html back into the tag.
+      if (!isRawContent(cs)) {
+        // just replace the old html with the new
+        cs.innerHTML = newContent;
+      } else {
+        // we need to change the tag to a <pre> since <xmp>s do not allow
+        // embedded tags such as the span tags used to attach styles to
+        // sections of source code.
+        var pre = document.createElement('PRE');
+        for (var i = 0; i < cs.attributes.length; ++i) {
+          var a = cs.attributes[i];
+          if (a.specified) {
+            var aname = a.name.toLowerCase();
+            if (aname === 'class') {
+              pre.className = a.value;  // For IE 6
+            } else {
+              pre.setAttribute(a.name, a.value);
+            }
+          }
+        }
+        pre.innerHTML = newContent;
+
+        // remove the old
+        cs.parentNode.replaceChild(pre, cs);
+        cs = pre;
+      }
+
+      // Replace <br>s with line-feeds so that copying and pasting works
+      // on IE 6.
+      // Doing this on other browsers breaks lots of stuff since \r\n is
+      // treated as two newlines on Firefox, and doing this also slows
+      // down rendering.
+      if (isIE6 && cs.tagName === 'PRE') {
+        var lineBreaks = cs.getElementsByTagName('br');
+        for (var j = lineBreaks.length; --j >= 0;) {
+          var lineBreak = lineBreaks[j];
+          lineBreak.parentNode.replaceChild(
+              document.createTextNode('\r'), lineBreak);
+        }
       }
     }
 
