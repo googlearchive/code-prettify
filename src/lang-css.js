@@ -42,12 +42,12 @@ PR.registerLangHandler(
           /^\"(?:[^\n\r\f\\\"]|\\(?:\r\n?|\n|\f)|\\[\s\S])*\"/, null],
          [PR.PR_STRING,
           /^\'(?:[^\n\r\f\\\']|\\(?:\r\n?|\n|\f)|\\[\s\S])*\'/, null],
-         [PR.PR_STRING, /^\([^\)\"\']*\)/, /\burl/i],
+         ['lang-css-str', /^url\(([^\)\"\']*)\)/i],
          [PR.PR_KEYWORD,
           /^(?:url|rgb|\!important|@import|@page|@media|@charset|inherit)(?=[^\-\w]|$)/i,
           null],
          // A property name -- an identifier followed by a colon.
-         [PR.PR_KEYWORD, /^-?(?:[_a-z]|(?:\\[0-9a-f]+ ?))(?:[_a-z0-9\-]|\\(?:\\[0-9a-f]+ ?))*(?=\s*:)/i],
+         ['lang-css-kw', /^(-?(?:[_a-z]|(?:\\[0-9a-f]+ ?))(?:[_a-z0-9\-]|\\(?:\\[0-9a-f]+ ?))*)\s*:/i],
          // A C style block comment.  The <comment> production.
          [PR.PR_COMMENT, /^\/\*[^*]*\*+(?:[^\/*][^*]*\*+)*\//],
          // Escaping text spans
@@ -63,3 +63,16 @@ PR.registerLangHandler(
          [PR.PR_PUNCTUATION, /^[^\s\w\'\"]+/]
         ]),
     ['css']);
+PR.registerLangHandler(
+    PR.createSimpleLexer([],
+        [
+         [PR.PR_KEYWORD,
+          /^-?(?:[_a-z]|(?:\\[\da-f]+ ?))(?:[_a-z\d\-]|\\(?:\\[\da-f]+ ?))*/i]
+        ]),
+    ['css-kw']);
+PR.registerLangHandler(
+    PR.createSimpleLexer([],
+        [
+         [PR.PR_STRING, /^[^\)\"\']+/]
+        ]),
+    ['css-str']);

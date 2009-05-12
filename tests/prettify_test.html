@@ -22,25 +22,13 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-vb.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
-<script type="text/javascript">
-// get accurate timing
-PR_SHOULD_USE_CONTINUATION = false;
-if (!/[?&]testcopypaste\b/.test(location.search)) {
-  _pr_isIE6 = function() { return false; };  // Ensure consistent output.
-}
-</script>
+<script src="test_base.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css" />
-<style type="text/css">
-.mismatch { background: #fee; }
-span.annot { margin:2px 2px 2px 3em; border:1px dotted #88f; background:#eef;
-             padding: 0 2px 0 2px }
-.nocode { background: #f8f8f8 }
-</style>
+<link rel="stylesheet" type="text/css" href="test_styles.css" />
 </head>
 
-<body
- onload="startClock(); prettyPrint(function () { stopClock(); runTests(); })"
- bgcolor="white">
+<body onload="go(goldens)" bgcolor="white">
 <div id="timing"></div>
 <div id="errorReport" style="white-space: pre"></div>
 
@@ -1501,71 +1489,70 @@ var goldens = {
   xml: (
       '`DEC&lt;!DOCTYPE series PUBLIC "fibonacci numbers"&gt;`END`PLN<br>' +
       '<br>' +
-      '`END`PUN&lt;`END`TAGseries`END`PLN `END`ATNbase`END`PUN=`END' +
+      '`END`TAG&lt;series`END`PLN `END`ATNbase`END`PUN=`END' +
           '`ATV"1"`END`PLN `END' +
-          '`ATNstep`END`PUN=`END`ATV"s(n-2) + s(n-1)"`END`PUN&gt;`END' +
+          '`ATNstep`END`PUN=`END`ATV"s(n-2) + s(n-1)"`END`TAG&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+      '&nbsp; `END`TAG&lt;element`END`PLN `END`ATNi`END`PUN=`END' +
           '`ATV"0"`END' +
-          '`PUN&gt;`END`PLN1`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN1`END`TAG&lt;/element&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+      '&nbsp; `END`TAG&lt;element`END`PLN `END`ATNi`END`PUN=`END' +
           '`ATV"1"`END' +
-          '`PUN&gt;`END`PLN1`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN1`END`TAG&lt;/element&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+      '&nbsp; `END`TAG&lt;element`END`PLN `END`ATNi`END`PUN=`END' +
           '`ATV"2"`END' +
-          '`PUN&gt;`END`PLN2`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN2`END`TAG&lt;/element&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+      '&nbsp; `END`TAG&lt;element`END`PLN `END`ATNi`END`PUN=`END' +
           '`ATV"3"`END' +
-          '`PUN&gt;`END`PLN3`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN3`END`TAG&lt;/element&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+      '&nbsp; `END`TAG&lt;element`END`PLN `END`ATNi`END`PUN=`END' +
           '`ATV"4"`END' +
-          '`PUN&gt;`END`PLN5`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN5`END`TAG&lt;/element&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGelement`END`PLN `END`ATNi`END`PUN=`END' +
+      '&nbsp; `END`TAG&lt;element`END`PLN `END`ATNi`END`PUN=`END' +
           '`ATV"5"`END' +
-          '`PUN&gt;`END`PLN8`END`PUN&lt;/`END`TAGelement`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN8`END`TAG&lt;/element&gt;`END' +
           '`PLN<br>' +
       '&nbsp; ...<br>' +
-      '`END`PUN&lt;/`END`TAGseries`END`PUN&gt;`END'),
+      '`END`TAG&lt;/series&gt;`END'),
   html: (
-      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END' +
-          '`PLNFibonacci number`END' +
-          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGstyle`END`PUN&gt;`END`COM&lt;!--`END' +
+      '`TAG&lt;html&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;title&gt;`END`PLNFibonacci number`END' +
+          '`TAG&lt;/title&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;style&gt;`END`COM&lt;!--`END' +
           '`PLN BODY `END`PUN{`END`PLN `END`KWDtext-decoration`END`PUN:`END' +
-          '`PLN blink `END`PUN}`END`PLN `END`COM--&gt;`END`PUN&lt;/`END' +
-          '`TAGstyle`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
-          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END' +
+          '`PLN blink `END`PUN}`END`PLN `END`COM--&gt;`END`TAG&lt;/' +
+          'style&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;body&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;noscript&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;dl&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dt&gt;`END' +
+          '`PLNFibonacci numbers`END`TAG&lt;/dt&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN2`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN3`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN5`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN8`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN2`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN3`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN5`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN8`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; &amp;hellip;<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;/`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;/dl&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;/noscript&gt;`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
-          '`ATV"text/javascript"`END`PUN&gt;&lt;!--`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;script`END`PLN `END`ATNtype`END`PUN=`END' +
+          '`ATV"text/javascript"`END`TAG&gt;`END`PUN&lt;!--`END`PLN<br>' +
       '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
       '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
@@ -1583,37 +1570,36 @@ var goldens = {
       'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`COM// --&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+      '&nbsp; &nbsp; `END`TAG&lt;/script&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/html&gt;`END'),
   html_lang: (
       '`PLNFibonacci Numbers<br>' +
       '<br>' +
-      '`END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGdl`END`PLN `END`ATNstyle`END`PUN=`END' +
+      '`END`TAG&lt;noscript&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;dl`END`PLN `END`ATNstyle`END`PUN=`END' +
           '`ATV"`END`KWDlist-style`END`PUN:`END`PLN disc`END`ATV"`END' +
-          '`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
-          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;dt&gt;`END' +
+          '`PLNFibonacci numbers`END`TAG&lt;/dt&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END`TAG&lt;/dd&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN2`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN3`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN5`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN8`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END`TAG&lt;/dd&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN2`END`TAG&lt;/dd&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN3`END`TAG&lt;/dd&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN5`END`TAG&lt;/dd&gt;`END' +
+          '`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN8`END`TAG&lt;/dd&gt;`END' +
+          '`PLN<br>' +
       '&nbsp; &nbsp; &amp;hellip;<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/dl&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/noscript&gt;`END`PLN<br>' +
       '<br>' +
-      '`END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
-          '`ATV"text/javascript"`END`PUN&gt;&lt;!--`END`PLN<br>' +
+      '`END`TAG&lt;script`END`PLN `END`ATNtype`END`PUN=`END' +
+          '`ATV"text/javascript"`END`TAG&gt;`END`PUN&lt;!--`END`PLN<br>' +
       '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
       '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
@@ -1631,36 +1617,36 @@ var goldens = {
       'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`COM// --&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END'),
+      '`END`TAG&lt;/script&gt;`END'),
   htmlXmp: (
-      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNFibonacci number`END' +
-          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdt`END`PUN&gt;`END' +
-          '`PLNFibonacci numbers`END`PUN&lt;/`END`TAGdt`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN1`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN2`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN3`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN5`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN&lt;`END`TAGdd`END`PUN&gt;`END`PLN8`END' +
-          '`PUN&lt;/`END`TAGdd`END`PUN&gt;`END`PLN<br>' +
+      '`TAG&lt;html&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;title&gt;`END`PLNFibonacci number`END' +
+          '`TAG&lt;/title&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;body&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;noscript&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;dl&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dt&gt;`END' +
+          '`PLNFibonacci numbers`END`TAG&lt;/dt&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN1`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN2`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN3`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN5`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TAG&lt;dd&gt;`END`PLN8`END' +
+          '`TAG&lt;/dd&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp; &amp;hellip;<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`PUN&lt;/`END`TAGdl`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGnoscript`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;/dl&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;/noscript&gt;`END`PLN<br>' +
       '<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END`PUN=`END' +
-          '`ATV"text/javascript"`END`PUN&gt;&lt;!--`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;script`END`PLN `END`ATNtype`END`PUN=`END' +
+          '`ATV"text/javascript"`END`TAG&gt;`END`PUN&lt;!--`END`PLN<br>' +
       '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
       '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
@@ -1678,22 +1664,22 @@ var goldens = {
       'document`END`PUN.`END`PLNwriteln`END`PUN(`END`PLNfib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`COM// --&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+      '&nbsp; &nbsp; `END`TAG&lt;/script&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/html&gt;`END'),
   xhtml: (
-      '`PUN&lt;`END`TAGxhtml`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END' +
-          '`PLNFibonacci number`END`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END' +
+      '`TAG&lt;xhtml&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;title&gt;`END' +
+          '`PLNFibonacci number`END`TAG&lt;/title&gt;`END' +
           '`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PLN `END`ATNonload`END`PUN=`END' +
+      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;body`END`PLN `END`ATNonload`END`PUN=`END' +
           '`ATV"`END`PLNalert`END`PUN(`END`PLNfib`END`PUN(`END`LIT10`END' +
-          '`PUN))`END`ATV"`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGscript`END`PLN `END`ATNtype`END' +
-          '`PUN=`END`ATV"text/javascript"`END`PUN&gt;' +
-          '&lt;![`END`PLNCDATA`END`PUN[`END`PLN<br>' +
+          '`PUN))`END`ATV"`END`TAG&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;script`END`PLN `END`ATNtype`END' +
+          '`PUN=`END`ATV"text/javascript"`END`TAG&gt;`END' +
+          '`PUN&lt;![`END`PLNCDATA`END`PUN[`END`PLN<br>' +
       '`END`KWDfunction`END`PLN fib`END`PUN(`END`PLNn`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN<br>' +
       '&nbsp; `END`KWDvar`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
@@ -1708,16 +1694,16 @@ var goldens = {
       '&nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END`PLN<br>' +
       '`END`PUN}`END`PLN<br>' +
       '`END`PUN]]&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;/`END`TAGscript`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGxhtml`END`PUN&gt;`END'),
+      '&nbsp; &nbsp; `END`TAG&lt;/script&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/xhtml&gt;`END'),
   PHP: (
-      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;&lt;?=`END' +
+      '`TAG&lt;html&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;title&gt;`END`PUN&lt;?=`END' +
           '`PLN `END' +
           '`STR\'Fibonacci numbers\'`END`PLN `END' +
-          '`PUN?&gt;&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
+          '`PUN?&gt;`END`TAG&lt;/title&gt;`END`PLN<br>' +
       '<br>' +
       '&nbsp; &nbsp; `END`PUN&lt;?`END`PLNphp<br>' +
       '&nbsp; &nbsp; &nbsp; `END`COM// PHP has a plethora of comment types' +
@@ -1745,34 +1731,34 @@ var goldens = {
       '&nbsp; &nbsp; &nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN?&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;body&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN&lt;?=`END`PLN fib`END' +
           '`PUN(`END`LIT10`END`PUN)`END`PLN `END`PUN?&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGbody`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+      '&nbsp; `END`TAG&lt;/body&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/html&gt;`END'),
   xsl: (
       '`COM&lt;!-- Test elements and attributes with namespaces --&gt;' +
           '`END`PLN<br>' +
       '<br>' +
-      '`END`PUN&lt;`END`TAGxsl:stylesheet`END`PLN `END`ATNxml:lang`END' +
-          '`PUN=`END`ATV"en"`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGxsl:template`END' +
+      '`END`TAG&lt;xsl:stylesheet`END`PLN `END`ATNxml:lang`END' +
+          '`PUN=`END`ATV"en"`END`TAG&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;xsl:template`END' +
           '`PLN `END`ATNmatch`END`PUN=`END`ATV"."`END' +
-          '`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGxsl:text`END`PUN&gt;`END' +
+          '`TAG&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;xsl:text&gt;`END' +
           '`PLNHello World`END' +
-          '`PUN&lt;/`END`TAGxsl:text`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGxsl:template`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGxsl:stylesheet`END`PUN&gt;`END'
+          '`TAG&lt;/xsl:text&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/xsl:template&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/xsl:stylesheet&gt;`END'
       ),
   whitespace: '',
   misc1: '`COM// ends with line comment token`END`PLN<br>' +
       '`END`COM//`END',
   issue4: (
-      '`PUN&lt;`END`TAGscript`END`PLN `END' +
+      '`TAG&lt;script`END`PLN `END' +
           '`ATNtype`END`PUN=`END`ATV"text/javascript"`END' +
-          '`PUN&gt;`END`PLN<br>' +
+          '`TAG&gt;`END`PLN<br>' +
       '&nbsp; &nbsp;var savedTarget=null' +
           '; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ' +
           '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // The target ' +
@@ -1807,7 +1793,7 @@ var goldens = {
           '=\'75px\'; &nbsp; &nbsp; &nbsp; ' +
           '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;// ' +
           'Starting location verticle<br>' +
-      '`END`PUN&lt;`END`TAGscript`END`PUN&gt;`END'),
+      '`END`TAG&lt;script&gt;`END'),
   issue8: (
       '<b>`PLNone`END</b>`PLN &nbsp; &nbsp; `END<b>`TYPTwo`END</b>`PLN' +
           ' &nbsp; &nbsp; `END<b>`PLNthree`END</b>`PLN &nbsp; `END`TYPFour' +
@@ -1958,20 +1944,20 @@ var goldens = {
   issue14b: (
       '`COM&lt;!-- There\'s an `END<acronym title="tag soup">`COMHTML`END' +
           '</acronym>`COM comment in my comment --&gt;`END`PLN<br>' +
-      '`END`PUN&lt;`END`TAGp`END`PUN&gt;`END' +
+      '`END`TAG&lt;p&gt;`END' +
           '`PLNAnd another one inside the end tag`END' +
-      '`PUN&lt;/`END`TAGp`END`PUN&gt;`END'),
+      '`TAG&lt;/p&gt;`END'),
   issue20: (
-      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
+      '`TAG&lt;html&gt;`END`PLN<br>' +
       '<br>' +
-      '`END`PUN&lt;`END`TAGhead`END`PUN&gt;`END'),
+      '`END`TAG&lt;head&gt;`END'),
   issue21: (
-      '`PUN&lt;`END`TAGhtml`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN&lt;`END`TAGtitle`END`PUN&gt;`END`PLNTest`END' +
-          '`PUN&lt;/`END`TAGtitle`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;/`END`TAGhead`END`PUN&gt;`END`PLN<br>' +
-      '`END`PUN&lt;/`END`TAGhtml`END`PUN&gt;`END'),
+      '`TAG&lt;html&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;title&gt;`END`PLNTest`END' +
+          '`TAG&lt;/title&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/html&gt;`END'),
   issue22: (
       '<span class="nocode">01: `END`COM// This is a line of code`END`PLN<br>' +
       '`END<span class="nocode">02: `END`COM/* Multiline comments can<br>' +
@@ -2338,9 +2324,9 @@ var goldens = {
       '<br>' +
       '{{{<br>' +
       '&nbsp; `END`COM&lt;!-- Embedded XML --&gt;`END`PLN<br>' +
-      '&nbsp; `END`PUN&lt;`END`TAGfoo`END`PLN `END`ATNbar`END`PUN=`END' +
-           '`ATV"baz"`END`PUN&gt;&lt;`END`TAGboo`END`PLN `END' +
-           '`PUN/&gt;&lt;`END`TAGfoo`END`PUN&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;foo`END`PLN `END`ATNbar`END`PUN=`END' +
+           '`ATV"baz"`END`TAG&gt;&lt;boo`END`PLN `END' +
+           '`TAG/&gt;&lt;foo&gt;`END`PLN<br>' +
       '}}}`END'
       ),
   css: (
@@ -2348,8 +2334,8 @@ var goldens = {
       '`END`KWD@charset`END`PUN(`END`STR\'UTF-8\'`END`PUN);`END`PLN<br>' +
       '<br>' +
       '`END`COM/** A url that is not quoted. */`END`PLN<br>' +
-      '`END`KWD@import`END`PUN(`END`KWDurl`END`STR(/more-styles.css)`END' +
-          '`PUN);`END`PLN<br>' +
+      '`END`KWD@import`END`PUN(`END`KWDurl`END`PUN(`END`STR/more-styles.css`END' +
+          '`PUN));`END`PLN<br>' +
       '<br>' +
       'HTML `END`PUN{`END`PLN `END`KWDcontent-before`END`PUN:`END`PLN `END' +
           '`STR\'hello\\20\'`END`PUN;`END`PLN `END`KWDcontent-after`END' +
@@ -2380,113 +2366,6 @@ var goldens = {
       '`END`COM--&gt;`END'
       )
 };
-
-
-function runTests() {
-  /** number of characters in common at the end up to max. */
-  function commonPrefix(a, b) {
-    var n = Math.min(a.length, b.length);
-    var i;
-    for (i = 0; i < n; ++i) {
-      if (a.charAt(i) !== b.charAt(i)) { break; }
-    }
-    return i;
-  }
-
-  /** number of characters in common at the end up to max. */
-  function commonSuffix(a, b, max) {
-    var n = Math.min(a.length - max, b.length - max);
-    var i;
-    for (i = 0; i < n; ++i) {
-      if (a.charAt(a.length - i - 1) !== b.charAt(b.length - i - 1)) { break; }
-    }
-    return i;
-  }
-
-  /** convert a plain text string to html by escaping html special chars. */
-  function html(plainText) {
-    return plainText.replace(/\046/g, '&amp;')
-        .replace(/\074/g, '&lt;')
-        .replace(/\076/g, '&gt;')
-        .replace(/\042/g, '&quot;')
-        .replace(/\xa0/g, '&nbsp;');
-  }
-
-  /**
-   * get normalized markup.  innerHTML varies enough across browsers that we
-   * can't use it.
-   */
-  function normalizedInnerHtml(node) {
-    var out = [];
-    for (var child = node.firstChild; child; child = child.nextSibling) {
-      PR_normalizedHtml(child, out);
-    }
-    out = out.join('');
-    // more normalization to work around problems with non-ascii chars in
-    // regexps in Safari
-    for (var i = 0; (i = out.indexOf('\xa0')) >= 0;) {
-      out = out.substring(0, i) + '&nbsp;' + out.substring(i + 1);
-    }
-    return out;
-  }
-
-  var htmlOut = [];
-  var failures = 0;
-  document.getElementById('errorReport').innerHTML =
-      '<h1>Running tests&hellip;<\/h1>';
-  htmlOut.push('<h1>Test results<\/h1>');
-  for (var lang in goldens) {
-    var golden = goldens[lang].replace(/`([A-Z]{3})/g, function (_, lbl) {
-        return (lbl == 'END'
-            ? '<\/span>'
-            : '<span class="' + lbl.toLowerCase() + '">');
-      });
-    var actual = normalizedInnerHtml(document.getElementById(lang));
-    if (golden !== actual) {  // test failed
-      // write out
-      var pre = commonPrefix(golden, actual);
-      var post = commonSuffix(golden, actual, pre);
-
-      ++failures;
-      htmlOut.push(
-          '<h2><a href="#' + html(lang) + '">'
-          + html(lang) + '<\/a> Failed<\/h2>');
-      htmlOut.push(
-          '<tt>' + html(golden.substring(0, pre)) +
-          '&raquo;<span class="mismatch">' +
-          html(golden.substring(pre, golden.length - post)) +
-          '<\/span>&laquo;' +
-          html(golden.substring(golden.length - post)) +
-
-          '<br>!==<br>' +
-
-          html(actual.substring(0, pre)) +
-          '&raquo;<span class="mismatch">' +
-          html(actual.substring(pre, actual.length - post)) +
-          '<\/span>&laquo;' +
-          html(actual.substring(actual.length - post)) + '<\/tt>');
-    } else {
-      htmlOut.push(
-          '<h2><a href="#' + html(lang) + '">' + html(lang) + '<\/a> OK<\/h2>');
-    }
-  }
-  var summary = (failures ? (failures + ' test(s) failed') : 'Tests Passed');
-  htmlOut.push('<h2>' + summary + '<\/h2>');
-  document.title += ' \u2014 ' + summary;
-  document.getElementById('errorReport').innerHTML =
-      htmlOut.join('').replace(/&lt;br&gt;/g, '&lt;br&gt;\n');
-}
-
-var startTime = null;
-function startClock() {
-  startTime = (new Date).getTime();
-}
-
-function stopClock() {
-  var delta = (new Date).getTime() - startTime;
-  startTime = null;
-  document.getElementById('timing').innerHTML = 'Took ' + delta + ' ms';
-}
 </script>
 
 </html>
