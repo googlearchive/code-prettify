@@ -33,7 +33,7 @@ PR.registerLangHandler(
         ],
         [
          // Meta-info like #summary, #labels, etc.
-         ['lang-wiki.meta',  /(?:^^|[\r\n])(#[a-z]+)\b/],
+         ['lang-wiki.meta',  /(?:^^|\r\n?|\n)(#[a-z]+)\b/],
          // A WikiWord
          [PR.PR_LITERAL,     /^(?:[A-Z][a-z][a-z0-9]+[A-Z][a-z][a-zA-Z0-9]+)\b/
           ],
@@ -44,7 +44,7 @@ PR.registerLangHandler(
          // An inline URL.
          [PR.PR_STRING,
           /^https?:\/\/[^\/?#\s]*(?:\/[^?#\s]*)?(?:\?[^#\s]*)?(?:#\S*)?/i],
-         [PR.PR_PLAIN,       /^[\s\S][^#=*~^A-Zh\{`\[\r\n]+/]
+         [PR.PR_PLAIN,       /^(?:\r\n|[\s\S])[^#=*~^A-Zh\{`\[\r\n]*/]
         ]),
     ['wiki']);
 
