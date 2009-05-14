@@ -1,7 +1,7 @@
 // get accurate timing.
 // This file must be loaded after prettify.js for this to work.
 PR_SHOULD_USE_CONTINUATION = false;
-if (!/[?&]testcopypaste\b/.test(location.search)) {
+if (!/\btestcopypaste\b/.test(location.fragment)) {
   _pr_isIE6 = function() { return false; };  // Ensure consistent output.
 }
 

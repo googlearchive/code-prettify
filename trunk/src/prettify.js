@@ -1050,7 +1050,10 @@ if (patternParts[2]) { console.log(uneval(patternParts)); }
         // Keep track of whether we need to escape space at the beginning of the
         // next chunk.
         lastWasSpace = trailingSpaceRe.test(htmlChunk);
-        html.push(htmlChunk.replace(newlineRe, '<br />'));
+        // IE collapses multiple adjacient <br>s into 1 line break.
+        // Prefix every <br> with '&nbsp;' can prevent such IE's behavior.
+        var lineBreakHtml = window['_pr_isIE6']() ? '&nbsp;<br />' : '<br />';
+        html.push(htmlChunk.replace(newlineRe, lineBreakHtml));
         outputIdx = sourceIdx;
       }
     }
