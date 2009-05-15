@@ -745,8 +745,10 @@ the above into Notepad.</p>
 <span class=nocode>10: </span>}</pre>
 
 <h1>Bug 24 - LUA Syntax Highlighting</h1>
-<pre class="prettyprint lang-lua" id="issue24"
->
+<pre class="prettyprint lang-lua" id="issue24">
+os=require("os")
+math=require("math")
+
 -- Examples from the language reference
      a = 'alo\n123"'
      a = "alo\n123\&quot;"
@@ -1980,7 +1982,10 @@ var goldens = {
       '`END<span class="nocode">10: `END`PUN}`END'
       ),
   issue24: (
-      '`COM-- Examples from the language reference`END`PLN<br>' +
+      '`PLNos`END`PUN=`END`PLNrequire`END`PUN(`END`STR"os"`END`PUN)`END`PLN<br>' +
+      'math`END`PUN=`END`PLNrequire`END`PUN(`END`STR"math"`END`PUN)`END`PLN<br>' +
+      '<br>' +
+      '`END`COM-- Examples from the language reference`END`PLN<br>' +
       '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR\'alo\\n123"\'`END' +
           '`PLN<br>' +
       '&nbsp; &nbsp; &nbsp;a `END`PUN=`END`PLN `END`STR"alo\\n123\\""`END' +
