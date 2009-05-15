@@ -79,7 +79,7 @@ PR.registerLangHandler(
         [
          [PR.PR_KEYWORD,     /^(?:block|c[ad]+r|catch|cons|defun|do|eq|eql|equal|equalp|eval-when|flet|format|go|if|labels|lambda|let|load-time-value|locally|macrolet|multiple-value-call|nil|progn|progv|quote|require|return-from|setq|symbol-macrolet|t|tagbody|the|throw|unwind)\b/, null],
          [PR.PR_LITERAL,
-          /^[+\-]?(?:\d+\/\d+|(?:\.\d+|\d+(?:\.\d*)?)(?:[eEdD][+\-]?\d+)?)/],
+          /^[+\-]?(?:0x[0-9a-f]+|\d+\/\d+|(?:\.\d+|\d+(?:\.\d*)?)(?:[ed][+\-]?\d+)?)/i],
          // A single quote possibly followed by a word that optionally ends with
          // = ! or ?.
          [PR.PR_LITERAL,

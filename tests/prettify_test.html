@@ -914,7 +914,7 @@ Not.A.Char = 'too long'  -- Don't barf.  Show that 't is a lexical error.
 (setenv "TERM" "emacs")
 (c-set-offset 'case-label 2)
 (setq c-basic-offset 2)
-(setq perl-indent-level 2)
+(setq perl-indent-level 0x2)
 (setq delete-key-deletes-forward t)
 (setq indent-tabs-mode nil)
 
@@ -2236,7 +2236,7 @@ var goldens = {
            '`LIT2`END`CLO)`END`PLN<br>' +
       '`END`OPN(`END`KWDsetq`END`PLN c-basic-offset `END`LIT2`END`CLO)`END' +
            '`PLN<br>' +
-      '`END`OPN(`END`KWDsetq`END`PLN perl-indent-level `END`LIT2`END`CLO)`END' +
+      '`END`OPN(`END`KWDsetq`END`PLN perl-indent-level `END`LIT0x2`END`CLO)`END' +
            '`PLN<br>' +
       '`END`OPN(`END`KWDsetq`END`PLN delete-key-deletes-forward `END`KWDt`END' +
            '`CLO)`END`PLN<br>' +
