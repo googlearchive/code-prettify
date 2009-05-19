@@ -115,6 +115,9 @@ unsigned int fib(unsigned int n) {
 void main() {
   printf("%u", fib(10));
 }
+
+#define ZERO 0 /* a
+  multiline comment */
 </pre>
 
 <h1>C++</h1>
@@ -1113,7 +1116,10 @@ var goldens = {
       '`END`KWDvoid`END`PLN main`END`PUN()`END`PLN `END`PUN{`END`PLN<br>' +
       '&nbsp; printf`END`PUN(`END`STR"%u"`END`PUN,`END`PLN fib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN<br>' +
-      '`END`PUN}`END'),
+      '`END`PUN}`END`PLN<br>' +
+      '<br>' +
+      '`END`COM#define ZERO 0 /* a<br>' +
+      '&nbsp; multiline comment */`END'),
   Cpp: (
       '`COM#include &lt;iostream&gt;`END`PLN<br>' +
       '<br>' +
