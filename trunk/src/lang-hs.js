@@ -77,7 +77,7 @@ PR.registerLangHandler(
          // dashes       ->    '--' {'-'}
          // opencom      ->    '{-'
          // closecom     ->    '-}'
-         [PR.PR_COMMENT,     /^(?:(?:--+(?:[^\r\n\x0C_:\"\'\(\),;\[\]`\{\}][^\r\n\x0C_]*)?(?=[\x0C\r\n]|$))|(?:\{-(?:[^-]|-+[^-\}])*-\}))/],
+         [PR.PR_COMMENT,     /^(?:(?:--+(?:[^\r\n\x0C]*)?)|(?:\{-(?:[^-]|-+[^-\}])*-\}))/],
          // reservedid   ->    case | class | data | default | deriving | do
          //               |    else | if | import | in | infix | infixl | infixr
          //               |    instance | let | module | newtype | of | then
