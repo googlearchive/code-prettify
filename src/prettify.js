@@ -922,7 +922,14 @@ if (patternParts[2]) { console.log(uneval(patternParts)); }
            null, '"\'']);
     }
     if (options['hashComments']) {
-      shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
+      if (options['cStyleComments']) {
+        // Stop C preprocessor declarations at an unclosed open comment
+        shortcutStylePatterns.push(
+            [PR_COMMENT, /^#(?:[^\r\n\/]|\/(?!\*)|\/\*[^\r\n]*?\*\/)*/,
+             null, '#']);
+      } else {
+        shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
+      }
     }
     if (options['cStyleComments']) {
       fallthroughStylePatterns.push([PR_COMMENT, /^\/\/[^\r\n]*/, null]);
