@@ -109,7 +109,7 @@ window['_pr_isIE6'] = function () {
   var CSHARP_KEYWORDS = JAVA_KEYWORDS +
       "as base by checked decimal delegate descending event " +
       "fixed foreach from group implicit in interface internal into is lock " +
-      "object out override orderby params readonly ref sbyte sealed " +
+      "object out override orderby params partial readonly ref sbyte sealed " +
       "stackalloc string select uint ulong unchecked unsafe ushort var ";
   var JSCRIPT_KEYWORDS = COMMON_KEYWORDS +
       "debugger eval export function get null set undefined var with " +
