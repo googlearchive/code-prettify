@@ -73,9 +73,9 @@ window['PR_normalizedHtml']
   * @return {string} code as html, but prettier
   */
   = window['prettyPrintOne']
-/** find all the < pre > and < code > tags in the DOM with class=prettyprint
-  * and prettify them.
-  * @param {Function} opt_whenDone if specified, called when the last entry
+/** Find all the {@code <pre>} and {@code <code>} tags in the DOM with
+  * {@code class=prettyprint} and prettify them.
+  * @param {Function?} opt_whenDone if specified, called when the last entry
   *     has been finished.
   */
   = window['prettyPrint'] = void 0;
@@ -758,7 +758,7 @@ window['_pr_isIE6'] = function () {
     * @param {Array} fallthroughStylePatterns patterns that will be tried in
     *   order if the shortcut ones fail.  May have shortcuts.
     *
-    * @return {function (string, number?) : Array.<number|string>} a
+    * @return {function (Object)} a
     *   function that takes source code and returns a list of decorations.
     */
   function createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns) {
@@ -770,7 +770,6 @@ window['_pr_isIE6'] = function () {
       var regexKeys = {};
       for (var i = 0, n = allPatterns.length; i < n; ++i) {
         var patternParts = allPatterns[i];
-if (patternParts[2]) { console.log(uneval(patternParts)); }
         var shortcutChars = patternParts[3];
         if (shortcutChars) {
           for (var c = shortcutChars.length; --c >= 0;) {
@@ -842,8 +841,7 @@ if (patternParts[2]) { console.log(uneval(patternParts)); }
             }
           }
 
-          var isEmbedded = style.length >= 5
-              && 'lang-' === style.substring(0, 5);
+          isEmbedded = style.length >= 5 && 'lang-' === style.substring(0, 5);
           if (isEmbedded && !(match && match[1])) {
             isEmbedded = false;
             style = PR_SOURCE;
@@ -898,9 +896,8 @@ if (patternParts[2]) { console.log(uneval(patternParts)); }
     * It recognizes C, C++, and shell style comments.
     *
     * @param {Object} options a set of optional parameters.
-    * @return {function (string) : Array.<string|number>} a
-    *     decorator that takes sourceCode as plain text and that returns a
-    *     decoration list
+    * @return {function (Object)} a function that examines the source code
+    *     in the input job and builds the decoration list.
     */
   function sourceDecorator(options) {
     var shortcutStylePatterns = [], fallthroughStylePatterns = [];
@@ -1109,10 +1106,9 @@ if (patternParts[2]) { console.log(uneval(patternParts)); }
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
   /** Register a language handler for the given file extensions.
-    * @param {function (Object) handler a function from source code to a list of
-    *      decorations.  Takes a single argument job which describes the state
-    *      of the computation so that language handlers may be written in a
-    *      continuation passing style.   The single parameter has the form
+    * @param {function (Object)} handler a function from source code to a list
+    *      of decorations.  Takes a single argument job which describes the
+    *      state of the computation.   The single parameter has the form
     *      {@code {
     *        source: {string} as plain text.
     *        decorations: {Array.<number|string>} an array of style classes
