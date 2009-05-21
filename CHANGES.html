@@ -55,7 +55,8 @@
       <li>Support for <code>nocode</code> spans to allow embedding of line
       numbers and code annotations which should not be styled or otherwise
       affect the tokenization of prettified code.
-      See the issue 22 <a href="tests/prettify_test.html#issue22">testcase</a>.</code>
+      See the issue 22
+      <a href="tests/prettify_test.html#issue22">testcase</a>.</code>
     </ul>
     <h2>6 Jan 2009</h2>
     <ul>
@@ -73,6 +74,14 @@
       <li>Changed HTML lexer to use the same embedded source mechanism as the
         wiki language handler, and changed to use the registered
         CSS handler for STYLE element content.
+    </ul>
+    <h2>21 May 2009</h2>
+    <ul>
+      <li>Rewrote to improve performance on large files.
+        See <a href="http://mikesamuel.blogspot.com/2009/05/efficient-parsing-in-javascript.html">benchmarks</a>.</li>
+      <li>Fixed bugs with highlighting of Haskell line comments, Lisp
+        number literals, Lua strings, C preprocessor directives,
+        newlines in Wiki code on Windows, and newlines in IE6.</li>
     </ul>
   </body>
 </html>
