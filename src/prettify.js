@@ -611,13 +611,14 @@ window['_pr_isIE6'] = function () {
       '[^<]+'  // A run of characters other than '<'
       + '|<\!--[\\s\\S]*?--\>'  // an HTML comment
       + '|<!\\[CDATA\\[[\\s\\S]*?\\]\\]>'  // a CDATA section
-      + '|</?[a-zA-Z][^>]*>'  // a probable tag that should not be highlighted
+      // a probable tag that should not be highlighted
+      + '|<\/?[a-zA-Z](?:[^>\"\']|\'[^\']*\'|\"[^\"]*\")*>'
       + '|<',  // A '<' that does not begin a larger chunk
       'g');
   var pr_commentPrefix = /^<\!--/;
-  var pr_cdataPrefix = /^<\[CDATA\[/;
+  var pr_cdataPrefix = /^<!\[CDATA\[/;
   var pr_brPrefix = /^<br\b/i;
-  var pr_tagNameRe = /^<(\/?)([a-zA-Z]+)/;
+  var pr_tagNameRe = /^<(\/?)([a-zA-Z][a-zA-Z0-9]*)/;
 
   /** split markup into chunks of html tags (style null) and
     * plain text (style {@link #PR_PLAIN}), converting tags which are
