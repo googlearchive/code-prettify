@@ -48,4 +48,4 @@ PR.registerLangHandler(
          // A printable non-space non-special character
          [PR.PR_PUNCTUATION, /^[^\w\t\n\r \xA0()\"\\\';]+/]
         ]),
-    ['apollo']);
+    ['apollo', 'agc', 'aea']);
