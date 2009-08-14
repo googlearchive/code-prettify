@@ -1,6 +1,7 @@
 // get accurate timing.
 // This file must be loaded after prettify.js for this to work.
 PR_SHOULD_USE_CONTINUATION = false;
+var realIsIE6 = _pr_isIE6();
 if (!/\btestcopypaste\b/.test(location.fragment)) {
   _pr_isIE6 = function() { return false; };  // Ensure consistent output.
 }
@@ -69,12 +70,16 @@ function runTests(goldens) {
       '<h1>Running tests&hellip;<\/h1>';
   htmlOut.push('<h1>Test results<\/h1>');
   for (var lang in goldens) {
+    var container = document.getElementById(lang);
+    if (realIsIE6 && /\bknown_ie6_failure\b/.test(container.className)) {
+      continue;
+    }
     var golden = goldens[lang].replace(/`([A-Z]{3})/g, function (_, lbl) {
         return (lbl == 'END'
             ? '<\/span>'
             : '<span class="' + lbl.toLowerCase() + '">');
       });
-    var actual = normalizedInnerHtml(document.getElementById(lang));
+    var actual = normalizedInnerHtml(container);
     if (golden !== actual) {  // test failed
       // write out
       var pre = commonPrefix(golden, actual);

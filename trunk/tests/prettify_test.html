@@ -1012,6 +1012,20 @@ TABLE.foo TR.bar A#visited { color: #001123; font-family: "monospace" }
 blink { text-decoration: BLINK !IMPORTANT; font-weight: bolder }
 --&gt;
 </pre>
+
+<h1>Issue 86</h1>
+<p><code class="prettyprint" id="issue86_0">#One
+Two words</code></p>
+<p><code class="prettyprint known_ie6_failure" id="issue86_1" style="white-space: pre">#One
+Two lines</code></p>
+<pre class="prettyprint" id="issue86_2">#One
+Two lines</pre>
+<pre><code class="prettyprint known_ie6_failure" id="issue86_3">#One
+Two lines</code></pre>
+<xmp class="prettyprint" id="issue86_4">#One
+Two lines</xmp>
+<p><code class="prettyprint" id="issue86_5">#One<br>
+Two lines</code></p>
 </body>
 
 <script type="text/javascript">
@@ -2375,7 +2389,16 @@ var goldens = {
           '`PLN BLINK `END`KWD!IMPORTANT`END`PUN;`END`PLN `END' +
           '`KWDfont-weight`END`PUN:`END`PLN bolder `END`PUN}`END`PLN<br>' +
       '`END`COM--&gt;`END'
-      )
+      ),
+  issue86_0: '`COM#One Two words`END',
+  issue86_1: '`COM#One`END`PLN<br>' +
+      '`END`TYPTwo`END`PLN lines`END',
+  issue86_2: '`COM#One`END`PLN<br>' +
+      '`END`TYPTwo`END`PLN lines`END',
+  issue86_3: '`COM#One`END`PLN<br>' +
+      '`END`TYPTwo`END`PLN lines`END',
+  issue86_4: '`COM#One`END`PLN<br>' +
+      '`END`TYPTwo`END`PLN lines`END'
 };
 </script>
 
