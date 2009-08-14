@@ -273,6 +273,27 @@ window['_pr_isIE6'] = function () {
     return 'XMP' === node.tagName;
   }
 
+  var newlineRe = /[\r\n]/g;
+  /**
+   * Are newlines and adjacent spaces significant in the given node's innerHTML?
+   */
+  function isPreformatted(node, content) {
+    // PRE means preformatted, and is a very common case, so don't create
+    // unnecessary computed style objects.
+    if ('PRE' === node.tagName) { return true; }
+    if (!newlineRe.test(content)) { return true; }  // Don't care
+    var whitespace;
+    // For disconnected nodes, IE has no currentStyle.
+    if (node.currentStyle) {
+      whitespace = node.currentStyle.whiteSpace;
+    } else if (window.getComputedStyle) {
+      // Firefox makes a best guess if node is disconnected whereas Safari
+      // returns the empty string.
+      whitespace = window.getComputedStyle(node, null).whiteSpace;
+    }
+    return !whitespace || whitespace === 'pre';
+  }
+
   function normalizedHtml(node, out) {
     switch (node.nodeType) {
       case 1:  // an element
@@ -548,6 +569,9 @@ window['_pr_isIE6'] = function () {
       // XMP tags contain unescaped entities so require special handling.
       if (isRawContent(node)) {
         content = textToHtml(content);
+      } else if (!isPreformatted(node, content)) {
+        content = content.replace(/(<br\s*\/?>)[\r\n]+/g, '$1')
+            .replace(/(?:[\r\n]+[ \t]*)+/g, ' ');
       }
       return content;
     }
