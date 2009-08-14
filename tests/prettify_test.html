@@ -1013,6 +1013,9 @@ blink { text-decoration: BLINK !IMPORTANT; font-weight: bolder }
 --&gt;
 </pre>
 
+<h1>Issue 84 NBSPs</h1>
+<pre class="prettyprint lang-java" id="issue84">super("&amp;nbsp;");</pre>
+
 <h1>Issue 86</h1>
 <p><code class="prettyprint" id="issue86_0">#One
 Two words</code></p>
@@ -2390,6 +2393,7 @@ var goldens = {
           '`KWDfont-weight`END`PUN:`END`PLN bolder `END`PUN}`END`PLN<br>' +
       '`END`COM--&gt;`END'
       ),
+  issue84: '`KWDsuper`END`PUN(`END`STR"&amp;nbsp;"`END`PUN);`END',
   issue86_0: '`COM#One Two words`END',
   issue86_1: '`COM#One`END`PLN<br>' +
       '`END`TYPTwo`END`PLN lines`END',
