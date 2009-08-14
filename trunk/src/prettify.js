@@ -264,8 +264,8 @@ window['_pr_isIE6'] = function () {
         .replace(pr_gtEnt, '>')
         .replace(pr_aposEnt, "'")
         .replace(pr_quotEnt, '"')
-        .replace(pr_ampEnt, '&')
-        .replace(pr_nbspEnt, ' ');
+        .replace(pr_nbspEnt, ' ')
+        .replace(pr_ampEnt, '&');
   }
 
   /** is the given node's innerHTML normally unescaped? */
