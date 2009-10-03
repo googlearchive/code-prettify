@@ -1050,7 +1050,7 @@ Two lines</xmp>
 <p><code class="prettyprint" id="issue86_5">#One<br>
 Two lines</code></p>
 
-<h1>Issue 92</h1>
+<h1>Issue 92 -- capital letters in tag names</h1>
 <pre class="prettyprint" id="issue92">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;kml xmlns="http://www.opengis.net/kml/2.2"&gt;
@@ -1063,6 +1063,14 @@ Two lines</code></p>
     &lt;/Point&gt;
   &lt;/Placemark&gt;
 &lt;/kml&gt;
+</pre>
+
+<h1>Issue 93 -- C# verbatim strings</h1>
+<pre class="prettyprint lang-cs" id="issue93">
+// The normal string syntax
+string a = "C:\\";
+// is equivalent to a verbatim string
+string b = @"C:\";
 </pre>
 </body>
 
@@ -2438,22 +2446,26 @@ var goldens = {
       '`END`TYPTwo`END`PLN lines`END',
   issue86_4: '`COM#One`END`PLN<br>' +
       '`END`TYPTwo`END`PLN lines`END',
-  issue92: '`PUN&lt;?`END`PLNxml version`END`PUN=`END`STR"1.0"`END`PLN encoding`END`PUN=`END ' +
+  issue92: '`PUN&lt;?`END`PLNxml version`END`PUN=`END`STR"1.0"`END`PLN encoding`END`PUN=`END' +
           '`STR"UTF-8"`END`PUN?&gt;`END`PLN<br>' +
-      '`END`TAG&lt;kml`END`PLN `END`ATNxmlns`END`PUN=`END`ATV"http://www.opengis.net/kml/2.2"`END ' +
+      '`END`TAG&lt;kml`END`PLN `END`ATNxmlns`END`PUN=`END`ATV"http://www.opengis.net/kml/2.2"`END' +
           '`TAG&gt;`END`PLN<br>' +
       '&nbsp; `END`TAG&lt;Placemark&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`TAG&lt;name&gt;`END`PLNSimple placemark`END`TAG&lt;/name&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;description&gt;`END`PLNAttached to the ground. ' +
+      '&nbsp; &nbsp; `END`TAG&lt;description&gt;`END`PLNAttached to the ground.' +
           ' Intelligently places itself <br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp;at the height of the underlying terrain.`END ' +
+      '&nbsp; &nbsp; &nbsp; &nbsp;at the height of the underlying terrain.`END' +
           '`TAG&lt;/description&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`TAG&lt;Point&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;coordinates&gt;`END ' +
+      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;coordinates&gt;`END' +
           '`PLN-122.0822035425683,37.42228990140251,0`END`TAG&lt;/coordinates&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`TAG&lt;/Point&gt;`END`PLN<br>' +
       '&nbsp; `END`TAG&lt;/Placemark&gt;`END`PLN<br>' +
-      '`END`TAG&lt;/kml&gt;`END'
+      '`END`TAG&lt;/kml&gt;`END',
+  issue93: '`COM// The normal string syntax`END`PLN<br>' +
+      '`END`KWDstring`END`PLN a `END`PUN=`END`PLN `END`STR"C:\\\\"`END`PUN;`END`PLN<br>' +
+      '`END`COM// is equivalent to a verbatim string`END`PLN<br>' +
+      '`END`KWDstring`END`PLN b `END`PUN=`END`PLN `END`STR@"C:\\"`END`PUN;`END'
 };
 </script>
 
