@@ -943,6 +943,11 @@ window['_pr_isIE6'] = function () {
            /^(?:\'(?:[^\\\'\r\n]|\\.)*(?:\'|$)|\"(?:[^\\\"\r\n]|\\.)*(?:\"|$))/,
            null, '"\'']);
     }
+    if (options['verbatimStrings']) {
+      // verbatim-string-literal production from the C# grammar.  See issue 93.
+      fallthroughStylePatterns.push(
+          [PR_STRING, /^@\"(?:[^\"]|\"\")*(?:\"|$)/, null]);
+    }
     if (options['hashComments']) {
       if (options['cStyleComments']) {
         // Stop C preprocessor declarations at an unclosed open comment
@@ -988,7 +993,7 @@ window['_pr_isIE6'] = function () {
     shortcutStylePatterns.push([PR_PLAIN,       /^\s+/, null, ' \r\n\t\xA0']);
     fallthroughStylePatterns.push(
         // TODO(mikesamuel): recognize non-latin letters and numerals in idents
-        [PR_LITERAL,     /^@[a-z_$][a-z_$@0-9]*/i, null, '@'],
+        [PR_LITERAL,     /^@[a-z_$][a-z_$@0-9]*/i, null],
         [PR_TYPE,        /^@?[A-Z]+[a-z][A-Za-z_$@0-9]*/, null],
         [PR_PLAIN,       /^[a-z_$][a-z_$@0-9]*/i, null],
         [PR_LITERAL,
@@ -1218,7 +1223,8 @@ window['_pr_isIE6'] = function () {
   registerLangHandler(sourceDecorator({
           'keywords': CSHARP_KEYWORDS,
           'hashComments': true,
-          'cStyleComments': true
+          'cStyleComments': true,
+          'verbatimStrings': true
         }), ['cs']);
   registerLangHandler(sourceDecorator({
           'keywords': JAVA_KEYWORDS,
