@@ -1013,6 +1013,26 @@ blink { text-decoration: BLINK !IMPORTANT; font-weight: bolder }
 --&gt;
 </pre>
 
+<h1>Issue 79 CSS highlighting</h1>
+<pre class=prettyprint>
+&lt;style type='text/css'>
+/* desert scheme ported from vim to google prettify */
+code.prettyprint { display: block; padding: 2px; border: 1px solid #888;
+background-color: #333; }
+.str { color: #ffa0a0; } /* string  - pink */
+.kwd { color: #f0e68c; font-weight: bold; }
+.com { color: #87ceeb; } /* comment - skyblue */
+.typ { color: #98fb98; } /* type    - lightgreen */
+.lit { color: #cd5c5c; } /* literal - darkred */
+.pun { color: #fff; }    /* punctuation */
+.pln { color: #fff; }    /* plaintext */
+.tag { color: #f0e68c; font-weight: bold; } /* html/xml tag    - lightyellow*/
+.atn { color: #bdb76b; font-weight: bold; } /* attribute name  - khaki*/
+.atv { color: #ffa0a0; } /* attribute value - pink */
+.dec { color: #98fb98; } /* decimal         - lightgreen */
+&lt;/style>
+</pre>
+
 <h1>Issue 84 NBSPs</h1>
 <pre class="prettyprint lang-java" id="issue84">super("&amp;nbsp;");</pre>
 
@@ -1029,6 +1049,21 @@ Two lines</code></pre>
 Two lines</xmp>
 <p><code class="prettyprint" id="issue86_5">#One<br>
 Two lines</code></p>
+
+<h1>Issue 92</h1>
+<pre class="prettyprint" id="issue92">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;kml xmlns="http://www.opengis.net/kml/2.2"&gt;
+  &lt;Placemark&gt;
+    &lt;name&gt;Simple placemark&lt;/name&gt;
+    &lt;description&gt;Attached to the ground. Intelligently places itself 
+       at the height of the underlying terrain.&lt;/description&gt;
+    &lt;Point&gt;
+      &lt;coordinates&gt;-122.0822035425683,37.42228990140251,0&lt;/coordinates&gt;
+    &lt;/Point&gt;
+  &lt;/Placemark&gt;
+&lt;/kml&gt;
+</pre>
 </body>
 
 <script type="text/javascript">
@@ -2402,7 +2437,23 @@ var goldens = {
   issue86_3: '`COM#One`END`PLN<br>' +
       '`END`TYPTwo`END`PLN lines`END',
   issue86_4: '`COM#One`END`PLN<br>' +
-      '`END`TYPTwo`END`PLN lines`END'
+      '`END`TYPTwo`END`PLN lines`END',
+  issue92: '`PUN&lt;?`END`PLNxml version`END`PUN=`END`STR"1.0"`END`PLN encoding`END`PUN=`END ' +
+          '`STR"UTF-8"`END`PUN?&gt;`END`PLN<br>' +
+      '`END`TAG&lt;kml`END`PLN `END`ATNxmlns`END`PUN=`END`ATV"http://www.opengis.net/kml/2.2"`END ' +
+          '`TAG&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;Placemark&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;name&gt;`END`PLNSimple placemark`END`TAG&lt;/name&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;description&gt;`END`PLNAttached to the ground. ' +
+          ' Intelligently places itself <br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp;at the height of the underlying terrain.`END ' +
+          '`TAG&lt;/description&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;Point&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`TAG&lt;coordinates&gt;`END ' +
+          '`PLN-122.0822035425683,37.42228990140251,0`END`TAG&lt;/coordinates&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;/Point&gt;`END`PLN<br>' +
+      '&nbsp; `END`TAG&lt;/Placemark&gt;`END`PLN<br>' +
+      '`END`TAG&lt;/kml&gt;`END'
 };
 </script>
 

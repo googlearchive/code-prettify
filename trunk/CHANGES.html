@@ -5,6 +5,21 @@
   </head>
   <body bgcolor="white">
     <a style="float:right" href="README.html">README</a>
+
+    <h1>Known Issues</h1>
+    <ul>
+      <li>Perl formatting is really crappy.  Partly because the author is lazy and
+      partly because Perl is
+      <a href="http://www.perlmonks.org/?node_id=663393">hard</a> to parse.
+      <li>On some browsers, <code>&lt;code&gt;</code> elements with newlines in the text
+      which use CSS to specify <code>white-space:pre</code> will have the newlines
+      improperly stripped if the element is not attached to the document at the time
+      the stripping is done.  Also, on IE 6, all newlines will be stripped from
+      <code>&lt;code&gt;</code> elements because of the way IE6 produces
+      <code>innerHTML</code>.  Workaround: use <code>&lt;pre&gt;</code> for code with
+      newlines.
+    </ul>
+
     <h1>Change Log</h1>
     <h2>29 March 2007</h2>
     <ul>
@@ -62,7 +77,7 @@
     <ul>
       <li>Language handlers for Visual Basic, Haskell, CSS, and WikiText</li>
       <li>Added <tt>.mxml</tt> extension to the markup style handler for
-	Flex <a href="http://en.wikipedia.org/wiki/MXML">MXML files</a>.  See
+        Flex <a href="http://en.wikipedia.org/wiki/MXML">MXML files</a>.  See
         <a
         href="http://code.google.com/p/google-code-prettify/issues/detail?id=37"
         >issue 37</a>.
@@ -82,6 +97,14 @@
       <li>Fixed bugs with highlighting of Haskell line comments, Lisp
         number literals, Lua strings, C preprocessor directives,
         newlines in Wiki code on Windows, and newlines in IE6.</li>
+    </ul>
+    <h2>14 August</h2>
+    <ul>
+      <li>Fixed prettifying of <code>&lt;code&gt;</code> blocks with embedded newlines.
+    </ul>
+    <h2>3 October</h2>
+    <ul>
+      <li>Fixed prettifying of XML/HTML tags that contain uppercase letters.
     </ul>
   </body>
 </html>

@@ -1193,7 +1193,7 @@ window['_pr_isIE6'] = function () {
            [PR_ATTRIB_VALUE, /^(?:\"[^\"]*\"?|\'[^\']*\'?)/, null, '\"\'']
            ],
           [
-           [PR_TAG,          /^^<\/?[a-z](?:[\w:-]*\w)?|\/?>$/],
+           [PR_TAG,          /^^<\/?[a-z](?:[\w:-]*\w)?|\/?>$/i],
            [PR_ATTRIB_NAME,  /^(?!style\b|on)[a-z](?:[\w:-]*\w)?/],
            ['lang-uq.val',   /^=\s*([^>\'\"\s]*(?:[^>\'\"\s\/]|\/(?=\s)))/],
            [PR_PUNCTUATION,  /^[=<>\/]+/],
