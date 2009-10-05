@@ -1127,7 +1127,7 @@ var goldens = {
           '`PUN/*`END`PLNhead `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
           '`PLN tail `END`PUN-`END`LIT1`END'),
   C: (
-      '`COM#include &lt;stdio.h&gt;`END`PLN<br>' +
+      '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN<br>' +
       '<br>' +
       '`END`COM/* the n-th fibonacci number.<br>' +
       '&nbsp;*\/`END`PLN<br>' +
@@ -1153,7 +1153,7 @@ var goldens = {
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`PUN}`END'),
   C_lang: (
-      '`COM#include &lt;stdio.h&gt;`END`PLN<br>' +
+      '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN<br>' +
       '<br>' +
       '`END`COM/* the n`END<sup>`COMth`END<\/sup>`COM fibonacci number. *\/`END`PLN<br>' +
       '`END`KWDunsigned`END`PLN `END`KWDint`END`PLN fib`END`PUN(`END' +
@@ -1178,10 +1178,10 @@ var goldens = {
           '`LIT10`END`PUN));`END`PLN<br>' +
       '`END`PUN}`END`PLN<br>' +
       '<br>' +
-      '`END`COM#define ZERO 0 /* a<br>' +
+      '`END`COM#define`END`PLN ZERO `END`LIT0`END`PLN `END`COM/* a<br>' +
       '&nbsp; multiline comment */`END'),
   Cpp: (
-      '`COM#include &lt;iostream&gt;`END`PLN<br>' +
+      '`COM#include`END`PLN `END`STR&lt;iostream&gt;`END`PLN<br>' +
       '<br>' +
       '`END`KWDusing`END`PLN `END`KWDnamespace`END`PLN std`END`PUN;`END' +
           '`PLN<br>' +
@@ -1216,7 +1216,7 @@ var goldens = {
       '`END`PUN}`END'),
 
   Cpp_lang: (
-      '`COM#include &lt;iostream&gt;`END`PLN<br>' +
+      '`COM#include`END`PLN `END`STR&lt;iostream&gt;`END`PLN<br>' +
       '<br>' +
       '`END`KWDusing`END`PLN `END`KWDnamespace`END`PLN std`END`PUN;`END' +
           '`PLN<br>' +
