@@ -148,8 +148,22 @@ produces
     <p>For a more complete example see the issue22
     <a href="tests/prettify_test.html#issue22">testcase</a>.</p>
 
-    <br><br><br>
+    <h3>I get an error message "a is not a function" or "opt_whenDone is not a function"</h3>
+    <p>If you are calling <code>prettyPrint</code> via an event handler, wrap it in a function.
+    Instead of doing
+    <blockquote>
+      <code class="prettyprint lang-js"
+       >addEventListener('load', prettyPrint, false);</code>
+    </blockquote>
+    wrap it in a closure like
+    <blockquote>
+      <code class="prettyprint lang-js"
+       >addEventListener('load', function (event) { prettyPrint() }, false);</code>
+    </blockquote>
+    so that the browser does not pass an event object to <code>prettyPrint</code> which
+    will confuse it.
 
+    <br><br><br>
 
     <div class="footer">
 <!-- Created: Tue Oct  3 17:51:56 PDT 2006 -->
