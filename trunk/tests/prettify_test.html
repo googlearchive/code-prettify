@@ -1056,7 +1056,7 @@ Two lines</code></p>
 &lt;kml xmlns="http://www.opengis.net/kml/2.2"&gt;
   &lt;Placemark&gt;
     &lt;name&gt;Simple placemark&lt;/name&gt;
-    &lt;description&gt;Attached to the ground. Intelligently places itself 
+    &lt;description Lang="en"&gt;Attached to the ground. Intelligently places itself 
        at the height of the underlying terrain.&lt;/description&gt;
     &lt;Point&gt;
       &lt;coordinates&gt;-122.0822035425683,37.42228990140251,0&lt;/coordinates&gt;
@@ -2452,7 +2452,9 @@ var goldens = {
           '`TAG&gt;`END`PLN<br>' +
       '&nbsp; `END`TAG&lt;Placemark&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`TAG&lt;name&gt;`END`PLNSimple placemark`END`TAG&lt;/name&gt;`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TAG&lt;description&gt;`END`PLNAttached to the ground.' +
+      '&nbsp; &nbsp; `END`TAG&lt;description`END' +
+          '`PLN `END`ATNLang`END`PUN=`END`ATV"en"`END`TAG&gt;`END' +
+          '`PLNAttached to the ground.' +
           ' Intelligently places itself <br>' +
       '&nbsp; &nbsp; &nbsp; &nbsp;at the height of the underlying terrain.`END' +
           '`TAG&lt;/description&gt;`END`PLN<br>' +
