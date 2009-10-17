@@ -1203,15 +1203,15 @@ window['_pr_isIE6'] = function () {
            ],
           [
            [PR_TAG,          /^^<\/?[a-z](?:[\w:-]*\w)?|\/?>$/i],
-           [PR_ATTRIB_NAME,  /^(?!style\b|on)[a-z](?:[\w:-]*\w)?/],
+           [PR_ATTRIB_NAME,  /^(?!style[\s=]|on)[a-z](?:[\w:-]*\w)?/i],
            ['lang-uq.val',   /^=\s*([^>\'\"\s]*(?:[^>\'\"\s\/]|\/(?=\s)))/],
            [PR_PUNCTUATION,  /^[=<>\/]+/],
            ['lang-js',       /^on\w+\s*=\s*\"([^\"]+)\"/i],
            ['lang-js',       /^on\w+\s*=\s*\'([^\']+)\'/i],
            ['lang-js',       /^on\w+\s*=\s*([^\"\'>\s]+)/i],
-           ['lang-css',      /^sty\w+\s*=\s*\"([^\"]+)\"/i],
-           ['lang-css',      /^sty\w+\s*=\s*\'([^\']+)\'/i],
-           ['lang-css',      /^sty\w+\s*=\s*([^\"\'>\s]+)/i]
+           ['lang-css',      /^style\s*=\s*\"([^\"]+)\"/i],
+           ['lang-css',      /^style\s*=\s*\'([^\']+)\'/i],
+           ['lang-css',      /^style\s*=\s*([^\"\'>\s]+)/i]
            ]),
       ['in.tag']);
   registerLangHandler(
