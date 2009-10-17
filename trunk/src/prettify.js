@@ -104,8 +104,9 @@ window['_pr_isIE6'] = function () {
       "mutable namespace nullptr reinterpret_cast static_assert static_cast " +
       "template typeid typename typeof using virtual wchar_t where ";
   var JAVA_KEYWORDS = COMMON_KEYWORDS +
-      "boolean byte extends final finally implements import instanceof null " +
-      "native package strictfp super synchronized throws transient ";
+      "abstract boolean byte extends final finally implements import " +
+      "instanceof null native package strictfp super synchronized throws " +
+      "transient ";
   var CSHARP_KEYWORDS = JAVA_KEYWORDS +
       "as base by checked decimal delegate descending event " +
       "fixed foreach from group implicit in interface internal into is lock " +
