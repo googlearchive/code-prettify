@@ -16,31 +16,41 @@
 /**
  * @fileoverview
  * some functions for browser-side pretty printing of code contained in html.
+ * <p>
  *
- * The lexer should work on a number of languages including C and friends,
- * Java, Python, Bash, SQL, HTML, XML, CSS, Javascript, and Makefiles.
- * It works passably on Ruby, PHP and Awk and a decent subset of Perl, but,
- * because of commenting conventions, doesn't work on Smalltalk, Lisp-like, or
- * CAML-like languages.
- *
- * If there's a language not mentioned here, then I don't know it, and don't
- * know whether it works.  If it has a C-like, Bash-like, or XML-like syntax
- * then it should work passably.
- *
- * Usage:
- * 1) include this source file in an html page via
- * <script type="text/javascript" src="/path/to/prettify.js"></script>
- * 2) define style rules.  See the example page for examples.
- * 3) mark the <pre> and <code> tags in your source with class=prettyprint.
- *    You can also use the (html deprecated) <xmp> tag, but the pretty printer
- *    needs to do more substantial DOM manipulations to support that, so some
- *    css styles may not be preserved.
+ * For a fairly comprehensive set of languages see the
+ * <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html#langs">README</a>
+ * file that came with this source.  At a minimum, the lexer should work on a
+ * number of languages including C and friends, Java, Python, Bash, SQL, HTML,
+ * XML, CSS, Javascript, and Makefiles.  It works passably on Ruby, PHP and Awk
+ * and a subset of Perl, but, because of commenting conventions, doesn't work on
+ * Smalltalk, Lisp-like, or CAML-like languages without an explicit lang class.
+ * <p>
+ * Usage: <ol>
+ * <li> include this source file in an html page via
+ *   {@code <script type="text/javascript" src="/path/to/prettify.js"></script>}
+ * <li> define style rules.  See the example page for examples.
+ * <li> mark the {@code <pre>} and {@code <code>} tags in your source with
+ *    {@code class=prettyprint.}
+ *    You can also use the (html deprecated) {@code <xmp>} tag, but the pretty
+ *    printer needs to do more substantial DOM manipulations to support that, so
+ *    some css styles may not be preserved.
+ * </ol>
  * That's it.  I wanted to keep the API as simple as possible, so there's no
- * need to specify which language the code is in.
- *
- * Change log:
+ * need to specify which language the code is in, but if you wish, you can add
+ * another class to the {@code <pre>} or {@code <code>} element to specify the
+ * language, as in {@code <pre class="prettyprint lang-java">}.  Any class that
+ * starts with "lang-" followed by a file extension, specifies the file type.
+ * See the "lang-*.js" files in this directory for code that implements
+ * per-language file handlers.
+ * <p>
+ * Change log:<br>
  * cbeust, 2006/08/22
+ * <blockquote>
  *   Java annotations (start with "@") are now captured as literals ("lit")
+ * </blockquote>
+ * @requires console
+ * @overrides window
  */
 
 // JSLint declarations
@@ -97,12 +107,12 @@ window['_pr_isIE6'] = function () {
       "double enum extern float goto int long register short signed sizeof " +
       "static struct switch typedef union unsigned void volatile ";
   var COMMON_KEYWORDS = C_KEYWORDS + "catch class delete false import " +
-      "new operator private protected public this throw true try ";
+      "new operator private protected public this throw true try typeof ";
   var CPP_KEYWORDS = COMMON_KEYWORDS + "alignof align_union asm axiom bool " +
       "concept concept_map const_cast constexpr decltype " +
       "dynamic_cast explicit export friend inline late_check " +
       "mutable namespace nullptr reinterpret_cast static_assert static_cast " +
-      "template typeid typename typeof using virtual wchar_t where ";
+      "template typeid typename using virtual wchar_t where ";
   var JAVA_KEYWORDS = COMMON_KEYWORDS +
       "abstract boolean byte extends final finally implements import " +
       "instanceof null native package strictfp super synchronized throws " +
@@ -283,7 +293,7 @@ window['_pr_isIE6'] = function () {
     // unnecessary computed style objects.
     if ('PRE' === node.tagName) { return true; }
     if (!newlineRe.test(content)) { return true; }  // Don't care
-    var whitespace;
+    var whitespace = '';
     // For disconnected nodes, IE has no currentStyle.
     if (node.currentStyle) {
       whitespace = node.currentStyle.whiteSpace;
@@ -477,7 +487,6 @@ window['_pr_isIE6'] = function () {
 
       // Walk over and identify back references to build the capturedGroups
       // mapping.
-      var groupIndex;
       for (var i = 0, groupIndex = 0; i < n; ++i) {
         var p = parts[i];
         if (p === '(') {
@@ -842,7 +851,7 @@ window['_pr_isIE6'] = function () {
       for (var ti = 0, nTokens = tokens.length; ti < nTokens; ++ti) {
         var token = tokens[ti];
         var style = styleCache[token];
-        var match;
+        var match = void 0;
 
         var isEmbedded;
         if (typeof style === 'string') {
