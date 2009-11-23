@@ -90,12 +90,13 @@ window['PR_normalizedHtml']
   */
   = window['prettyPrint'] = void 0;
 
-/** browser detection. @extern */
+/** browser detection. @extern @returns false if not IE, otherwise the major version. */
 window['_pr_isIE6'] = function () {
-  var isIE6 = navigator && navigator.userAgent &&
-      /\bMSIE 6\./.test(navigator.userAgent);
-  window['_pr_isIE6'] = function () { return isIE6; };
-  return isIE6;
+  var ieVersion = navigator && navigator.userAgent &&
+      navigator.userAgent.match(/\bMSIE ([678])\./);
+  ieVersion = ieVersion ? +ieVersion[1] : false;
+  window['_pr_isIE6'] = function () { return ieVersion; };
+  return ieVersion;
 };
 
 
@@ -1319,7 +1320,9 @@ window['_pr_isIE6'] = function () {
   }
 
   function prettyPrint(opt_whenDone) {
-    var isIE6 = window['_pr_isIE6']();
+    var isIE678 = window['_pr_isIE6']();
+    var ieNewline = isIE678 === 6 ? '\r\n' : '\r';
+    // See bug 71 and http://stackoverflow.com/questions/136443/why-doesnt-ie7-
 
     // fetch a list of nodes to rewrite
     var codeSegments = [
@@ -1431,12 +1434,12 @@ window['_pr_isIE6'] = function () {
       // Doing this on other browsers breaks lots of stuff since \r\n is
       // treated as two newlines on Firefox, and doing this also slows
       // down rendering.
-      if (isIE6 && cs.tagName === 'PRE') {
+      if (isIE678 && cs.tagName === 'PRE') {
         var lineBreaks = cs.getElementsByTagName('br');
         for (var j = lineBreaks.length; --j >= 0;) {
           var lineBreak = lineBreaks[j];
           lineBreak.parentNode.replaceChild(
-              document.createTextNode('\r'), lineBreak);
+              document.createTextNode(ieNewline), lineBreak);
         }
       }
     }
