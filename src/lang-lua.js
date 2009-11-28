@@ -54,6 +54,6 @@ PR.registerLangHandler(
          // An identifier
          [PR.PR_PLAIN, /^[a-z_]\w*/i],
          // A run of punctuation
-         [PR.PR_PUNCTUATION, /^[^\w\t\n\r \xA0][^\w\t\n\r \xA0\"\-\+=]*/]
+         [PR.PR_PUNCTUATION, /^[^\w\t\n\r \xA0][^\w\t\n\r \xA0\"\'\-\+=]*/]
         ]),
     ['lua']);
