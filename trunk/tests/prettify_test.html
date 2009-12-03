@@ -474,7 +474,7 @@ select * from user-table where id in (x, y, z);
 <pre class="prettyprint" id="xml">
 &lt;!DOCTYPE series PUBLIC "fibonacci numbers"&gt;
 
-&lt;series base="1" step="s(n-2) + s(n-1)">
+&lt;series.root base="1" step="s(n-2) + s(n-1)">
   &lt;element i="0"&gt;1&lt;/element&gt;
   &lt;element i="1"&gt;1&lt;/element&gt;
   &lt;element i="2"&gt;2&lt;/element&gt;
@@ -482,7 +482,7 @@ select * from user-table where id in (x, y, z);
   &lt;element i="4"&gt;5&lt;/element&gt;
   &lt;element i="5"&gt;8&lt;/element&gt;
   ...
-&lt;/series&gt;
+&lt;/series.root&gt;
 </pre>
 
 <h1>HTML</h1>
@@ -1560,7 +1560,7 @@ var goldens = {
   xml: (
       '`DEC&lt;!DOCTYPE series PUBLIC "fibonacci numbers"&gt;`END`PLN<br>' +
       '<br>' +
-      '`END`TAG&lt;series`END`PLN `END`ATNbase`END`PUN=`END' +
+      '`END`TAG&lt;series.root`END`PLN `END`ATNbase`END`PUN=`END' +
           '`ATV"1"`END`PLN `END' +
           '`ATNstep`END`PUN=`END`ATV"s(n-2) + s(n-1)"`END`TAG&gt;`END' +
           '`PLN<br>' +
@@ -1589,7 +1589,7 @@ var goldens = {
           '`TAG&gt;`END`PLN8`END`TAG&lt;/element&gt;`END' +
           '`PLN<br>' +
       '&nbsp; ...<br>' +
-      '`END`TAG&lt;/series&gt;`END'),
+      '`END`TAG&lt;/series.root&gt;`END'),
   html: (
       '`TAG&lt;html&gt;`END`PLN<br>' +
       '&nbsp; `END`TAG&lt;head&gt;`END`PLN<br>' +
