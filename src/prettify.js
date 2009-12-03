@@ -339,7 +339,7 @@ window['_pr_isIE6'] = function () {
    * matches the union o the sets o strings matched d by the input RegExp.
    * Since it matches globally, if the input strings have a start-of-input
    * anchor (/^.../), it is ignored for the purposes of unioning.
-   * @param {Array.<RegExpr>} regexs non multiline, non-global regexs.
+   * @param {Array.<RegExp>} regexs non multiline, non-global regexs.
    * @return {RegExp} a global regex.
    */
   function combinePrefixPatterns(regexs) {
