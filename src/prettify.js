@@ -878,7 +878,7 @@ window['_pr_isIE6'] = function () {
           }
 
           isEmbedded = style.length >= 5 && 'lang-' === style.substring(0, 5);
-          if (isEmbedded && !(match && match[1])) {
+          if (isEmbedded && !(match && typeof match[1] === 'string')) {
             isEmbedded = false;
             style = PR_SOURCE;
           }
@@ -895,8 +895,14 @@ window['_pr_isIE6'] = function () {
           var embeddedSource = match[1];
           var embeddedSourceStart = token.indexOf(embeddedSource);
           var embeddedSourceEnd = embeddedSourceStart + embeddedSource.length;
+          if (match[2]) {
+            // If embeddedSource can be blank, then it would match at the
+            // beginning which would cause us to infinitely recurse on the
+            // entire token, so we catch the right context in match[2].
+            embeddedSourceEnd = token.length - match[2].length;
+            embeddedSourceStart = embeddedSourceEnd - embeddedSource.length;
+          }
           var lang = style.substring(5);
-          var size = decorations.length - 10;
           // Decorate the left of the embedded source
           appendDecorations(
               basePos + tokenStart,
@@ -1200,9 +1206,9 @@ window['_pr_isIE6'] = function () {
            [PR_PUNCTUATION, /^(?:<[%?]|[%?]>)/],
            ['lang-',        /^<xmp\b[^>]*>([\s\S]+?)<\/xmp\b[^>]*>/i],
            // Unescaped content in javascript.  (Or possibly vbscript).
-           ['lang-js',      /^<script\b[^>]*>([\s\S]+?)<\/script\b[^>]*>/i],
+           ['lang-js',      /^<script\b[^>]*>([\s\S]*?)(<\/script\b[^>]*>)/i],
            // Contains unescaped stylesheet content
-           ['lang-css',     /^<style\b[^>]*>([\s\S]+?)<\/style\b[^>]*>/i],
+           ['lang-css',     /^<style\b[^>]*>([\s\S]*?)(<\/style\b[^>]*>)/i],
            ['lang-in.tag',  /^(<\/?[a-z][^<>]*>)/i]
           ]),
       ['default-markup', 'htm', 'html', 'mxml', 'xhtml', 'xml', 'xsl']);

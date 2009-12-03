@@ -491,6 +491,8 @@ select * from user-table where id in (x, y, z);
   &lt;head>
     &lt;title&gt;Fibonacci number&lt;/title&gt;
     &lt;style&gt;&lt;!-- BODY { text-decoration: blink } --&gt;&lt;/style&gt;
+    &lt;script src="foo.js"&gt;&lt;/script&gt;
+    &lt;script src="bar.js"&gt;&lt;/script&gt;
   &lt;/head&gt;
   &lt;body>
     &lt;noscript&gt;
@@ -1597,6 +1599,10 @@ var goldens = {
           '`PLN BODY `END`PUN{`END`PLN `END`KWDtext-decoration`END`PUN:`END' +
           '`PLN blink `END`PUN}`END`PLN `END`COM--&gt;`END`TAG&lt;/' +
           'style&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;script`END`PLN `END`ATNsrc`END`PUN=`END' +
+          '`ATV"foo.js"`END`TAG&gt;&lt;/script&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`TAG&lt;script`END`PLN `END`ATNsrc`END`PUN=`END' +
+          '`ATV"bar.js"`END`TAG&gt;&lt;/script&gt;`END`PLN<br>' +
       '&nbsp; `END`TAG&lt;/head&gt;`END`PLN<br>' +
       '&nbsp; `END`TAG&lt;body&gt;`END`PLN<br>' +
       '&nbsp; &nbsp; `END`TAG&lt;noscript&gt;`END`PLN<br>' +
