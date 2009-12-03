@@ -16,16 +16,16 @@
 
 /**
  * @fileoverview
- * Registers a language handler for LUA.
+ * Registers a language handler for Lua.
  *
  *
  * To use, include prettify.js and this file in your HTML page.
  * Then put your code in an HTML tag like
- *      <pre class="prettyprint lang-lua">(my LUA code)</pre>
+ *      <pre class="prettyprint lang-lua">(my Lua code)</pre>
  *
  *
  * I used http://www.lua.org/manual/5.1/manual.html#2.1
- * Because of the long-bracket concept used in strings and comments, LUA does
+ * Because of the long-bracket concept used in strings and comments, Lua does
  * not have a regular lexical grammar, but luckily it fits within the space
  * of irregular grammars supported by javascript regular expressions.
  *
