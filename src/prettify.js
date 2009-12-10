@@ -1077,6 +1077,21 @@ window['_pr_isIE6'] = function () {
     var trailingSpaceRe = /[ \r\n]$/;
     var lastWasSpace = true;  // the last text chunk emitted ended with a space.
 
+    // See bug 71 and http://stackoverflow.com/questions/136443/why-doesnt-ie7-
+    var isIE678 = window['_pr_isIE6']();
+    var lineBreakHtml = (
+        isIE678
+        ? (job.sourceNode.tagName === 'PRE'
+           // Use line feeds instead of <br>s so that copying and pasting works
+           // on IE.
+           // Doing this on other browsers breaks lots of stuff since \r\n is
+           // treated as two newlines on Firefox.
+           ? (isIE678 === 6 ? '&nbsp;\r\n' : '&nbsp;\r')
+           // IE collapses multiple adjacient <br>s into 1 line break.
+           // Prefix every newline with '&nbsp;' to prevent such behavior.
+           : '&nbsp;<br />')
+        : '<br />');
+
     // A helper function that is responsible for opening sections of decoration
     // and outputing properly escaped chunks of source
     function emitTextUpTo(sourceIdx) {
@@ -1105,9 +1120,6 @@ window['_pr_isIE6'] = function () {
         // Keep track of whether we need to escape space at the beginning of the
         // next chunk.
         lastWasSpace = trailingSpaceRe.test(htmlChunk);
-        // IE collapses multiple adjacient <br>s into 1 line break.
-        // Prefix every <br> with '&nbsp;' can prevent such IE's behavior.
-        var lineBreakHtml = window['_pr_isIE6']() ? '&nbsp;<br />' : '<br />';
         html.push(htmlChunk.replace(newlineRe, lineBreakHtml));
         outputIdx = sourceIdx;
       }
@@ -1326,10 +1338,6 @@ window['_pr_isIE6'] = function () {
   }
 
   function prettyPrint(opt_whenDone) {
-    var isIE678 = window['_pr_isIE6']();
-    var ieNewline = isIE678 === 6 ? '\r\n' : '\r';
-    // See bug 71 and http://stackoverflow.com/questions/136443/why-doesnt-ie7-
-
     // fetch a list of nodes to rewrite
     var codeSegments = [
         document.getElementsByTagName('pre'),
@@ -1433,20 +1441,6 @@ window['_pr_isIE6'] = function () {
         // remove the old
         cs.parentNode.replaceChild(pre, cs);
         cs = pre;
-      }
-
-      // Replace <br>s with line-feeds so that copying and pasting works
-      // on IE 6.
-      // Doing this on other browsers breaks lots of stuff since \r\n is
-      // treated as two newlines on Firefox, and doing this also slows
-      // down rendering.
-      if (isIE678 && cs.tagName === 'PRE') {
-        var lineBreaks = cs.getElementsByTagName('br');
-        for (var j = lineBreaks.length; --j >= 0;) {
-          var lineBreak = lineBreaks[j];
-          lineBreak.parentNode.replaceChild(
-              document.createTextNode(ieNewline), lineBreak);
-        }
       }
     }
 
