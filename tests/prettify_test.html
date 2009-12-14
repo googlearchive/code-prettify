@@ -20,6 +20,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-wiki.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-vhdl.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-vb.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="test_base.js" type="text/javascript"
@@ -1074,6 +1076,46 @@ Two lines</code></p>
 string a = "C:\\";
 // is equivalent to a verbatim string
 string b = @"C:\";
+</pre>
+
+<h1>VHDL mode</h1>
+<pre class="prettyprint lang-vhdl" id="vhdl">
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+-- A line comment
+entity foo_entity is
+
+  generic (-- comment after punc
+    a : natural := 42;
+    x : real := 16#ab.cd#-3
+  );
+  port (
+    clk_i : in  std_logic;
+    b_i   : in  natural range 0 to 100;
+    c_o   : out std_logic_vector(5 downto 0);
+    \a "name"\ : out integer  -- extended identifier
+  );
+
+end entity foo_entity;
+
+architecture foo_architecture of foo_entity is
+  signal bar_s : std_logic_vector(2 downto 0);
+begin
+  
+  bar_s &lt;= b"101";
+
+  dummy_p : process (clk_i)
+  begin
+    if b_i = 1 then
+      c_o &lt;= (others => '0');
+    elsif rising_edge(clk_i) then
+      c_o &lt;= "1011" &amp; bar_s(1 downto 0);
+    end if;
+  end process dummy_p;
+
+end architecture foo_architecture;
 </pre>
 </body>
 
@@ -2474,7 +2516,45 @@ var goldens = {
   issue93: '`COM// The normal string syntax`END`PLN<br>' +
       '`END`KWDstring`END`PLN a `END`PUN=`END`PLN `END`STR"C:\\\\"`END`PUN;`END`PLN<br>' +
       '`END`COM// is equivalent to a verbatim string`END`PLN<br>' +
-      '`END`KWDstring`END`PLN b `END`PUN=`END`PLN `END`STR@"C:\\"`END`PUN;`END'
+      '`END`KWDstring`END`PLN b `END`PUN=`END`PLN `END`STR@"C:\\"`END`PUN;`END',
+  vhdl: '`KWDlibrary`END`PLN ieee`END`PUN;`END`PLN<br>' +
+      '`END`KWDuse`END`PLN ieee`END`PUN.`END`PLNstd_logic_1164`END`PUN.`END`KWDall`END`PUN;`END`PLN<br>' +
+      '`END`KWDuse`END`PLN ieee`END`PUN.`END`PLNnumeric_std`END`PUN.`END`KWDall`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM-- A line comment`END`PLN<br>' +
+      '`END`KWDentity`END`PLN foo_entity `END`KWDis`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; `END`KWDgeneric`END`PLN `END`PUN(`END`COM-- comment after punc`END`PLN<br>' +
+      '&nbsp; &nbsp; a `END`PUN:`END`PLN `END`TYPnatural`END`PLN `END`PUN:=`END' +
+          '`PLN `END`LIT42`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; x `END`PUN:`END`PLN `END`TYPreal`END`PLN `END' +
+          '`PUN:=`END`PLN `END`LIT16#ab.cd#-3`END`PLN<br>' +
+      '&nbsp; `END`PUN);`END`PLN<br>' +
+      '&nbsp; `END`KWDport`END`PLN `END`PUN(`END`PLN<br>' +
+      '&nbsp; &nbsp; clk_i `END`PUN:`END`PLN `END`KWDin`END`PLN &nbsp;`END`TYPstd_logic`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; b_i &nbsp; `END`PUN:`END`PLN `END`KWDin`END`PLN &nbsp;`END`TYPnatural`END`PLN `END`KWDrange`END`PLN `END`LIT0`END`PLN `END`KWDto`END`PLN `END`LIT100`END`PUN;`END`PLN<br>' +
+      '&nbsp; &nbsp; c_o &nbsp; `END`PUN:`END`PLN `END`KWDout`END`PLN `END`TYPstd_logic_vector`END`PUN(`END`LIT5`END`PLN `END`KWDdownto`END`PLN `END`LIT0`END`PUN);`END`PLN<br>' +
+      '&nbsp; &nbsp; \\a "name"\\ `END`PUN:`END`PLN `END`KWDout`END`PLN `END`TYPinteger`END`PLN &nbsp;`END`COM-- extended identifier`END`PLN<br>' +
+      '&nbsp; `END`PUN);`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDend`END`PLN `END`KWDentity`END`PLN foo_entity`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDarchitecture`END`PLN foo_architecture `END`KWDof`END`PLN foo_entity `END`KWDis`END`PLN<br>' +
+      '&nbsp; `END`KWDsignal`END`PLN bar_s `END`PUN:`END`PLN `END`TYPstd_logic_vector`END`PUN(`END`LIT2`END`PLN `END`KWDdownto`END`PLN `END`LIT0`END`PUN);`END`PLN<br>' +
+      '`END`KWDbegin`END`PLN<br>' +
+      '&nbsp; <br>' +
+      '&nbsp; bar_s `END`PUN&lt;=`END`PLN `END`STRb"101"`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '&nbsp; dummy_p `END`PUN:`END`PLN `END`KWDprocess`END`PLN `END`PUN(`END`PLNclk_i`END`PUN)`END`PLN<br>' +
+      '&nbsp; `END`KWDbegin`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDif`END`PLN b_i `END`PUN=`END`PLN `END`LIT1`END`PLN `END`KWDthen`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; c_o `END`PUN&lt;=`END`PLN `END`PUN(`END`KWDothers`END`PLN `END`PUN=&gt;`END`PLN `END`STR\'0\'`END`PUN);`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDelsif`END`PLN rising_edge`END`PUN(`END`PLNclk_i`END`PUN)`END`PLN `END`KWDthen`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; c_o `END`PUN&lt;=`END`PLN `END`STR"1011"`END`PLN `END`PUN&amp;`END`PLN bar_s`END`PUN(`END`LIT1`END`PLN `END`KWDdownto`END`PLN `END`LIT0`END`PUN);`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDend`END`PLN `END`KWDif`END`PUN;`END`PLN<br>' +
+      '&nbsp; `END`KWDend`END`PLN `END`KWDprocess`END`PLN dummy_p`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDend`END`PLN `END`KWDarchitecture`END`PLN foo_architecture`END`PUN;`END'
 };
 </script>
 
