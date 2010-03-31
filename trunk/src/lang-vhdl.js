@@ -12,7 +12,7 @@ PR.registerLangHandler(
     PR.createSimpleLexer(
         [
          // Whitespace
-         [PR.PR_PLAIN, /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
+         [PR.PR_PLAIN, /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0']
         ],
         [
          // String, character or bit string
