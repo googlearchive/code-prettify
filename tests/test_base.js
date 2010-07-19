@@ -53,7 +53,7 @@ function runTests(goldens) {
   function normalizedInnerHtml(node) {
     var out = [];
     for (var child = node.firstChild; child; child = child.nextSibling) {
-      PR_normalizedHtml(child, out);
+      PR_normalizedHtml(child, out, true);
     }
     out = out.join('');
     // more normalization to work around problems with non-ascii chars in
@@ -74,11 +74,15 @@ function runTests(goldens) {
     if (realIsIE6 && /\bknown_ie6_failure\b/.test(container.className)) {
       continue;
     }
+    // Convert abbreviations that start with `.
     var golden = goldens[lang].replace(/`([A-Z]{3})/g, function (_, lbl) {
         return (lbl == 'END'
             ? '<\/span>'
             : '<span class="' + lbl.toLowerCase() + '">');
-      });
+      })
+      // Line numbers
+      .replace(/`#(?![0-9])/, '<li class="L0">')
+      .replace(/`#([0-9])/g, '</li><li class="L$1">');
     var actual = normalizedInnerHtml(container);
     if (golden !== actual) {  // test failed
       // write out

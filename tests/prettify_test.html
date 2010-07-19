@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Code Prettifier</title>
-<script src="../src/prettify.js" type="text/javascript"
+<script src="../src/prettify.min.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-css.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
@@ -57,7 +57,7 @@ fib | head -10 | tail -1
 </pre>
 
 <h1>Bash w/ language specified</h1>
-<pre class="prettyprint lang-sh" id="bash_lang">#!/bin/bash
+<pre class="prettyprint lang-sh linenums" id="bash_lang">#!/bin/bash
 
 # Fibonacci numbers
 # Writes an infinite series to stdout, one entry per line
@@ -224,8 +224,8 @@ public final class Fibonacci implements Iterable&lt;Integer> {
 }
 </pre>
 
-<h1>Java w/ language specified</h1>
-<pre class="prettyprint lang-java" id="java_lang">
+<h1>Java w/ language specified<small>(first line shown is line 12)</small></h1>
+<pre class="prettyprint lang-java linenums:12" id="java_lang">
 package foo;
 
 import java.util.Iterator;
@@ -1195,28 +1195,28 @@ var goldens = {
       'fib `END`PUN|`END`PLN head `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
           '`PLN tail `END`PUN-`END`LIT1`END'),
   bash_lang: (
-      '`COM#!/bin/bash`END`PLN<br>' +
-      '<br>' +
-      '`END`COM# Fibonacci numbers`END`PLN<br>' +
-      '`END`COM# Writes an infinite series to stdout, one entry per line`END' +
-          '`PLN<br>' +
-      '`END`KWDfunction`END`PLN fib`END`PUN()`END`PLN `END`PUN{`END`PLN<br>' +
-      '&nbsp; `END`KWDlocal`END`PLN a`END`PUN=`END`LIT1`END`PLN<br>' +
-      '&nbsp; `END`KWDlocal`END`PLN b`END`PUN=`END`LIT1`END`PLN<br>' +
-      '&nbsp; `END`KWDwhile`END`PLN true `END`PUN;`END' +
-          '`PLN `END`KWDdo`END`PLN<br>' +
-      '&nbsp; &nbsp; echo $a<br>' +
-      '&nbsp; &nbsp; `END`KWDlocal`END`PLN tmp`END`PUN=`END`PLN$a<br>' +
-      '&nbsp; &nbsp; a`END`PUN=`END`PLN$`END`PUN((`END`PLN $a `END`PUN+`END' +
-          '`PLN $b `END`PUN))`END`PLN<br>' +
-      '&nbsp; &nbsp; b`END`PUN=`END`PLN$tmp<br>' +
-      '&nbsp; `END`KWDdone`END`PLN<br>' +
-      '`END`PUN}`END`PLN<br>' +
-      '<br>' +
-      '`END`COM# output the 10th element of the series and halt`END`PLN<br>' +
-      'fib `END`PUN|`END`PLN `END`PUN/`END`PLNusr`END`PUN/`END`PLNbin`END' +
+      '<ol class="linenums">`#`COM#!/bin/bash`END`PLN`END<br>' +
+      '`#1`PLN`END<br>' +
+      '`#2`PLN`END`COM# Fibonacci numbers`END`PLN`END<br>' +
+      '`#3`PLN`END`COM# Writes an infinite series to stdout, one entry per line`END' +
+          '`PLN`END<br>' +
+      '`#4`PLN`END`KWDfunction`END`PLN fib`END`PUN()`END`PLN `END`PUN{`END`PLN`END<br>' +
+      '`#5`PLN&nbsp; `END`KWDlocal`END`PLN a`END`PUN=`END`LIT1`END`PLN`END<br>' +
+      '`#6`PLN&nbsp; `END`KWDlocal`END`PLN b`END`PUN=`END`LIT1`END`PLN`END<br>' +
+      '`#7`PLN&nbsp; `END`KWDwhile`END`PLN true `END`PUN;`END' +
+          '`PLN `END`KWDdo`END`PLN`END<br>' +
+      '`#8`PLN&nbsp; &nbsp; echo $a`END<br>' +
+      '`#9`PLN&nbsp; &nbsp; `END`KWDlocal`END`PLN tmp`END`PUN=`END`PLN$a`END<br>' +
+      '`#0`PLN&nbsp; &nbsp; a`END`PUN=`END`PLN$`END`PUN((`END`PLN $a `END`PUN+`END' +
+          '`PLN $b `END`PUN))`END`PLN`END<br>' +
+      '`#1`PLN&nbsp; &nbsp; b`END`PUN=`END`PLN$tmp`END<br>' +
+      '`#2`PLN&nbsp; `END`KWDdone`END`PLN`END<br>' +
+      '`#3`PLN`END`PUN}`END`PLN`END<br>' +
+      '`#4`PLN`END<br>' +
+      '`#5`PLN`END`COM# output the 10th element of the series and halt`END`PLN`END<br>' +
+      '`#6`PLNfib `END`PUN|`END`PLN `END`PUN/`END`PLNusr`END`PUN/`END`PLNbin`END' +
           '`PUN/*`END`PLNhead `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
-          '`PLN tail `END`PUN-`END`LIT1`END'),
+          '`PLN tail `END`PUN-`END`LIT1`END</li></ol>'),
   C: (
       '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN<br>' +
       '<br>' +
@@ -1427,94 +1427,95 @@ var goldens = {
       '&nbsp; `END`PUN}`END`PLN<br>' +
       '`END`PUN}`END'),
   java_lang: (
-      '`KWDpackage`END`PLN foo`END`PUN;`END`PLN<br>' +
-      '<br>' +
-      '`END`KWDimport`END`PLN java`END`PUN.`END`PLNutil`END`PUN.`END' +
-          '`TYPIterator`END`PUN;`END`PLN<br>' +
-      '<br>' +
-      '`END`COM/**<br>' +
-      '&nbsp;* the fibonacci series implemented as an Iterable.<br>' +
-      '&nbsp;*\/`END`PLN<br>' +
-      '`END`KWDpublic`END`PLN `END`KWDfinal`END`PLN `END`KWDclass`END' +
+      '<ol class="linenums"><li class="L1" value="12">' +
+        '`KWDpackage`END`PLN foo`END`PUN;`END`PLN`END<br>' +
+      '`#2`PLN`END<br>' +
+      '`#3`PLN`END`KWDimport`END`PLN java`END`PUN.`END`PLNutil`END`PUN.`END' +
+          '`TYPIterator`END`PUN;`END`PLN`END<br>' +
+      '`#4`PLN`END<br>' +
+      '`#5`PLN`END`COM/**`END<br>' +
+      '`#6`COM&nbsp;* the fibonacci series implemented as an Iterable.`END<br>' +
+      '`#7`COM&nbsp;*\/`END`PLN`END<br>' +
+      '`#8`PLN`END`KWDpublic`END`PLN `END`KWDfinal`END`PLN `END`KWDclass`END' +
           '`PLN `END`TYPFibonacci`END`PLN `END`KWDimplements`END`PLN `END' +
           '`TYPIterable`END`PUN&lt;`END`TYPInteger`END`PUN&gt;`END`PLN `END`' +
-          'PUN{`END`PLN<br>' +
-      '&nbsp; `END' +
+          'PUN{`END`PLN`END<br>' +
+      '`#9`PLN&nbsp; `END' +
           '`COM/** the next and previous members of the series. *\/`END' +
-          '`PLN<br>' +
-      '&nbsp; `END`KWDprivate`END`PLN `END`KWDint`END`PLN a `END`PUN=`END' +
+          '`PLN`END<br>' +
+      '`#0`PLN&nbsp; `END`KWDprivate`END`PLN `END`KWDint`END`PLN a `END`PUN=`END' +
           '`PLN `END`LIT1`END`PUN,`END`PLN b `END`PUN=`END`PLN `END`LIT1`END' +
-          '`PUN;`END`PLN<br>' +
-      '<br>' +
-      '&nbsp; `END`LIT@Override`END`PLN<br>' +
-      '&nbsp; `END`KWDpublic`END`PLN `END`TYPIterator`END`PUN&lt;`END' +
+          '`PUN;`END`PLN`END<br>' +
+      '`#1`PLN`END<br>' +
+      '`#2`PLN&nbsp; `END`LIT@Override`END`PLN`END<br>' +
+      '`#3`PLN&nbsp; `END`KWDpublic`END`PLN `END`TYPIterator`END`PUN&lt;`END' +
           '`TYPInteger`END`PUN&gt;`END`PLN iterator`END`PUN()`END`PLN `END' +
-          '`PUN{`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`KWDreturn`END`PLN `END`KWDnew`END`PLN `END' +
+          '`PUN{`END`PLN`END<br>' +
+      '`#4`PLN&nbsp; &nbsp; `END`KWDreturn`END`PLN `END`KWDnew`END`PLN `END' +
           '`TYPIterator`END`PUN&lt;`END`TYPInteger`END`PUN&gt;()`END`PLN `END' +
-          '`PUN{`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`COM/** the series is infinite. *\/`END' +
-          '`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`KWDboolean`END' +
+          '`PUN{`END`PLN`END<br>' +
+      '`#5`PLN&nbsp; &nbsp; &nbsp; `END`COM/** the series is infinite. *\/`END' +
+          '`PLN`END<br>' +
+      '`#6`PLN&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`KWDboolean`END' +
           '`PLN hasNext`END`PUN()`END`PLN `END`PUN{`END`PLN `END' +
           '`KWDreturn`END`PLN `END`KWDtrue`END`PUN;`END`PLN `END`PUN}`END' +
-          '`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`TYPInteger`END' +
-          '`PLN next`END`PUN()`END`PLN `END`PUN{`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDint`END`PLN tmp `END`PUN=`END' +
-          '`PLN a`END`PUN;`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; a `END`PUN+=`END`PLN b`END`PUN;`END' +
-          '`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; b `END`PUN=`END`PLN tmp`END`PUN;`END' +
-          '`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END' +
-          '`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`KWDvoid`END' +
+          '`PLN`END<br>' +
+      '`#7`PLN&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`TYPInteger`END' +
+          '`PLN next`END`PUN()`END`PLN `END`PUN{`END`PLN`END<br>' +
+      '`#8`PLN&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDint`END`PLN tmp `END`PUN=`END' +
+          '`PLN a`END`PUN;`END`PLN`END<br>' +
+      '`#9`PLN&nbsp; &nbsp; &nbsp; &nbsp; a `END`PUN+=`END`PLN b`END`PUN;`END' +
+          '`PLN`END<br>' +
+      '`#0`PLN&nbsp; &nbsp; &nbsp; &nbsp; b `END`PUN=`END`PLN tmp`END`PUN;`END' +
+          '`PLN`END<br>' +
+      '`#1`PLN&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDreturn`END`PLN a`END`PUN;`END' +
+          '`PLN`END<br>' +
+      '`#2`PLN&nbsp; &nbsp; &nbsp; `END`PUN}`END`PLN`END<br>' +
+      '`#3`PLN&nbsp; &nbsp; &nbsp; `END`KWDpublic`END`PLN `END`KWDvoid`END' +
           '`PLN remove`END`PUN()`END`PLN `END`PUN{`END`PLN `END`KWDthrow`END' +
           '`PLN `END`KWDnew`END`PLN `END' +
           '`TYPUnsupportedOperationException`END`PUN();`END`PLN `END' +
-          '`PUN}`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN};`END`PLN<br>' +
-      '&nbsp; `END`PUN}`END`PLN<br>' +
-      '<br>' +
-      '&nbsp; `END`COM/**<br>' +
-      '&nbsp; &nbsp;* the n&lt;sup&gt;th&lt;/sup&gt; element of the given ' +
-          'series.<br>' +
-      '&nbsp; &nbsp;* @throws NoSuchElementException if there are less than ' +
-          'n elements in the<br>' +
-      '&nbsp; &nbsp;* &nbsp; given Iterable\'s {@link Iterable#iterator ' +
-          'iterator}.<br>' +
-      '&nbsp; &nbsp;*\/`END`PLN<br>' +
-      '&nbsp; `END`KWDpublic`END`PLN `END`KWDstatic`END`PLN `END' +
-          '`PUN&lt;`END`PLNT`END`PUN&gt;`END`PLN<br>' +
-      '&nbsp; T nth`END`PUN(`END`KWDint`END`PLN n`END`PUN,`END`PLN `END' +
+          '`PUN}`END`PLN`END<br>' +
+      '`#4`PLN&nbsp; &nbsp; `END`PUN};`END`PLN`END<br>' +
+      '`#5`PLN&nbsp; `END`PUN}`END`PLN`END<br>' +
+      '`#6`PLN`END<br>' +
+      '`#7`PLN&nbsp; `END`COM/**`END<br>' +
+      '`#8`COM&nbsp; &nbsp;* the n&lt;sup&gt;th&lt;/sup&gt; element of the given ' +
+          'series.`END<br>' +
+      '`#9`COM&nbsp; &nbsp;* @throws NoSuchElementException if there are less than ' +
+          'n elements in the`END<br>' +
+      '`#0`COM&nbsp; &nbsp;* &nbsp; given Iterable\'s {@link Iterable#iterator ' +
+          'iterator}.`END<br>' +
+      '`#1`COM&nbsp; &nbsp;*\/`END`PLN`END<br>' +
+      '`#2`PLN&nbsp; `END`KWDpublic`END`PLN `END`KWDstatic`END`PLN `END' +
+          '`PUN&lt;`END`PLNT`END`PUN&gt;`END`PLN`END<br>' +
+      '`#3`PLN&nbsp; T nth`END`PUN(`END`KWDint`END`PLN n`END`PUN,`END`PLN `END' +
           '`TYPIterable`END`PUN&lt;`END`PLNT`END`PUN&gt;`END' +
-          '`PLN iterable`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TYPIterator`END`PUN&lt;?`END`PLN `END' +
+          '`PLN iterable`END`PUN)`END`PLN `END`PUN{`END`PLN`END<br>' +
+      '`#4`PLN&nbsp; &nbsp; `END`TYPIterator`END`PUN&lt;?`END`PLN `END' +
           '`KWDextends`END`PLN T`END`PUN&gt;`END`PLN in `END`PUN=`END' +
-          '`PLN iterable`END`PUN.`END`PLNiterator`END`PUN();`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END' +
-          '`PUN&gt;`END`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
-      '&nbsp; &nbsp; &nbsp; in`END`PUN.`END`PLNnext`END`PUN();`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`KWDreturn`END`PLN in`END`PUN.`END`PLNnext`END' +
-          '`PUN();`END`PLN<br>' +
-      '&nbsp; `END`PUN}`END`PLN<br>' +
-      '<br>' +
-      '&nbsp; `END`KWDpublic`END`PLN `END`KWDstatic`END`PLN `END`KWDvoid`END' +
+          '`PLN iterable`END`PUN.`END`PLNiterator`END`PUN();`END`PLN`END<br>' +
+      '`#5`PLN&nbsp; &nbsp; `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END' +
+          '`PUN&gt;`END`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN`END<br>' +
+      '`#6`PLN&nbsp; &nbsp; &nbsp; in`END`PUN.`END`PLNnext`END`PUN();`END`PLN`END<br>' +
+      '`#7`PLN&nbsp; &nbsp; `END`PUN}`END`PLN`END<br>' +
+      '`#8`PLN&nbsp; &nbsp; `END`KWDreturn`END`PLN in`END`PUN.`END`PLNnext`END' +
+          '`PUN();`END`PLN`END<br>' +
+      '`#9`PLN&nbsp; `END`PUN}`END`PLN`END<br>' +
+      '`#0`PLN`END<br>' +
+      '`#1`PLN&nbsp; `END`KWDpublic`END`PLN `END`KWDstatic`END`PLN `END`KWDvoid`END' +
           '`PLN main`END`PUN(`END`TYPString`END`PUN[]`END`PLN args`END' +
-          '`PUN)`END`PLN `END`PUN{`END`PLN<br>' +
-      '&nbsp; &nbsp; `END`TYPSystem`END`PUN.`END`PLNout`END`PUN.`END' +
+          '`PUN)`END`PLN `END`PUN{`END`PLN`END<br>' +
+      '`#2`PLN&nbsp; &nbsp; `END`TYPSystem`END`PUN.`END`PLNout`END`PUN.`END' +
           '`PLNprint`END`PUN(`END`PLNnth`END`PUN(`END`LIT10`END`PUN,`END' +
           '`PLN `END`KWDnew`END`PLN `END`TYPFibonacci`END`PUN()));`END' +
-          '`PLN<br>' +
-      '&nbsp; `END`PUN}`END`PLN<br>' +
-      '`END`PUN}`END`PLN<br>' +
-      '<br>' +
-      '`END`PUN#`END`PLN not a java comment<br>' +
-      '`END`PUN#`END`PLN not keywords`END`PUN:`END' +
-          '`PLN static_cast and namespace`END'),
+          '`PLN`END<br>' +
+      '`#3`PLN&nbsp; `END`PUN}`END`PLN`END<br>' +
+      '`#4`PLN`END`PUN}`END`PLN`END<br>' +
+      '`#5`PLN`END<br>' +
+      '`#6`PLN`END`PUN#`END`PLN not a java comment`END<br>' +
+      '`#7`PLN`END`PUN#`END`PLN not keywords`END`PUN:`END' +
+          '`PLN static_cast and namespace`END</li></ol>'),
   javascript: (
       '`COM/**<br>' +
       '&nbsp;* nth element in the fibonacci series.<br>' +

@@ -306,27 +306,37 @@ window['_pr_isIE6'] = function () {
     return !whitespace || whitespace === 'pre';
   }
 
-  function normalizedHtml(node, out) {
+  function normalizedHtml(node, out, opt_sortAttrs) {
     switch (node.nodeType) {
       case 1:  // an element
         var name = node.tagName.toLowerCase();
+
         out.push('<', name);
-        for (var i = 0; i < node.attributes.length; ++i) {
-          var attr = node.attributes[i];
-          if (!attr.specified) { continue; }
-          out.push(' ');
-          normalizedHtml(attr, out);
+        var attrs = node.attributes;
+        var n = attrs.length;
+        if (n) {
+          if (opt_sortAttrs) {
+            var sortedAttrs = [];
+            for (var i = n; --i >= 0;) { sortedAttrs[i] = attrs[i]; }
+            sortedAttrs.sort(function (a, b) {
+                return (a.name < b.name) ? -1 : a.name === b.name ? 0 : 1;
+              });
+            attrs = sortedAttrs;
+          }
+          for (var i = 0; i < n; ++i) {
+            var attr = attrs[i];
+            if (!attr.specified) { continue; }
+            out.push(' ', attr.name.toLowerCase(),
+                     '="', attribToHtml(attr.value), '"');
+          }
         }
         out.push('>');
         for (var child = node.firstChild; child; child = child.nextSibling) {
-          normalizedHtml(child, out);
+          normalizedHtml(child, out, opt_sortAttrs);
         }
         if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
           out.push('<\/', name, '>');
         }
-        break;
-      case 2: // an attribute
-        out.push(node.name.toLowerCase(), '="', attribToHtml(node.value), '"');
         break;
       case 3: case 4: // text
         out.push(textToHtml(node.nodeValue));
@@ -1087,10 +1097,36 @@ window['_pr_isIE6'] = function () {
            // Doing this on other browsers breaks lots of stuff since \r\n is
            // treated as two newlines on Firefox.
            ? (isIE678 === 6 ? '&nbsp;\r\n' : '&nbsp;\r')
-           // IE collapses multiple adjacient <br>s into 1 line break.
+           // IE collapses multiple adjacent <br>s into 1 line break.
            // Prefix every newline with '&nbsp;' to prevent such behavior.
            : '&nbsp;<br />')
         : '<br />');
+
+    // Look for a class like linenums or linenums:<n> where <n> is the 1-indexed
+    // number of the first line.
+    var numberLines = job.sourceNode.className.match(/\blinenums\b(?::(\d+))?/);
+    var lineBreaker;
+    if (numberLines) {
+      var lineBreaks = [];
+      for (var i = 0; i < 10; ++i) {
+        lineBreaks[i] = lineBreakHtml + '</li><li class="L' + i + '">';
+      }
+      var lineNum = numberLines[1] - 1 || 0;  // Lines are 1-indexed
+      html.push('<ol class="linenums"><li class="L', (lineNum) % 10, '"');
+      if (lineNum) {
+        html.push(' value="', lineNum + 1, '"');
+      }
+      html.push('>');
+      lineBreaker = function () {
+        var lb = lineBreaks[++lineNum % 10];
+        // If a decoration is open, we need to close it before closing a list-item
+        // and reopen it on the other side of the list item.
+        return openDecoration
+            ? ('</span>' + lb + '<span class="' + openDecoration + '">') : lb;
+      };
+    } else {
+      lineBreaker = lineBreakHtml;
+    }
 
     // A helper function that is responsible for opening sections of decoration
     // and outputing properly escaped chunks of source
@@ -1120,7 +1156,7 @@ window['_pr_isIE6'] = function () {
         // Keep track of whether we need to escape space at the beginning of the
         // next chunk.
         lastWasSpace = trailingSpaceRe.test(htmlChunk);
-        html.push(htmlChunk.replace(newlineRe, lineBreakHtml));
+        html.push(htmlChunk.replace(newlineRe, lineBreaker));
         outputIdx = sourceIdx;
       }
     }
@@ -1163,6 +1199,7 @@ window['_pr_isIE6'] = function () {
     if (openDecoration) {
       html.push('</span>');
     }
+    if (numberLines) { html.push('</li></ol>'); }
     job.prettyPrintedHtml = html.join('');
   }
 

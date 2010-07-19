@@ -130,19 +130,46 @@ public:
     >WordPress's help center</a> for info on how to stop smart quoting of code
     snippets.</p>
 
-    <h3>How do I put line numbers in my code?</h3>
+    <h3 id="linenums">How do I put line numbers in my code?</h3>
+    <p>You can use the <code>linenums</code> class to turn on line
+    numbering.  If your code doesn't start at line number 1, you can
+    add a colon and a line number to the end of that class as in
+    <code>linenums:52</code>.
+
+    <p>For example
+<pre class="prettyprint">&lt;pre class="prettyprint linenums:<b>4</b>"
+&gt;// This is line 4.
+foo();
+bar();
+baz();
+boo();
+far();
+faz();
+&lt;pre&gt;</pre>
+    produces
+<pre class="prettyprint linenums:4"
+>// This is line 4.
+foo();
+bar();
+baz();
+boo();
+far();
+faz();
+</pre>
+
+    <h3>How do I prevent a portion of markup from being marked as code?</h3>
     <p>You can use the <code>nocode</code> class to identify a span of markup
     that is not code.
-<pre>&lt;pre class=prettyprint&gt;
-&lt;span class="<b>nocode</b>"&gt;1:&lt;/span&gt; /* This is line 1 of my code
-&lt;span class="<b>nocode</b>"&gt;2:&lt;/span&gt;  * and here's line 2 */
-&lt;span class="<b>nocode</b>"&gt;3:&lt;/span&gt; print("I'm line number 3");
+<pre class="prettyprint">&lt;pre class=prettyprint&gt;
+int x = foo();  /* This is a comment  &lt;span class="nocode"&gt;This is not code&lt;/span&gt;
+  Continuation of comment */
+int y = bar();
 &lt;/pre&gt;</pre>
 produces
-<pre class=prettyprint>
-<span class="nocode">1:</span> /* This is line 1 of my code
-<span class="nocode">2:</span>  * and here's line 2 */
-<span class="nocode">3:</span> print("I'm line number 3");
+<pre class="prettyprint">
+int x = foo();  /* This is a comment  <span class="nocode">This is not code</span>
+  Continuation of comment */
+int y = bar();
 </pre>
 
     <p>For a more complete example see the issue22
