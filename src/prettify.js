@@ -1228,7 +1228,7 @@ window['_pr_isIE6'] = function () {
       if (!langHandlerRegistry.hasOwnProperty(ext)) {
         langHandlerRegistry[ext] = handler;
       } else if ('console' in window) {
-        console.warn('cannot override language handler %s', ext);
+        console['warn']('cannot override language handler %s', ext);
       }
     }
   }
@@ -1360,8 +1360,8 @@ window['_pr_isIE6'] = function () {
       recombineTagsAndDecorations(job);
     } catch (e) {
       if ('console' in window) {
-        console.log(e);
-        console.trace();
+        console['log'](e);
+        console['trace']();
       }
     }
   }
