@@ -24,6 +24,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-vb.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-yaml.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="test_base.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css" />
@@ -1117,6 +1119,50 @@ begin
 
 end architecture foo_architecture;
 </pre>
+
+<h1>YAML mode</h1>
+<pre class="prettyprint lang-yaml" id="yaml1">
+application: mirah-lang
+version: 1
+
+# Here's a comment
+handlers:
+  - url: /red/*
+     servlet: mysite.server.TeamServlet
+     init_params:
+       teamColor: red
+       bgColor: "#CC0000"
+     name: redteam
+  - url: /blue/*
+     servlet: mysite.server.TeamServlet
+     init_params:
+       teamColor: blue
+       bgColor: "#0000CC"
+     name: blueteam
+  - url: /register/*
+     jsp: /register/start.jsp
+  - url: *.special
+     filter: mysite.server.LogFilterImpl
+     init_params:
+       logType: special
+  </pre>
+<pre class="prettyprint lang-yaml" id="yaml2">
+%YAML 1.1
+---
+!!map {
+  ? !!str ""
+  : !!str "value",
+  ? !!str "explicit key"
+  : !!str "value",
+  ? !!str "simple key"
+  : !!str "value",
+  ? !!seq [
+    !!str "collection",
+    !!str "simple",
+    !!str "key"
+  ]
+  : !!str "value"
+}</pre>
 </body>
 
 <script type="text/javascript">
@@ -2554,7 +2600,47 @@ var goldens = {
       '&nbsp; &nbsp; `END`KWDend`END`PLN `END`KWDif`END`PUN;`END`PLN<br>' +
       '&nbsp; `END`KWDend`END`PLN `END`KWDprocess`END`PLN dummy_p`END`PUN;`END`PLN<br>' +
       '<br>' +
-      '`END`KWDend`END`PLN `END`KWDarchitecture`END`PLN foo_architecture`END`PUN;`END'
+      '`END`KWDend`END`PLN `END`KWDarchitecture`END`PLN foo_architecture`END`PUN;`END',
+  yaml1: '`KWDapplication: `END`PLNmirah`END`PUN-`END`PLNlang<br>' +
+      '`END`KWDversion: `END`PLN1<br>' +
+      '<br>' +
+      '`END`COM# Here\'s a comment`END`PLN<br>' +
+      '`END`KWDhandlers:<br>' +
+      '`END`PLN&nbsp; `END`PUN-`END`PLN `END`KWDurl: `END`PLN/red/*<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDservlet: `END`PLNmysite.server.TeamServlet<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDinit_params:<br>' +
+      '`END`PLN&nbsp; &nbsp; &nbsp; &nbsp;`END`KWDteamColor: `END`PLNred<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp;`END`KWDbgColor: `END`STR"#CC0000"`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDname: `END`PLNredteam<br>' +
+      '&nbsp; `END`PUN-`END`PLN `END`KWDurl: `END`PLN/blue/*<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDservlet: `END`PLNmysite.server.TeamServlet<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDinit_params:<br>' +
+      '`END`PLN&nbsp; &nbsp; &nbsp; &nbsp;`END`KWDteamColor: `END`PLNblue<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp;`END`KWDbgColor: `END`STR"#0000CC"`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDname: `END`PLNblueteam<br>' +
+      '&nbsp; `END`PUN-`END`PLN `END`KWDurl: `END`PLN/register/*<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDjsp: `END`PLN/register/start.jsp<br>' +
+      '&nbsp; `END`PUN-`END`PLN `END`KWDurl: `END`PLN*.special<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDfilter: `END`PLNmysite.server.LogFilterImpl<br>' +
+      '&nbsp; &nbsp; &nbsp;`END`KWDinit_params:<br>' +
+      '`END`PLN&nbsp; &nbsp; &nbsp; &nbsp;`END`KWDlogType: `END`PLNspecial<br>' +
+      '&nbsp; `END',
+yaml2: '`DEC%YAML 1.1`END`PLN<br>' +
+      '`END`DEC---<br>' +
+      '`END`TYP!!map`END`PLN {<br>' +
+      '&nbsp; `END`PUN?`END`PLN `END`TYP!!str`END`PLN `END`STR""`END`PLN<br>' +
+      '&nbsp; `END`PUN:`END`PLN `END`TYP!!str`END`PLN `END`STR"value"`END`PLN,<br>' +
+      '&nbsp; `END`PUN?`END`PLN `END`TYP!!str`END`PLN `END`STR"explicit key"`END`PLN<br>' +
+      '&nbsp; `END`PUN:`END`PLN `END`TYP!!str`END`PLN `END`STR"value"`END`PLN,<br>' +
+      '&nbsp; `END`PUN?`END`PLN `END`TYP!!str`END`PLN `END`STR"simple key"`END`PLN<br>' +
+      '&nbsp; `END`PUN:`END`PLN `END`TYP!!str`END`PLN `END`STR"value"`END`PLN,<br>' +
+      '&nbsp; `END`PUN?`END`PLN `END`TYP!!seq`END`PLN [<br>' +
+      '&nbsp; &nbsp; `END`TYP!!str`END`PLN `END`STR"collection"`END`PLN,<br>' +
+      '&nbsp; &nbsp; `END`TYP!!str`END`PLN `END`STR"simple"`END`PLN,<br>' +
+      '&nbsp; &nbsp; `END`TYP!!str`END`PLN `END`STR"key"`END`PLN<br>' +
+      '&nbsp; ]<br>' +
+      '&nbsp; `END`PUN:`END`PLN `END`TYP!!str`END`PLN `END`STR"value"`END`PLN<br>' +
+      '}`END'
 };
 </script>
 
