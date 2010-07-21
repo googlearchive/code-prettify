@@ -26,6 +26,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-yaml.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-scala.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="test_base.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css" />
@@ -1163,6 +1165,65 @@ handlers:
   ]
   : !!str "value"
 }</pre>
+
+<h1>Scala mode</h1>
+<pre class="prettyprint lang-scala" id="scala">
+/* comment 1 */
+/*
+comment 2
+*/
+/* comment / * comment 3 **/
+// strings
+"Hello, World!", "\n",
+`an-identifier`, `\n`,
+'A', '\n',
+'aSymbol,
+"""Hello,
+World""", """Hello,\nWorld""",
+"""Hello, "World"!""",
+"""Hello, \"World\""""
+
+// Numbers
+0
+0123
+0xa0
+0XA0L
+123
+123.45
+1.50F
+0.50
+.50
+123e-1
+123.45e+1
+1.50e2
+0.50e-6
+.50e+42f
+
+// Values
+false, true, null, this;
+
+// Keywords
+class MyClass;
+import foo.bar;
+package baz;
+
+// From scala-lang.org/node/242
+def act() {
+  var pongCount = 0
+  loop {
+    react {
+      case Ping =>
+        if (pongCount % 1000 == 0)
+          Console.println("Pong: ping "+pongCount)
+        sender ! Pong
+        pongCount = pongCount + 1
+      case Stop =>
+        Console.println("Pong: stop")
+        exit()
+    }
+  }
+}
+</pre>
 </body>
 
 <script type="text/javascript">
@@ -2626,7 +2687,7 @@ var goldens = {
       '&nbsp; &nbsp; &nbsp;`END`KWDinit_params:<br>' +
       '`END`PLN&nbsp; &nbsp; &nbsp; &nbsp;`END`KWDlogType: `END`PLNspecial<br>' +
       '&nbsp; `END',
-yaml2: '`DEC%YAML 1.1`END`PLN<br>' +
+  yaml2: '`DEC%YAML 1.1`END`PLN<br>' +
       '`END`DEC---<br>' +
       '`END`TYP!!map`END`PLN {<br>' +
       '&nbsp; `END`PUN?`END`PLN `END`TYP!!str`END`PLN `END`STR""`END`PLN<br>' +
@@ -2641,7 +2702,62 @@ yaml2: '`DEC%YAML 1.1`END`PLN<br>' +
       '&nbsp; &nbsp; `END`TYP!!str`END`PLN `END`STR"key"`END`PLN<br>' +
       '&nbsp; ]<br>' +
       '&nbsp; `END`PUN:`END`PLN `END`TYP!!str`END`PLN `END`STR"value"`END`PLN<br>' +
-      '}`END'
+      '}`END',
+  scala: '`COM/* comment 1 */`END`PLN<br>' +
+      '`END`COM/*<br>' +
+      'comment 2<br>' +
+      '*/`END`PLN<br>' +
+      '`END`COM/* comment / * comment 3 **/`END`PLN<br>' +
+      '`END`COM// strings`END`PLN<br>' +
+      '`END`STR"Hello, World!"`END`PUN,`END`PLN `END`STR"\\n"`END`PUN,`END`PLN<br>' +
+      '`END`LIT`an-identifier``END`PUN,`END`PLN `END`LIT`\\n``END`PUN,`END`PLN<br>' +
+      '`END`STR\'A\'`END`PUN,`END`PLN `END`STR\'\\n\'`END`PUN,`END`PLN<br>' +
+      '`END`LIT\'aSymbol`END`PUN,`END`PLN<br>' +
+      '`END`STR"""Hello,<br>' +
+      'World"""`END`PUN,`END`PLN `END`STR"""Hello,\\nWorld"""`END`PUN,`END`PLN<br>' +
+      '`END`STR"""Hello, "World"!"""`END`PUN,`END`PLN<br>' +
+      '`END`STR"""Hello, \\"World\\""""`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// Numbers`END`PLN<br>' +
+      '`END`LIT0`END`PLN<br>' +
+      '`END`LIT0123`END`PLN<br>' +
+      '`END`LIT0xa0`END`PLN<br>' +
+      '`END`LIT0XA0L`END`PLN<br>' +
+      '`END`LIT123`END`PLN<br>' +
+      '`END`LIT123.45`END`PLN<br>' +
+      '`END`LIT1.50F`END`PLN<br>' +
+      '`END`LIT0.50`END`PLN<br>' +
+      '`END`PUN.`END`LIT50`END`PLN<br>' +
+      '`END`LIT123e-1`END`PLN<br>' +
+      '`END`LIT123.45e+1`END`PLN<br>' +
+      '`END`LIT1.50e2`END`PLN<br>' +
+      '`END`LIT0.50e-6`END`PLN<br>' +
+      '`END`PUN.`END`LIT50e+42f`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// Values`END`PLN<br>' +
+      '`END`LITfalse`END`PUN,`END`PLN `END`LITtrue`END`PUN,`END`PLN `END`LITnull`END`PUN,`END`PLN `END`LITthis`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// Keywords`END`PLN<br>' +
+      '`END`KWDclass`END`PLN `END`TYPMyClass`END`PUN;`END`PLN<br>' +
+      '`END`KWDimport`END`PLN foo`END`PUN.`END`PLNbar`END`PUN;`END`PLN<br>' +
+      '`END`KWDpackage`END`PLN baz`END`PUN;`END`PLN<br>' +
+      '<br>' +
+      '`END`COM// From scala-lang.org/node/242`END`PLN<br>' +
+      '`END`KWDdef`END`PLN act`END`PUN()`END`PLN `END`PUN{`END`PLN<br>' +
+      '&nbsp; `END`KWDvar`END`PLN pongCount `END`PUN=`END`PLN `END`LIT0`END`PLN<br>' +
+      '&nbsp; loop `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; react `END`PUN{`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDcase`END`PLN `END`TYPPing`END`PLN `END`PUN=&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDif`END`PLN `END`PUN(`END`PLNpongCount `END`PUN%`END`PLN `END`LIT1000`END`PLN `END`PUN==`END`PLN `END`LIT0`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; `END`TYPConsole`END`PUN.`END`PLNprintln`END`PUN(`END`STR"Pong: ping "`END`PUN+`END`PLNpongCount`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; sender `END`PUN!`END`PLN `END`TYPPong`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; pongCount `END`PUN=`END`PLN pongCount `END`PUN+`END`PLN `END`LIT1`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDcase`END`PLN `END`TYPStop`END`PLN `END`PUN=&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`TYPConsole`END`PUN.`END`PLNprintln`END`PUN(`END`STR"Pong: stop"`END`PUN)`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; exit`END`PUN()`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
+      '&nbsp; `END`PUN}`END`PLN<br>' +
+      '`END`PUN}`END'
 };
 </script>
 
