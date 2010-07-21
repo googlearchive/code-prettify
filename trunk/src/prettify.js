@@ -1096,7 +1096,8 @@ window['_pr_isIE6'] = function () {
            // on IE.
            // Doing this on other browsers breaks lots of stuff since \r\n is
            // treated as two newlines on Firefox.
-           ? (isIE678 === 6 ? '&#160;\r\n' : '&#160;\r')
+           ? (isIE678 === 6 ? '&#160;\r\n' :
+              isIE678 === 7 ? '&#160;<br>\r' : '&#160;\r')
            // IE collapses multiple adjacent <br>s into 1 line break.
            // Prefix every newline with '&#160;' to prevent such behavior.
            // &nbsp; is the same as &#160; but works in XML as well as HTML.
@@ -1360,8 +1361,7 @@ window['_pr_isIE6'] = function () {
       recombineTagsAndDecorations(job);
     } catch (e) {
       if ('console' in window) {
-        console['log'](e);
-        console['trace']();
+        console['log'](e && e['stack'] ? e['stack'] : e);
       }
     }
   }
