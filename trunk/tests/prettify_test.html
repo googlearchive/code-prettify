@@ -945,6 +945,9 @@ Not.A.Char = 'too long'  -- Don't barf.  Show that 't is a lexical error.
      (turn-on-auto-fill)
    )
 )
+
+;; Define and cond are keywords in scheme
+(define (sqt x) (sqrt-iter 1.0 2.0 x))
 </pre>
 
 <h1>Bug 45 - Square brackets in strings</h1>
@@ -2488,7 +2491,12 @@ var goldens = {
       '&nbsp; &nbsp; &nbsp;`END`OPN(`END`PLNturn-on-auto-fill`END' +
            '`CLO)`END`PLN<br>' +
       '&nbsp; &nbsp;`END`CLO)`END`PLN<br>' +
-      '`END`CLO)`END'),
+      '`END`CLO)`END`PLN<br>' +
+      '<br>' +
+      '`END`COM;; Define and cond are keywords in scheme`END`PLN<br>' +
+      '`END`OPN(`END`KWDdefine`END`PLN `END`OPN(`END`PLNsqt x`END`CLO)`END' +
+           '`PLN `END`OPN(`END`PLNsqrt-iter `END`LIT1.0`END`PLN `END' +
+           '`LIT2.0`END`PLN x`END`CLO))`END'),
   issue45: (
       '`KWDthrow`END`PLN `END`KWDnew`END`PLN `END`TYPRuntimeException`END' +
            '`PUN(`END`STR"Element ["`END`PLN `END`PUN+`END`PLN element`END' +
