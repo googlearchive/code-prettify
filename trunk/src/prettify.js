@@ -50,7 +50,6 @@
  *   Java annotations (start with "@") are now captured as literals ("lit")
  * </blockquote>
  * @requires console
- * @overrides window
  */
 
 // JSLint declarations
@@ -1094,10 +1093,10 @@ window['_pr_isIE6'] = function () {
         ? (job.sourceNode.tagName === 'PRE'
            // Use line feeds instead of <br>s so that copying and pasting works
            // on IE.
-           // Doing this on other browsers breaks lots of stuff since \r\n is
-           // treated as two newlines on Firefox.
+           // See Issue 104 for the derivation of this mess.
            ? (isIE678 === 6 ? '&#160;\r\n' :
-              isIE678 === 7 ? '&#160;<br>\r' : '&#160;\r')
+              isIE678 === 7 ? '&#160;<br />\r' :
+	      isIE678 === 8 ? '&#160;<br />' : '&#160;\r')
            // IE collapses multiple adjacent <br>s into 1 line break.
            // Prefix every newline with '&#160;' to prevent such behavior.
            // &nbsp; is the same as &#160; but works in XML as well as HTML.
@@ -1377,11 +1376,9 @@ window['_pr_isIE6'] = function () {
   }
 
   function prettyPrint(opt_whenDone) {
+    function byTagName(tn) { return document.getElementsByTagName(tn); }
     // fetch a list of nodes to rewrite
-    var codeSegments = [
-        document.getElementsByTagName('pre'),
-        document.getElementsByTagName('code'),
-        document.getElementsByTagName('xmp') ];
+    var codeSegments = [byTagName('pre'), byTagName('code'), byTagName('xmp')];
     var elements = [];
     for (var i = 0; i < codeSegments.length; ++i) {
       for (var j = 0, n = codeSegments[i].length; j < n; ++j) {
