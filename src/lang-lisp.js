@@ -67,8 +67,8 @@
 PR.registerLangHandler(
     PR.createSimpleLexer(
         [
-         ['opn',             /^\(/, null, '('],
-         ['clo',             /^\)/, null, ')'],
+         ['opn',             /^\(+/, null, '('],
+         ['clo',             /^\)+/, null, ')'],
          // A line comment that starts with ;
          [PR.PR_COMMENT,     /^;[^\r\n]*/, null, ';'],
          // Whitespace
