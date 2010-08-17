@@ -24,7 +24,7 @@
  * @author mikesamuel@gmail.com
  */
 
-PR.registerLangHandler(PR.sourceDecorator({
+PR['registerLangHandler'](PR['sourceDecorator']({
         keywords: (
             'bool bytes default double enum extend extensions false fixed32 '
             + 'fixed64 float group import int32 int64 max message option '
