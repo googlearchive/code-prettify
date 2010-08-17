@@ -64,30 +64,30 @@
  * @author mikesamuel@gmail.com
  */
 
-PR.registerLangHandler(
-    PR.createSimpleLexer(
+PR['registerLangHandler'](
+    PR['createSimpleLexer'](
         [
          ['opn',             /^\(+/, null, '('],
          ['clo',             /^\)+/, null, ')'],
          // A line comment that starts with ;
-         [PR.PR_COMMENT,     /^;[^\r\n]*/, null, ';'],
+         [PR['PR_COMMENT'],     /^;[^\r\n]*/, null, ';'],
          // Whitespace
-         [PR.PR_PLAIN,       /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
+         [PR['PR_PLAIN'],       /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
          // A double quoted, possibly multi-line, string.
-         [PR.PR_STRING,      /^\"(?:[^\"\\]|\\[\s\S])*(?:\"|$)/, null, '"']
+         [PR['PR_STRING'],      /^\"(?:[^\"\\]|\\[\s\S])*(?:\"|$)/, null, '"']
         ],
         [
-         [PR.PR_KEYWORD,     /^(?:block|c[ad]+r|catch|con[ds]|def(?:ine|un)|do|eq|eql|equal|equalp|eval-when|flet|format|go|if|labels|lambda|let|load-time-value|locally|macrolet|multiple-value-call|nil|progn|progv|quote|require|return-from|setq|symbol-macrolet|t|tagbody|the|throw|unwind)\b/, null],
-         [PR.PR_LITERAL,
+         [PR['PR_KEYWORD'],     /^(?:block|c[ad]+r|catch|con[ds]|def(?:ine|un)|do|eq|eql|equal|equalp|eval-when|flet|format|go|if|labels|lambda|let|load-time-value|locally|macrolet|multiple-value-call|nil|progn|progv|quote|require|return-from|setq|symbol-macrolet|t|tagbody|the|throw|unwind)\b/, null],
+         [PR['PR_LITERAL'],
           /^[+\-]?(?:0x[0-9a-f]+|\d+\/\d+|(?:\.\d+|\d+(?:\.\d*)?)(?:[ed][+\-]?\d+)?)/i],
          // A single quote possibly followed by a word that optionally ends with
          // = ! or ?.
-         [PR.PR_LITERAL,
+         [PR['PR_LITERAL'],
           /^\'(?:-*(?:\w|\\[\x21-\x7e])(?:[\w-]*|\\[\x21-\x7e])[=!?]?)?/],
          // A word that optionally ends with = ! or ?.
-         [PR.PR_PLAIN,
+         [PR['PR_PLAIN'],
           /^-*(?:[a-z_]|\\[\x21-\x7e])(?:[\w-]*|\\[\x21-\x7e])[=!?]?/i],
          // A printable non-space non-special character
-         [PR.PR_PUNCTUATION, /^[^\w\t\n\r \xA0()\"\\\';]+/]
+         [PR['PR_PUNCTUATION'], /^[^\w\t\n\r \xA0()\"\\\';]+/]
         ]),
     ['cl', 'el', 'lisp', 'scm']);
