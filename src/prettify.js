@@ -122,6 +122,9 @@ window['_pr_isIE6'] = function () {
       "fixed foreach from group implicit in interface internal into is lock " +
       "object out override orderby params partial readonly ref sbyte sealed " +
       "stackalloc string select uint ulong unchecked unsafe ushort var ";
+  var COFFEE_KEYWORDS = "all and by catch class else extends false finally " +
+      "for if in is isnt loop new no not null of off on or return super then " +
+      "true try unless until when while yes ";
   var JSCRIPT_KEYWORDS = COMMON_KEYWORDS +
       "debugger eval export function get null set undefined var with " +
       "Infinity NaN ";
@@ -974,12 +977,18 @@ window['_pr_isIE6'] = function () {
       fallthroughStylePatterns.push(
           [PR_STRING, /^@\"(?:[^\"]|\"\")*(?:\"|$)/, null]);
     }
-    if (options['hashComments']) {
+    var hc = options['hashComments'];
+    if (hc) {
       if (options['cStyleComments']) {
-        // Stop C preprocessor declarations at an unclosed open comment
-        shortcutStylePatterns.push(
-            [PR_COMMENT, /^#(?:(?:define|elif|else|endif|error|ifdef|include|ifndef|line|pragma|undef|warning)\b|[^\r\n]*)/,
-             null, '#']);
+        if (hc > 1) {  // multiline hash comments
+          shortcutStylePatterns.push(
+              [PR_COMMENT, /^#(?:##(?:[^#]|#(?!##))*(?:###|$)|.*)/, null, '#']);
+        } else {
+          // Stop C preprocessor declarations at an unclosed open comment
+          shortcutStylePatterns.push(
+              [PR_COMMENT, /^#(?:(?:define|elif|else|endif|error|ifdef|include|ifndef|line|pragma|undef|warning)\b|[^\r\n]*)/,
+               null, '#']);
+        }
         fallthroughStylePatterns.push(
             [PR_STRING,
              /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h|[a-z]\w*)>/,
@@ -1096,7 +1105,7 @@ window['_pr_isIE6'] = function () {
            // See Issue 104 for the derivation of this mess.
            ? (isIE678 === 6 ? '&#160;\r\n' :
               isIE678 === 7 ? '&#160;<br />\r' :
-	      isIE678 === 8 ? '&#160;<br />' : '&#160;\r')
+              isIE678 === 8 ? '&#160;<br />' : '&#160;\r')
            // IE collapses multiple adjacent <br>s into 1 line break.
            // Prefix every newline with '&#160;' to prevent such behavior.
            // &nbsp; is the same as &#160; but works in XML as well as HTML.
@@ -1112,7 +1121,7 @@ window['_pr_isIE6'] = function () {
       for (var i = 0; i < 10; ++i) {
         lineBreaks[i] = lineBreakHtml + '</li><li class="L' + i + '">';
       }
-      var lineNum = numberLines[1] && numberLines[1].length 
+      var lineNum = numberLines[1] && numberLines[1].length
           ? numberLines[1] - 1 : 0;  // Lines are 1-indexed
       html.push('<ol class="linenums"><li class="L', (lineNum) % 10, '"');
       if (lineNum) {
@@ -1330,8 +1339,15 @@ window['_pr_isIE6'] = function () {
           'cStyleComments': true,
           'regexLiterals': true
         }), ['js']);
-  registerLangHandler(
-      createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
+  registerLangHandler(sourceDecorator({
+          'keywords': COFFEE_KEYWORDS,
+          'hashComments': 3,  // ### style block comments
+          'cStyleComments': true,
+          'multilineStrings': true,
+          'tripleQuotedStrings': true,
+          'regexLiterals': true
+        }), ['coffee']);
+  registerLangHandler(createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
 
   function applyDecorator(job) {
     var sourceCodeHtml = job.sourceCodeHtml;
@@ -1408,7 +1424,7 @@ window['_pr_isIE6'] = function () {
           // Language extensions can be specified like
           //     <pre class="prettyprint lang-cpp">
           // the language extension "cpp" is used to find a language handler as
-          // passed to PR_registerLangHandler.
+          // passed to PR.registerLangHandler.
           var langExtension = cs.className.match(/\blang-(\w+)\b/);
           if (langExtension) { langExtension = langExtension[1]; }
 
