@@ -386,6 +386,57 @@ division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
 extends = /extends/;
 </pre>
 
+<h1>Coffee</h1>
+<pre class="prettyprint lang-coffee" id="coffee">
+class Animal
+  constructor: (@name) ->
+  move: (meters, loc) ->
+    alert @name + " moved " + meters + "m."
+  travel: (path...) ->
+    for place in path
+      @move place.distance, place.location
+
+class Horse extends Animal
+  ###
+  @param name Horse name
+  @param jumper Jumping ability
+  ###
+  constructor: (name, jumper) ->
+    super name
+    @capable = jumper
+  step: ->
+    alert '''
+          Step,
+          step...
+          '''
+  jump: ->
+    @capable
+  move: (meters, where) ->
+    switch where
+      when "ground"
+        @step()
+        super meters
+      when "hurdle"
+        super meters if @jump()
+
+# Create horse
+tom = new Horse "Tommy", yes
+
+street =
+  location: "ground"
+  distance: 12
+car =
+  location: "hurdle"
+  distance: 2
+
+###
+Tell him to travel:
+1. through the street
+2. over the car
+###
+tom.travel street, car
+</pre>
+
 <h1>Perl</h1>
 <pre class="prettyprint" id="perl">
 #!/usr/bin/perl
@@ -2163,6 +2214,55 @@ var goldens = {
       '`END`PUN&amp;`END`STR/foo/`END`PUN;`END`PLN<br>' +
       '<br>' +
       'extends `END`PUN=`END`PLN `END`STR/extends/`END`PUN;`END'),
+  coffee: (
+      '`KWDclass`END`PLN `END`TYPAnimal`END`PLN<br>' +
+      '&nbsp; constructor`END`PUN:`END`PLN `END`PUN(`END`LIT@name`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN<br>' +
+      '&nbsp; move`END`PUN:`END`PLN `END`PUN(`END`PLNmeters`END`PUN,`END`PLN loc`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; alert `END`LIT@name`END`PLN `END`PUN+`END`PLN `END`STR" moved "`END`PLN `END`PUN+`END`PLN meters `END`PUN+`END`PLN `END`STR"m."`END`PLN<br>' +
+      '&nbsp; travel`END`PUN:`END`PLN `END`PUN(`END`PLNpath`END`PUN...)`END`PLN `END`PUN-&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDfor`END`PLN place `END`KWDin`END`PLN path<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`LIT@move`END`PLN place`END`PUN.`END`PLNdistance`END`PUN,`END`PLN place`END`PUN.`END`PLNlocation<br>' +
+      '<br>' +
+      '`END`KWDclass`END`PLN `END`TYPHorse`END`PLN `END`KWDextends`END`PLN `END`TYPAnimal`END`PLN<br>' +
+      '&nbsp; `END`COM###<br>' +
+      '&nbsp; @param name Horse name<br>' +
+      '&nbsp; @param jumper Jumping ability<br>' +
+      '&nbsp; ###`END`PLN<br>' +
+      '&nbsp; constructor`END`PUN:`END`PLN `END`PUN(`END`PLNname`END`PUN,`END`PLN jumper`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`KWDsuper`END`PLN name<br>' +
+      '&nbsp; &nbsp; `END`LIT@capable`END`PLN `END`PUN=`END`PLN jumper<br>' +
+      '&nbsp; step`END`PUN:`END`PLN `END`PUN-&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; alert `END`STR\'\'\'<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Step,<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; step...<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; \'\'\'`END`PLN<br>' +
+      '&nbsp; jump`END`PUN:`END`PLN `END`PUN-&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; `END`LIT@capable`END`PLN<br>' +
+      '&nbsp; move`END`PUN:`END`PLN `END`PUN(`END`PLNmeters`END`PUN,`END`PLN where`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN<br>' +
+      '&nbsp; &nbsp; switch where<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDwhen`END`PLN `END`STR"ground"`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`LIT@step`END`PUN()`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDsuper`END`PLN meters<br>' +
+      '&nbsp; &nbsp; &nbsp; `END`KWDwhen`END`PLN `END`STR"hurdle"`END`PLN<br>' +
+      '&nbsp; &nbsp; &nbsp; &nbsp; `END`KWDsuper`END`PLN meters `END`KWDif`END`PLN `END`LIT@jump`END`PUN()`END`PLN<br>' +
+      '<br>' +
+      '`END`COM# Create horse`END`PLN<br>' +
+      'tom `END`PUN=`END`PLN `END`KWDnew`END`PLN `END`TYPHorse`END`PLN `END`STR"Tommy"`END`PUN,`END`PLN `END`KWDyes`END`PLN<br>' +
+      '<br>' +
+      'street `END`PUN=`END`PLN<br>' +
+      '&nbsp; location`END`PUN:`END`PLN `END`STR"ground"`END`PLN<br>' +
+      '&nbsp; distance`END`PUN:`END`PLN `END`LIT12`END`PLN<br>' +
+      'car `END`PUN=`END`PLN<br>' +
+      '&nbsp; location`END`PUN:`END`PLN `END`STR"hurdle"`END`PLN<br>' +
+      '&nbsp; distance`END`PUN:`END`PLN `END`LIT2`END`PLN<br>' +
+      '<br>' +
+      '`END`COM###<br>' +
+      'Tell him to travel:<br>' +
+      '1. through the street<br>' +
+      '2. over the car<br>' +
+      '###`END`PLN<br>' +
+      'tom`END`PUN.`END`PLNtravel street`END`PUN,`END`PLN car`END'
+       ),
   issue14a: (
       '`COM//comment`END`PLN<br>' +
       '`END`KWDint`END`PLN main`END`PUN(`END`KWDint`END`PLN argc`END`PUN,`END' +
