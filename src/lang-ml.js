@@ -19,7 +19,7 @@
  * Registers a language handler for OCaml, SML, F# and similar languages.
  *
  * Based on the lexical grammar at
- * http://research.microsoft.com/fsharp/manual/spec2.aspx#_Toc202383715
+ * http://research.microsoft.com/en-us/um/cambridge/projects/fsharp/manual/spec.html#_Toc270597388
  *
  * @author mikesamuel@gmail.com
  */
@@ -36,7 +36,7 @@ PR['registerLangHandler'](
           null, '#'],
          // A double or single quoted, possibly multi-line, string.
          // F# allows escaped newlines in strings.
-         [PR['PR_STRING'],      /^(?:\"(?:[^\"\\]|\\[\s\S])*(?:\"|$)|\'(?:[^\'\\]|\\[\s\S])*(?:\'|$))/, null, '"\'']
+         [PR['PR_STRING'],      /^(?:\"(?:[^\"\\]|\\[\s\S])*(?:\"|$)|\'(?:[^\'\\]|\\[\s\S])(?:\'|$))/, null, '"\'']
         ],
         [
          // Block comments are delimited by (* and *) and may be
@@ -49,7 +49,7 @@ PR['registerLangHandler'](
          // scientific notation.
          [PR['PR_LITERAL'],
           /^[+\-]?(?:0x[\da-f]+|(?:(?:\.\d+|\d+(?:\.\d*)?)(?:e[+\-]?\d+)?))/i],
-         [PR['PR_PLAIN'],       /^(?:[a-z_]\w*[!?#]?|``[^\r\n\t`]*(?:``|$))/i],
+         [PR['PR_PLAIN'],       /^(?:[a-z_][\w']*[!?#]?|``[^\r\n\t`]*(?:``|$))/i],
          // A printable non-space non-special character
          [PR['PR_PUNCTUATION'], /^[^\t\n\r \xA0\"\'\w]+/]
         ]),
