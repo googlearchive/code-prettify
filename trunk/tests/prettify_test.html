@@ -955,6 +955,10 @@ Not.A.Char = 'too long'  -- Don't barf.  Show that 't is a lexical error.
   in
     print_int(fib(10, 1, 1));;
 #endif
+
+let zed = 'z'
+
+let f' x' = x' + 1
 </pre>
 <p>Still TODO: handle nested <code>(* (* comments *) *)</code> properly.</p>
 
@@ -2529,7 +2533,11 @@ var goldens = {
       '&nbsp; &nbsp; print_int`END`PUN(`END`PLNfib`END`PUN(`END`LIT10`END' +
            '`PUN,`END`PLN `END`LIT1`END`PUN,`END`PLN `END`LIT1`END' +
            '`PUN));;`END`PLN<br>' +
-      '`END`COM#endif`END'),
+      '`END`COM#endif`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDlet`END`PLN zed `END`PUN=`END`PLN `END`STR\'z\'`END`PLN<br>' +
+      '<br>' +
+      '`END`KWDlet`END`PLN f\' x\' `END`PUN=`END`PLN x\' `END`PUN+`END`PLN `END`LIT1`END'),
   issue42: (
       '`COM; -*- mode: lisp -*-`END`PLN<br>' +
       '<br>' +
