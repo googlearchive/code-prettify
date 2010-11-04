@@ -6,6 +6,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-css.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-go.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-hs.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-lisp.js" type="text/javascript"
@@ -16,6 +18,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-proto.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-scala.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-sql.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-wiki.js" type="text/javascript"
@@ -25,8 +29,6 @@
 <script src="../src/lang-vb.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-yaml.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-scala.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="test_base.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
@@ -1281,6 +1283,20 @@ def act() {
     }
   }
 }
+</pre>
+
+<h1>Go mode</h1>
+<pre class="prettyprint lang-go" id="go">
+package main  /* Package of which this program is part. */
+
+import fmt "fmt"  // Package implementing formatted I/O.
+
+
+func main() {
+    fmt.Printf("Hello, world; or &#x039a;&#x03b1;&#x03bb;&#x03b7;&#x03bc;&#x03ad;&#x03c1;&#x03b1; &#x03ba;&#x03cc;&#x03c3;&#x03bc;&#x03b5;; or &#x3053;&#x3093;&#x306b;&#x3061;&#x306f; &#x4e16;&#x754c;\n")  // Semicolon inserted here
+}
+
+/* " */  "foo /* "  /*/  */
 </pre>
 </body>
 
@@ -2873,7 +2889,17 @@ var goldens = {
       '&nbsp; &nbsp; &nbsp; &nbsp; exit`END`PUN()`END`PLN<br>' +
       '&nbsp; &nbsp; `END`PUN}`END`PLN<br>' +
       '&nbsp; `END`PUN}`END`PLN<br>' +
-      '`END`PUN}`END'
+      '`END`PUN}`END',
+  go: '`PLNpackage main &nbsp;`END`COM/* Package of which this program is part. */`END`PLN<br>' +
+      '<br>' +
+      'import fmt "fmt" &nbsp;`END`COM// Package implementing formatted I/O.`END`PLN<br>' +
+      '<br>' +
+      '<br>' +
+      'func main() {<br>' +
+      '&nbsp; &nbsp; fmt.Printf("Hello, world; or \u039a\u03b1\u03bb\u03b7\u03bc\u03ad\u03c1\u03b1 \u03ba\u03cc\u03c3\u03bc\u03b5; or \u3053\u3093\u306b\u3061\u306f \u4e16\u754c\\n") &nbsp;`END`COM// Semicolon inserted here`END`PLN<br>' +
+      '}<br>' +
+      '<br>' +
+      '`END`COM/* " */`END`PLN &nbsp;"foo /* " &nbsp;`END`COM/*/ &nbsp;*/`END'
 };
 </script>
 
