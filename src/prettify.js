@@ -1078,6 +1078,8 @@ window['_pr_isIE6'] = function () {
     var sourceText = job.source;
     var extractedTags = job.extractedTags;
     var decorations = job.decorations;
+    var numberLines = job.numberLines;
+    var sourceNode = job.sourceNode;
 
     var html = [];
     // index past the last char in sourceText written to html
@@ -1099,7 +1101,7 @@ window['_pr_isIE6'] = function () {
     var isIE678 = window['_pr_isIE6']();
     var lineBreakHtml = (
         isIE678
-        ? (job.sourceNode.tagName === 'PRE'
+        ? (sourceNode && sourceNode.tagName === 'PRE'
            // Use line feeds instead of <br>s so that copying and pasting works
            // on IE.
            // See Issue 104 for the derivation of this mess.
@@ -1112,17 +1114,14 @@ window['_pr_isIE6'] = function () {
            : '&#160;<br />')
         : '<br />');
 
-    // Look for a class like linenums or linenums:<n> where <n> is the 1-indexed
-    // number of the first line.
-    var numberLines = job.sourceNode.className.match(/\blinenums\b(?::(\d+))?/);
     var lineBreaker;
     if (numberLines) {
       var lineBreaks = [];
       for (var i = 0; i < 10; ++i) {
         lineBreaks[i] = lineBreakHtml + '</li><li class="L' + i + '">';
       }
-      var lineNum = numberLines[1] && numberLines[1].length
-          ? numberLines[1] - 1 : 0;  // Lines are 1-indexed
+      var lineNum = typeof numberLines === 'number'
+          ? numberLines - 1 /* number lines are 1 indexed */ : 0;
       html.push('<ol class="linenums"><li class="L', (lineNum) % 10, '"');
       if (lineNum) {
         html.push(' value="', lineNum + 1, '"');
@@ -1382,10 +1381,18 @@ window['_pr_isIE6'] = function () {
     }
   }
 
-  function prettyPrintOne(sourceCodeHtml, opt_langExtension) {
+  /**
+   * @param sourceCodeHtml {string} The HTML to pretty print.
+   * @param opt_langExtension {string} The language name to use.
+   *     Typically, a filename extension like 'cpp' or 'java'.
+   * @param opt_numberLines {number|boolean} True to number lines,
+   *     or the 1-indexed number of the first line in sourceCodeHtml.
+   */
+  function prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
     var job = {
       sourceCodeHtml: sourceCodeHtml,
-      langExtension: opt_langExtension
+      langExtension: opt_langExtension,
+      numberLines: opt_numberLines
     };
     applyDecorator(job);
     return job.prettyPrintedHtml;
@@ -1444,11 +1451,18 @@ window['_pr_isIE6'] = function () {
             var content = getInnerHtml(cs);
             content = content.replace(/(?:\r\n?|\n)$/, '');
 
+            // Look for a class like linenums or linenums:<n> where <n> is the
+            // 1-indexed number of the first line.
+            var numberLines = cs.className.match(/\blinenums\b(?::(\d+))?/);
+
             // do the pretty printing
             prettyPrintingJob = {
               sourceCodeHtml: content,
               langExtension: langExtension,
-              sourceNode: cs
+              sourceNode: cs,
+              numberLines: numberLines
+                  ? numberLines[1] && numberLines[1].length ? +numberLines[1] : true
+                  : false
             };
             applyDecorator(prettyPrintingJob);
             replaceWithPrettyPrintedHtml();
