@@ -1,30 +1,34 @@
 /* Pretty printing styles. Used with prettify.js. */
 
 /* SPAN elements with the classes below are added by prettyprint. */
-.str { color: #080; }
-.kwd { color: #008; }
-.com { color: #800; }
-.typ { color: #606; }
-.lit { color: #066; }
-.pun, .opn, .clo { color: #660; }
-.pln { color: #000; }
-.tag { color: #008; }
-.atn { color: #606; }
-.atv { color: #080; }
-.dec { color: #606; }
+.pln { color: #000 }  /* plain text */
 
-/* Use higher contrast and font-styling for printable form. */
-@media print {
-  .str { color: #060; }
-  .kwd { color: #006; font-weight: bold; }
-  .com { color: #600; font-style: italic; }
-  .typ { color: #404; font-weight: bold; }
-  .lit { color: #044; }
-  .pun, .opn, .clo { color: #440; }
-  .pln { color: #000; }
-  .tag { color: #006; font-weight: bold; }
-  .atn { color: #404; }
-  .atv { color: #060; }
+@media screen {
+  .str { color: #080 }  /* string content */
+  .kwd { color: #008 }  /* a keyword */
+  .com { color: #800 }  /* a comment */
+  .typ { color: #606 }  /* a type name */
+  .lit { color: #066 }  /* a literal value */
+  /* punctuation, lisp open bracket, lisp close bracket */
+  .pun, .opn, .clo { color: #660 }
+  .tag { color: #008 }  /* a markup tag name */
+  .atn { color: #606 }  /* a markup attribute name */
+  .atv { color: #080 }  /* a markup attribute value */
+  .dec, .var { color: #606 }  /* a declaration; a variable name */
+  .fun { color: red }  /* a function name */
+}
+
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .str { color: #060 }
+  .kwd { color: #006; font-weight: bold }
+  .com { color: #600; font-style: italic }
+  .typ { color: #404; font-weight: bold }
+  .lit { color: #044 }
+  .pun, .opn, .clo { color: #440 }
+  .tag { color: #006; font-weight: bold }
+  .atn { color: #404 }
+  .atv { color: #060 }
 }
 
 /* Put a border around prettyprinted code snippets. */
