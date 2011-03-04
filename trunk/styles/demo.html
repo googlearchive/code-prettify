@@ -17,9 +17,9 @@ var themeName = decodeURIComponent(document.location.search.replace(/^\?/, ''));
 function adjustHeightInParent() {
   if (parent !== window) {
     try {
-      var pre = document.body.getElementsByTagName('pre')[0];
+      var div = document.body.getElementsByTagName('div')[0];
       parent.adjustChildIframeSize(
-          themeName, pre.offsetWidth, pre.offsetHeight);
+          themeName, div.offsetWidth, div.offsetHeight);
     } catch (ex) {
       // Can happen when this page is opened in its own tab.
     }
@@ -33,12 +33,14 @@ function adjustHeightInParent() {
   var link = document.createElement('link');
   link.rel = 'stylesheet';
   link.type = 'text/css';
-  link.href = themeName + '.css';
+  link.href = themeName === 'default'
+      ? '../src/prettify.css' : themeName + '.css';
   document.getElementsByTagName('head')[0].appendChild(link);
 })();
 </script>
 
 <body onload="prettyPrint(); adjustHeightInParent()">
+<div style="width: 40em; display: inline-block">
 <pre class="prettyprint lang-html linenums">
 &lt;script type="text/javascript"&gt;
 // Say hello world until the user starts questioning
@@ -55,4 +57,5 @@ b { color: blue }
 u { color: "umber" }
 &lt;/style&gt;
 </pre>
+</div>
 </body></html>
