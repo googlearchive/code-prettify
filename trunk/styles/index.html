@@ -15,16 +15,15 @@ function adjustChildIframeSize(themeName, width, height) {
     console.log('adjusting size for child ' + themeName + ' to ' + width + 'x' + height);
   }
 
-  var frame = window.frames[themeName];
-  var container = frame.parentChild;
+  var container = document.getElementById(themeName).parentNode;
   container.style.width = (+width + 16) + 'px';
-  frame.style.height = (+width + 16) + 'px';
   container.style.display = 'inline-block';
+  container.getElementsByTagName('iframe')[0].style.height = (+width + 16) + 'px';
 }
 </script>
 </head>
 
-<body>
+<body onload="adjustChildIframeSize()">
 <noscript>This page requires JavaScript</noscript>
 <h1>Gallery of themes</h1>
 <script>(function () {
@@ -37,7 +36,9 @@ function adjustChildIframeSize(themeName, width, height) {
     var header = document.createElement('h2');
     header.id = theme;
     var linkToThemeSrc = document.createElement('a');
-    linkToThemeSrc.href = 'http://code.google.com/p/google-code-prettify/source/browse/trunk/styles/' + encodeURIComponent(theme) + '.css';
+    linkToThemeSrc.href = (
+        'http://code.google.com/p/google-code-prettify/source/browse/trunk/styles/'
+        + encodeURIComponent(theme) + '.css');
     linkToThemeSrc.appendChild(document.createTextNode(
        theme.replace(/\b[a-z]/g,  // Capitalize first letter of each word
        function (letter) { return letter.toUpperCase(); })));
