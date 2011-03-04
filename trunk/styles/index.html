@@ -11,6 +11,10 @@ var allThemes = ['desert', 'sunburst'];
 // size the iframes properly and to allow them to tile
 // the page nicely.
 function adjustChildIframeSize(themeName, width, height) {
+  if (typeof console != 'undefined') {
+    console.log('adjusting size for child ' + themeName + ' to ' + width + 'x' + height);
+  }
+
   var frame = window.frames[themeName];
   var container = frame.parentChild;
   container.style.width = (+width + 16) + 'px';
