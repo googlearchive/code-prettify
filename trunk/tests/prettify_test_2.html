@@ -12,6 +12,8 @@
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-n.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-tex.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 
 <script src="test_base.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
@@ -385,6 +387,18 @@ s2.Add ("foo");
 assert (s2.Contains ("foo"));
 </pre>
 
+<h1>Tex support</h1>
+<pre id="latex" class="prettyprint lang-tex">% resume.tex
+% vim:set ft=tex spell:
+\documentclass[10pt,letterpaper]{article}
+\usepackage[letterpaper,margin=0.8in]{geometry}
+\usepackage{mdwlist}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\pagestyle{empty}
+\setlength{\tabcolsep}{0em}
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -748,7 +762,18 @@ var goldens = {
         '`END`COM// s1.Add ("foo"); // error here!`END`PLN<br>' +
         '`END`KWDdef`END`PLN s2 `END`PUN=`END`PLN Set `END`PUN();`END`PLN<br>' +
         's2`END`PUN.`END`PLNAdd `END`PUN(`END`STR"foo"`END`PUN);`END`PLN<br>' +
-        '`END`KWDassert`END`PLN `END`PUN(`END`PLNs2`END`PUN.`END`PLNContains `END`PUN(`END`STR"foo"`END`PUN));`END')
+        '`END`KWDassert`END`PLN `END`PUN(`END`PLNs2`END`PUN.`END`PLNContains `END`PUN(`END`STR"foo"`END`PUN));`END'),
+  latex: (
+        '`COM% resume.tex`END`PLN<br>' +
+        '`END`COM% vim:set ft=tex spell:`END`PLN<br>' +
+        '`END`KWD\\documentclass`END`PUN[`END`LIT10pt`END`PLN,letterpaper`END`PUN]{`END`PLNarticle`END`PUN}`END`PLN<br>' +
+        '`END`KWD\\usepackage`END`PUN[`END`PLNletterpaper,margin`END`PUN=`END`LIT0.8in`END`PUN]{`END`PLNgeometry`END`PUN}`END`PLN<br>' +
+        '`END`KWD\\usepackage`END`PUN{`END`PLNmdwlist`END`PUN}`END`PLN<br>' +
+        '`END`KWD\\usepackage`END`PUN[`END`PLNT1`END`PUN]{`END`PLNfontenc`END`PUN}`END`PLN<br>' +
+        '`END`KWD\\usepackage`END`PUN{`END`PLNtextcomp`END`PUN}`END`PLN<br>' +
+        '`END`KWD\\pagestyle`END`PUN{`END`PLNempty`END`PUN}`END`PLN<br>' +
+        '`END`KWD\\setlength`END`PUN{`END`KWD\\tabcolsep`END`PUN}{`END`LIT0em`END`PUN}`END'
+        )
 };
 </script>
 
