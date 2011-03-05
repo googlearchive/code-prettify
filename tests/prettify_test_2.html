@@ -10,6 +10,8 @@
 <!-- Language extensions tested -->
 <script src="../src/lang-xq.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-n.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 
 <script src="test_base.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
@@ -356,6 +358,33 @@ local:depth(fn:doc("partlist.xml"))
 &lt;/bib&gt;
 (: -------- :)
 </pre>
+
+<h1>Nemerle code</h1>
+<pre id="nemerle" class="prettyprint lang-nemerle">
+class Set ['a]
+{
+  mutable storage : list ['a] = [];
+  public Add (e : 'a) : void
+  {
+    when (! Contains (e))
+      storage ::= e;
+  }
+  public Contains (e : 'a) : bool
+  {
+    storage.Contains (e)
+  }
+}
+ 
+def s1 = Set ();
+s1.Add (3);
+s1.Add (42);
+assert (s1.Contains (3));
+// s1.Add ("foo"); // error here!
+def s2 = Set ();
+s2.Add ("foo");
+assert (s2.Contains ("foo"));
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -696,7 +725,30 @@ var goldens = {
         '&nbsp; &nbsp; `END`TAG&lt;/book&gt;`END`PLN<br>' +
         '&nbsp;}<br>' +
         '`END`TAG&lt;/bib&gt;`END`PLN<br>' +
-        '`END`COM(: -------- :)`END')
+        '`END`COM(: -------- :)`END'),
+  nemerle: (
+        '`KWDclass`END`PLN Set `END`PUN[`END`PLN\'a`END`PUN]`END`PLN<br>' +
+        '`END`PUN{`END`PLN<br>' +
+        '&nbsp; `END`KWDmutable`END`PLN storage `END`PUN:`END`PLN `END`TYPlist`END`PLN `END`PUN[`END`PLN\'a`END`PUN]`END`PLN `END`PUN=`END`PLN `END`PUN[];`END`PLN<br>' +
+        '&nbsp; `END`KWDpublic`END`PLN Add `END`PUN(`END`PLNe `END`PUN:`END`PLN \'a`END`PUN)`END`PLN `END`PUN:`END`PLN `END`TYPvoid`END`PLN<br>' +
+        '&nbsp; `END`PUN{`END`PLN<br>' +
+        '&nbsp; &nbsp; `END`KWDwhen`END`PLN `END`PUN(!`END`PLN Contains `END`PUN(`END`PLNe`END`PUN))`END`PLN<br>' +
+        '&nbsp; &nbsp; &nbsp; storage `END`PUN::=`END`PLN e`END`PUN;`END`PLN<br>' +
+        '&nbsp; `END`PUN}`END`PLN<br>' +
+        '&nbsp; `END`KWDpublic`END`PLN Contains `END`PUN(`END`PLNe `END`PUN:`END`PLN \'a`END`PUN)`END`PLN `END`PUN:`END`PLN `END`TYPbool`END`PLN<br>' +
+        '&nbsp; `END`PUN{`END`PLN<br>' +
+        '&nbsp; &nbsp; storage`END`PUN.`END`PLNContains `END`PUN(`END`PLNe`END`PUN)`END`PLN<br>' +
+        '&nbsp; `END`PUN}`END`PLN<br>' +
+        '`END`PUN}`END`PLN<br>' +
+        '&nbsp;<br>' +
+        '`END`KWDdef`END`PLN s1 `END`PUN=`END`PLN Set `END`PUN();`END`PLN<br>' +
+        's1`END`PUN.`END`PLNAdd `END`PUN(`END`LIT3`END`PUN);`END`PLN<br>' +
+        's1`END`PUN.`END`PLNAdd `END`PUN(`END`LIT42`END`PUN);`END`PLN<br>' +
+        '`END`KWDassert`END`PLN `END`PUN(`END`PLNs1`END`PUN.`END`PLNContains `END`PUN(`END`LIT3`END`PUN));`END`PLN<br>' +
+        '`END`COM// s1.Add ("foo"); // error here!`END`PLN<br>' +
+        '`END`KWDdef`END`PLN s2 `END`PUN=`END`PLN Set `END`PUN();`END`PLN<br>' +
+        's2`END`PUN.`END`PLNAdd `END`PUN(`END`STR"foo"`END`PUN);`END`PLN<br>' +
+        '`END`KWDassert`END`PLN `END`PUN(`END`PLNs2`END`PUN.`END`PLNContains `END`PUN(`END`STR"foo"`END`PUN));`END')
 };
 </script>
 
