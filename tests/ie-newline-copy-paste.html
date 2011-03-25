@@ -60,6 +60,20 @@ function makeCodeJoiningOn(text, htmlNewline) {
 
 <script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
 
+<pre id=notgen-cr>before
+[Not generated via innerHTML CR]
+after</pre>
+
+<pre id=notgen-br>before<br>[Not generated via innerHTML BR]<br>after</pre>
+
+<pre id=notgen-brcr>before<br>
+[Not generated via innerHTML CR + BR]<br>
+after</pre>
+
+<pre id=notgen-crbr>before
+<br>[Not generated via innerHTML BR + CR]
+<br>after</pre>
+
 <h2>END</h2>
 
 <pre id=threelines>one
