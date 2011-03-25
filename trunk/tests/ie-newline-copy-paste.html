@@ -50,6 +50,12 @@ function makeCodeJoiningOn(text, htmlNewline, start, end) {
 
 <script>makeCodeJoiningOn('LF', '&#160;\n');</script>
 
+<script>makeCodeJoiningOn('VTAB', '&#160;\u000b');</script>
+
+<script>makeCodeJoiningOn('x2028', '&#160;\u2028');</script>
+
+<script>makeCodeJoiningOn('x2029', '&#160;\u2029');</script>
+
 <script>makeCodeJoiningOn('BR', '&#160;<br>');</script>
 
 <script>makeCodeJoiningOn('CR+BR', '&#160;\r<br>');</script>
@@ -60,6 +66,12 @@ function makeCodeJoiningOn(text, htmlNewline, start, end) {
 
 <script>makeCodeJoiningOn('LF+BR', '&#160;\n<br>');</script>
 
+<script>makeCodeJoiningOn('VTAB+BR', '&#160;\u000b<br>');</script>
+
+<script>makeCodeJoiningOn('x2028+BR', '&#160;\u2028<br>');</script>
+
+<script>makeCodeJoiningOn('x2029+BR', '&#160;\u2029<br>');</script>
+
 <script>makeCodeJoiningOn('BR+CR', '&#160;<br>\r');</script>
 
 <script>makeCodeJoiningOn('BR+CRLF', '&#160;<br>\r\n');</script>
@@ -69,6 +81,12 @@ function makeCodeJoiningOn(text, htmlNewline, start, end) {
 <script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
 
 <script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
+
+<script>makeCodeJoiningOn('BR+VTAB', '&#160;<br>\u000b');</script>
+
+<script>makeCodeJoiningOn('BR+x2028', '&#160;<br>\u2028');</script>
+
+<script>makeCodeJoiningOn('BR+x2029', '&#160;<br>\u2029');</script>
 
 <script>makeCodeJoiningOn('divs', '</div><div>', '<div>', '<\/div>');</script>
 
