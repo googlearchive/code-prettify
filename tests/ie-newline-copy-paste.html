@@ -46,6 +46,8 @@ function makeCodeJoiningOn(text, htmlNewline, start, end) {
 
 <script>makeCodeJoiningOn('CRLF', '&#160;\r\n');</script>
 
+<script>makeCodeJoiningOn('LFCR', '&#160;\n \r');</script>
+
 <script>makeCodeJoiningOn('LF', '&#160;\n');</script>
 
 <script>makeCodeJoiningOn('BR', '&#160;<br>');</script>
@@ -54,11 +56,15 @@ function makeCodeJoiningOn(text, htmlNewline, start, end) {
 
 <script>makeCodeJoiningOn('CRLF+BR', '&#160;\r\n<br>');</script>
 
+<script>makeCodeJoiningOn('LFCR+BR', '&#160;\n\r<br>');</script>
+
 <script>makeCodeJoiningOn('LF+BR', '&#160;\n<br>');</script>
 
 <script>makeCodeJoiningOn('BR+CR', '&#160;<br>\r');</script>
 
 <script>makeCodeJoiningOn('BR+CRLF', '&#160;<br>\r\n');</script>
+
+<script>makeCodeJoiningOn('BR+LFCR', '&#160;<br>\n\r');</script>
 
 <script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
 
