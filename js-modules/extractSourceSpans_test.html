@@ -23,12 +23,12 @@ tr { vertical-align: top }
   <tr><th colspan=3>Test space preserved in PRE</th></tr>
   <tr>
     <td><pre class="testinput"><b>print </b>'Hello '<br>  + '&lt;World&gt;';</pre></td>
-    <td class="golden">^print ^'Hello '^&#10;^  + '&lt;World&gt;';^</td>
+    <td class="golden">^print ^'Hello '^\n^  + '&lt;World&gt;';^</td>
   </tr>
   <tr><th colspan=3>Test class="nocode"</th></tr>
   <tr>
     <td><pre class="testinput"><span class=nocode>1. </span><b>print </b>'Hello '<br><span class=nocode>2. </span>  + '&lt;World&gt;';</pre></td>
-    <td class="golden">^print ^'Hello '^&#10;^  + '&lt;World&gt;';^</td>
+    <td class="golden">^print ^'Hello '^\n^  + '&lt;World&gt;';^</td>
   </tr>
   <tr><th colspan=3>Test whitespace normalized in code</th></tr>
   <tr>
@@ -40,18 +40,18 @@ tr { vertical-align: top }
   <tr>
     <td><xmp class="testinput">print 'Hello '
   + '<World>';</xmp></td>
-    <td class="golden">^print 'Hello '&#10;  + '&lt;World&gt;';^</td>
+    <td class="golden">^print 'Hello '\n  + '&lt;World&gt;';^</td>
   </tr>
   <tr><th colspan=3>Test tabs</th></tr>
   <tr>
     <td><pre class="testinput">print 'Hello '
 &#9;+ '&lt;World&gt;';</pre></td>
-    <td class="golden">^print 'Hello '&#10;&#9;+ '&lt;World&gt;';^</td>
+    <td class="golden">^print 'Hello '\n\t+ '&lt;World&gt;';^</td>
   </tr>
   <tr><th colspan=3>Test number lines output</th></tr>
   <tr>
     <td><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</pre></li></ul></td>
-    <td class="golden">^print ^'Hello '^&#10;^  + '&lt;World&gt;';^&#10;^</td>
+    <td class="golden">^print ^'Hello '^\n^  + '&lt;World&gt;';^^</td>
   </tr>
 </table>
 
@@ -109,9 +109,11 @@ setTimeout(function () {
       }
       actual.innerHTML = '<pre>' + actualHtml + '<\/pre>';
       var goldenText = testResult.innerText || testResult.textContent;
-      var passed = actualText === goldenText;
+      var goldenNormalized = '"' + goldenText + '"';
+      var actualNormalized = stringify(actualText);
+      var passed = actualNormalized === goldenNormalized;
       if (!passed) {
-        console.log(stringify(goldenText) + ' !==\n' + stringify(actualText));
+        console.log(goldenNormalized + ' !==\n' + actualNormalized);
       }
       actual.className += passed ? ' ok' : ' failure';
     } catch (ex) {
@@ -123,5 +125,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 16:14:57 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 16:18:54 PDT 2011 <!-- hhmts end -->
 </body> </html>
