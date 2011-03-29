@@ -49,6 +49,7 @@ function numberLines(node, opt_startLineNum) {
         }
         break;
       case 3: case 4:  // Text
+console.log('saw text node, isPreformatted=' + isPreformatted);
         if (isPreformatted) {
           var text = node.nodeValue;
           var match = text.match(lineBreak);
