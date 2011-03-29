@@ -35,8 +35,7 @@ function numberLines(node, opt_startLineNum) {
   function walk(node) {
     switch (node.nodeType) {
       case 1:  // Element
-        if (nocode.test(node.className)) { console.log('nocode'); break; }
-console.log('  el=' + node.nodeName);
+        if (nocode.test(node.className)) { break; }
         if ('BR' === node.nodeName) {
           breakAfter(node);
           // Discard the <BR> since it is now flush against a </LI>.
@@ -57,7 +56,6 @@ console.log('  el=' + node.nodeName);
             var firstLine = text.substring(0, match.index);
             node.nodeValue = firstLine;
             var tail = text.substring(match.index + match[0].length);
-console.log('split "' + text.replace(/\r\n?|\n/g, '\\n') + '" into "' + firstLine + '" and "' + tail.replace(/\r\n?|\n/g, '\\n') + '"');
             if (tail) {
               var parent = node.parentNode;
               parent.insertBefore(
@@ -109,19 +107,18 @@ console.log('split "' + text.replace(/\r\n?|\n/g, '\\n') + '" into "' + firstLin
     var copiedListItem = breakLeftOf(lineEndNode.nextSibling, 0);
 
     // Walk the parent chain until we reach an unattached LI.
+    // Check nodeType since IE sticks useless document fragments around things.
     for (var parent; (parent = copiedListItem.parentNode) && parent.nodeType === 1;) {
       copiedListItem = parent;
     }
     // Put it on the list of lines for later processing.
     listItems.push(copiedListItem);
-console.log('pushing listItem length=' + listItems.length + ', copy=' + copiedListItem.nodeName);
   }
 
   // Split lines while there are lines left to split.
   for (var i = 0;  // Number of lines that have been split so far.
        i < listItems.length;  // length updated by breakAfter calls.
        ++i) {
-console.log('walking list item ' + i + ' : ' + listItems[i].innerHTML.replace(/[\r\n]+/, '\\n'));
     walk(listItems[i]);
   }
 
