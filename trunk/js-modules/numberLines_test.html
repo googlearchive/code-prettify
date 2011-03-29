@@ -78,6 +78,11 @@ if (!document.body.getElementsByClassName) {
 }
 
 setTimeout(function () {
+  function normListItems(html) {
+    // IE likes to leave out </li>s before <li>s.
+    return html.replace(/<\/li>(<li\b)/g, '$1');
+  }
+
   var testInputs = Array.prototype.slice.call(
      document.body.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
@@ -92,9 +97,12 @@ setTimeout(function () {
       testInputClone.removeAttribute('class');  // Not IE.
       actual.appendChild(testInputClone);
       numberLines(testInputClone);
-      var passed = testResult.innerHTML === actual.innerHTML;
+      var goldenNorm = normListItems(testResult.innerHTML);
+      var actualNorm = normListItems(actual.innerHTML);
+      var passed = goldenNorm === actualNorm;
       if (!passed) {
-        console.log(JSON.stringify(testResult.innerHTML) + ' !==\n' + JSON.stringify(actual.innerHTML));
+        console.log(JSON.stringify(goldenNorm)
+                    + ' !==\n' + JSON.stringify(actualNorm));
       }
       actual.className = passed ? 'ok' : 'failure';
     } catch (ex) {
@@ -107,5 +115,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 15:52:29 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 16:42:02 PDT 2011 <!-- hhmts end -->
 </body> </html>
