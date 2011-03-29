@@ -119,7 +119,7 @@ console.log('pushing listItem length=' + listItems.length);
   for (var i = 0;  // Number of lines that have been split so far.
        i < listItems.length;  // length updated by breakAfter calls.
        ++i) {
-console.log('walking list item ' + i);
+console.log('walking list item ' + i + ' : ' + listItems[i].innerHTML.replace(/[\r\n]+/, '\\n'));
     walk(listItems[i]);
   }
 
