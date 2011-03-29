@@ -12,6 +12,9 @@
  * @private
  */
 function recombineTagsAndDecorations(job) {
+  var isIE = /\bMSIE\b/.test(navigator.userAgent);
+  var newlineRe = /\n/g;
+
   var source = job.source;
   var sourceLength = source.length;
   // Index into source after the last code-unit recombined.
@@ -29,7 +32,7 @@ function recombineTagsAndDecorations(job) {
 
   // Simplify decorations.
   var decPos = 0;
-  for (i = 0; i < nDecorations;) {
+  for (var i = 0; i < nDecorations;) {
     // Skip over any zero-length decorations.
     var startPos = decorations[i];
     var start = i;
@@ -65,7 +68,9 @@ function recombineTagsAndDecorations(job) {
 
     var textNode = spans[spanIndex + 1];
     if (textNode.nodeType !== 1) {  // Don't muck with <BR>s or <LI>s
-      textNode.nodeValue = source.substring(sourceIndex, end);
+      var styledText = source.substring(sourceIndex, end);
+      if (isIE) { styledText = styledText.replace(newLineRe, '\r\n'); }
+      textNode.nodeValue = styledText;
       var document = textNode.ownerDocument;
       var span = document.createElement('SPAN');
       span.className = decorations[decorationIndex + 1];
