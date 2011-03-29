@@ -1295,7 +1295,7 @@ func main() {
     fmt.Printf("Hello, world; or &#x039a;&#x03b1;&#x03bb;&#x03b7;&#x03bc;&#x03ad;&#x03c1;&#x03b1; &#x03ba;&#x03cc;&#x03c3;&#x03bc;&#x03b5;; or &#x3053;&#x3093;&#x306b;&#x3061;&#x306f; &#x4e16;&#x754c;\n")  // Semicolon inserted here
 }
 
-/* " */  "foo /* "  /*/  */
+/* " */  &quot;foo /* "  /*/  */
 </pre>
 
 Test IE by copy/pasting content here.
@@ -1305,8 +1305,8 @@ Test IE by copy/pasting content here.
 <script type="text/javascript">
 /**
  * maps ids of rewritten code to the expected output.
- * For brevity, <span class="foo"> has been changed to `FOO and close span tags
- * have been changed to `END.
+ * For brevity, <span class="foo"> has been changed to `FOO and </span>
+ * has been changed to `END.
  */
 var goldens = {
   bash: (
