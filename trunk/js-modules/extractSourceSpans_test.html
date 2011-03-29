@@ -76,6 +76,11 @@ if (!document.body.getElementsByClassName) {
 }
 
 setTimeout(function () {
+  function stringify(s) {
+    return JSON.stringify(s).replace(/\r/g, '\\r').replace(/\n/g, '\\n')
+        .replace(/\t/g, '\\t');
+  }
+
   var testInputs = Array.prototype.slice.call(
      document.body.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
@@ -106,7 +111,7 @@ setTimeout(function () {
       var goldenText = testResult.innerText || testResult.textContent;
       var passed = actualText === goldenText;
       if (!passed) {
-        console.log(JSON.stringify(actualText) + ' !==\n' + JSON.stringify(goldenText));
+        console.log(stringify(actualText) + ' !==\n' + stringify(goldenText));
       }
       actual.className += passed ? ' ok' : ' failure';
     } catch (ex) {
@@ -118,5 +123,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 15:47:29 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 16:13:48 PDT 2011 <!-- hhmts end -->
 </body> </html>
