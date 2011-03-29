@@ -516,7 +516,7 @@ window['PR']
             if (!isPreformatted) {
               text = text.replace(/[ \t\r\n]+/g, ' ');
             } else {
-              text = text.replace(/\r\n?/g, '\n');  // Normalize newlines.
+              text = text.replace(/\r\n?/g, '\r\n');  // Normalize newlines.
             }
             // TODO: handle tabs here?
             chunks[k] = text;
@@ -531,10 +531,11 @@ window['PR']
     walk(node);
   
     return {
-      source: chunks.join('').replace(/\n$/, ''),
+      source: chunks.join('').replace(/\r\n$/, ''),
       spans: spans
     };
   }
+
 
   /**
    * Apply the given language handler to sourceCode and add the resulting
@@ -853,7 +854,7 @@ window['PR']
   /**
    * Given a DOM subtree, wraps it in a list, and puts each line into its own
    * list item.
-   * 
+   *
    * @param {Node} node modified in place.  Its content is pulled into an
    *     HTMLOListElement, and each line is moved into a separate list item.
    *     This requires cloning elements, so the input might not have unique
@@ -940,7 +941,9 @@ window['PR']
         var parent = limit.parentNode;
         if (parent) {
           // We clone the parent chain.
-          // This helps us resurrect important 
+          // This helps us resurrect important styling elements that cross lines.
+          // E.g. in <i>Foo<br>Bar</i>
+          // should be rewritten to <li><i>Foo</i></li><li><i>Bar</i></li>.
           var parentClone = breakLeftOf(parent, 1);
           // Move the clone and everything to the right of the original
           // onto the cloned parent.
