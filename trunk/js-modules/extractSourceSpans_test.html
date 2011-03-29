@@ -7,7 +7,7 @@
 .ok { background: #dfd }
 .error, .failure { background: #fdd }
 td { font-family: monospace }
-.golden, .actual { white-space: pre }
+.actual { white-space: pre }
 tr { vertical-align: top }
 .break { padding-left: 2px; border-right-style: dotted !important }
 .odd, .even { border-style: solid; border-width: 1px }
@@ -23,35 +23,35 @@ tr { vertical-align: top }
   <tr><th colspan=3>Test space preserved in PRE</th></tr>
   <tr>
     <td><pre class="testinput"><b>print </b>'Hello '<br>  + '&lt;World&gt;';</pre></td>
-    <td class="golden">^print ^'Hello '^\n^  + '&lt;World&gt;';^</td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
   </tr>
   <tr><th colspan=3>Test class="nocode"</th></tr>
   <tr>
     <td><pre class="testinput"><span class=nocode>1. </span><b>print </b>'Hello '<br><span class=nocode>2. </span>  + '&lt;World&gt;';</pre></td>
-    <td class="golden">^print ^'Hello '^\n^  + '&lt;World&gt;';^</td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
   </tr>
   <tr><th colspan=3>Test whitespace normalized in code</th></tr>
   <tr>
     <td><code class="testinput"><b>print </b>'Hello '
   + '&lt;World&gt;';</pre></td>
-    <td class="golden">^print ^'Hello ' + '&lt;World&gt;';^</td>
+    <td class="golden"><pre>^print ^'Hello ' + '&lt;World&gt;';^</pre></td>
   </tr>
   <tr><th colspan=3>Test XMP</th></tr>
   <tr>
     <td><xmp class="testinput">print 'Hello '
   + '<World>';</xmp></td>
-    <td class="golden">^print 'Hello '\n  + '&lt;World&gt;';^</td>
+    <td class="golden"><pre>^print 'Hello '\n  + '&lt;World&gt;';^</pre></td>
   </tr>
   <tr><th colspan=3>Test tabs</th></tr>
   <tr>
     <td><pre class="testinput">print 'Hello '
 &#9;+ '&lt;World&gt;';</pre></td>
-    <td class="golden">^print 'Hello '\n\t+ '&lt;World&gt;';^</td>
+    <td class="golden"><pre>^print 'Hello '\n\t+ '&lt;World&gt;';^</pre></td>
   </tr>
   <tr><th colspan=3>Test number lines output</th></tr>
   <tr>
     <td><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</pre></li></ul></td>
-    <td class="golden">^print ^'Hello '^\n^  + '&lt;World&gt;';^^</td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^^</pre></td>
   </tr>
 </table>
 
@@ -125,5 +125,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 16:18:54 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 16:21:19 PDT 2011 <!-- hhmts end -->
 </body> </html>
