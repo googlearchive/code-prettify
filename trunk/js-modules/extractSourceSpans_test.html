@@ -110,12 +110,12 @@ setTimeout(function () {
       actual.className += passed ? ' ok' : ' failure';
     } catch (ex) {
       actual.className += ' error';
-      actual.appendChild(document.createTextNode('Error: ' + ex));
+      actual.appendChild(document.createTextNode('Error: ' + (ex.message || ex)));
     }
   }
 }, 0)</script>
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 15:41:20 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 15:43:20 PDT 2011 <!-- hhmts end -->
 </body> </html>
