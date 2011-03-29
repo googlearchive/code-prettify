@@ -109,7 +109,7 @@ setTimeout(function () {
       }
       actual.innerHTML = '<pre>' + actualHtml + '<\/pre>';
       var goldenText = testResult.innerText || testResult.textContent;
-      var goldenNormalized = '"' + goldenText + '"';
+      var goldenNormalized = '"' + goldenText.replace(/(?:\r\n?|\n)$/, '') + '"';
       var actualNormalized = stringify(actualText);
       var passed = actualNormalized === goldenNormalized;
       if (!passed) {
@@ -125,5 +125,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 16:21:19 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 16:38:23 PDT 2011 <!-- hhmts end -->
 </body> </html>

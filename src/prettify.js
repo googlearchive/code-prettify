@@ -957,12 +957,16 @@ window['PR']
         return rightSide;
       }
   
-      var split = breakLeftOf(lineEndNode.nextSibling, 0);
+      var copiedListItem = breakLeftOf(lineEndNode.nextSibling, 0);
   
       // Walk the parent chain until we reach an unattached LI.
-      for (var parent; (parent = split.parentNode);) { split = parent; }
+      for (var parent;
+           // Check nodeType since IE invents document fragments.
+           (parent = copiedListItem.parentNode) && parent.nodeType === 1;) {
+        copiedListItem = parent;
+      }
       // Put it on the list of lines for later processing.
-      listItems.push(split);
+      listItems.push(copiedListItem);
     }
   
     // Split lines while there are lines left to split.
