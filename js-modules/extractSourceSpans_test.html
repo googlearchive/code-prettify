@@ -111,7 +111,7 @@ setTimeout(function () {
       var goldenText = testResult.innerText || testResult.textContent;
       var passed = actualText === goldenText;
       if (!passed) {
-        console.log(stringify(actualText) + ' !==\n' + stringify(goldenText));
+        console.log(stringify(goldenText) + ' !==\n' + stringify(actualText));
       }
       actual.className += passed ? ' ok' : ' failure';
     } catch (ex) {
@@ -123,5 +123,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 16:13:48 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 16:14:57 PDT 2011 <!-- hhmts end -->
 </body> </html>
