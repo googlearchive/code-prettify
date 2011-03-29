@@ -80,7 +80,7 @@ if (!document.body.getElementsByClassName) {
 setTimeout(function () {
   function normListItems(html) {
     // IE likes to leave out </li>s before <li>s.
-    return html.replace(/<\/li>(<li\b)/g, '$1');
+    return html.replace(/<\/li>(<li\b)/gi, '$1');
   }
 
   var testInputs = Array.prototype.slice.call(
@@ -115,5 +115,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 16:42:02 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 16:42:41 PDT 2011 <!-- hhmts end -->
 </body> </html>
