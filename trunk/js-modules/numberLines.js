@@ -109,7 +109,9 @@ console.log('split "' + text.replace(/\r\n?|\n/g, '\\n') + '" into "' + firstLin
     var copiedListItem = breakLeftOf(lineEndNode.nextSibling, 0);
 
     // Walk the parent chain until we reach an unattached LI.
-    for (var parent; (parent = copiedListItem.parentNode);) { copiedListItem = parent; }
+    for (var parent; (parent = copiedListItem.parentNode) && parent.nodeType === 1;) {
+      copiedListItem = parent;
+    }
     // Put it on the list of lines for later processing.
     listItems.push(copiedListItem);
 console.log('pushing listItem length=' + listItems.length + ', copy=' + copiedListItem.nodeName);
