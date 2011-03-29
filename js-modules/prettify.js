@@ -764,7 +764,7 @@ window['PR']
             // Look for a class like linenums or linenums:<n> where <n> is the
             // 1-indexed number of the first line.
             var lineNums = cs.className.match(/\blinenums\b(?::(\d+))?/);
-	    lineNums = lineNums
+            lineNums = lineNums
                   ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
                   : false;
             if (lineNums) { numberLines(cs, lineNums); }

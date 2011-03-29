@@ -43,8 +43,8 @@ function recombineTagsAndDecorations(job) {
     var startDec = decorations[start + 1];
     var end = start + 2;
     while (end + 2 <= nDecorations
-	   && (decorations[end + 1] === startDec
-	       || decorations[end] === decorations[end + 2])) {
+           && (decorations[end + 1] === startDec
+               || decorations[end] === decorations[end + 2])) {
       end += 2;
     }
     decorations[decPos++] = startPos;
@@ -79,7 +79,7 @@ function recombineTagsAndDecorations(job) {
       span.appendChild(textNode);
       if (sourceIndex < spanEnd) {  // Split off a text node.
         spans[spanIndex + 1] = textNode
-	    // TODO: Possibly optimize by using '' if there's no flicker.
+            // TODO: Possibly optimize by using '' if there's no flicker.
             = document.createTextNode(source.substring(end, spanEnd));
         parentNode.insertBefore(textNode, span.nextSibling);
       }
