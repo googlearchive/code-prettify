@@ -11,10 +11,10 @@ pre .pln, code .pln { color: #fff; } /* plaintext - white */
 pre .tag, code .tag { color: #89bdff; } /* html/xml tag    - light blue */
 pre .atn, code .atn { color: #bdb76b; } /* html/xml attribute name  - khaki */
 pre .atv, code .atv { color: #65B042; } /* html/xml attribute value - green */
-pre .dec, code .dec { color: #3387CC; } /* decimal - blue */ 
+pre .dec, code .dec { color: #3387CC; } /* decimal - blue */
 
-pre.prettyprint, code.prettyprint{
-	background-color: #000; 
+pre.prettyprint, code.prettyprint {
+	background-color: #000;
 	-moz-border-radius: 8px;
 	-webkit-border-radius: 8px;
 	-o-border-radius: 8px;
@@ -23,10 +23,11 @@ pre.prettyprint, code.prettyprint{
 	border-radius: 8px;
 }
 
-pre.prettyprint { 
+pre.prettyprint {
 	width: 95%;
 	margin: 1em auto;
-	padding: 1em; 
+	padding: 1em;
+	white-space: pre-wrap;
 }
 
 
