@@ -1010,7 +1010,7 @@ window['PR']
    */
   function recombineTagsAndDecorations(job) {
     var isIE = /\bMSIE\b/.test(navigator.userAgent);
-    var newlineRe = /\r\n?|\n/g;
+    var newlineRe = /\n/g;
   
     var source = job.source;
     var sourceLength = source.length;
@@ -1066,7 +1066,7 @@ window['PR']
       var textNode = spans[spanIndex + 1];
       if (textNode.nodeType !== 1) {  // Don't muck with <BR>s or <LI>s
         var styledText = source.substring(sourceIndex, end);
-        if (isIE) { styledText = styledText.replace(newLineRe, '\r\n'); }
+        if (isIE) { styledText = styledText.replace(newlineRe, '\r\n'); }
         textNode.nodeValue = styledText;
         var document = textNode.ownerDocument;
         var span = document.createElement('SPAN');
