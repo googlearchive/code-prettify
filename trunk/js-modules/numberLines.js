@@ -107,8 +107,9 @@ function numberLines(node, opt_startLineNum) {
     var copiedListItem = breakLeftOf(lineEndNode.nextSibling, 0);
 
     // Walk the parent chain until we reach an unattached LI.
-    // Check nodeType since IE sticks useless document fragments around things.
-    for (var parent; (parent = copiedListItem.parentNode) && parent.nodeType === 1;) {
+    for (var parent;
+         // Check nodeType since IE invents document fragments.
+         (parent = copiedListItem.parentNode) && parent.nodeType === 1;) {
       copiedListItem = parent;
     }
     // Put it on the list of lines for later processing.
