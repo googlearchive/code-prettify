@@ -83,7 +83,8 @@ setTimeout(function () {
       actual.className = passed ? 'ok' : 'failure';
     } catch (ex) {
       actual.className = 'error';
-      actual.appendChild(document.createTextNode('Error: ' + ex + '\n' + ex.stack));
+      actual.appendChild(document.createTextNode(
+          'Error: ' + (ex.message || ex)  + '\n' + ex.stack));
     }
     actual.className += ' actual';
   }

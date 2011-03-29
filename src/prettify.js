@@ -1040,8 +1040,8 @@ window['PR']
       var startDec = decorations[start + 1];
       var end = start + 2;
       while (end + 2 <= nDecorations
-  	   && (decorations[end + 1] === startDec
-  	       || decorations[end] === decorations[end + 2])) {
+             && (decorations[end + 1] === startDec
+                 || decorations[end] === decorations[end + 2])) {
         end += 2;
       }
       decorations[decPos++] = startPos;
@@ -1076,7 +1076,7 @@ window['PR']
         span.appendChild(textNode);
         if (sourceIndex < spanEnd) {  // Split off a text node.
           spans[spanIndex + 1] = textNode
-  	    // TODO: Possibly optimize by using '' if there's no flicker.
+              // TODO: Possibly optimize by using '' if there's no flicker.
               = document.createTextNode(source.substring(end, spanEnd));
           parentNode.insertBefore(textNode, span.nextSibling);
         }
@@ -1331,7 +1331,7 @@ window['PR']
             // Look for a class like linenums or linenums:<n> where <n> is the
             // 1-indexed number of the first line.
             var lineNums = cs.className.match(/\blinenums\b(?::(\d+))?/);
-	    lineNums = lineNums
+            lineNums = lineNums
                   ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
                   : false;
             if (lineNums) { numberLines(cs, lineNums); }
