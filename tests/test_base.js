@@ -1,10 +1,132 @@
 // get accurate timing.
 // This file must be loaded after prettify.js for this to work.
 PR_SHOULD_USE_CONTINUATION = false;
-var realIsIE6 = _pr_isIE6();
-if (!/\btestcopypaste\b/.test(location.fragment)) {
-  _pr_isIE6 = function() { return false; };  // Ensure consistent output.
+
+var attribToHtml, textToHtml;
+
+var getInnerHtml;
+
+(function () {
+  /** is the given node's innerHTML normally unescaped? */
+  function isRawContent(node) {
+    return 'XMP' === node.tagName;
+  }
+
+  var newlineRe = /[\r\n]/g;
+  /**
+   * Are newlines and adjacent spaces significant in the given node's innerHTML?
+   */
+  function isPreformatted(node, content) {
+    // PRE means preformatted, and is a very common case, so don't create
+    // unnecessary computed style objects.
+    if ('PRE' === node.tagName) { return true; }
+    if (!newlineRe.test(content)) { return true; }  // Don't care
+    var whitespace = '';
+    // For disconnected nodes, IE has no currentStyle.
+    if (node.currentStyle) {
+      whitespace = node.currentStyle.whiteSpace;
+    } else if (window.getComputedStyle) {
+      // Firefox makes a best guess if node is disconnected whereas Safari
+      // returns the empty string.
+      whitespace = window.getComputedStyle(node, null).whiteSpace;
+    }
+    return !whitespace || whitespace === 'pre';
+  }
+
+  // Define regexps here so that the interpreter doesn't have to create an
+  // object each time the function containing them is called.
+  // The language spec requires a new object created even if you don't access
+  // the $1 members.
+  var pr_amp = /&/g;
+  var pr_lt = /</g;
+  var pr_gt = />/g;
+  var pr_quot = /\"/g;
+
+  /** escapest html special characters to html. */
+  textToHtml = function (str) {
+    return str.replace(pr_amp, '&amp;')
+        .replace(pr_lt, '&lt;')
+        .replace(pr_gt, '&gt;');
+  };
+
+  /** like textToHtml but escapes double quotes to be attribute safe. */
+  attribToHtml = function (str) {
+    return str.replace(pr_amp, '&amp;')
+        .replace(pr_lt, '&lt;')
+        .replace(pr_gt, '&gt;')
+        .replace(pr_quot, '&quot;');
+  };
+
+  var PR_innerHtmlWorks = null;
+  getInnerHtml = function (node) {
+    // inner html is hopelessly broken in Safari 2.0.4 when the content is
+    // an html description of well formed XML and the containing tag is a PRE
+    // tag, so we detect that case and emulate innerHTML.
+    if (null === PR_innerHtmlWorks) {
+      var testNode = document.createElement('PRE');
+      testNode.appendChild(
+          document.createTextNode('<!DOCTYPE foo PUBLIC "foo bar">\n<foo />'));
+      PR_innerHtmlWorks = !/</.test(testNode.innerHTML);
+    }
+
+    if (PR_innerHtmlWorks) {
+      var content = node.innerHTML;
+      // XMP tags contain unescaped entities so require special handling.
+      if (isRawContent(node)) {
+        content = textToHtml(content);
+      } else if (!isPreformatted(node, content)) {
+        content = content.replace(/(<br\s*\/?>)[\r\n]+/g, '$1')
+            .replace(/(?:[\r\n]+[ \t]*)+/g, ' ');
+      }
+      return content;
+    }
+
+    var out = [];
+    for (var child = node.firstChild; child; child = child.nextSibling) {
+      normalizedHtml(child, out);
+    }
+    return out.join('');
+  };
+})();
+
+function normalizedHtml(node, out, opt_sortAttrs) {
+  switch (node.nodeType) {
+    case 1:  // an element
+      var name = node.tagName.toLowerCase();
+
+      out.push('<', name);
+      var attrs = node.attributes;
+      var n = attrs.length;
+      if (n) {
+        if (opt_sortAttrs) {
+          var sortedAttrs = [];
+          for (var i = n; --i >= 0;) { sortedAttrs[i] = attrs[i]; }
+          sortedAttrs.sort(function (a, b) {
+              return (a.name < b.name) ? -1 : a.name === b.name ? 0 : 1;
+            });
+          attrs = sortedAttrs;
+        }
+        for (var i = 0; i < n; ++i) {
+          var attr = attrs[i];
+          if (!attr.specified) { continue; }
+          out.push(' ', attr.name.toLowerCase(),
+                   '="', attribToHtml(attr.value), '"');
+        }
+      }
+      out.push('>');
+      for (var child = node.firstChild; child; child = child.nextSibling) {
+        normalizedHtml(child, out, opt_sortAttrs);
+      }
+      if (node.firstChild || !/^(?:br|link|img)$/.test(name)) {
+        out.push('<\/', name, '>');
+      }
+      break;
+    case 3: case 4: // text
+      out.push(textToHtml(node.nodeValue));
+      break;
+  }
 }
+
 
 /**
  * @param golden a mapping from IDs of prettyprinted chunks to an abbreviated
@@ -39,11 +161,7 @@ function runTests(goldens) {
 
   /** convert a plain text string to html by escaping html special chars. */
   function html(plainText) {
-    return plainText.replace(/\046/g, '&amp;')
-        .replace(/\074/g, '&lt;')
-        .replace(/\076/g, '&gt;')
-        .replace(/\042/g, '&quot;')
-        .replace(/\xa0/g, '&nbsp;');
+    return attribToHtml(plainText).replace(/\xa0/g, '&nbsp;');
   }
 
   /**
@@ -53,7 +171,7 @@ function runTests(goldens) {
   function normalizedInnerHtml(node) {
     var out = [];
     for (var child = node.firstChild; child; child = child.nextSibling) {
-      PR_normalizedHtml(child, out, true);
+      normalizedHtml(child, out, true);
     }
     out = out.join('');
     // more normalization to work around problems with non-ascii chars in
@@ -71,9 +189,6 @@ function runTests(goldens) {
   htmlOut.push('<h1>Test results<\/h1>');
   for (var lang in goldens) {
     var container = document.getElementById(lang);
-    if (realIsIE6 && /\bknown_ie6_failure\b/.test(container.className)) {
-      continue;
-    }
     // Convert abbreviations that start with `.
     var golden = goldens[lang].replace(/`([A-Z]{3})/g, function (_, lbl) {
         return (lbl == 'END'
@@ -129,4 +244,3 @@ function stopClock() {
   startTime = null;
   document.getElementById('timing').innerHTML = 'Took ' + delta + ' ms';
 }
-
