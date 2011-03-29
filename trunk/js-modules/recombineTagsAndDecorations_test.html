@@ -4,7 +4,7 @@
 <script src="extractSourceSpans.js"></script>
 <script src="numberLines.js"></script>
 <script src="recombineTagsAndDecorations.js"></script>
-<script src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"></script>
+<script src="http://github.com/douglascrockford/JSON-js/raw/master/json2.js"></script>
 <link rel="stylesheet" href="../src/prettify.css" type="text/css" />
 <style>
 .ok { background: #dfd }
@@ -71,7 +71,8 @@ setTimeout(function () {
     var actual = document.createElement('TD');
     testResult.parentNode.appendChild(actual);
     var clone = testInput.cloneNode(true);
-    clone.removeAttribute('class');
+    clone.className = '';  // IE
+    clone.removeAttribute('class');  // Not IE.
     actual.appendChild(clone);
     var job = extractSourceSpans(clone);
     job.decorations = eval(decorationsNode.innerText || decorationsNode.textContent);
