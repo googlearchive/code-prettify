@@ -35,7 +35,8 @@ function numberLines(node, opt_startLineNum) {
   function walk(node) {
     switch (node.nodeType) {
       case 1:  // Element
-        if (nocode.test(node.className)) { break; }
+        if (nocode.test(node.className)) { console.log('nocode'); break; }
+console.log('  el=' + node.nodeName);
         if ('BR' === node.nodeName) {
           breakAfter(node);
           // Discard the <BR> since it is now flush against a </LI>.
@@ -49,7 +50,6 @@ function numberLines(node, opt_startLineNum) {
         }
         break;
       case 3: case 4:  // Text
-console.log('saw text node, isPreformatted=' + isPreformatted);
         if (isPreformatted) {
           var text = node.nodeValue;
           var match = text.match(lineBreak);
