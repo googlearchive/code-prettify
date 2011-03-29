@@ -78,7 +78,7 @@ function extractSourceSpans(node) {
           if (!isPreformatted) {
             text = text.replace(/[ \t\r\n]+/g, ' ');
           } else {
-            text = text.replace(/\r\n?/g, '\r\n');  // Normalize newlines.
+            text = text.replace(/\r\n?/g, '\n');  // Normalize newlines.
           }
           // TODO: handle tabs here?
           chunks[k] = text;
@@ -93,7 +93,7 @@ function extractSourceSpans(node) {
   walk(node);
 
   return {
-    source: chunks.join('').replace(/\r\n$/, ''),
+    source: chunks.join('').replace(/\n$/, ''),
     spans: spans
   };
 }

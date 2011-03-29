@@ -516,7 +516,7 @@ window['PR']
             if (!isPreformatted) {
               text = text.replace(/[ \t\r\n]+/g, ' ');
             } else {
-              text = text.replace(/\r\n?/g, '\r\n');  // Normalize newlines.
+              text = text.replace(/\r\n?/g, '\n');  // Normalize newlines.
             }
             // TODO: handle tabs here?
             chunks[k] = text;
@@ -531,7 +531,7 @@ window['PR']
     walk(node);
   
     return {
-      source: chunks.join('').replace(/\r\n$/, ''),
+      source: chunks.join('').replace(/\n$/, ''),
       spans: spans
     };
   }
@@ -1009,6 +1009,9 @@ window['PR']
    * @private
    */
   function recombineTagsAndDecorations(job) {
+    var isIE = /\bMSIE\b/.test(navigator.userAgent);
+    var newlineRe = /\r\n?|\n/g;
+  
     var source = job.source;
     var sourceLength = source.length;
     // Index into source after the last code-unit recombined.
@@ -1026,7 +1029,7 @@ window['PR']
   
     // Simplify decorations.
     var decPos = 0;
-    for (i = 0; i < nDecorations;) {
+    for (var i = 0; i < nDecorations;) {
       // Skip over any zero-length decorations.
       var startPos = decorations[i];
       var start = i;
@@ -1062,7 +1065,9 @@ window['PR']
   
       var textNode = spans[spanIndex + 1];
       if (textNode.nodeType !== 1) {  // Don't muck with <BR>s or <LI>s
-        textNode.nodeValue = source.substring(sourceIndex, end);
+        var styledText = source.substring(sourceIndex, end);
+        if (isIE) { styledText = styledText.replace(newLineRe, '\r\n'); }
+        textNode.nodeValue = styledText;
         var document = textNode.ownerDocument;
         var span = document.createElement('SPAN');
         span.className = decorations[decorationIndex + 1];
