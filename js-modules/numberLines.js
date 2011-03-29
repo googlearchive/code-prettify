@@ -56,6 +56,7 @@ function numberLines(node, opt_startLineNum) {
             var firstLine = text.substring(0, match.index);
             node.nodeValue = firstLine;
             var tail = text.substring(match.index + match[0].length);
+console.log('split "' + text.replace(/\r\n?|\n/g, '\\n') + '" into "' + firstLine + '" and "' + tail.replace(/\r\n?|\n/g, '\\n') + '"');
             if (tail) {
               var parent = node.parentNode;
               parent.insertBefore(
