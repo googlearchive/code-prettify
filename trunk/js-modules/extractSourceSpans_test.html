@@ -45,7 +45,7 @@ tr { vertical-align: top }
   <tr>
     <td><pre class="testinput">print 'Hello '
 &#9;+ '&lt;World&gt;';</pre></td>
-    <td class="golden">^print 'Hello '&#10;	+ '&lt;World&gt;';^</td>
+    <td class="golden">^print 'Hello '&#10;&#9;+ '&lt;World&gt;';^</td>
   </tr>
   <tr><th colspan=3>Test number lines output</th></tr>
   <tr>
@@ -54,7 +54,27 @@ tr { vertical-align: top }
   </tr>
 </table>
 
-<script>setTimeout(function () {
+<script>
+if (!document.body.getElementsByClassName) {
+  document.body.getElementsByClassName = function (className) {
+    className = className.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, ' ');
+    var results = [];
+    function walk(node) {
+      if (node.nodeType !== 1) { return; }
+      // This test should be order-insensitive.
+      if ((' ' + node.className + ' ').indexOf(className) >= 0) {
+        results[results.length] = node;
+      }
+      for (var child = node.firstChild; child; child = child.nextSibling) {
+        walk(child);
+      }
+    }
+    walk(document.body);
+    return results;
+  };
+}
+
+setTimeout(function () {
   var testInputs = Array.prototype.slice.call(
      document.body.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
@@ -87,7 +107,7 @@ tr { vertical-align: top }
       if (!passed) {
         console.log(JSON.stringify(actualText) + ' !==\n' + JSON.stringify(goldenText));
       }
-      actual.className += passed ? ' ok' : ' failure'; 
+      actual.className += passed ? ' ok' : ' failure';
     } catch (ex) {
       actual.className += ' error';
       actual.appendChild(document.createTextNode('Error: ' + ex));
@@ -97,5 +117,5 @@ tr { vertical-align: top }
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 09:58:22 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 15:41:20 PDT 2011 <!-- hhmts end -->
 </body> </html>
