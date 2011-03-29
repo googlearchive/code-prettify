@@ -110,12 +110,14 @@ function numberLines(node, opt_startLineNum) {
     for (var parent; (parent = split.parentNode);) { split = parent; }
     // Put it on the list of lines for later processing.
     listItems.push(split);
+console.log('pushing listItem length=' + listItems.length);
   }
 
   // Split lines while there are lines left to split.
   for (var i = 0;  // Number of lines that have been split so far.
        i < listItems.length;  // length updated by breakAfter calls.
        ++i) {
+console.log('walking list item ' + i);
     walk(listItems[i]);
   }
 
