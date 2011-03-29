@@ -179,7 +179,7 @@ function runTests(goldens) {
     for (var i = 0; (i = out.indexOf('\xa0')) >= 0;) {
       out = out.substring(0, i) + '&nbsp;' + out.substring(i + 1);
     }
-    return out;
+    return out.replace(/\r\n?/g, '\n');
   }
 
   var htmlOut = [];
