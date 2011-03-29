@@ -69,7 +69,7 @@ function recombineTagsAndDecorations(job) {
     var textNode = spans[spanIndex + 1];
     if (textNode.nodeType !== 1) {  // Don't muck with <BR>s or <LI>s
       var styledText = source.substring(sourceIndex, end);
-      if (isIE) { styledText = styledText.replace(newLineRe, '\r\n'); }
+      if (isIE) { styledText = styledText.replace(newlineRe, '\r\n'); }
       textNode.nodeValue = styledText;
       var document = textNode.ownerDocument;
       var span = document.createElement('SPAN');
