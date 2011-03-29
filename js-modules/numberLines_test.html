@@ -2,7 +2,7 @@
 <html> <head>
 <title>Number Lines Test</title>
 <script src="numberLines.js"></script>
-<script src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"></script>
+<script src="http://github.com/douglascrockford/JSON-js/raw/master/json2.js"></script>
 <style>
 .ok { background: #dfd }
 .error, .failure { background: #fdd }
@@ -88,7 +88,8 @@ setTimeout(function () {
     testResult.parentNode.appendChild(actual);
     try {
       var testInputClone = testInput.cloneNode(true);
-      testInputClone.removeAttribute('class');
+      testInputClone.className = '';  // IE
+      testInputClone.removeAttribute('class');  // Not IE.
       actual.appendChild(testInputClone);
       numberLines(testInputClone);
       var passed = testResult.innerHTML === actual.innerHTML;
@@ -106,5 +107,5 @@ setTimeout(function () {
 
 <hr>
 <address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 15:46:10 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start --> Last modified: Tue Mar 29 15:52:29 PDT 2011 <!-- hhmts end -->
 </body> </html>
