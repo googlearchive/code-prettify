@@ -69,6 +69,11 @@ function recombineTagsAndDecorations(job) {
     var textNode = spans[spanIndex + 1];
     if (textNode.nodeType !== 1) {  // Don't muck with <BR>s or <LI>s
       var styledText = source.substring(sourceIndex, end);
+      // This may seem bizarre, and it is.  Emitting LF on IE causes the
+      // code to display with spaces instead of line breaks.
+      // Emitting Windows standard issue linebreaks (CRLF) causes a blank
+      // space to appear at the beginning of every line but the first.
+      // Emitting an old Mac OS 9 line separator makes everything spiffy.
       if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
       textNode.nodeValue = styledText;
       var document = textNode.ownerDocument;

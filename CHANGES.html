@@ -137,5 +137,19 @@
       <li>Added support for XQuery courtesy Patrick Wied, Nemerle
       courtesy Zimin A.V., and Latex support courtesy Martin S.</li>
     </ul>
+    <h2>29 March 2011</h2>
+    <ul>
+      <li>Fixed IE newline issues, and copying/pasting of prettified
+      source code from IE.  This required significant internal changes
+      but involves no API changes.
+      <b>Caveat:</b> <code>prettyPrintOne</code> injects the HTML
+      passed to it into a <code>&lt;pre&gt;</code> element.
+      If the HTML comes from a trusted source, this may allow XSS.
+      Do not do this.  This should not be a problem for existing apps
+      since the standard usage is to rewrite the HTML and then inject
+      it, so anyone doing that with untrusted HTML already has an XSS
+      vulnerability.  If you sanitize and prettify HTML from an
+      untrusted source, sanitize first.
+    </ul>
   </body>
 </html>
