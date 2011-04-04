@@ -399,6 +399,17 @@ assert (s2.Contains ("foo"));
 \setlength{\tabcolsep}{0em}
 </pre>
 
+<h1>Issue 144</h1>
+Escaped quotes in bash.
+<pre id="issue144" class="prettyprint">
+#! /bin/bash
+# toascii.sh
+for i in $(echo $* | fold -w 1);do
+  printf "%x " \'$i;
+done;
+echo
+</pre>
+
 <h1>Issue 145</h1>
 <pre id="issue145" class="prettyprint">
 &lt;script type="text/javascript"&gt;
@@ -785,6 +796,16 @@ var goldens = {
         '`END`KWD\\usepackage`END`PUN{`END`PLNtextcomp`END`PUN}`END`PLN\n' +
         '`END`KWD\\pagestyle`END`PUN{`END`PLNempty`END`PUN}`END`PLN\n' +
         '`END`KWD\\setlength`END`PUN{`END`KWD\\tabcolsep`END`PUN}{`END`LIT0em`END`PUN}`END'
+        ),
+  issue144: (
+        '`COM#! /bin/bash`END`PLN\n' +
+        '`END`COM# toascii.sh`END`PLN\n' +
+        '`END`KWDfor`END`PLN i `END`KWDin`END`PLN $`END`PUN(`END`PLNecho $`END`PUN*' +
+          '`END`PLN `END`PUN|`END`PLN fold `END`PUN-`END`PLNw `END`LIT1`END`PUN);`END' +
+          '`KWDdo`END`PLN\n' +
+        '  printf `END`STR"%x "`END`PLN \\\'$i`END`PUN;`END`PLN\n' +
+        '`END`KWDdone`END`PUN;`END`PLN\n' +
+        'echo`END'
         )
 };
 </script>

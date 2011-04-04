@@ -838,7 +838,9 @@ window['PR']
              // with an optional modifier like UL for unsigned long
              + '[a-z]*', 'i'),
          null, '0123456789'],
-        [PR_PUNCTUATION, /^.[^\s\w\.$@\'\"\`\/\#]*/, null]);
+        // Don't treat escaped quotes in bash as starting strings.  See issue 144.
+        [PR_PLAIN,       /^\\[\s\S]?/, null],
+        [PR_PUNCTUATION, /^.[^\s\w\.$@\'\"\`\/\#\\]*/, null]);
 
     return createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns);
   }
