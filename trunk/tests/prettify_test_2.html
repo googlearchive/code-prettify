@@ -399,6 +399,18 @@ assert (s2.Contains ("foo"));
 \setlength{\tabcolsep}{0em}
 </pre>
 
+<h1>Issue 145</h1>
+<pre id="issue145" class="prettyprint">
+&lt;script type="text/javascript"&gt;
+&lt;!--
+        var target = $$.css('backgroundImage').replace(/^url[\(\)'"]/g, '');
+
+        // nice long chain: wrap img element in span
+        $$.wrap('&lt;span style="position: relative;"&gt;&lt;/span&gt;')
+--&gt;
+&lt;/script&gt;
+</pre>
+
 </body>
 
 <script type="text/javascript">
