@@ -109,9 +109,9 @@ main() {
 #include &lt;stdio.h&gt;
 
 /* the n<sup>th</sup> fibonacci number. */
-unsigned int fib(unsigned int n) {
-  unsigned int a = 1, b = 1;
-  unsigned int tmp;
+uint32 fib(unsigned int n) {
+  uint32 a = 1, b = 1;
+  uint32 tmp;
   while (--n >= 0) {
     tmp = a;
     a += b;
@@ -121,6 +121,8 @@ unsigned int fib(unsigned int n) {
 }
 
 void main() {
+  size_t size = sizeof(wchar_t);
+  ASSERT_EQ(size, 1);
   printf("%u", fib(10));
 }
 
@@ -1383,14 +1385,12 @@ var goldens = {
       '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN\n' +
       '\n' +
       '`END`COM/* the n`END<sup>`COMth`END<\/sup>`COM fibonacci number. *\/`END`PLN\n' +
-      '`END`KWDunsigned`END`PLN `END`KWDint`END`PLN fib`END`PUN(`END' +
-          '`KWDunsigned`END`PLN `END`KWDint`END`PLN n`END`PUN)`END`PLN `END' +
+      '`END`TYPuint32`END`PLN fib`END`PUN(`END' +
+          '`KWDunsigned`END`PLN `END`TYPint`END`PLN n`END`PUN)`END`PLN `END' +
           '`PUN{`END`PLN\n' +
-      '  `END`KWDunsigned`END`PLN `END`KWDint`END`PLN a `END`PUN=`END' +
-          '`PLN `END`LIT1`END`PUN,`END`PLN b `END`PUN=`END`PLN `END`LIT1`END' +
-          '`PUN;`END`PLN\n' +
-      '  `END`KWDunsigned`END`PLN `END`KWDint`END`PLN tmp`END`PUN;`END' +
-          '`PLN\n' +
+      '  `END`TYPuint32`END`PLN a `END`PUN=`END`PLN `END`LIT1`END`PUN,`END' +
+          '`PLN b `END`PUN=`END`PLN `END`LIT1`END`PUN;`END`PLN\n' +
+      '  `END`TYPuint32`END`PLN tmp`END`PUN;`END`PLN\n' +
       '  `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END`PUN&gt;=`END' +
           '`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
       '    tmp `END`PUN=`END`PLN a`END`PUN;`END`PLN\n' +
@@ -1401,6 +1401,10 @@ var goldens = {
       '`END`PUN}`END`PLN\n' +
       '\n' +
       '`END`KWDvoid`END`PLN main`END`PUN()`END`PLN `END`PUN{`END`PLN\n' +
+      '  `END`TYPsize_t`END`PLN size `END`PUN=`END`PLN `END`KWDsizeof`END' +
+          '`PUN(`END`TYPwchar_t`END`PUN);`END`PLN\n' +
+      '  ASSERT_EQ`END`PUN(`END`PLNsize`END`PUN,`END`PLN `END`LIT1`END' +
+          '`PUN);`END`PLN\n' +
       '  printf`END`PUN(`END`STR"%u"`END`PUN,`END`PLN fib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN\n' +
       '`END`PUN}`END`PLN\n' +
@@ -1456,7 +1460,7 @@ var goldens = {
           '`PLN\n' +
       '`END`KWDtemplate`END`PLN `END`PUN&lt;`END`KWDclass`END`PLN T`END' +
           '`PUN&gt;`END`PLN\n' +
-      'T fib`END`PUN(`END`KWDint`END`PLN n`END' +
+      'T fib`END`PUN(`END`TYPint`END`PLN n`END' +
           '`PUN,`END`PLN `END`KWDconst`END`PLN T`END`PUN&amp;`END`PLN fib0' +
           '`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
       '  T a`END`PUN(`END`PLNfib0`END`PUN),`END`PLN b`END`PUN(`END' +
@@ -1470,7 +1474,7 @@ var goldens = {
       '  `END`KWDreturn`END`PLN a`END`PUN;`END`PLN\n' +
       '`END`PUN}`END`PLN\n' +
       '\n' +
-      '`END`KWDint`END`PLN main`END`PUN(`END`KWDint`END`PLN argc`END' +
+      '`END`TYPint`END`PLN main`END`PUN(`END`TYPint`END`PLN argc`END' +
           '`PUN,`END`PLN `END`KWDchar`END`PLN `END`PUN**`END`PLNargv`END' +
           '`PUN)`END`PLN `END`PUN{`END`PLN\n' +
       '  cout `END`PUN&lt;&lt;`END`PLN fib`END`PUN(`END`LIT10`END' +
@@ -2094,18 +2098,7 @@ var goldens = {
           '             // ' +
           'Starting location verticle\n' +
       '`END`TAG&lt;script&gt;`END'),
-  issue8: /*(
-      '<b>`PLNone`END</b>`PLN     `END<b>`TYPTwo`END</b>`PLN' +
-          '     `END<b>`PLNthree`END</b>`PLN   `END`TYPFour' +
-          '`END`PLN    `END<b>`PLNfive`END</b>`PLN    ' +
-          '`END`PUN|`END`PLN\n' +
-      '`END`TYPSix`END`PLN     `END<b>`PLNseven`END</b>`PLN   ' +
-          '`END`TYPEight`END`PLN   nine    `END`TYPTen`END' +
-          '`PLN     `END`PUN|`END`PLN\n' +
-      '`END<b>`PLNeleven`END</b>`PLN  `END`TYPTwelve`END`PLN  `END' +
-          '<b>`PLNthirteen`END</b>`PLN        `END' +
-          '`TYPFourteen`END`PLN        fifteen `END`' +
-          'PUN|`END'),*/
+  issue8:
       (
       '<b>`PLNone`END</b>`PLN\t`END<b>`TYPTwo`END</b>`PLN' +
           '\t`END<b>`PLNthree`END</b>`PLN\t`END`TYPFour' +
