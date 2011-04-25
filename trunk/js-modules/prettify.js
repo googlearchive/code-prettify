@@ -97,7 +97,7 @@ window['PR']
       "concept concept_map const_cast constexpr decltype " +
       "dynamic_cast explicit export friend inline late_check " +
       "mutable namespace nullptr reinterpret_cast static_assert static_cast " +
-      "template typeid typename using virtual wchar_t where ";
+      "template typeid typename using virtual where ";
   var JAVA_KEYWORDS = COMMON_KEYWORDS +
       "abstract boolean byte extends final finally implements import " +
       "instanceof null native package strictfp super synchronized throws " +
@@ -128,6 +128,7 @@ window['PR']
   var ALL_KEYWORDS = (
       CPP_KEYWORDS + CSHARP_KEYWORDS + JSCRIPT_KEYWORDS + PERL_KEYWORDS +
       PYTHON_KEYWORDS + RUBY_KEYWORDS + SH_KEYWORDS);
+  var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)/;
 
   // token style names.  correspond to css classes
   /** token style for a string literal */
@@ -484,6 +485,10 @@ window['PR']
            ]);
     }
 
+    if (options['types']) {
+      fallthroughStylePatterns.push([PR_TYPE, options['types']]);
+    }
+
     var keywords = options['keywords'].replace(/^\s+|\s+$/g, '');
     if (keywords.length) {
       fallthroughStylePatterns.push(
@@ -495,7 +500,7 @@ window['PR']
     fallthroughStylePatterns.push(
         // TODO(mikesamuel): recognize non-latin letters and numerals in idents
         [PR_LITERAL,     /^@[a-z_$][a-z_$@0-9]*/i, null],
-        [PR_TYPE,        /^@?[A-Z]+[a-z][A-Za-z_$@0-9]*/, null],
+        [PR_TYPE,        /^(?:[@_]?[A-Z]+[a-z][A-Za-z_$@0-9]*|\w+_t\b)/, null],
         [PR_PLAIN,       /^[a-z_$][a-z_$@0-9]*/i, null],
         [PR_LITERAL,
          new RegExp(
@@ -611,7 +616,8 @@ window['PR']
   registerLangHandler(sourceDecorator({
           'keywords': CPP_KEYWORDS,
           'hashComments': true,
-          'cStyleComments': true
+          'cStyleComments': true,
+          'types': C_TYPES
         }), ['c', 'cc', 'cpp', 'cxx', 'cyc', 'm']);
   registerLangHandler(sourceDecorator({
           'keywords': 'null true false'
@@ -620,7 +626,8 @@ window['PR']
           'keywords': CSHARP_KEYWORDS,
           'hashComments': true,
           'cStyleComments': true,
-          'verbatimStrings': true
+          'verbatimStrings': true,
+          'types': C_TYPES
         }), ['cs']);
   registerLangHandler(sourceDecorator({
           'keywords': JAVA_KEYWORDS,
