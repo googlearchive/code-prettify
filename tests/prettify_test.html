@@ -1298,6 +1298,7 @@ func main() {
 }
 
 /* " */  &quot;foo /* "  /*/  */
+/* ` */  `foo /* `  /*/  */
 </pre>
 
 Test IE by copy/pasting content here.
@@ -2905,7 +2906,8 @@ var goldens = {
       '    fmt.Printf("Hello, world; or \u039a\u03b1\u03bb\u03b7\u03bc\u03ad\u03c1\u03b1 \u03ba\u03cc\u03c3\u03bc\u03b5; or \u3053\u3093\u306b\u3061\u306f \u4e16\u754c\\n")  `END`COM// Semicolon inserted here`END`PLN\n' +
       '}\n' +
       '\n' +
-      '`END`COM/* " *\/`END`PLN  "foo /* "  `END`COM/*\/  *\/`END'
+      '`END`COM/* " *\/`END`PLN  "foo /* "  `END`COM/*\/  *\/`END`PLN\n' +
+      '`END`COM/* ` *\/`END`PLN  `foo /* `  `END`COM/*\/  *\/`END'
 };
 </script>
 
