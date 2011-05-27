@@ -756,7 +756,7 @@ window['PR']
           //     <pre class="prettyprint lang-cpp">
           // the language extension "cpp" is used to find a language handler as
           // passed to PR.registerLangHandler.
-          var langExtension = cs.className.match(/\blang-(\w+)\b/);
+          var langExtension = cs.className.match(/\blang-([\w.]+)(?!\S)/);
           if (langExtension) { langExtension = langExtension[1]; }
 
           // make sure this is not nested in an already prettified element

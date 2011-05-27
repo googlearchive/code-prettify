@@ -28,7 +28,7 @@
         <pre class="prettyprint">
 &lt;link href="prettify.css" type="text/css" rel="stylesheet" /&gt;
 &lt;script type="text/javascript" src="prettify.js"&gt;&lt;/script&gt;</pre>
-      <li>Add <code class="prettyprint lang-html">onload="prettyPrint()"</code> to your
+      <li>Add <code class="prettyprint lang-in.tag">onload="prettyPrint()"</code> to your
       document's body tag.
       <li>Modify the stylesheet to get the coloring you prefer</li>
     </ol>
@@ -63,7 +63,7 @@ public:
     </table>
 
     <h2>FAQ</h2>
-    <h3 id="langs">Which languages does it work for?</h3>
+    <h3 id="langs">For which languages does it work?</h3>
     <p>The comments in <tt>prettify.js</tt> are authoritative but the lexer
     should work on a number of languages including C and friends,
     Java, Python, Bash, SQL, HTML, XML, CSS, Javascript, and Makefiles.
@@ -75,10 +75,10 @@ public:
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-lisp.js"
      ><code>lang-lisp.js</code></a>.</p>
     <p>And similarly for
-    <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-css.js"
-     ><code>CSS</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-clj.js"
      ><code>Clojure</code></a>,
+    <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-css.js"
+     ><code>CSS</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-go.js"
      ><code>Go</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-hs.js"
@@ -87,18 +87,24 @@ public:
      ><code>Lua</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-ml.js"
      ><code>OCAML, SML, F#</code></a>,
+    <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-n.js"
+     ><code>Nemerle</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-proto.js"
      ><code>Protocol Buffers</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-scala.js"
      ><code>Scala</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-sql.js"
      ><code>SQL</code></a>,
+    <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-tex.js"
+     ><code>TeX, LaTeX</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-vhdl.js"
      ><code>VHDL</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-vb.js"
      ><code>Visual Basic</code></a>,
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-wiki.js"
-     ><code>WikiText</code></a>, and
+     ><code>WikiText</code></a>,
+    <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-xq.js"
+     ><code>XQuery</code></a>, and
     <a href="http://code.google.com/p/google-code-prettify/source/browse/trunk/src/lang-yaml.js"
      ><code>YAML</code></a>.
 
@@ -107,7 +113,7 @@ public:
     <a href="http://code.google.com/p/google-code-prettify/issues/list"
      >issue</a> including your language extension, and a testcase.</p>
 
-    <h3>How do I specify which language my code is in?</h3>
+    <h3>How do I specify the language of my code?</h3>
     <p>You don't need to specify the language since <code>prettyprint()</code>
     will guess.  You can specify a language by specifying the language extension
     along with the <code>prettyprint</code> class like so:</p>
@@ -215,7 +221,7 @@ int y = bar();
 
     <div class="footer">
 <!-- Created: Tue Oct  3 17:51:56 PDT 2006 -->
-<!-- hhmts start -->Last modified: Fri May 20 12:43:46 PDT 2011 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Fri May 27 16:05:12 PDT 2011 <!-- hhmts end -->
     </div>
   </body>
 </html>
