@@ -10,6 +10,8 @@
 <!-- Language extensions tested -->
 <script src="../src/lang-clj.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
+<script src="../src/lang-lisp.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-xq.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
 <script src="../src/lang-n.js" type="text/javascript"
@@ -438,6 +440,38 @@ echo
 
 (bar "foo" "bar" "blah" :baz)
 </pre>
+
+<h1>HTML 5 language on code</h1>
+<p>
+The text is specified to be lisp by the class attribute.
+Semicolon is normally a valid punctuation character but
+in lisp it is a comment so should be colored as a comment
+if the className is being properly parsed.</p>
+<code class="prettyprint language-lisp" id="html5conv1">; foo</code>
+
+<h1>HTML 5 language on nested code element</h1>
+<p>The language is attached to a CODE element inside a PRE.</p>
+<pre class="prettyprint" id="html5conv2"
+><code class="language-lisp">; foo</code></pre>
+
+<h1>HTML 5 language on nested code element not foiled by space</h1>
+<p>The language is attached to a CODE element inside a PRE and there
+is space between the PRE element's tags and CODE element's tags.</p>
+<pre class="prettyprint" id="html5conv3">
+<code class="language-lisp">
+; foo
+</code>
+</pre>
+
+<h1>HTML 5 nested code element language ignored if not only content</h1>
+<p>The below is not treated as lisp despite there being a lisp
+language specifier on the contained CODE element, the CODE element
+does not wrap all non-space content.</p>
+<pre class="prettyprint" id="html5conv4">
+before CODE
+<code class="language-lisp">; foo</code>
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -833,7 +867,14 @@ var goldens = {
         '  `END`OPN(`END`KWDfor`END`PLN `END`OPN[`END`PLNarg args`END`CLO]`END`PLN\n' +
         '    `END`OPN(`END`KWDprn`END`PLN arg`END`CLO)))`END`PLN\n' +
         '\n' +
-        '`END`OPN(`END`PLNbar `END`STR"foo"`END`PLN `END`STR"bar"`END`PLN `END`STR"blah"`END`PLN `END`TYP:baz`END`CLO)`END'
+        '`END`OPN(`END`PLNbar `END`STR"foo"`END`PLN `END`STR"bar"`END`PLN `END`STR"blah"`END`PLN `END`TYP:baz`END`CLO)`END',
+  html5conv1: '`COM; foo`END',
+  html5conv2: '<code class="language-lisp">`COM; foo`END</code>',
+  html5conv3: ('<code class="language-lisp">`PLN\n' +
+      '`END`COM; foo`END`PLN\n' +
+      '`END</code>\n'),
+  html5conv4: ('`PLNbefore CODE\n' +
+      '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n')
 };
 </script>
 

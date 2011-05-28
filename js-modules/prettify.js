@@ -226,6 +226,32 @@ window['PR']
     out.push.apply(out, job.decorations);
   }
 
+   var notWs = /\S/;
+
+  /**
+   * Given an element, if it contains only one child element and any text nodes
+   * it contains contain only space characters, return the sole child element.
+   * Otherwise returns undefined.
+   * <p>
+   * This is meant to return the CODE element in {@code <pre><code ...>} when
+   * there is a single child element that contains all the non-space textual
+   * content, but not to return anything where there are multiple child elements
+   * as in {@code <pre><code>...</code><code>...</code></pre>} or when there
+   * is textual content.
+   */
+  function childContentWrapper(element) {
+    var wrapper = undefined;
+    for (var c = element.firstChild; c; c = c.nextSibling) {
+      var type = c.nodeType;
+      wrapper = (type === 1)  // Element Node
+          ? (wrapper ? element : c)
+          : (type === 3)  // Text Node
+          ? (notWs.test(c.nodeValue) ? element : wrapper)
+          : wrapper;
+    }
+    return wrapper === element ? undefined : wrapper;
+  }
+
   /** Given triples of [style, pattern, context] returns a lexing function,
     * The lexing function interprets the patterns to find token boundaries and
     * returns a decoration list of the form
@@ -299,7 +325,6 @@ window['PR']
     })();
 
     var nPatterns = fallthroughStylePatterns.length;
-    var notWs = /\S/;
 
     /**
      * Lexes job.source and produces an output array job.decorations of style
@@ -744,20 +769,36 @@ window['PR']
     var k = 0;
     var prettyPrintingJob;
 
+    var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
+    var prettyPrintRe = /\bprettyprint\b/;
+
     function doWork() {
       var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
-                     clock.now() + 250 /* ms */ :
+                     clock['now']() + 250 /* ms */ :
                      Infinity);
-      for (; k < elements.length && clock.now() < endTime; k++) {
+      for (; k < elements.length && clock['now']() < endTime; k++) {
         var cs = elements[k];
-        if (cs.className && cs.className.indexOf('prettyprint') >= 0) {
+        var className = cs.className;
+        if (className.indexOf('prettyprint') >= 0) {
           // If the classes includes a language extensions, use it.
           // Language extensions can be specified like
           //     <pre class="prettyprint lang-cpp">
           // the language extension "cpp" is used to find a language handler as
           // passed to PR.registerLangHandler.
-          var langExtension = cs.className.match(/\blang-([\w.]+)(?!\S)/);
-          if (langExtension) { langExtension = langExtension[1]; }
+          // HTML5 recommends that a language be specified using "language-"
+          // as the prefix instead.  Google Code Prettify supports both.
+          // http://dev.w3.org/html5/spec-author-view/the-code-element.html
+          var langExtension = className.match(langExtensionRe);
+          // Support <pre class="prettyprint"><code class="language-c">
+          var wrapper;
+          if (!langExtension && (wrapper = childContentWrapper(cs))
+              && "CODE" === wrapper.tagName) {
+            langExtension = wrapper.className.match(langExtensionRe);
+          }
+
+          if (langExtension) {
+            langExtension = langExtension[1];
+          }
 
           // make sure this is not nested in an already prettified element
           var nested = false;
