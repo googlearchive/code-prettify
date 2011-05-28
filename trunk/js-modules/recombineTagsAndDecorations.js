@@ -27,24 +27,30 @@ function recombineTagsAndDecorations(job) {
 
   var decorations = job.decorations;
   var nDecorations = decorations.length;
-  // Index into decorations after the last decoration which ends at or before sourceIndex.
+  // Index into decorations after the last decoration which ends at or before
+  // sourceIndex.
   var decorationIndex = 0;
 
-  // Simplify decorations.
-  var decPos = 0;
-  for (var i = 0; i < nDecorations;) {
-    // Skip over any zero-length decorations.
-    var startPos = decorations[i];
-    var start = i;
-    while (start + 2 < nDecorations && decorations[start + 2] === startPos) {
-      start += 2;
+  // Remove all zero-length decorations.
+  decorations[nDecorations] = sourceLength;
+  var decPos, i;
+  for (i = decPos = 0; i < nDecorations;) {
+    if (decorations[i] !== decorations[i + 2]) {
+      decorations[decPos++] = decorations[i++];
+      decorations[decPos++] = decorations[i++];
+    } else {
+      i += 2;
     }
+  }
+  nDecorations = decPos;
+
+  // Simplify decorations.
+  for (i = decPos = 0; i < nDecorations;) {
+    var startPos = decorations[i];
     // Conflate all adjacent decorations that use the same style.
-    var startDec = decorations[start + 1];
-    var end = start + 2;
-    while (end + 2 <= nDecorations
-           && (decorations[end + 1] === startDec
-               || decorations[end] === decorations[end + 2])) {
+    var startDec = decorations[i + 1];
+    var end = i + 2;
+    while (end + 2 <= nDecorations && decorations[end + 1] === startDec) {
       end += 2;
     }
     decorations[decPos++] = startPos;
@@ -52,8 +58,6 @@ function recombineTagsAndDecorations(job) {
     i = end;
   }
 
-  // Strip any zero-length decoration at the end.
-  if (decPos && decorations[decPos - 2] === sourceLength) { decPos -= 2; }
   nDecorations = decorations.length = decPos;
 
   var decoration = null;
@@ -67,8 +71,10 @@ function recombineTagsAndDecorations(job) {
     var end = Math.min(spanEnd, decEnd);
 
     var textNode = spans[spanIndex + 1];
-    if (textNode.nodeType !== 1) {  // Don't muck with <BR>s or <LI>s
-      var styledText = source.substring(sourceIndex, end);
+    var styledText;
+    if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
+        // Don't introduce spans around empty text nodes.
+        && (styledText = source.substring(sourceIndex, end))) {
       // This may seem bizarre, and it is.  Emitting LF on IE causes the
       // code to display with spaces instead of line breaks.
       // Emitting Windows standard issue linebreaks (CRLF) causes a blank

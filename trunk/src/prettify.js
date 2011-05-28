@@ -554,6 +554,32 @@ window['PR']
     out.push.apply(out, job.decorations);
   }
 
+   var notWs = /\S/;
+
+  /**
+   * Given an element, if it contains only one child element and any text nodes
+   * it contains contain only space characters, return the sole child element.
+   * Otherwise returns undefined.
+   * <p>
+   * This is meant to return the CODE element in {@code <pre><code ...>} when
+   * there is a single child element that contains all the non-space textual
+   * content, but not to return anything where there are multiple child elements
+   * as in {@code <pre><code>...</code><code>...</code></pre>} or when there
+   * is textual content.
+   */
+  function childContentWrapper(element) {
+    var wrapper = undefined;
+    for (var c = element.firstChild; c; c = c.nextSibling) {
+      var type = c.nodeType;
+      wrapper = (type === 1)  // Element Node
+          ? (wrapper ? element : c)
+          : (type === 3)  // Text Node
+          ? (notWs.test(c.nodeValue) ? element : wrapper)
+          : wrapper;
+    }
+    return wrapper === element ? undefined : wrapper;
+  }
+
   /** Given triples of [style, pattern, context] returns a lexing function,
     * The lexing function interprets the patterns to find token boundaries and
     * returns a decoration list of the form
@@ -627,7 +653,6 @@ window['PR']
     })();
 
     var nPatterns = fallthroughStylePatterns.length;
-    var notWs = /\S/;
 
     /**
      * Lexes job.source and produces an output array job.decorations of style
@@ -1035,24 +1060,30 @@ window['PR']
   
     var decorations = job.decorations;
     var nDecorations = decorations.length;
-    // Index into decorations after the last decoration which ends at or before sourceIndex.
+    // Index into decorations after the last decoration which ends at or before
+    // sourceIndex.
     var decorationIndex = 0;
   
-    // Simplify decorations.
-    var decPos = 0;
-    for (var i = 0; i < nDecorations;) {
-      // Skip over any zero-length decorations.
-      var startPos = decorations[i];
-      var start = i;
-      while (start + 2 < nDecorations && decorations[start + 2] === startPos) {
-        start += 2;
+    // Remove all zero-length decorations.
+    decorations[nDecorations] = sourceLength;
+    var decPos, i;
+    for (i = decPos = 0; i < nDecorations;) {
+      if (decorations[i] !== decorations[i + 2]) {
+        decorations[decPos++] = decorations[i++];
+        decorations[decPos++] = decorations[i++];
+      } else {
+        i += 2;
       }
+    }
+    nDecorations = decPos;
+  
+    // Simplify decorations.
+    for (i = decPos = 0; i < nDecorations;) {
+      var startPos = decorations[i];
       // Conflate all adjacent decorations that use the same style.
-      var startDec = decorations[start + 1];
-      var end = start + 2;
-      while (end + 2 <= nDecorations
-             && (decorations[end + 1] === startDec
-                 || decorations[end] === decorations[end + 2])) {
+      var startDec = decorations[i + 1];
+      var end = i + 2;
+      while (end + 2 <= nDecorations && decorations[end + 1] === startDec) {
         end += 2;
       }
       decorations[decPos++] = startPos;
@@ -1060,8 +1091,6 @@ window['PR']
       i = end;
     }
   
-    // Strip any zero-length decoration at the end.
-    if (decPos && decorations[decPos - 2] === sourceLength) { decPos -= 2; }
     nDecorations = decorations.length = decPos;
   
     var decoration = null;
@@ -1075,8 +1104,10 @@ window['PR']
       var end = Math.min(spanEnd, decEnd);
   
       var textNode = spans[spanIndex + 1];
-      if (textNode.nodeType !== 1) {  // Don't muck with <BR>s or <LI>s
-        var styledText = source.substring(sourceIndex, end);
+      var styledText;
+      if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
+          // Don't introduce spans around empty text nodes.
+          && (styledText = source.substring(sourceIndex, end))) {
         // This may seem bizarre, and it is.  Emitting LF on IE causes the
         // code to display with spaces instead of line breaks.
         // Emitting Windows standard issue linebreaks (CRLF) causes a blank
@@ -1320,20 +1351,36 @@ window['PR']
     var k = 0;
     var prettyPrintingJob;
 
+    var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
+    var prettyPrintRe = /\bprettyprint\b/;
+
     function doWork() {
       var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
-                     clock.now() + 250 /* ms */ :
+                     clock['now']() + 250 /* ms */ :
                      Infinity);
-      for (; k < elements.length && clock.now() < endTime; k++) {
+      for (; k < elements.length && clock['now']() < endTime; k++) {
         var cs = elements[k];
-        if (cs.className && cs.className.indexOf('prettyprint') >= 0) {
+        var className = cs.className;
+        if (className.indexOf('prettyprint') >= 0) {
           // If the classes includes a language extensions, use it.
           // Language extensions can be specified like
           //     <pre class="prettyprint lang-cpp">
           // the language extension "cpp" is used to find a language handler as
           // passed to PR.registerLangHandler.
-          var langExtension = cs.className.match(/\blang-([\w.]+)\b/);
-          if (langExtension) { langExtension = langExtension[1]; }
+          // HTML5 recommends that a language be specified using "language-"
+          // as the prefix instead.  Google Code Prettify supports both.
+          // http://dev.w3.org/html5/spec-author-view/the-code-element.html
+          var langExtension = className.match(langExtensionRe);
+          // Support <pre class="prettyprint"><code class="language-c">
+          var wrapper;
+          if (!langExtension && (wrapper = childContentWrapper(cs))
+              && "CODE" === wrapper.tagName) {
+            langExtension = wrapper.className.match(langExtensionRe);
+          }
+
+          if (langExtension) {
+            langExtension = langExtension[1];
+          }
 
           // make sure this is not nested in an already prettified element
           var nested = false;
