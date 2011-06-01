@@ -2,37 +2,44 @@
 <html>
 <head>
 <title>Code Prettifier</title>
-<script src="../src/prettify.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-css.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-go.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-hs.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-lisp.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-lua.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-ml.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-proto.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-scala.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-sql.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-wiki.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-vhdl.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-vb.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-yaml.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
+<script>(function () {
+  var sourceBaseUrl = /[&?]distrib/.test(location.search)
+      ? "../distrib/google-code-prettify/" : "../src/";
+  var sources = [
+      "prettify.js",
+      "lang-css.js",
+      "lang-go.js",
+      "lang-hs.js",
+      "lang-lisp.js",
+      "lang-lua.js",
+      "lang-ml.js",
+      "lang-proto.js",
+      "lang-scala.js",
+      "lang-sql.js",
+      "lang-wiki.js",
+      "lang-vhdl.js",
+      "lang-vb.js",
+      "lang-yaml.js",
+  ];
+  var styles = [
+      "prettify.css"
+  ];
+  if (window.console) {
+    console.log("sourceBaseUrl=" + sourceBaseUrl);
+  }
+  for (var i = 0; i < sources.length; ++i) {
+    document.write(
+        "<script src=\"" + sourceBaseUrl + sources[i] + "\"><\/script>");
+  }
+  for (var i = 0; i < styles.length; ++i) {
+    document.write(
+        "<link rel=\"stylesheet\" href=\"" + sourceBaseUrl + styles[i] + "\">");
+  }
+})();
+</script>
+
 <script src="test_base.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
-<link rel="stylesheet" type="text/css" href="../src/prettify.css" />
 <link rel="stylesheet" type="text/css" href="test_styles.css" />
 </head>
 
@@ -2637,11 +2644,11 @@ var goldens = {
   proto: (
       '`KWDmessage`END`PLN `END`TYPSearchRequest`END`PLN `END`PUN{`END' +
            '`PLN\n' +
-      '  `END`KWDrequired`END`PLN `END`KWDstring`END`PLN query `END' +
+      '  `END`KWDrequired`END`PLN `END`TYPstring`END`PLN query `END' +
            '`PUN=`END`PLN `END`LIT1`END`PUN;`END`PLN\n' +
-      '  `END`KWDoptional`END`PLN `END`KWDint32`END`PLN page_number `END' +
+      '  `END`KWDoptional`END`PLN `END`TYPint32`END`PLN page_number `END' +
            '`PUN=`END`PLN `END`LIT2`END`PUN;`END`PLN\n' +
-      '  `END`KWDoptional`END`PLN `END`KWDint32`END' +
+      '  `END`KWDoptional`END`PLN `END`TYPint32`END' +
            '`PLN result_per_page `END`PUN=`END`PLN `END`LIT3`END`PLN `END' +
            '`PUN[`END`KWDdefault`END`PLN `END`PUN=`END`PLN `END`LIT10`END' +
            '`PUN];`END`PLN\n' +

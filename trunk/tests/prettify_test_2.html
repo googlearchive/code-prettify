@@ -2,26 +2,38 @@
 <html>
 <head>
 <title>Code Prettifier</title>
-<script src="../src/prettify.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-css.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-
-<!-- Language extensions tested -->
-<script src="../src/lang-clj.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-lisp.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-xq.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-n.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<script src="../src/lang-tex.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
+<script>(function () {
+  var sourceBaseUrl = /[&?]distrib/.test(location.search)
+      ? "../distrib/google-code-prettify/" : "../src/";
+  var sources = [
+      "prettify.js",
+      "lang-css.js",
+      // Language extensions tested.
+      "lang-clj.js",
+      "lang-lisp.js",
+      "lang-xq.js",
+      "lang-n.js",
+      "lang-tex.js"
+ ];
+  var styles = [
+      "prettify.css"
+  ];
+  if (window.console) {
+    console.log("sourceBaseUrl=" + sourceBaseUrl);
+  }
+  for (var i = 0; i < sources.length; ++i) {
+    document.write(
+        "<script src=\"" + sourceBaseUrl + sources[i] + "\"><\/script>");
+  }
+  for (var i = 0; i < styles.length; ++i) {
+    document.write(
+        "<link rel=\"stylesheet\" href=\"" + sourceBaseUrl + styles[i] + "\">");
+  }
+})();
+</script>
 
 <script src="test_base.js" type="text/javascript"
  onerror="alert('Error: failed to load ' + this.src)"></script>
-<link rel="stylesheet" type="text/css" href="../src/prettify.css" />
 <link rel="stylesheet" type="text/css" href="test_styles.css" />
 </head>
 
