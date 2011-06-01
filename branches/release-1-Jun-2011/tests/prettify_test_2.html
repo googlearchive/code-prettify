@@ -1,0 +1,893 @@
+<!DOCTYPE HTML PUBLIC "-//W5C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Code Prettifier</title>
+<script>(function () {
+  var sourceBaseUrl = /[&?]distrib/.test(location.search)
+      ? "../distrib/google-code-prettify/" : "../src/";
+  var sources = [
+      "prettify.js",
+      "lang-css.js",
+      // Language extensions tested.
+      "lang-clj.js",
+      "lang-lisp.js",
+      "lang-xq.js",
+      "lang-n.js",
+      "lang-tex.js"
+ ];
+  var styles = [
+      "prettify.css"
+  ];
+  if (window.console) {
+    console.log("sourceBaseUrl=" + sourceBaseUrl);
+  }
+  for (var i = 0; i < sources.length; ++i) {
+    document.write(
+        "<script src=\"" + sourceBaseUrl + sources[i] + "\"><\/script>");
+  }
+  for (var i = 0; i < styles.length; ++i) {
+    document.write(
+        "<link rel=\"stylesheet\" href=\"" + sourceBaseUrl + styles[i] + "\">");
+  }
+})();
+</script>
+
+<script src="test_base.js" type="text/javascript"
+ onerror="alert('Error: failed to load ' + this.src)"></script>
+<link rel="stylesheet" type="text/css" href="test_styles.css" />
+</head>
+
+<body onload="go(goldens)" bgcolor="white">
+<div id="timing"></div>
+<div id="errorReport" style="white-space: pre"></div>
+
+<h1>XQuery mode</h1>
+From <code>http://www.patrick-wied.at/static/xquery/prettify/</code>
+<pre class="prettyprint lang-xq" id="xquery">
+(: 
+	Took some of Mike Brevoort's xquery code samples because they are nice and show common xquery syntax 
+:)
+ 
+  (:~
+   : Given a sequence of version URIs, publish all of these versions of each document
+   : If there is a version of the same document already published, unpublish it 1st
+   :
+   : When "publish" is referred to, we mean that it is put into the PUBLISHED collection
+   : unpublish removes content from this collection
+   : @param $version_uris - sequence of uris of versions of managed documents to publish
+   :)
+  declare function comoms-dls:publish($version_uris as item()*) {
+      for $uri in $version_uris
+      let $doc := fn:doc($uri)
+      let $managed_base_uri := $doc/node()/property::dls:version/dls:document-uri/text()
+      let $existing :=  comoms-dls:publishedDoc($managed_base_uri)
+      let $unpublishExisting := if($existing) then comoms-dls:unpublishVersion((xdmp:node-uri($existing)))  else ()
+      let $addPermissions := dls:document-add-permissions($uri, (xdmp:permission('mkp-anon', 'read')))
+      return
+          dls:document-add-collections($uri, ("PUBLISHED"))    
+  };
+ 
+  declare function comoms-dls:publishLatest($uri) {
+      (: TODO check if it's in the draft collection probably :)
+ 
+      let $latest_version_uri := comoms-dls:latestVersionUri($uri)
+      let $log:= xdmp:log(fn:concat("latest: ", $latest_version_uri))    
+      let $log:= xdmp:log(fn:concat("uri: ", $uri))            
+      return comoms-dls:publish($latest_version_uri)    
+ 
+  };
+ 
+  declare function comoms-dls:latestVersionUri($uri) {
+      let $latest_version_num :=
+          (
+          for $version in dls:document-history($uri)/dls:version
+          order by fn:number($version//dls:version-id/text()) descending
+          return $version//dls:version-id/text()
+          )[1]
+ 
+ 
+      return dls:document-version-uri($uri, $latest_version_num)
+  };
+ 
+  declare function comoms-dls:unpublish($uris as item()*) {
+      for $uri in $uris
+      return
+          let $published_doc := comoms-dls:publishedDoc($uri)
+          return
+              if($published_doc) then
+                  let $published_version_uri := xdmp:node-uri($published_doc)
+                  return comoms-dls:unpublishVersion($published_version_uri)        
+              else
+                  ()
+  };
+ 
+  declare function comoms-dls:latestPublishedDocAuthor($uri) {
+      let $author_id := doc($uri)/property::dls:version/dls:author/text()
+      return
+          if($author_id) then
+              comoms-user:getUsername($author_id)
+          else
+              ()
+ 
+  };
+ 
+  (:~
+   : Given a sequence of version URIs, unpublish all of these versions of each document
+   :)
+  declare function comoms-dls:unpublishVersion($version_uris as item()*) {
+      for $uri in $version_uris
+      return
+          let $removePermissions := dls:document-remove-permissions($uri, (xdmp:permission('mkp-anon', 'read')))
+          return dls:document-remove-collections($uri, ("PUBLISHED"))        
+  };
+ 
+  (:~
+   : Given the base URI of a managed piece of content, return the document of the node
+   : of the version that is published
+   :)
+  declare function comoms-dls:publishedDoc($uri) {
+      fn:collection("PUBLISHED")[property::dls:version/dls:document-uri = $uri]
+  };
+ 
+ 
+  (:~
+   : Test if any version of the managed document is published
+   :)
+  declare function comoms-dls:isPublished($uri) {
+      if( comoms-dls:publishedDoc($uri)) then
+          fn:true()
+      else
+          fn:false()
+  };
+ 
+ 
+  declare function comoms-dls:publishedState($uri) {
+      let $doc := comoms-dls:publishedDoc($uri)
+      let $published_uri := if($doc) then xdmp:node-uri($doc) else ()
+      let $latest := comoms-dls:latestVersionUri($uri)
+      return
+          if($doc) then
+              if($latest ne $published_uri) then
+                  "stale"
+              else
+                  "published"
+          else
+              "unpublished"
+  };
+ 
+ 
+  declare function comoms-dls:getManagedDocUri($uri) {
+      let $doc := fn:doc($uri)
+      let $managed_uri := $doc/property::dls:version/dls:document-uri/text()
+      let $managed_uri := if($managed_uri) then $managed_uri else $uri
+      return $managed_uri
+  };
+ 
+  (:~
+   : Given a manage content url (e.g. /content/123456.xml) return the appropriate
+   : version of the document based on what stage collection is being viewed and
+   : what's published
+   :
+   : @param $uri a manage content url (e.g. /content/123456.xml) - NOT A VERSIONED URI
+   :)
+  declare function comoms-dls:doc($uri) {
+      let $doc := fn:root(comoms-dls:collection()[property::dls:version/dls:document-uri = $uri][1])
+      return
+          if($doc) then
+              $doc
+          else
+              let $managedDocInCollection := comoms-dls:collection-name() = xdmp:document-get-collections($uri)
+              return
+                  if($managedDocInCollection) then
+                      fn:doc($uri)
+                  else
+                      ()
+  };
+ 
+  (:~
+   : Get the collection to be used when querying for content
+   : THIS or comoms-dls:collection-name() SHOULD BE USED WHEN BUILDING ANY QUERY FOR MANAGED CONTENT
+   :)
+  declare function comoms-dls:collection()  {
+      fn:collection( comoms-dls:collection-name() )
+  };
+ 
+  (:~
+   : Get the collection nameto be used when querying for content
+   : THIS or comoms-dls:collection() SHOULD BE USED WHEN BUILDING ANY QUERY FOR MANAGED CONTENT
+   :)
+  declare function comoms-dls:collection-name() as xs:string {
+      let $default_collection := "PUBLISHED"
+      return
+          if(comoms-user:isAdmin()) then
+              let $pub_stage_collection_cookie := comoms-util:getCookie("COMOMS_COLLECTION")
+              return
+                  if($pub_stage_collection_cookie) then
+                      $pub_stage_collection_cookie
+                  else
+                      $default_collection
+          else
+              $default_collection
+  };
+ 
+  (:~
+   : Check if the published collection is being viewed
+   :)
+  declare function comoms-dls:isViewingPublished() {
+      if(comoms-dls:collection-name() = "PUBLISHED") then
+          fn:true()
+      else
+          fn:false()
+  };
+ 
+  (:~
+   : Get the best URL for the content URI.
+   : This is either the default URI based on detail type or should also take
+   : into account friendly urls and navigation structures to figure out the
+   : best choice
+   :)
+  declare function comoms-dls:contentUrl($uri) {
+ 
+      (: TODO: add friendly URL and nav structure logic 1st :)
+ 
+      let $doc := fn:doc($uri)
+      let $managedDocUri := $doc/property::dls:version/dls:document-uri
+      let $uri := if($managedDocUri) then $managedDocUri else $uri
+      let $type := $doc/node()/fn:name()
+      let $content_id := fn:tokenize( fn:tokenize($uri, "/")[3], "\.")[1]
+      return
+          fn:concat("/", $type, "/", $content_id)
+  };
+ 
+  (:
+   :
+   :  gets list of doc versions and uri.
+   :
+   :)
+  declare function comoms-dls:versionHistory($uri) {
+      let $published_doc := comoms-dls:publishedDoc($uri)
+      let $published_uri := if($published_doc) then xdmp:node-uri($published_doc) else ()
+      return
+      &lt;versions&gt;
+          {
+          for $version in dls:document-history($uri)/dls:version
+            let $version_num := $version/dls:version-id/text()
+            let $created := $version/dls:created/text()
+            let $author_id := $version/dls:author/text()
+            let $author := comoms-user:getUsername($author_id)
+ 
+ 
+            let $note := $version/dls:annotation/text()
+            let $version_uri := xdmp:node-uri(dls:document-version($uri, $version_num))
+            let $published := $published_uri eq $version_uri
+            return
+              &lt;version&gt;
+                  &lt;version-number&gt;{$version_num}&lt;/version-number&gt;
+                  &lt;created&gt;{$created}&lt;/created&gt;                
+                  &lt;author&gt;{$author}&lt;/author&gt;
+                  &lt;published&gt;{$published}&lt;/published&gt;
+                  &lt;version-uri&gt;{$version_uri}&lt;/version-uri&gt;
+              &lt;/version&gt;  
+          }        
+      &lt;/versions&gt;
+  };
+ 
+ 
+ 
+ 
+ 
+ 
+  (: ########################################################################### :)
+  (: PRIVATE FUNCTIONS :)
+  (: ########################################################################### :)
+ 
+  declare function comoms-dls:_import() {
+      "xquery version '1.0-ml';
+       import module namespace dls = 'http://marklogic.com/xdmp/dls' at '/MarkLogic/dls.xqy'; "
+  };  
+ 
+(: ----
+---- :)
+xquery version '1.0-ml';
+declare variable $URI as xs:string external;
+ 
+declare function local:document-move-forest($uri as xs:string, $forest-ids as xs:unsignedLong*)
+{
+  xdmp:document-insert(
+    $uri,
+    fn:doc($uri),
+    xdmp:document-get-permissions($uri),
+    xdmp:document-get-collections($uri),
+    xdmp:document-get-quality($uri),
+    $forest-ids
+  )
+};
+ 
+let $xml :=
+  &lt;xml att="blah" att2="blah"&gt;
+    sdasd&lt;b&gt;asdasd&lt;/b&gt;
+  &lt;/xml&gt;
+(: -------- :)
+for $d in fn:doc("depts.xml")/depts/deptno
+let $e := fn:doc("emps.xml")/emps/emp[deptno = $d]
+where fn:count($e) &gt;= 10
+order by fn:avg($e/salary) descending
+return
+   &lt;big-dept&gt;
+      {
+      $d,
+      &lt;headcount&gt;{fn:count($e)}&lt;/headcount&gt;,
+      &lt;avgsal&gt;{fn:avg($e/salary)}&lt;/avgsal&gt;
+      }
+   &lt;/big-dept&gt;
+(: -------- :)
+declare function local:depth($e as node()) as xs:integer
+{
+   (: A node with no children has depth 1 :)
+   (: Otherwise, add 1 to max depth of children :)
+   if (fn:empty($e/*)) then 1
+   else fn:max(for $c in $e/* return local:depth($c)) + 1
+};
+ 
+local:depth(fn:doc("partlist.xml"))
+ 
+(: -------- :)
+&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+{
+  for $act in doc("hamlet.xml")//ACT
+  let $speakers := distinct-values($act//SPEAKER)
+  return
+    &lt;div&gt;{ string($act/TITLE) }&lt;/h1&gt;
+      &lt;ul&gt;
+      {
+        for $speaker in $speakers
+        return &lt;li&gt;{ $speaker }&lt;/li&gt;
+      }
+      &lt;/ul&gt;
+    &lt;/div&gt;
+}
+&lt;/body&gt;&lt;/html&gt;
+(: -------- :)
+{
+	for $book in doc("books.xml")//book
+        return
+	if (contains($book/author/text(),"Herbert") or contains($book/author/text(),"Asimov"))
+		then $book
+	else $book/text()
+	
+	let $let := &lt;x&gt;"test"&lt;/x&gt;
+	return element element {
+	attribute attribute { 1 },
+	element test { 'a' },
+	attribute foo { "bar" },
+	fn:doc()[ foo/@bar eq $let ],
+	//x }
+}
+(: -------- :)
+&lt;bib&gt;
+ {
+  for $b in doc("http://bstore1.example.com/bib.xml")/bib/book
+  where $b/publisher = "Addison-Wesley" and $b/@year &gt; 1991
+  return
+    &lt;book year="{ $b/@year }"&gt;
+     { $b/title }
+    &lt;/book&gt;
+ }
+&lt;/bib&gt;
+(: -------- :)
+</pre>
+
+<h1>Nemerle code</h1>
+<pre id="nemerle" class="prettyprint lang-nemerle">
+class Set ['a]
+{
+  mutable storage : list ['a] = [];
+  public Add (e : 'a) : void
+  {
+    when (! Contains (e))
+      storage ::= e;
+  }
+  public Contains (e : 'a) : bool
+  {
+    storage.Contains (e)
+  }
+}
+ 
+def s1 = Set ();
+s1.Add (3);
+s1.Add (42);
+assert (s1.Contains (3));
+// s1.Add ("foo"); // error here!
+def s2 = Set ();
+s2.Add ("foo");
+assert (s2.Contains ("foo"));
+</pre>
+
+<h1>Tex support</h1>
+<pre id="latex" class="prettyprint lang-tex">% resume.tex
+% vim:set ft=tex spell:
+\documentclass[10pt,letterpaper]{article}
+\usepackage[letterpaper,margin=0.8in]{geometry}
+\usepackage{mdwlist}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\pagestyle{empty}
+\setlength{\tabcolsep}{0em}
+</pre>
+
+<h1>Issue 144</h1>
+Escaped quotes in bash.
+<pre id="issue144" class="prettyprint">
+#! /bin/bash
+# toascii.sh
+for i in $(echo $* | fold -w 1);do
+  printf "%x " \'$i;
+done;
+echo
+</pre>
+
+<h1>Issue 145</h1>
+<pre id="issue145" class="prettyprint">
+&lt;script type="text/javascript"&gt;
+&lt;!--
+        var target = $$.css('backgroundImage').replace(/^url[\(\)'"]/g, '');
+
+        // nice long chain: wrap img element in span
+        $$.wrap('&lt;span style="position: relative;"&gt;&lt;/span&gt;')
+--&gt;
+&lt;/script&gt;
+</pre>
+
+<h1>Clojure Syntax Highlighting</h1>
+<pre class="prettyprint lang-clj" id="clojure">
+; Clojure test comment
+(ns test
+ (:gen-class))
+
+(def foo "bar")
+(defn bar [arg1 arg2 & args]
+  "sample function"
+  (for [arg args]
+    (prn arg)))
+
+(bar "foo" "bar" "blah" :baz)
+</pre>
+
+<h1>HTML 5 language on code</h1>
+<p>
+The text is specified to be lisp by the class attribute.
+Semicolon is normally a valid punctuation character but
+in lisp it is a comment so should be colored as a comment
+if the className is being properly parsed.</p>
+<code class="prettyprint language-lisp" id="html5conv1">; foo</code>
+
+<h1>HTML 5 language on nested code element</h1>
+<p>The language is attached to a CODE element inside a PRE.</p>
+<pre class="prettyprint" id="html5conv2"
+><code class="language-lisp">; foo</code></pre>
+
+<h1>HTML 5 language on nested code element not foiled by space</h1>
+<p>The language is attached to a CODE element inside a PRE and there
+is space between the PRE element's tags and CODE element's tags.</p>
+<pre class="prettyprint" id="html5conv3">
+<code class="language-lisp">
+; foo
+</code>
+</pre>
+
+<h1>HTML 5 nested code element language ignored if not only content</h1>
+<p>The below is not treated as lisp despite there being a lisp
+language specifier on the contained CODE element, the CODE element
+does not wrap all non-space content.</p>
+<pre class="prettyprint" id="html5conv4">
+before CODE
+<code class="language-lisp">; foo</code>
+</pre>
+
+</body>
+
+<script type="text/javascript">
+/**
+ * maps ids of rewritten code to the expected output.
+ * For brevity, <span class="foo"> has been changed to `FOO and close span tags
+ * have been changed to `END.
+ */
+var goldens = {
+  xquery: (
+        '`COM(: \n' +
+        '\tTook some of Mike Brevoort\'s xquery code samples because they are nice and show common xquery syntax \n' +
+        ':)`END`PLN\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Given a sequence of version URIs, publish all of these versions of each document\n' +
+        '   : If there is a version of the same document already published, unpublish it 1st\n' +
+        '   :\n' +
+        '   : When "publish" is referred to, we mean that it is put into the PUBLISHED collection\n' +
+        '   : unpublish removes content from this collection\n' +
+        '   : @param $version_uris - sequence of uris of versions of managed documents to publish\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:publish(`END<span class="var pln">$version_uris`END`PLN `END`KWDas`END`PLN `END`KWDitem`END`PLN()*) {\n' +
+        '      `END`KWDfor`END`PLN `END<span class="var pln">$uri`END`PLN `END`KWDin`END`PLN `END<span class="var pln">$version_uris`END`PLN\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$doc`END`PLN := `END<span class="fun pln">fn:doc`END`PLN(`END<span class="var pln">$uri`END`PLN)\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$managed_base_uri`END`PLN := `END<span class="var pln">$doc`END`PLN/`END`KWDnode`END`PLN()/property::dls:version/dls:document-uri/`END`KWDtext`END`PLN()\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$existing`END`PLN :=  comoms-dls:publishedDoc(`END<span class="var pln">$managed_base_uri`END`PLN)\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$unpublishExisting`END`PLN := `END`KWDif`END`PLN(`END<span class="var pln">$existing`END`PLN) `END`KWDthen`END`PLN comoms-dls:unpublishVersion((`END<span class="fun pln">xdmp:node-uri`END`PLN(`END<span class="var pln">$existing`END`PLN)))  `END`KWDelse`END`PLN ()\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$addPermissions`END`PLN := `END<span class="fun pln">dls:document-add-permissions`END`PLN(`END<span class="var pln">$uri`END`PLN, (`END<span class="fun pln">xdmp:permission`END`PLN(`END`STR\'mkp-anon\'`END`PLN, `END`STR\'read\'`END`PLN)))\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END<span class="fun pln">dls:document-add-collections`END`PLN(`END<span class="var pln">$uri`END`PLN, (`END`STR"PUBLISHED"`END`PLN))    \n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:publishLatest(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`COM(: TODO check if it\'s in the draft collection probably :)`END`PLN\n' +
+        ' \n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$latest_version_uri`END`PLN := comoms-dls:latestVersionUri(`END<span class="var pln">$uri`END`PLN)\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$log`END`PLN:= `END<span class="fun pln">xdmp:log`END`PLN(`END<span class="fun pln">fn:concat`END`PLN(`END`STR"latest: "`END`PLN, `END<span class="var pln">$latest_version_uri`END`PLN))    \n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$log`END`PLN:= `END<span class="fun pln">xdmp:log`END`PLN(`END<span class="fun pln">fn:concat`END`PLN(`END`STR"uri: "`END`PLN, `END<span class="var pln">$uri`END`PLN))            \n' +
+        '      `END`KWDreturn`END`PLN comoms-dls:publish(`END<span class="var pln">$latest_version_uri`END`PLN)    \n' +
+        ' \n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:latestVersionUri(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$latest_version_num`END`PLN :=\n' +
+        '          (\n' +
+        '          `END`KWDfor`END`PLN `END<span class="var pln">$version`END`PLN `END`KWDin`END`PLN `END<span class="fun pln">dls:document-history`END`PLN(`END<span class="var pln">$uri`END`PLN)/dls:version\n' +
+        '          `END`KWDorder`END`PLN `END`KWDby`END`PLN `END<span class="fun pln">fn:number`END`PLN(`END<span class="var pln">$version`END`PLN//dls:version-id/`END`KWDtext`END`PLN()) `END`KWDdescending`END`PLN\n' +
+        '          `END`KWDreturn`END`PLN `END<span class="var pln">$version`END`PLN//dls:version-id/`END`KWDtext`END`PLN()\n' +
+        '          )[1]\n' +
+        ' \n' +
+        ' \n' +
+        '      `END`KWDreturn`END`PLN `END<span class="fun pln">dls:document-version-uri`END`PLN(`END<span class="var pln">$uri`END`PLN, `END<span class="var pln">$latest_version_num`END`PLN)\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:unpublish(`END<span class="var pln">$uris`END`PLN `END`KWDas`END`PLN `END`KWDitem`END`PLN()*) {\n' +
+        '      `END`KWDfor`END`PLN `END<span class="var pln">$uri`END`PLN `END`KWDin`END`PLN `END<span class="var pln">$uris`END`PLN\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END`KWDlet`END`PLN `END<span class="var pln">$published_doc`END`PLN := comoms-dls:publishedDoc(`END<span class="var pln">$uri`END`PLN)\n' +
+        '          `END`KWDreturn`END`PLN\n' +
+        '              `END`KWDif`END`PLN(`END<span class="var pln">$published_doc`END`PLN) `END`KWDthen`END`PLN\n' +
+        '                  `END`KWDlet`END`PLN `END<span class="var pln">$published_version_uri`END`PLN := `END<span class="fun pln">xdmp:node-uri`END`PLN(`END<span class="var pln">$published_doc`END`PLN)\n' +
+        '                  `END`KWDreturn`END`PLN comoms-dls:unpublishVersion(`END<span class="var pln">$published_version_uri`END`PLN)        \n' +
+        '              `END`KWDelse`END`PLN\n' +
+        '                  ()\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:latestPublishedDocAuthor(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$author_id`END`PLN := `END<span class="fun pln">doc`END`PLN(`END<span class="var pln">$uri`END`PLN)/property::dls:version/dls:author/`END`KWDtext`END`PLN()\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END`KWDif`END`PLN(`END<span class="var pln">$author_id`END`PLN) `END`KWDthen`END`PLN\n' +
+        '              comoms-user:getUsername(`END<span class="var pln">$author_id`END`PLN)\n' +
+        '          `END`KWDelse`END`PLN\n' +
+        '              ()\n' +
+        ' \n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Given a sequence of version URIs, unpublish all of these versions of each document\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:unpublishVersion(`END<span class="var pln">$version_uris`END`PLN `END`KWDas`END`PLN `END`KWDitem`END`PLN()*) {\n' +
+        '      `END`KWDfor`END`PLN `END<span class="var pln">$uri`END`PLN `END`KWDin`END`PLN `END<span class="var pln">$version_uris`END`PLN\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END`KWDlet`END`PLN `END<span class="var pln">$removePermissions`END`PLN := `END<span class="fun pln">dls:document-remove-permissions`END`PLN(`END<span class="var pln">$uri`END`PLN, (`END<span class="fun pln">xdmp:permission`END`PLN(`END`STR\'mkp-anon\'`END`PLN, `END`STR\'read\'`END`PLN)))\n' +
+        '          `END`KWDreturn`END`PLN `END<span class="fun pln">dls:document-remove-collections`END`PLN(`END<span class="var pln">$uri`END`PLN, (`END`STR"PUBLISHED"`END`PLN))        \n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Given the base URI of a managed piece of content, return the document of the node\n' +
+        '   : of the version that is published\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:publishedDoc(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END<span class="fun pln">fn:collection`END`PLN(`END`STR"PUBLISHED"`END`PLN)[property::dls:version/dls:document-uri = `END<span class="var pln">$uri`END`PLN]\n' +
+        '  };\n' +
+        ' \n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Test if any version of the managed document is published\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:isPublished(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`KWDif`END`PLN( comoms-dls:publishedDoc(`END<span class="var pln">$uri`END`PLN)) `END`KWDthen`END`PLN\n' +
+        '          `END<span class="fun pln">fn:true`END`PLN()\n' +
+        '      `END`KWDelse`END`PLN\n' +
+        '          `END<span class="fun pln">fn:false`END`PLN()\n' +
+        '  };\n' +
+        ' \n' +
+        ' \n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:publishedState(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$doc`END`PLN := comoms-dls:publishedDoc(`END<span class="var pln">$uri`END`PLN)\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$published_uri`END`PLN := `END`KWDif`END`PLN(`END<span class="var pln">$doc`END`PLN) `END`KWDthen`END`PLN `END<span class="fun pln">xdmp:node-uri`END`PLN(`END<span class="var pln">$doc`END`PLN) `END`KWDelse`END`PLN ()\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$latest`END`PLN := comoms-dls:latestVersionUri(`END<span class="var pln">$uri`END`PLN)\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END`KWDif`END`PLN(`END<span class="var pln">$doc`END`PLN) `END`KWDthen`END`PLN\n' +
+        '              `END`KWDif`END`PLN(`END<span class="var pln">$latest`END`PLN ne `END<span class="var pln">$published_uri`END`PLN) `END`KWDthen`END`PLN\n' +
+        '                  `END`STR"stale"`END`PLN\n' +
+        '              `END`KWDelse`END`PLN\n' +
+        '                  `END`STR"published"`END`PLN\n' +
+        '          `END`KWDelse`END`PLN\n' +
+        '              `END`STR"unpublished"`END`PLN\n' +
+        '  };\n' +
+        ' \n' +
+        ' \n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:getManagedDocUri(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$doc`END`PLN := `END<span class="fun pln">fn:doc`END`PLN(`END<span class="var pln">$uri`END`PLN)\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$managed_uri`END`PLN := `END<span class="var pln">$doc`END`PLN/property::dls:version/dls:document-uri/`END`KWDtext`END`PLN()\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$managed_uri`END`PLN := `END`KWDif`END`PLN(`END<span class="var pln">$managed_uri`END`PLN) `END`KWDthen`END`PLN `END<span class="var pln">$managed_uri`END`PLN `END`KWDelse`END`PLN `END<span class="var pln">$uri`END`PLN\n' +
+        '      `END`KWDreturn`END`PLN `END<span class="var pln">$managed_uri`END`PLN\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Given a manage content url (e.g. /content/123456.xml) return the appropriate\n' +
+        '   : version of the document based on what stage collection is being viewed and\n' +
+        '   : what\'s published\n' +
+        '   :\n' +
+        '   : @param $uri a manage content url (e.g. /content/123456.xml) - NOT A VERSIONED URI\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:doc(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$doc`END`PLN := `END<span class="fun pln">fn:root`END`PLN(comoms-dls:collection()[property::dls:version/dls:document-uri = `END<span class="var pln">$uri`END`PLN][1])\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END`KWDif`END`PLN(`END<span class="var pln">$doc`END`PLN) `END`KWDthen`END`PLN\n' +
+        '              `END<span class="var pln">$doc`END`PLN\n' +
+        '          `END`KWDelse`END`PLN\n' +
+        '              `END`KWDlet`END`PLN `END<span class="var pln">$managedDocInCollection`END`PLN := comoms-dls:collection-name() = `END<span class="fun pln">xdmp:document-get-collections`END`PLN(`END<span class="var pln">$uri`END`PLN)\n' +
+        '              `END`KWDreturn`END`PLN\n' +
+        '                  `END`KWDif`END`PLN(`END<span class="var pln">$managedDocInCollection`END`PLN) `END`KWDthen`END`PLN\n' +
+        '                      `END<span class="fun pln">fn:doc`END`PLN(`END<span class="var pln">$uri`END`PLN)\n' +
+        '                  `END`KWDelse`END`PLN\n' +
+        '                      ()\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Get the collection to be used when querying for content\n' +
+        '   : THIS or comoms-dls:collection-name() SHOULD BE USED WHEN BUILDING ANY QUERY FOR MANAGED CONTENT\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:collection()  {\n' +
+        '      `END<span class="fun pln">fn:collection`END`PLN( comoms-dls:collection-name() )\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Get the collection nameto be used when querying for content\n' +
+        '   : THIS or comoms-dls:collection() SHOULD BE USED WHEN BUILDING ANY QUERY FOR MANAGED CONTENT\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:collection-name() `END`KWDas`END`PLN `END`TYPxs:string`END`PLN {\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$default_collection`END`PLN := `END`STR"PUBLISHED"`END`PLN\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END`KWDif`END`PLN(comoms-user:isAdmin()) `END`KWDthen`END`PLN\n' +
+        '              `END`KWDlet`END`PLN `END<span class="var pln">$pub_stage_collection_cookie`END`PLN := comoms-util:getCookie(`END`STR"COMOMS_COLLECTION"`END`PLN)\n' +
+        '              `END`KWDreturn`END`PLN\n' +
+        '                  `END`KWDif`END`PLN(`END<span class="var pln">$pub_stage_collection_cookie`END`PLN) `END`KWDthen`END`PLN\n' +
+        '                      `END<span class="var pln">$pub_stage_collection_cookie`END`PLN\n' +
+        '                  `END`KWDelse`END`PLN\n' +
+        '                      `END<span class="var pln">$default_collection`END`PLN\n' +
+        '          `END`KWDelse`END`PLN\n' +
+        '              `END<span class="var pln">$default_collection`END`PLN\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Check if the published collection is being viewed\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:isViewingPublished() {\n' +
+        '      `END`KWDif`END`PLN(comoms-dls:collection-name() = `END`STR"PUBLISHED"`END`PLN) `END`KWDthen`END`PLN\n' +
+        '          `END<span class="fun pln">fn:true`END`PLN()\n' +
+        '      `END`KWDelse`END`PLN\n' +
+        '          `END<span class="fun pln">fn:false`END`PLN()\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:~\n' +
+        '   : Get the best URL for the content URI.\n' +
+        '   : This is either the default URI based on detail type or should also take\n' +
+        '   : into account friendly urls and navigation structures to figure out the\n' +
+        '   : best choice\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:contentUrl(`END<span class="var pln">$uri`END`PLN) {\n' +
+        ' \n' +
+        '      `END`COM(: TODO: add friendly URL and nav structure logic 1st :)`END`PLN\n' +
+        ' \n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$doc`END`PLN := `END<span class="fun pln">fn:doc`END`PLN(`END<span class="var pln">$uri`END`PLN)\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$managedDocUri`END`PLN := `END<span class="var pln">$doc`END`PLN/property::dls:version/dls:document-uri\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$uri`END`PLN := `END`KWDif`END`PLN(`END<span class="var pln">$managedDocUri`END`PLN) `END`KWDthen`END`PLN `END<span class="var pln">$managedDocUri`END`PLN `END`KWDelse`END`PLN `END<span class="var pln">$uri`END`PLN\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$type`END`PLN := `END<span class="var pln">$doc`END`PLN/`END`KWDnode`END`PLN()/`END<span class="fun pln">fn:name`END`PLN()\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$content_id`END`PLN := `END<span class="fun pln">fn:tokenize`END`PLN( `END<span class="fun pln">fn:tokenize`END`PLN(`END<span class="var pln">$uri`END`PLN, `END`STR"/"`END`PLN)[3], `END`STR"\\."`END`PLN)[1]\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '          `END<span class="fun pln">fn:concat`END`PLN(`END`STR"/"`END`PLN, `END<span class="var pln">$type`END`PLN, `END`STR"/"`END`PLN, `END<span class="var pln">$content_id`END`PLN)\n' +
+        '  };\n' +
+        ' \n' +
+        '  `END`COM(:\n' +
+        '   :\n' +
+        '   :  gets list of doc versions and uri.\n' +
+        '   :\n' +
+        '   :)`END`PLN\n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:versionHistory(`END<span class="var pln">$uri`END`PLN) {\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$published_doc`END`PLN := comoms-dls:publishedDoc(`END<span class="var pln">$uri`END`PLN)\n' +
+        '      `END`KWDlet`END`PLN `END<span class="var pln">$published_uri`END`PLN := `END`KWDif`END`PLN(`END<span class="var pln">$published_doc`END`PLN) `END`KWDthen`END`PLN `END<span class="fun pln">xdmp:node-uri`END`PLN(`END<span class="var pln">$published_doc`END`PLN) `END`KWDelse`END`PLN ()\n' +
+        '      `END`KWDreturn`END`PLN\n' +
+        '      `END`TAG&lt;versions&gt;`END`PLN\n' +
+        '          {\n' +
+        '          `END`KWDfor`END`PLN `END<span class="var pln">$version`END`PLN `END`KWDin`END`PLN `END<span class="fun pln">dls:document-history`END`PLN(`END<span class="var pln">$uri`END`PLN)/dls:version\n' +
+        '            `END`KWDlet`END`PLN `END<span class="var pln">$version_num`END`PLN := `END<span class="var pln">$version`END`PLN/dls:version-id/`END`KWDtext`END`PLN()\n' +
+        '            `END`KWDlet`END`PLN `END<span class="var pln">$created`END`PLN := `END<span class="var pln">$version`END`PLN/dls:created/`END`KWDtext`END`PLN()\n' +
+        '            `END`KWDlet`END`PLN `END<span class="var pln">$author_id`END`PLN := `END<span class="var pln">$version`END`PLN/dls:author/`END`KWDtext`END`PLN()\n' +
+        '            `END`KWDlet`END`PLN `END<span class="var pln">$author`END`PLN := comoms-user:getUsername(`END<span class="var pln">$author_id`END`PLN)\n' +
+        ' \n' +
+        ' \n' +
+        '            `END`KWDlet`END`PLN `END<span class="var pln">$note`END`PLN := `END<span class="var pln">$version`END`PLN/dls:annotation/`END`KWDtext`END`PLN()\n' +
+        '            `END`KWDlet`END`PLN `END<span class="var pln">$version_uri`END`PLN := `END<span class="fun pln">xdmp:node-uri`END`PLN(`END<span class="fun pln">dls:document-version`END`PLN(`END<span class="var pln">$uri`END`PLN, `END<span class="var pln">$version_num`END`PLN))\n' +
+        '            `END`KWDlet`END`PLN `END<span class="var pln">$published`END`PLN := `END<span class="var pln">$published_uri`END`PLN `END`KWDeq`END`PLN `END<span class="var pln">$version_uri`END`PLN\n' +
+        '            `END`KWDreturn`END`PLN\n' +
+        '              `END`TAG&lt;version&gt;`END`PLN\n' +
+        '                  `END`TAG&lt;version-number&gt;`END`PLN{`END<span class="var pln">$version_num`END`PLN}`END`TAG&lt;/version-number&gt;`END`PLN\n' +
+        '                  `END`TAG&lt;created&gt;`END`PLN{`END<span class="var pln">$created`END`PLN}`END`TAG&lt;/created&gt;`END`PLN                \n' +
+        '                  `END`TAG&lt;author&gt;`END`PLN{`END<span class="var pln">$author`END`PLN}`END`TAG&lt;/author&gt;`END`PLN\n' +
+        '                  `END`TAG&lt;published&gt;`END`PLN{`END<span class="var pln">$published`END`PLN}`END`TAG&lt;/published&gt;`END`PLN\n' +
+        '                  `END`TAG&lt;version-uri&gt;`END`PLN{`END<span class="var pln">$version_uri`END`PLN}`END`TAG&lt;/version-uri&gt;`END`PLN\n' +
+        '              `END`TAG&lt;/version&gt;`END`PLN  \n' +
+        '          }        \n' +
+        '      `END`TAG&lt;/versions&gt;`END`PLN\n' +
+        '  };\n' +
+        ' \n' +
+        ' \n' +
+        ' \n' +
+        ' \n' +
+        ' \n' +
+        ' \n' +
+        '  `END`COM(: ########################################################################### :)`END`PLN\n' +
+        '  `END`COM(: PRIVATE FUNCTIONS :)`END`PLN\n' +
+        '  `END`COM(: ########################################################################### :)`END`PLN\n' +
+        ' \n' +
+        '  `END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN comoms-dls:_import() {\n' +
+        '      `END`STR"xquery version \'1.0-ml\';\n' +
+        '       import module namespace dls = \'http://marklogic.com/xdmp/dls\' at \'/MarkLogic/dls.xqy\'; "`END`PLN\n' +
+        '  };  \n' +
+        ' \n' +
+        '`END`COM(: ----\n' +
+        '---- :)`END`PLN\n' +
+        '`END`KWDxquery`END`PLN `END`KWDversion`END`PLN `END`STR\'1.0-ml\'`END`PLN;\n' +
+        '`END`KWDdeclare`END`PLN `END`KWDvariable`END`PLN `END<span class="var pln">$URI`END`PLN `END`KWDas`END`PLN `END`TYPxs:string`END`PLN `END`KWDexternal`END`PLN;\n' +
+        ' \n' +
+        '`END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN local:document-move-forest(`END<span class="var pln">$uri`END`PLN `END`KWDas`END`PLN `END`TYPxs:string`END`PLN, `END<span class="var pln">$forest-ids`END`PLN `END`KWDas`END`PLN `END`TYPxs:unsignedLong`END`PLN*)\n' +
+        '{\n' +
+        '  `END<span class="fun pln">xdmp:document-insert`END`PLN(\n' +
+        '    `END<span class="var pln">$uri`END`PLN,\n' +
+        '    `END<span class="fun pln">fn:doc`END`PLN(`END<span class="var pln">$uri`END`PLN),\n' +
+        '    `END<span class="fun pln">xdmp:document-get-permissions`END`PLN(`END<span class="var pln">$uri`END`PLN),\n' +
+        '    `END<span class="fun pln">xdmp:document-get-collections`END`PLN(`END<span class="var pln">$uri`END`PLN),\n' +
+        '    `END<span class="fun pln">xdmp:document-get-quality`END`PLN(`END<span class="var pln">$uri`END`PLN),\n' +
+        '    `END<span class="var pln">$forest-ids`END`PLN\n' +
+        '  )\n' +
+        '};\n' +
+        ' \n' +
+        '`END`KWDlet`END`PLN `END<span class="var pln">$xml`END`PLN :=\n' +
+        '  `END`TAG&lt;xml`END`PLN att=`END`STR"blah"`END`PLN att2=`END`STR"blah"`END`TAG&gt;`END`PLN\n' +
+        '    sdasd`END`TAG&lt;b&gt;`END`PLNasdasd`END`TAG&lt;/b&gt;`END`PLN\n' +
+        '  `END`TAG&lt;/xml&gt;`END`PLN\n' +
+        '`END`COM(: -------- :)`END`PLN\n' +
+        '`END`KWDfor`END`PLN `END<span class="var pln">$d`END`PLN `END`KWDin`END`PLN `END<span class="fun pln">fn:doc`END`PLN(`END`STR"depts.xml"`END`PLN)/depts/deptno\n' +
+        '`END`KWDlet`END`PLN `END<span class="var pln">$e`END`PLN := `END<span class="fun pln">fn:doc`END`PLN(`END`STR"emps.xml"`END`PLN)/emps/emp[deptno = `END<span class="var pln">$d`END`PLN]\n' +
+        '`END`KWDwhere`END`PLN `END<span class="fun pln">fn:count`END`PLN(`END<span class="var pln">$e`END`PLN) &gt;= 10\n' +
+        '`END`KWDorder`END`PLN `END`KWDby`END`PLN `END<span class="fun pln">fn:avg`END`PLN(`END<span class="var pln">$e`END`PLN/salary) `END`KWDdescending`END`PLN\n' +
+        '`END`KWDreturn`END`PLN\n' +
+        '   `END`TAG&lt;big-dept&gt;`END`PLN\n' +
+        '      {\n' +
+        '      `END<span class="var pln">$d`END`PLN,\n' +
+        '      `END`TAG&lt;headcount&gt;`END`PLN{`END<span class="fun pln">fn:count`END`PLN(`END<span class="var pln">$e`END`PLN)}`END`TAG&lt;/headcount&gt;`END`PLN,\n' +
+        '      `END`TAG&lt;avgsal&gt;`END`PLN{`END<span class="fun pln">fn:avg`END`PLN(`END<span class="var pln">$e`END`PLN/salary)}`END`TAG&lt;/avgsal&gt;`END`PLN\n' +
+        '      }\n' +
+        '   `END`TAG&lt;/big-dept&gt;`END`PLN\n' +
+        '`END`COM(: -------- :)`END`PLN\n' +
+        '`END`KWDdeclare`END`PLN `END`KWDfunction`END`PLN local:depth(`END<span class="var pln">$e`END`PLN `END`KWDas`END`PLN `END`KWDnode`END`PLN()) `END`KWDas`END`PLN `END`TYPxs:integer`END`PLN\n' +
+        '{\n' +
+        '   `END`COM(: A node with no children has depth 1 :)`END`PLN\n' +
+        '   `END`COM(: Otherwise, add 1 to max depth of children :)`END`PLN\n' +
+        '   `END`KWDif`END`PLN (`END<span class="fun pln">fn:empty`END`PLN(`END<span class="var pln">$e`END`PLN/*)) `END`KWDthen`END`PLN 1\n' +
+        '   `END`KWDelse`END`PLN `END<span class="fun pln">fn:max`END`PLN(`END`KWDfor`END`PLN `END<span class="var pln">$c`END`PLN `END`KWDin`END`PLN `END<span class="var pln">$e`END`PLN/* `END`KWDreturn`END`PLN local:depth(`END<span class="var pln">$c`END`PLN)) + 1\n' +
+        '};\n' +
+        ' \n' +
+        'local:depth(`END<span class="fun pln">fn:doc`END`PLN(`END`STR"partlist.xml"`END`PLN))\n' +
+        ' \n' +
+        '`END`COM(: -------- :)`END`PLN\n' +
+        '`END`TAG&lt;html&gt;&lt;head`END`PLN/`END`TAG&gt;&lt;body&gt;`END`PLN\n' +
+        '{\n' +
+        '  `END`KWDfor`END`PLN `END<span class="var pln">$act`END`PLN `END`KWDin`END`PLN `END<span class="fun pln">doc`END`PLN(`END`STR"hamlet.xml"`END`PLN)//ACT\n' +
+        '  `END`KWDlet`END`PLN `END<span class="var pln">$speakers`END`PLN := `END<span class="fun pln">distinct-values`END`PLN(`END<span class="var pln">$act`END`PLN//SPEAKER)\n' +
+        '  `END`KWDreturn`END`PLN\n' +
+        '    `END`TAG&lt;div&gt;`END`PLN{ `END<span class="fun pln">string`END`PLN(`END<span class="var pln">$act`END`PLN/TITLE) }`END`TAG&lt;/h1&gt;`END`PLN\n' +
+        '      `END`TAG&lt;ul&gt;`END`PLN\n' +
+        '      {\n' +
+        '        `END`KWDfor`END`PLN `END<span class="var pln">$speaker`END`PLN `END`KWDin`END`PLN `END<span class="var pln">$speakers`END`PLN\n' +
+        '        `END`KWDreturn`END`PLN `END`TAG&lt;li&gt;`END`PLN{ `END<span class="var pln">$speaker`END`PLN }`END`TAG&lt;/li&gt;`END`PLN\n' +
+        '      }\n' +
+        '      `END`TAG&lt;/ul&gt;`END`PLN\n' +
+        '    `END`TAG&lt;/div&gt;`END`PLN\n' +
+        '}\n' +
+        '`END`TAG&lt;/body&gt;&lt;/html&gt;`END`PLN\n' +
+        '`END`COM(: -------- :)`END`PLN\n' +
+        '{\n' +
+        '\t`END`KWDfor`END`PLN `END<span class="var pln">$book`END`PLN `END`KWDin`END`PLN `END<span class="fun pln">doc`END`PLN(`END`STR"books.xml"`END`PLN)//book\n' +
+        '        `END`KWDreturn`END`PLN\n' +
+        '\t`END`KWDif`END`PLN (`END<span class="fun pln">contains`END`PLN(`END<span class="var pln">$book`END`PLN/author/`END`KWDtext`END`PLN(),`END`STR"Herbert"`END`PLN) `END`KWDor`END`PLN `END<span class="fun pln">contains`END`PLN(`END<span class="var pln">$book`END`PLN/author/`END`KWDtext`END`PLN(),`END`STR"Asimov"`END`PLN))\n' +
+        '\t\t`END`KWDthen`END`PLN `END<span class="var pln">$book`END`PLN\n' +
+        '\t`END`KWDelse`END`PLN `END<span class="var pln">$book`END`PLN/`END`KWDtext`END`PLN()\n' +
+        '\t\n' +
+        '\t`END`KWDlet`END`PLN `END<span class="var pln">$let`END`PLN := `END`TAG&lt;x&gt;`END`STR"test"`END`TAG&lt;/x&gt;`END`PLN\n' +
+        '\t`END`KWDreturn`END`PLN `END`KWDelement`END`PLN `END`KWDelement`END`PLN {\n' +
+        '\t`END`KWDattribute`END`PLN `END`KWDattribute`END`PLN { 1 },\n' +
+        '\t`END`KWDelement`END`PLN test { `END`STR\'a\'`END`PLN },\n' +
+        '\t`END`KWDattribute`END`PLN foo { `END`STR"bar"`END`PLN },\n' +
+        '\t`END<span class="fun pln">fn:doc`END`PLN()[ foo/`END`LIT@bar`END`PLN `END`KWDeq`END`PLN `END<span class="var pln">$let`END`PLN ],\n' +
+        '\t//x }\n' +
+        '}\n' +
+        '`END`COM(: -------- :)`END`PLN\n' +
+        '`END`TAG&lt;bib&gt;`END`PLN\n' +
+        ' {\n' +
+        '  `END`KWDfor`END`PLN `END<span class="var pln">$b`END`PLN `END`KWDin`END`PLN `END<span class="fun pln">doc`END`PLN(`END`STR"http://bstore1.example.com/bib.xml"`END`PLN)/bib/book\n' +
+        '  `END`KWDwhere`END`PLN `END<span class="var pln">$b`END`PLN/publisher = `END`STR"Addison-Wesley"`END`PLN `END`KWDand`END`PLN `END<span class="var pln">$b`END`PLN/`END`LIT@year`END`PLN &gt; 1991\n' +
+        '  `END`KWDreturn`END`PLN\n' +
+        '    `END`TAG&lt;book`END`PLN year=`END`STR"`END`PLN{ `END<span class="var pln">$b`END`PLN/`END`LIT@year`END`PLN }`END`STR"`END`TAG&gt;`END`PLN\n' +
+        '     { `END<span class="var pln">$b`END`PLN/title }\n' +
+        '    `END`TAG&lt;/book&gt;`END`PLN\n' +
+        ' }\n' +
+        '`END`TAG&lt;/bib&gt;`END`PLN\n' +
+        '`END`COM(: -------- :)`END'),
+  nemerle: (
+        '`KWDclass`END`PLN Set `END`PUN[`END`PLN\'a`END`PUN]`END`PLN\n' +
+        '`END`PUN{`END`PLN\n' +
+        '  `END`KWDmutable`END`PLN storage `END`PUN:`END`PLN `END`TYPlist`END`PLN `END`PUN[`END`PLN\'a`END`PUN]`END`PLN `END`PUN=`END`PLN `END`PUN[];`END`PLN\n' +
+        '  `END`KWDpublic`END`PLN Add `END`PUN(`END`PLNe `END`PUN:`END`PLN \'a`END`PUN)`END`PLN `END`PUN:`END`PLN `END`TYPvoid`END`PLN\n' +
+        '  `END`PUN{`END`PLN\n' +
+        '    `END`KWDwhen`END`PLN `END`PUN(!`END`PLN Contains `END`PUN(`END`PLNe`END`PUN))`END`PLN\n' +
+        '      storage `END`PUN::=`END`PLN e`END`PUN;`END`PLN\n' +
+        '  `END`PUN}`END`PLN\n' +
+        '  `END`KWDpublic`END`PLN Contains `END`PUN(`END`PLNe `END`PUN:`END`PLN \'a`END`PUN)`END`PLN `END`PUN:`END`PLN `END`TYPbool`END`PLN\n' +
+        '  `END`PUN{`END`PLN\n' +
+        '    storage`END`PUN.`END`PLNContains `END`PUN(`END`PLNe`END`PUN)`END`PLN\n' +
+        '  `END`PUN}`END`PLN\n' +
+        '`END`PUN}`END`PLN\n' +
+        ' \n' +
+        '`END`KWDdef`END`PLN s1 `END`PUN=`END`PLN Set `END`PUN();`END`PLN\n' +
+        's1`END`PUN.`END`PLNAdd `END`PUN(`END`LIT3`END`PUN);`END`PLN\n' +
+        's1`END`PUN.`END`PLNAdd `END`PUN(`END`LIT42`END`PUN);`END`PLN\n' +
+        '`END`KWDassert`END`PLN `END`PUN(`END`PLNs1`END`PUN.`END`PLNContains `END`PUN(`END`LIT3`END`PUN));`END`PLN\n' +
+        '`END`COM// s1.Add ("foo"); // error here!`END`PLN\n' +
+        '`END`KWDdef`END`PLN s2 `END`PUN=`END`PLN Set `END`PUN();`END`PLN\n' +
+        's2`END`PUN.`END`PLNAdd `END`PUN(`END`STR"foo"`END`PUN);`END`PLN\n' +
+        '`END`KWDassert`END`PLN `END`PUN(`END`PLNs2`END`PUN.`END`PLNContains `END`PUN(`END`STR"foo"`END`PUN));`END'),
+  latex: (
+        '`COM% resume.tex`END`PLN\n' +
+        '`END`COM% vim:set ft=tex spell:`END`PLN\n' +
+        '`END`KWD\\documentclass`END`PUN[`END`LIT10pt`END`PLN,letterpaper`END`PUN]{`END`PLNarticle`END`PUN}`END`PLN\n' +
+        '`END`KWD\\usepackage`END`PUN[`END`PLNletterpaper,margin`END`PUN=`END`LIT0.8in`END`PUN]{`END`PLNgeometry`END`PUN}`END`PLN\n' +
+        '`END`KWD\\usepackage`END`PUN{`END`PLNmdwlist`END`PUN}`END`PLN\n' +
+        '`END`KWD\\usepackage`END`PUN[`END`PLNT1`END`PUN]{`END`PLNfontenc`END`PUN}`END`PLN\n' +
+        '`END`KWD\\usepackage`END`PUN{`END`PLNtextcomp`END`PUN}`END`PLN\n' +
+        '`END`KWD\\pagestyle`END`PUN{`END`PLNempty`END`PUN}`END`PLN\n' +
+        '`END`KWD\\setlength`END`PUN{`END`KWD\\tabcolsep`END`PUN}{`END`LIT0em`END`PUN}`END'
+        ),
+  issue144: (
+        '`COM#! /bin/bash`END`PLN\n' +
+        '`END`COM# toascii.sh`END`PLN\n' +
+        '`END`KWDfor`END`PLN i `END`KWDin`END`PLN $`END`PUN(`END`PLNecho $`END`PUN*' +
+          '`END`PLN `END`PUN|`END`PLN fold `END`PUN-`END`PLNw `END`LIT1`END`PUN);`END' +
+          '`KWDdo`END`PLN\n' +
+        '  printf `END`STR"%x "`END`PLN \\\'$i`END`PUN;`END`PLN\n' +
+        '`END`KWDdone`END`PUN;`END`PLN\n' +
+        'echo`END'
+        ),
+  clojure: '`COM; Clojure test comment`END`PLN\n' +
+        '`END`OPN(`END`KWDns`END`PLN test\n' +
+        ' `END`OPN(`END`TYP:gen-class`END`CLO))`END`PLN\n' +
+        '\n' +
+        '`END`OPN(`END`KWDdef`END`PLN foo `END`STR"bar"`END`CLO)`END`PLN\n' +
+        '`END`OPN(`END`KWDdefn`END`PLN bar `END`OPN[`END`PLNarg1 arg2 &amp; args`END`CLO]`END`PLN\n' +
+        '  `END`STR"sample function"`END`PLN\n' +
+        '  `END`OPN(`END`KWDfor`END`PLN `END`OPN[`END`PLNarg args`END`CLO]`END`PLN\n' +
+        '    `END`OPN(`END`KWDprn`END`PLN arg`END`CLO)))`END`PLN\n' +
+        '\n' +
+        '`END`OPN(`END`PLNbar `END`STR"foo"`END`PLN `END`STR"bar"`END`PLN `END`STR"blah"`END`PLN `END`TYP:baz`END`CLO)`END',
+  html5conv1: '`COM; foo`END',
+  html5conv2: '<code class="language-lisp">`COM; foo`END</code>',
+  html5conv3: ('<code class="language-lisp">`PLN\n' +
+      '`END`COM; foo`END`PLN\n' +
+      '`END</code>\n'),
+  html5conv4: ('`PLNbefore CODE\n' +
+      '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n')
+};
+</script>
+
+</html>
