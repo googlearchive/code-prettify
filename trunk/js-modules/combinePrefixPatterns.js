@@ -1,4 +1,3 @@
-
 /**
  * Given a group of {@link RegExp}s, returns a {@code RegExp} that globally
  * matches the union of the sets of strings matched by the input RegExp.
@@ -24,22 +23,30 @@ function combinePrefixPatterns(regexs) {
     }
   }
 
+  var escapeCharToCodeUnit = {
+    'b': 8,
+    't': 9,
+    'n': 0xa,
+    'v': 0xb,
+    'f': 0xc,
+    'r': 0xd
+  };
+
   function decodeEscape(charsetPart) {
-    if (charsetPart.charAt(0) !== '\\') { return charsetPart.charCodeAt(0); }
-    switch (charsetPart.charAt(1)) {
-      case 'b': return 8;
-      case 't': return 9;
-      case 'n': return 0xa;
-      case 'v': return 0xb;
-      case 'f': return 0xc;
-      case 'r': return 0xd;
-      case 'u': case 'x':
-        return parseInt(charsetPart.substring(2), 16)
-            || charsetPart.charCodeAt(1);
-      case '0': case '1': case '2': case '3': case '4':
-      case '5': case '6': case '7':
-        return parseInt(charsetPart.substring(1), 8);
-      default: return charsetPart.charCodeAt(1);
+    var cc0 = charsetPart.charCodeAt(0);
+    if (cc0 !== 92 /* \\ */) {
+      return cc0;
+    }
+    var c1 = charsetPart.charAt(1);
+    cc0 = escapeCharToCodeUnit[c1];
+    if (cc0) {
+      return cc0;
+    } else if ('0' <= c1 && c1 <= '7') {
+      return parseInt(charsetPart.substring(1), 8);
+    } else if (c1 === 'u' || c1 === 'x') {
+      return parseInt(charsetPart.substring(2), 16);
+    } else {
+      return charsetPart.charCodeAt(1);
     }
   }
 
@@ -70,30 +77,29 @@ function combinePrefixPatterns(regexs) {
     var inverse = charsetParts[0] === '^';
     for (var i = inverse ? 1 : 0, n = charsetParts.length; i < n; ++i) {
       var p = charsetParts[i];
-      switch (p) {
-        case '\\B': case '\\b':
-        case '\\D': case '\\d':
-        case '\\S': case '\\s':
-        case '\\W': case '\\w':
-          groups.push(p);
-          continue;
-      }
-      var start = decodeEscape(p);
-      var end;
-      if (i + 2 < n && '-' === charsetParts[i + 1]) {
-        end = decodeEscape(charsetParts[i + 2]);
-        i += 2;
+      if (/\\[bdsw]/i.test(p)) {  // Don't muck with named groups.
+        groups.push(p);
       } else {
-        end = start;
-      }
-      ranges.push([start, end]);
-      // If the range might intersect letters, then expand it.
-      if (!(end < 65 || start > 122)) {
-        if (!(end < 65 || start > 90)) {
-          ranges.push([Math.max(65, start) | 32, Math.min(end, 90) | 32]);
+        var start = decodeEscape(p);
+        var end;
+        if (i + 2 < n && '-' === charsetParts[i + 1]) {
+          end = decodeEscape(charsetParts[i + 2]);
+          i += 2;
+        } else {
+          end = start;
         }
-        if (!(end < 97 || start > 122)) {
-          ranges.push([Math.max(97, start) & ~32, Math.min(end, 122) & ~32]);
+        ranges.push([start, end]);
+        // If the range might intersect letters, then expand it.
+        // This case handling is too simplistic.
+        // It does not deal with non-latin case folding.
+        // It works for latin source code identifiers though.
+        if (!(end < 65 || start > 122)) {
+          if (!(end < 65 || start > 90)) {
+            ranges.push([Math.max(65, start) | 32, Math.min(end, 90) | 32]);
+          }
+          if (!(end < 97 || start > 122)) {
+            ranges.push([Math.max(97, start) & ~32, Math.min(end, 122) & ~32]);
+          }
         }
       }
     }
