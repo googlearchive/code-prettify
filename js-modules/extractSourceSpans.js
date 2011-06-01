@@ -20,7 +20,7 @@
  * It will produce the output:</p>
  * <pre>
  * {
- *   source: "print 'Hello '\n  + 'World';",
+ *   sourceCode: "print 'Hello '\n  + 'World';",
  *   //                 1         2
  *   //       012345678901234 5678901234567
  *   spans: [0, #1, 6, #2, 14, #3, 15, #4]
@@ -93,7 +93,7 @@ function extractSourceSpans(node) {
   walk(node);
 
   return {
-    source: chunks.join('').replace(/\n$/, ''),
+    sourceCode: chunks.join('').replace(/\n$/, ''),
     spans: spans
   };
 }

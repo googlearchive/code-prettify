@@ -1,13 +1,13 @@
 /**
- * Breaks {@code job.source} around style boundaries in {@code job.decorations}
- * and modifies {@code job.sourceNode} in place.
+ * Breaks {@code job.sourceCode} around style boundaries in
+ * {@code job.decorations} and modifies {@code job.sourceNode} in place.
  * @param {Object} job like <pre>{
- *    source: {string} source as plain text,
+ *    sourceCode: {string} source as plain text,
  *    spans: {Array.<number|Node>} alternating span start indices into source
  *       and the text node or element (e.g. {@code <BR>}) corresponding to that
  *       span.
  *    decorations: {Array.<number|string} an array of style classes preceded
- *       by the position at which they start in job.source in order
+ *       by the position at which they start in job.sourceCode in order
  * }</pre>
  * @private
  */
@@ -15,7 +15,7 @@ function recombineTagsAndDecorations(job) {
   var isIE = /\bMSIE\b/.test(navigator.userAgent);
   var newlineRe = /\n/g;
 
-  var source = job.source;
+  var source = job.sourceCode;
   var sourceLength = source.length;
   // Index into source after the last code-unit recombined.
   var sourceIndex = 0;

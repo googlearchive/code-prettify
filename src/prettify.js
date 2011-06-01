@@ -62,151 +62,154 @@
  */
 window['PR_SHOULD_USE_CONTINUATION'] = true;
 
-/** the number of characters between tab columns */
-window['PR_TAB_WIDTH'] = 8;
-
-/** Contains functions for creating and registering new language handlers.
-  * @type {Object}
-  */
-window['PR']
-
-/** Pretty print a chunk of code.
-  *
-  * @param {string} sourceCodeHtml code as html
-  * @return {string} code as html, but prettier
-  */
-  = window['prettyPrintOne']
-/** Find all the {@code <pre>} and {@code <code>} tags in the DOM with
-  * {@code class=prettyprint} and prettify them.
-  * @param {Function?} opt_whenDone if specified, called when the last entry
-  *     has been finished.
-  */
-  = window['prettyPrint'] = void 0;
-
-
 (function () {
   // Keyword lists for various languages.
-  var FLOW_CONTROL_KEYWORDS =
-      "break continue do else for if return while ";
-  var C_KEYWORDS = FLOW_CONTROL_KEYWORDS + "auto case char const default " +
-      "double enum extern float goto int long register short signed sizeof " +
-      "static struct switch typedef union unsigned void volatile ";
-  var COMMON_KEYWORDS = C_KEYWORDS + "catch class delete false import " +
-      "new operator private protected public this throw true try typeof ";
-  var CPP_KEYWORDS = COMMON_KEYWORDS + "alignof align_union asm axiom bool " +
-      "concept concept_map const_cast constexpr decltype " +
-      "dynamic_cast explicit export friend inline late_check " +
-      "mutable namespace nullptr reinterpret_cast static_assert static_cast " +
-      "template typeid typename using virtual where ";
-  var JAVA_KEYWORDS = COMMON_KEYWORDS +
-      "abstract boolean byte extends final finally implements import " +
-      "instanceof null native package strictfp super synchronized throws " +
-      "transient ";
-  var CSHARP_KEYWORDS = JAVA_KEYWORDS +
-      "as base by checked decimal delegate descending dynamic event " +
-      "fixed foreach from group implicit in interface internal into is lock " +
-      "object out override orderby params partial readonly ref sbyte sealed " +
-      "stackalloc string select uint ulong unchecked unsafe ushort var ";
-  var COFFEE_KEYWORDS = "all and by catch class else extends false finally " +
-      "for if in is isnt loop new no not null of off on or return super then " +
-      "true try unless until when while yes ";
-  var JSCRIPT_KEYWORDS = COMMON_KEYWORDS +
-      "debugger eval export function get null set undefined var with " +
-      "Infinity NaN ";
-  var PERL_KEYWORDS = "caller delete die do dump elsif eval exit foreach for " +
-      "goto if import last local my next no our print package redo require " +
-      "sub undef unless until use wantarray while BEGIN END ";
-  var PYTHON_KEYWORDS = FLOW_CONTROL_KEYWORDS + "and as assert class def del " +
-      "elif except exec finally from global import in is lambda " +
-      "nonlocal not or pass print raise try with yield " +
-      "False True None ";
-  var RUBY_KEYWORDS = FLOW_CONTROL_KEYWORDS + "alias and begin case class def" +
-      " defined elsif end ensure false in module next nil not or redo rescue " +
-      "retry self super then true undef unless until when yield BEGIN END ";
-  var SH_KEYWORDS = FLOW_CONTROL_KEYWORDS + "case done elif esac eval fi " +
-      "function in local set then until ";
-  var ALL_KEYWORDS = (
-      CPP_KEYWORDS + CSHARP_KEYWORDS + JSCRIPT_KEYWORDS + PERL_KEYWORDS +
-      PYTHON_KEYWORDS + RUBY_KEYWORDS + SH_KEYWORDS);
+  // We use things that coerce to strings to make them compact when minified
+  // and to defeat aggressive optimizers that fold large string constants.
+  var FLOW_CONTROL_KEYWORDS = ["break,continue,do,else,for,if,return,while"];
+  var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," + 
+      "double,enum,extern,float,goto,int,long,register,short,signed,sizeof," +
+      "static,struct,switch,typedef,union,unsigned,void,volatile"];
+  var COMMON_KEYWORDS = [C_KEYWORDS,"catch,class,delete,false,import," +
+      "new,operator,private,protected,public,this,throw,true,try,typeof"];
+  var CPP_KEYWORDS = [COMMON_KEYWORDS,"alignof,align_union,asm,axiom,bool," +
+      "concept,concept_map,const_cast,constexpr,decltype," +
+      "dynamic_cast,explicit,export,friend,inline,late_check," +
+      "mutable,namespace,nullptr,reinterpret_cast,static_assert,static_cast," +
+      "template,typeid,typename,using,virtual,where"];
+  var JAVA_KEYWORDS = [COMMON_KEYWORDS,
+      "abstract,boolean,byte,extends,final,finally,implements,import," +
+      "instanceof,null,native,package,strictfp,super,synchronized,throws," +
+      "transient"];
+  var CSHARP_KEYWORDS = [JAVA_KEYWORDS,
+      "as,base,by,checked,decimal,delegate,descending,dynamic,event," +
+      "fixed,foreach,from,group,implicit,in,interface,internal,into,is,lock," +
+      "object,out,override,orderby,params,partial,readonly,ref,sbyte,sealed," +
+      "stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort,var"];
+  var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
+      "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
+      "true,try,unless,until,when,while,yes";
+  var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
+      "debugger,eval,export,function,get,null,set,undefined,var,with," +
+      "Infinity,NaN"];
+  var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
+      "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
+      "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
+  var PYTHON_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "and,as,assert,class,def,del," +
+      "elif,except,exec,finally,from,global,import,in,is,lambda," +
+      "nonlocal,not,or,pass,print,raise,try,with,yield," +
+      "False,True,None"];
+  var RUBY_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "alias,and,begin,case,class," +
+      "def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo," +
+      "rescue,retry,self,super,then,true,undef,unless,until,when,yield," +
+      "BEGIN,END"];
+  var SH_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "case,done,elif,esac,eval,fi," +
+      "function,in,local,set,then,until"];
+  var ALL_KEYWORDS = [
+      CPP_KEYWORDS, CSHARP_KEYWORDS, JSCRIPT_KEYWORDS, PERL_KEYWORDS +
+      PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
   var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)/;
 
   // token style names.  correspond to css classes
-  /** token style for a string literal */
+  /**
+   * token style for a string literal
+   * @const
+   */
   var PR_STRING = 'str';
-  /** token style for a keyword */
+  /**
+   * token style for a keyword
+   * @const
+   */
   var PR_KEYWORD = 'kwd';
-  /** token style for a comment */
+  /**
+   * token style for a comment
+   * @const
+   */
   var PR_COMMENT = 'com';
-  /** token style for a type */
+  /**
+   * token style for a type
+   * @const
+   */
   var PR_TYPE = 'typ';
-  /** token style for a literal value.  e.g. 1, null, true. */
+  /**
+   * token style for a literal value.  e.g. 1, null, true.
+   * @const
+   */
   var PR_LITERAL = 'lit';
-  /** token style for a punctuation string. */
+  /**
+   * token style for a punctuation string.
+   * @const
+   */
   var PR_PUNCTUATION = 'pun';
-  /** token style for a punctuation string. */
+  /**
+   * token style for a punctuation string.
+   * @const
+   */
   var PR_PLAIN = 'pln';
 
-  /** token style for an sgml tag. */
+  /**
+   * token style for an sgml tag.
+   * @const
+   */
   var PR_TAG = 'tag';
-  /** token style for a markup declaration such as a DOCTYPE. */
+  /**
+   * token style for a markup declaration such as a DOCTYPE.
+   * @const
+   */
   var PR_DECLARATION = 'dec';
-  /** token style for embedded source. */
+  /**
+   * token style for embedded source.
+   * @const
+   */
   var PR_SOURCE = 'src';
-  /** token style for an sgml attribute name. */
+  /**
+   * token style for an sgml attribute name.
+   * @const
+   */
   var PR_ATTRIB_NAME = 'atn';
-  /** token style for an sgml attribute value. */
+  /**
+   * token style for an sgml attribute value.
+   * @const
+   */
   var PR_ATTRIB_VALUE = 'atv';
 
   /**
    * A class that indicates a section of markup that is not code, e.g. to allow
    * embedding of line numbers within code listings.
+   * @const
    */
   var PR_NOCODE = 'nocode';
 
-  /** A set of tokens that can precede a regular expression literal in
-    * javascript.
-    * http://www.mozilla.org/js/language/js20/rationale/syntax.html has the full
-    * list, but I've removed ones that might be problematic when seen in
-    * languages that don't support regular expression literals.
-    *
-    * <p>Specifically, I've removed any keywords that can't precede a regexp
-    * literal in a syntactically legal javascript program, and I've removed the
-    * "in" keyword since it's not a keyword in many languages, and might be used
-    * as a count of inches.
-    *
-    * <p>The link a above does not accurately describe EcmaScript rules since
-    * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
-    * very well in practice.
-    *
-    * @private
-    */
-  var REGEXP_PRECEDER_PATTERN = function () {
-      var preceders = [
-          "!", "!=", "!==", "#", "%", "%=", "&", "&&", "&&=",
-          "&=", "(", "*", "*=", /* "+", */ "+=", ",", /* "-", */ "-=",
-          "->", /*".", "..", "...", handled below */ "/", "/=", ":", "::", ";",
-          "<", "<<", "<<=", "<=", "=", "==", "===", ">",
-          ">=", ">>", ">>=", ">>>", ">>>=", "?", "@", "[",
-          "^", "^=", "^^", "^^=", "{", "|", "|=", "||",
-          "||=", "~" /* handles =~ and !~ */,
-          "break", "case", "continue", "delete",
-          "do", "else", "finally", "instanceof",
-          "return", "throw", "try", "typeof"
-          ];
-      var pattern = '(?:^^|[+-]';
-      for (var i = 0; i < preceders.length; ++i) {
-        pattern += '|' + preceders[i].replace(/([^=<>:&a-z])/g, '\\$1');
-      }
-      pattern += ')\\s*';  // matches at end, and matches empty string
-      return pattern;
-      // CAVEAT: this does not properly handle the case where a regular
-      // expression immediately follows another since a regular expression may
-      // have flags for case-sensitivity and the like.  Having regexp tokens
-      // adjacent is not valid in any language I'm aware of, so I'm punting.
-      // TODO: maybe style special characters inside a regexp as punctuation.
-    }();
 
-  
+
+/**
+ * A set of tokens that can precede a regular expression literal in
+ * javascript
+ * http://web.archive.org/web/20070717142515/http://www.mozilla.org/js/language/js20/rationale/syntax.html
+ * has the full list, but I've removed ones that might be problematic when
+ * seen in languages that don't support regular expression literals.
+ *
+ * <p>Specifically, I've removed any keywords that can't precede a regexp
+ * literal in a syntactically legal javascript program, and I've removed the
+ * "in" keyword since it's not a keyword in many languages, and might be used
+ * as a count of inches.
+ *
+ * <p>The link a above does not accurately describe EcmaScript rules since
+ * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
+ * very well in practice.
+ *
+ * @private
+ * @const
+ */
+var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&&=|&=|\\(|\\*|\\*=|\\+=|\\,|\\-=|\\->|\\/|\\/=|:|::|\\;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\@|\\[|\\^|\\^=|\\^\\^|\\^\\^=|\\{|\\||\\|=|\\|\\||\\|\\|=|\\~|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
+
+// CAVEAT: this does not properly handle the case where a regular
+// expression immediately follows another since a regular expression may
+// have flags for case-sensitivity and the like.  Having regexp tokens
+// adjacent is not valid in any language I'm aware of, so I'm punting.
+// TODO: maybe style special characters inside a regexp as punctuation.
+
+
   /**
    * Given a group of {@link RegExp}s, returns a {@code RegExp} that globally
    * matches the union of the sets of strings matched by the input RegExp.
@@ -232,22 +235,30 @@ window['PR']
       }
     }
   
+    var escapeCharToCodeUnit = {
+      'b': 8,
+      't': 9,
+      'n': 0xa,
+      'v': 0xb,
+      'f': 0xc,
+      'r': 0xd
+    };
+  
     function decodeEscape(charsetPart) {
-      if (charsetPart.charAt(0) !== '\\') { return charsetPart.charCodeAt(0); }
-      switch (charsetPart.charAt(1)) {
-        case 'b': return 8;
-        case 't': return 9;
-        case 'n': return 0xa;
-        case 'v': return 0xb;
-        case 'f': return 0xc;
-        case 'r': return 0xd;
-        case 'u': case 'x':
-          return parseInt(charsetPart.substring(2), 16)
-              || charsetPart.charCodeAt(1);
-        case '0': case '1': case '2': case '3': case '4':
-        case '5': case '6': case '7':
-          return parseInt(charsetPart.substring(1), 8);
-        default: return charsetPart.charCodeAt(1);
+      var cc0 = charsetPart.charCodeAt(0);
+      if (cc0 !== 92 /* \\ */) {
+        return cc0;
+      }
+      var c1 = charsetPart.charAt(1);
+      cc0 = escapeCharToCodeUnit[c1];
+      if (cc0) {
+        return cc0;
+      } else if ('0' <= c1 && c1 <= '7') {
+        return parseInt(charsetPart.substring(1), 8);
+      } else if (c1 === 'u' || c1 === 'x') {
+        return parseInt(charsetPart.substring(2), 16);
+      } else {
+        return charsetPart.charCodeAt(1);
       }
     }
   
@@ -278,30 +289,26 @@ window['PR']
       var inverse = charsetParts[0] === '^';
       for (var i = inverse ? 1 : 0, n = charsetParts.length; i < n; ++i) {
         var p = charsetParts[i];
-        switch (p) {
-          case '\\B': case '\\b':
-          case '\\D': case '\\d':
-          case '\\S': case '\\s':
-          case '\\W': case '\\w':
-            groups.push(p);
-            continue;
-        }
-        var start = decodeEscape(p);
-        var end;
-        if (i + 2 < n && '-' === charsetParts[i + 1]) {
-          end = decodeEscape(charsetParts[i + 2]);
-          i += 2;
+        if (/\\[bdsw]/i.test(p)) {
+          groups.push(p);
         } else {
-          end = start;
-        }
-        ranges.push([start, end]);
-        // If the range might intersect letters, then expand it.
-        if (!(end < 65 || start > 122)) {
-          if (!(end < 65 || start > 90)) {
-            ranges.push([Math.max(65, start) | 32, Math.min(end, 90) | 32]);
+          var start = decodeEscape(p);
+          var end;
+          if (i + 2 < n && '-' === charsetParts[i + 1]) {
+            end = decodeEscape(charsetParts[i + 2]);
+            i += 2;
+          } else {
+            end = start;
           }
-          if (!(end < 97 || start > 122)) {
-            ranges.push([Math.max(97, start) & ~32, Math.min(end, 122) & ~32]);
+          ranges.push([start, end]);
+          // If the range might intersect letters, then expand it.
+          if (!(end < 65 || start > 122)) {
+            if (!(end < 65 || start > 90)) {
+              ranges.push([Math.max(65, start) | 32, Math.min(end, 90) | 32]);
+            }
+            if (!(end < 97 || start > 122)) {
+              ranges.push([Math.max(97, start) & ~32, Math.min(end, 122) & ~32]);
+            }
           }
         }
       }
@@ -459,7 +466,7 @@ window['PR']
    * It will produce the output:</p>
    * <pre>
    * {
-   *   source: "print 'Hello '\n  + 'World';",
+   *   sourceCode: "print 'Hello '\n  + 'World';",
    *   //                 1         2
    *   //       012345678901234 5678901234567
    *   spans: [0, #1, 6, #2, 14, #3, 15, #4]
@@ -532,7 +539,7 @@ window['PR']
     walk(node);
   
     return {
-      source: chunks.join('').replace(/\n$/, ''),
+      sourceCode: chunks.join('').replace(/\n$/, ''),
       spans: spans
     };
   }
@@ -547,14 +554,14 @@ window['PR']
   function appendDecorations(basePos, sourceCode, langHandler, out) {
     if (!sourceCode) { return; }
     var job = {
-      source: sourceCode,
+      sourceCode: sourceCode,
       basePos: basePos
     };
     langHandler(job);
     out.push.apply(out, job.decorations);
   }
 
-   var notWs = /\S/;
+  var notWs = /\S/;
 
   /**
    * Given an element, if it contains only one child element and any text nodes
@@ -655,18 +662,18 @@ window['PR']
     var nPatterns = fallthroughStylePatterns.length;
 
     /**
-     * Lexes job.source and produces an output array job.decorations of style
-     * classes preceded by the position at which they start in job.source in
-     * order.
+     * Lexes job.sourceCode and produces an output array job.decorations of
+     * style classes preceded by the position at which they start in
+     * job.sourceCode in order.
      *
-     * @param {Object} job an object like {@code
-     *    source: {string} sourceText plain text,
-     *    basePos: {int} position of job.source in the larger chunk of
+     * @param {Object} job an object like <pre>{
+     *    sourceCode: {string} sourceText plain text,
+     *    basePos: {int} position of job.sourceCode in the larger chunk of
      *        sourceCode.
-     * }
+     * }</pre>
      */
     var decorate = function (job) {
-      var sourceCode = job.source, basePos = job.basePos;
+      var sourceCode = job.sourceCode, basePos = job.basePos;
       /** Even entries are positions in source in ascending order.  Odd enties
         * are style markers (e.g., PR_COMMENT) that run from that position until
         * the end.
@@ -819,6 +826,9 @@ window['PR']
           [PR_COMMENT, /^\/\*[\s\S]*?(?:\*\/|$)/, null]);
     }
     if (options['regexLiterals']) {
+      /**
+       * @const
+       */
       var REGEX_LITERAL = (
           // A regular expression literal starts with a slash that is
           // not followed by * or / so that it is not confused with
@@ -838,15 +848,17 @@ window['PR']
            ]);
     }
 
-    if (options['types']) {
-      fallthroughStylePatterns.push([PR_TYPE, options['types']]);
+    var types = options['types'];
+    if (types) {
+      fallthroughStylePatterns.push([PR_TYPE, types]);
     }
 
-    var keywords = options['keywords'].replace(/^\s+|\s+$/g, '');
+    var keywords = ("" + options['keywords']).replace(/^ | $/g, '');
     if (keywords.length) {
       fallthroughStylePatterns.push(
           [PR_KEYWORD,
-           new RegExp('^(?:' + keywords.replace(/\s+/g, '|') + ')\\b'), null]);
+           new RegExp('^(?:' + keywords.replace(/[\s,]+/g, '|') + ')\\b'),
+           null]);
     }
 
     shortcutStylePatterns.push([PR_PLAIN,       /^\s+/, null, ' \r\n\t\xA0']);
@@ -1032,15 +1044,15 @@ window['PR']
   }
 
   /**
-   * Breaks {@code job.source} around style boundaries in {@code job.decorations}
-   * and modifies {@code job.sourceNode} in place.
+   * Breaks {@code job.sourceCode} around style boundaries in
+   * {@code job.decorations} and modifies {@code job.sourceNode} in place.
    * @param {Object} job like <pre>{
-   *    source: {string} source as plain text,
+   *    sourceCode: {string} source as plain text,
    *    spans: {Array.<number|Node>} alternating span start indices into source
    *       and the text node or element (e.g. {@code <BR>}) corresponding to that
    *       span.
    *    decorations: {Array.<number|string} an array of style classes preceded
-   *       by the position at which they start in job.source in order
+   *       by the position at which they start in job.sourceCode in order
    * }</pre>
    * @private
    */
@@ -1048,7 +1060,7 @@ window['PR']
     var isIE = /\bMSIE\b/.test(navigator.userAgent);
     var newlineRe = /\n/g;
   
-    var source = job.source;
+    var source = job.sourceCode;
     var sourceLength = source.length;
     // Index into source after the last code-unit recombined.
     var sourceIndex = 0;
@@ -1148,10 +1160,10 @@ window['PR']
     *      of decorations.  Takes a single argument job which describes the
     *      state of the computation.   The single parameter has the form
     *      {@code {
-    *        source: {string} as plain text.
+    *        sourceCode: {string} as plain text.
     *        decorations: {Array.<number|string>} an array of style classes
     *                     preceded by the position at which they start in
-    *                     job.source in order.
+    *                     job.sourceCode in order.
     *                     The language handler should assigned this field.
     *        basePos: {int} the position of source in the larger source chunk.
     *                 All positions in the output decorations array are relative
@@ -1164,7 +1176,7 @@ window['PR']
       var ext = fileExtensions[i];
       if (!langHandlerRegistry.hasOwnProperty(ext)) {
         langHandlerRegistry[ext] = handler;
-      } else if ('console' in window) {
+      } else if (window['console']) {
         console['warn']('cannot override language handler %s', ext);
       }
     }
@@ -1227,7 +1239,7 @@ window['PR']
           'types': C_TYPES
         }), ['c', 'cc', 'cpp', 'cxx', 'cyc', 'm']);
   registerLangHandler(sourceDecorator({
-          'keywords': 'null true false'
+          'keywords': 'null,true,false'
         }), ['json']);
   registerLangHandler(sourceDecorator({
           'keywords': CSHARP_KEYWORDS,
@@ -1285,8 +1297,8 @@ window['PR']
       // Extract tags, and convert the source code to plain text.
       var sourceAndSpans = extractSourceSpans(job.sourceNode);
       /** Plain text. @type {string} */
-      var source = sourceAndSpans.source;
-      job.source = source;
+      var source = sourceAndSpans.sourceCode;
+      job.sourceCode = source;
       job.spans = sourceAndSpans.spans;
       job.basePos = 0;
 
@@ -1343,7 +1355,7 @@ window['PR']
 
     var clock = Date;
     if (!clock['now']) {
-      clock = { 'now': function () { return (new Date).getTime(); } };
+      clock = { 'now': function () { return +(new Date); } };
     }
 
     // The loop is broken into a series of continuations to make sure that we
@@ -1422,8 +1434,25 @@ window['PR']
     doWork();
   }
 
+   /**
+    * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
+    * {@code class=prettyprint} and prettify them.
+    *
+    * @param {Function?} opt_whenDone if specified, called when the last entry
+    *     has been finished.
+    */
   window['prettyPrintOne'] = prettyPrintOne;
+   /**
+    * Pretty print a chunk of code.
+    *
+    * @param {string} sourceCodeHtml code as html
+    * @return {string} code as html, but prettier
+    */
   window['prettyPrint'] = prettyPrint;
+   /**
+    * Contains functions for creating and registering new language handlers.
+    * @type {Object}
+    */
   window['PR'] = {
         'createSimpleLexer': createSimpleLexer,
         'registerLangHandler': registerLangHandler,
