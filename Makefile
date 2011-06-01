@@ -37,9 +37,9 @@ src/prettify.js: js-modules/*.js js-modules/*.pl
 	  || rm src/prettify.js
 	@if [ -e $@ ]; then chmod -w $@; fi
 
-distrib: distrib.tstamp distrib/google-code-prettify-minimized.tgz \
-	 distrib/google-code-prettify-minimized.tar.bz2
-	@wc -c distrib/google-code-prettify-minimized.{tar.bz2,tgz} \
+distrib: distrib.tstamp distrib/prettify-small.tgz \
+	 distrib/prettify-small.tar.bz2
+	@wc -c distrib/prettify-small.{tar.bz2,tgz} \
 	    | grep -v total
 
 distrib.tstamp: src/*.js src/*.css
@@ -85,7 +85,7 @@ distrib.tstamp: src/*.js src/*.css
 %.tar.bz2: %.tar
 	@bzip2 -9f $^
 
-distrib/google-code-prettify-minimized.tar: distrib.tstamp
+distrib/prettify-small.tar: distrib.tstamp
 	@pushd distrib >& /dev/null; \
 	tar cf ../$@ google-code-prettify; \
 	popd >& /dev/null
