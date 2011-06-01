@@ -289,7 +289,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
       var inverse = charsetParts[0] === '^';
       for (var i = inverse ? 1 : 0, n = charsetParts.length; i < n; ++i) {
         var p = charsetParts[i];
-        if (/\\[bdsw]/i.test(p)) {
+        if (/\\[bdsw]/i.test(p)) {  // Don't muck with named groups.
           groups.push(p);
         } else {
           var start = decodeEscape(p);
@@ -302,6 +302,9 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
           }
           ranges.push([start, end]);
           // If the range might intersect letters, then expand it.
+          // This case handling is too simplistic.
+          // It does not deal with non-latin case folding.
+          // It works for latin source code identifiers though.
           if (!(end < 65 || start > 122)) {
             if (!(end < 65 || start > 90)) {
               ranges.push([Math.max(65, start) | 32, Math.min(end, 90) | 32]);
