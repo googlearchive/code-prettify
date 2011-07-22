@@ -55,10 +55,8 @@ function combinePrefixPatterns(regexs) {
       return (charCode < 0x10 ? '\\x0' : '\\x') + charCode.toString(16);
     }
     var ch = String.fromCharCode(charCode);
-    if (ch === '\\' || ch === '-' || ch === '[' || ch === ']') {
-      ch = '\\' + ch;
-    }
-    return ch;
+    return (ch === '\\' || ch === '-' || ch === ']' || ch === '^')
+        ? "\\" + ch : ch;
   }
 
   function caseFoldCharset(charSet) {
@@ -72,13 +70,16 @@ function combinePrefixPatterns(regexs) {
             + '|-'
             + '|[^-\\\\]',
             'g'));
-    var groups = [];
     var ranges = [];
     var inverse = charsetParts[0] === '^';
+
+    var out = ['['];
+    if (inverse) { out.push('^'); }
+
     for (var i = inverse ? 1 : 0, n = charsetParts.length; i < n; ++i) {
       var p = charsetParts[i];
       if (/\\[bdsw]/i.test(p)) {  // Don't muck with named groups.
-        groups.push(p);
+        out.push(p);
       } else {
         var start = decodeEscape(p);
         var end;
@@ -108,7 +109,7 @@ function combinePrefixPatterns(regexs) {
     // -> [[1, 12], [14, 14], [16, 17]]
     ranges.sort(function (a, b) { return (a[0] - b[0]) || (b[1]  - a[1]); });
     var consolidatedRanges = [];
-    var lastRange = [NaN, NaN];
+    var lastRange = [];
     for (var i = 0; i < ranges.length; ++i) {
       var range = ranges[i];
       if (range[0] <= lastRange[1] + 1) {
@@ -118,9 +119,6 @@ function combinePrefixPatterns(regexs) {
       }
     }
 
-    var out = ['['];
-    if (inverse) { out.push('^'); }
-    out.push.apply(out, groups);
     for (var i = 0; i < consolidatedRanges.length; ++i) {
       var range = consolidatedRanges[i];
       out.push(encodeEscape(range[0]));
@@ -166,8 +164,15 @@ function combinePrefixPatterns(regexs) {
         ++groupIndex;
       } else if ('\\' === p.charAt(0)) {
         var decimalValue = +p.substring(1);
-        if (decimalValue && decimalValue <= groupIndex) {
-          capturedGroups[decimalValue] = -1;
+        if (decimalValue) {
+          if (decimalValue <= groupIndex) {
+            capturedGroups[decimalValue] = -1;
+          } else {
+            // Replace with an unambiguous escape sequence so that
+            // an octal escape sequence does not turn into a backreference
+            // to a capturing group from an earlier regex.
+            parts[i] = encodeEscape(decimalValue);
+          }
         }
       }
     }
@@ -183,7 +188,7 @@ function combinePrefixPatterns(regexs) {
       var p = parts[i];
       if (p === '(') {
         ++groupIndex;
-        if (capturedGroups[groupIndex] === undefined) {
+        if (!capturedGroups[groupIndex]) {
           parts[i] = '(?:';
         }
       } else if ('\\' === p.charAt(0)) {
