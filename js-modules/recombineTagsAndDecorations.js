@@ -65,7 +65,6 @@ function recombineTagsAndDecorations(job) {
     var spanStart = spans[spanIndex];
     var spanEnd = spans[spanIndex + 2] || sourceLength;
 
-    var decStart = decorations[decorationIndex];
     var decEnd = decorations[decorationIndex + 2] || sourceLength;
 
     var end = Math.min(spanEnd, decEnd);
