@@ -14,7 +14,7 @@ print "
  * \"in\" keyword since it's not a keyword in many languages, and might be used
  * as a count of inches.
  *
- * <p>The link a above does not accurately describe EcmaScript rules since
+ * <p>The link above does not accurately describe EcmaScript rules since
  * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
  * very well in practice.
  *
@@ -24,24 +24,39 @@ print "
 var REGEXP_PRECEDER_PATTERN = ";
 
 my @preceders = (
-                 "!", "!=", "!==", "#", "%", "%=", "&", "&&", "&&=",
-                 "&=", "(", "*", "*=",
-                 # "+", "-", ".", "..", "..." handled below
-                 "+=", ",", "-=", "->", "/", "/=", ":", "::", ";",
-                 "<", "<<", "<<=", "<=", "=", "==", "===", ">",
-                 ">=", ">>", ">>=", ">>>", ">>>=", "?", "@", "[",
-                 "^", "^=", "^^", "^^=", "{", "|", "|=", "||",
-                 "||=", "~", # handles =~ and !~
+                 "[!=]=?=?",   # "!", "!=", "!==", "=", "==", "===",
+                 "\\#",
+                 "%=?",        # "%", "%=",
+                 "&&?=?",      # "&", "&&", "&&=", "&=",
+                 "\\(",
+                 "\\*=?",      # "*", "*=",
+                 "[+\\-]=",    # +=, -=.  + and - handled below.
+                 "->",
+                 "\\/=?",      # "/", "/=",
+                 "::?",        # ":", "::",
+                 "<<?=?",      # "<", "<<", "<<=", "<=", 
+                 ">>?>?=?",    # ">", ">=", ">>", ">>=", ">>>", ">>>=",
+                 ",",
+                 ";",          # ";"
+                 "\\?",
+                 "@",
+                 "\\[",
+                 "~",          # handles =~ and !~
+                 "{",
+                 "\\^\\^?=?",  # "^", "^=", "^^", "^^=",
+                 "\\|\\|?=?",  # "|", "|=", "||", "||=",
                  "break", "case", "continue", "delete",
                  "do", "else", "finally", "instanceof",
                  "return", "throw", "try", "typeof"
                 );
-my $pattern = "'(?:^^\\\\.?|[+-]";  # match at beginning or sign.
+# match at beginning, a dot that is not part of a number, or sign.
+my $pattern = "'(?:^^\\\\.?|[+-]";
 foreach my $preceder (@preceders) {
-  $preceder =~ s/([^=<>:&a-z])/\\\\$1/gi;
+  $preceder =~ s/\\/\\\\/g;
   $pattern .= "|$preceder";
 }
 $pattern .= ")\\\\s*'";  # matches at end, and matches empty string
+
 print "$pattern;\n";
 
 print "

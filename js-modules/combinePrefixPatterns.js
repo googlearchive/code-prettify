@@ -144,7 +144,7 @@ function combinePrefixPatterns(regexs) {
             + '|\\\\[0-9]+'  // a back-reference or octal escape
             + '|\\\\[^ux0-9]'  // other escape sequence
             + '|\\(\\?[:!=]'  // start of a non-capturing group
-            + '|[\\(\\)\\^]'  // start/emd of a group, or line start
+            + '|[\\(\\)\\^]'  // start/end of a group, or line start
             + '|[^\\x5B\\x5C\\(\\)\\^]+'  // run of other characters
             + ')',
             'g'));
