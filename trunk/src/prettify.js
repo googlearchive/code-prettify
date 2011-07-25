@@ -194,14 +194,14 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
  * "in" keyword since it's not a keyword in many languages, and might be used
  * as a count of inches.
  *
- * <p>The link a above does not accurately describe EcmaScript rules since
+ * <p>The link above does not accurately describe EcmaScript rules since
  * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
  * very well in practice.
  *
  * @private
  * @const
  */
-var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&&=|&=|\\(|\\*|\\*=|\\+=|\\,|\\-=|\\->|\\/|\\/=|:|::|\\;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\@|\\[|\\^|\\^=|\\^\\^|\\^\\^=|\\{|\\||\\|=|\\|\\||\\|\\|=|\\~|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
+var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[+\\-]=|->|\\/=?|::?|<<?=?|>>?>?=?|,|;|\\?|@|\\[|~|{|\\^\\^?=?|\\|\\|?=?|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
 
 // CAVEAT: this does not properly handle the case where a regular
 // expression immediately follows another since a regular expression may
@@ -356,7 +356,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|\\!|\\!=|\\!==|\\#|\\%|\\%=|&|&&|&
               + '|\\\\[0-9]+'  // a back-reference or octal escape
               + '|\\\\[^ux0-9]'  // other escape sequence
               + '|\\(\\?[:!=]'  // start of a non-capturing group
-              + '|[\\(\\)\\^]'  // start/emd of a group, or line start
+              + '|[\\(\\)\\^]'  // start/end of a group, or line start
               + '|[^\\x5B\\x5C\\(\\)\\^]+'  // run of other characters
               + ')',
               'g'));
