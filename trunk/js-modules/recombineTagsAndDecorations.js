@@ -60,48 +60,60 @@ function recombineTagsAndDecorations(job) {
 
   nDecorations = decorations.length = decPos;
 
-  var decoration = null;
-  while (spanIndex < nSpans) {
-    var spanStart = spans[spanIndex];
-    var spanEnd = spans[spanIndex + 2] || sourceLength;
+  var sourceNode = job.sourceNode;
+  var oldDisplay;
+  if (sourceNode) {
+    oldDisplay = sourceNode.style.display;
+    sourceNode.style.display = 'none';
+  }
+  try {
+    var decoration = null;
+    while (spanIndex < nSpans) {
+      var spanStart = spans[spanIndex];
+      var spanEnd = spans[spanIndex + 2] || sourceLength;
 
-    var decEnd = decorations[decorationIndex + 2] || sourceLength;
+      var decEnd = decorations[decorationIndex + 2] || sourceLength;
 
-    var end = Math.min(spanEnd, decEnd);
+      var end = Math.min(spanEnd, decEnd);
 
-    var textNode = spans[spanIndex + 1];
-    var styledText;
-    if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
-        // Don't introduce spans around empty text nodes.
-        && (styledText = source.substring(sourceIndex, end))) {
-      // This may seem bizarre, and it is.  Emitting LF on IE causes the
-      // code to display with spaces instead of line breaks.
-      // Emitting Windows standard issue linebreaks (CRLF) causes a blank
-      // space to appear at the beginning of every line but the first.
-      // Emitting an old Mac OS 9 line separator makes everything spiffy.
-      if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
-      textNode.nodeValue = styledText;
-      var document = textNode.ownerDocument;
-      var span = document.createElement('SPAN');
-      span.className = decorations[decorationIndex + 1];
-      var parentNode = textNode.parentNode;
-      parentNode.replaceChild(span, textNode);
-      span.appendChild(textNode);
-      if (sourceIndex < spanEnd) {  // Split off a text node.
-        spans[spanIndex + 1] = textNode
-            // TODO: Possibly optimize by using '' if there's no flicker.
-            = document.createTextNode(source.substring(end, spanEnd));
-        parentNode.insertBefore(textNode, span.nextSibling);
+      var textNode = spans[spanIndex + 1];
+      var styledText;
+      if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
+          // Don't introduce spans around empty text nodes.
+          && (styledText = source.substring(sourceIndex, end))) {
+        // This may seem bizarre, and it is.  Emitting LF on IE causes the
+        // code to display with spaces instead of line breaks.
+        // Emitting Windows standard issue linebreaks (CRLF) causes a blank
+        // space to appear at the beginning of every line but the first.
+        // Emitting an old Mac OS 9 line separator makes everything spiffy.
+        if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
+        textNode.nodeValue = styledText;
+        var document = textNode.ownerDocument;
+        var span = document.createElement('SPAN');
+        span.className = decorations[decorationIndex + 1];
+        var parentNode = textNode.parentNode;
+        parentNode.replaceChild(span, textNode);
+        span.appendChild(textNode);
+        if (sourceIndex < spanEnd) {  // Split off a text node.
+          spans[spanIndex + 1] = textNode
+              // TODO: Possibly optimize by using '' if there's no flicker.
+              = document.createTextNode(source.substring(end, spanEnd));
+          parentNode.insertBefore(textNode, span.nextSibling);
+        }
+      }
+
+      sourceIndex = end;
+
+      if (sourceIndex >= spanEnd) {
+        spanIndex += 2;
+      }
+      if (sourceIndex >= decEnd) {
+        decorationIndex += 2;
       }
     }
-
-    sourceIndex = end;
-
-    if (sourceIndex >= spanEnd) {
-      spanIndex += 2;
-    }
-    if (sourceIndex >= decEnd) {
-      decorationIndex += 2;
+  } finally {
+    if (sourceNode) {
+      sourceNode.style.display = oldDisplay;
     }
   }
 }

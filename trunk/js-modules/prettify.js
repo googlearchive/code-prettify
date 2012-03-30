@@ -453,9 +453,10 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
               [PR_COMMENT, /^#(?:(?:define|elif|else|endif|error|ifdef|include|ifndef|line|pragma|undef|warning)\b|[^\r\n]*)/,
                null, '#']);
         }
+        // #include <stdio.h>
         fallthroughStylePatterns.push(
             [PR_STRING,
-             /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h|[a-z]\w*)>/,
+             /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h(?:h|pp|\+\+)?|[a-z]\w*)>/,
              null]);
       } else {
         shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
@@ -761,26 +762,6 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
         var cs = elements[k];
         var className = cs.className;
         if (className.indexOf('prettyprint') >= 0) {
-          // If the classes includes a language extensions, use it.
-          // Language extensions can be specified like
-          //     <pre class="prettyprint lang-cpp">
-          // the language extension "cpp" is used to find a language handler as
-          // passed to PR.registerLangHandler.
-          // HTML5 recommends that a language be specified using "language-"
-          // as the prefix instead.  Google Code Prettify supports both.
-          // http://dev.w3.org/html5/spec-author-view/the-code-element.html
-          var langExtension = className.match(langExtensionRe);
-          // Support <pre class="prettyprint"><code class="language-c">
-          var wrapper;
-          if (!langExtension && (wrapper = childContentWrapper(cs))
-              && "CODE" === wrapper.tagName) {
-            langExtension = wrapper.className.match(langExtensionRe);
-          }
-
-          if (langExtension) {
-            langExtension = langExtension[1];
-          }
-
           // make sure this is not nested in an already prettified element
           var nested = false;
           for (var p = cs.parentNode; p; p = p.parentNode) {
@@ -792,6 +773,24 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
             }
           }
           if (!nested) {
+            // If the classes includes a language extensions, use it.
+            // Language extensions can be specified like
+            //     <pre class="prettyprint lang-cpp">
+            // the language extension "cpp" is used to find a language handler
+            // as passed to PR.registerLangHandler.
+            // HTML5 recommends that a language be specified using "language-"
+            // as the prefix instead.  Google Code Prettify supports both.
+            // http://dev.w3.org/html5/spec-author-view/the-code-element.html
+            var langExtension = className.match(langExtensionRe);
+            // Support <pre class="prettyprint"><code class="language-c">
+            var wrapper;
+            if (!langExtension && (wrapper = childContentWrapper(cs))
+                && "CODE" === wrapper.tagName) {
+              langExtension = wrapper.className.match(langExtensionRe);
+            }
+
+            if (langExtension) { langExtension = langExtension[1]; }
+
             // Look for a class like linenums or linenums:<n> where <n> is the
             // 1-indexed number of the first line.
             var lineNums = cs.className.match(/\blinenums\b(?::(\d+))?/);
