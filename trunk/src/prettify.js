@@ -493,24 +493,17 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
    * </p>
    *
    * @param {Node} node an HTML DOM subtree containing source-code.
+   * @param {boolean} isPreformatted true if white-space in text nodes should
+   *    be considered significant.
    * @return {Object} source code and the text nodes in which they occur.
    */
-  function extractSourceSpans(node) {
+  function extractSourceSpans(node, isPreformatted) {
     var nocode = /(?:^|\s)nocode(?:\s|$)/;
   
     var chunks = [];
     var length = 0;
     var spans = [];
     var k = 0;
-  
-    var whitespace;
-    if (node.currentStyle) {
-      whitespace = node.currentStyle.whiteSpace;
-    } else if (window.getComputedStyle) {
-      whitespace = document.defaultView.getComputedStyle(node, null)
-          .getPropertyValue('white-space');
-    }
-    var isPreformatted = whitespace && 'pre' === whitespace.substring(0, 3);
   
     function walk(node) {
       switch (node.nodeType) {
@@ -912,23 +905,14 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
    *     HTMLOListElement, and each line is moved into a separate list item.
    *     This requires cloning elements, so the input might not have unique
    *     IDs after numbering.
+   * @param {boolean} isPreformatted true iff white-space in text nodes should
+   *     be treated as significant.
    */
-  function numberLines(node, opt_startLineNum) {
+  function numberLines(node, opt_startLineNum, isPreformatted) {
     var nocode = /(?:^|\s)nocode(?:\s|$)/;
     var lineBreak = /\r\n?|\n/;
   
     var document = node.ownerDocument;
-  
-    var whitespace;
-    if (node.currentStyle) {
-      whitespace = node.currentStyle.whiteSpace;
-    } else if (window.getComputedStyle) {
-      whitespace = document.defaultView.getComputedStyle(node, null)
-          .getPropertyValue('white-space');
-    }
-    // If it's preformatted, then we need to split lines on line breaks
-    // in addition to <BR>s.
-    var isPreformatted = whitespace && 'pre' === whitespace.substring(0, 3);
   
     var li = document.createElement('li');
     while (node.firstChild) {
@@ -1315,7 +1299,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
 
     try {
       // Extract tags, and convert the source code to plain text.
-      var sourceAndSpans = extractSourceSpans(job.sourceNode);
+      var sourceAndSpans = extractSourceSpans(job.sourceNode, job.pre);
       /** Plain text. @type {string} */
       var source = sourceAndSpans.sourceCode;
       job.sourceCode = source;
@@ -1349,13 +1333,14 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
     // We assume that the inner HTML is from a trusted source.
     container.innerHTML = sourceCodeHtml;
     if (opt_numberLines) {
-      numberLines(container, opt_numberLines);
+      numberLines(container, opt_numberLines, true);
     }
 
     var job = {
       langExtension: opt_langExtension,
       numberLines: opt_numberLines,
-      sourceNode: container
+      sourceNode: container,
+      pre: 1
     };
     applyDecorator(job);
     return container.innerHTML;
@@ -1385,6 +1370,9 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
 
     var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
     var prettyPrintRe = /\bprettyprint\b/;
+    var preformattedTagNameRe = /pre|xmp/i;
+    var codeRe = /^code$/i;
+    var preCodeXmpRe = /^(?:pre|code|xmp)$/i;
 
     function doWork() {
       var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
@@ -1393,14 +1381,13 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
       for (; k < elements.length && clock['now']() < endTime; k++) {
         var cs = elements[k];
         var className = cs.className;
-        if (className.indexOf('prettyprint') >= 0) {
+        if (prettyPrintRe.test(className)) {
           // make sure this is not nested in an already prettified element
           var nested = false;
           for (var p = cs.parentNode; p; p = p.parentNode) {
             var tn = p.tagName;
-            tn = tn && tn.toLowerCase();
-            if ((tn === 'pre' || tn === 'code' || tn === 'xmp')
-                && p.className && p.className.indexOf('prettyprint') >= 0) {
+            if (preCodeXmpRe.test(tn)
+                && p.className && prettyPrintRe.test(p.className)) {
               nested = true;
               break;
             }
@@ -1418,25 +1405,43 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
             // Support <pre class="prettyprint"><code class="language-c">
             var wrapper;
             if (!langExtension && (wrapper = childContentWrapper(cs))
-                && 'code' === wrapper.tagName.toLowerCase()) {
+                && codeRe.test(wrapper.tagName)) {
               langExtension = wrapper.className.match(langExtensionRe);
             }
 
             if (langExtension) { langExtension = langExtension[1]; }
 
+            var preformatted;
+            if (preformattedTagNameRe.test(cs.tagName)) {
+              preformatted = 1;
+            } else {
+              var currentStyle = cs['currentStyle'];
+              var whitespace = (
+                  currentStyle
+                  ? currentStyle['whiteSpace']
+                  : (document.defaultView
+                     && document.defaultView.getComputedStyle)
+                  ? document.defaultView.getComputedStyle(cs, null)
+                  .getPropertyValue('white-space')
+                  : 0);
+              preformatted = whitespace
+                  && 'pre' === whitespace.substring(0, 3);
+            }
+
             // Look for a class like linenums or linenums:<n> where <n> is the
             // 1-indexed number of the first line.
             var lineNums = cs.className.match(/\blinenums\b(?::(\d+))?/);
             lineNums = lineNums
-                  ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
-                  : false;
-            if (lineNums) { numberLines(cs, lineNums); }
+                ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
+                : false;
+            if (lineNums) { numberLines(cs, lineNums, preformatted); }
 
             // do the pretty printing
             prettyPrintingJob = {
               langExtension: langExtension,
               sourceNode: cs,
-              numberLines: lineNums
+              numberLines: lineNums,
+              pre: preformatted
             };
             applyDecorator(prettyPrintingJob);
           }

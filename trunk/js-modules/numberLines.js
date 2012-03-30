@@ -6,23 +6,14 @@
  *     HTMLOListElement, and each line is moved into a separate list item.
  *     This requires cloning elements, so the input might not have unique
  *     IDs after numbering.
+ * @param {boolean} isPreformatted true iff white-space in text nodes should
+ *     be treated as significant.
  */
-function numberLines(node, opt_startLineNum) {
+function numberLines(node, opt_startLineNum, isPreformatted) {
   var nocode = /(?:^|\s)nocode(?:\s|$)/;
   var lineBreak = /\r\n?|\n/;
 
   var document = node.ownerDocument;
-
-  var whitespace;
-  if (node.currentStyle) {
-    whitespace = node.currentStyle.whiteSpace;
-  } else if (window.getComputedStyle) {
-    whitespace = document.defaultView.getComputedStyle(node, null)
-        .getPropertyValue('white-space');
-  }
-  // If it's preformatted, then we need to split lines on line breaks
-  // in addition to <BR>s.
-  var isPreformatted = whitespace && 'pre' === whitespace.substring(0, 3);
 
   var li = document.createElement('li');
   while (node.firstChild) {
