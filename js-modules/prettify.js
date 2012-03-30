@@ -765,9 +765,10 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
           // make sure this is not nested in an already prettified element
           var nested = false;
           for (var p = cs.parentNode; p; p = p.parentNode) {
-            if ((p.tagName === 'pre' || p.tagName === 'code' ||
-                 p.tagName === 'xmp') &&
-                p.className && p.className.indexOf('prettyprint') >= 0) {
+            var tn = p.tagName;
+            tn = tn && tn.toLowerCase();
+            if ((tn === 'pre' || tn === 'code' || tn === 'xmp')
+                && p.className && p.className.indexOf('prettyprint') >= 0) {
               nested = true;
               break;
             }
@@ -785,7 +786,7 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
             // Support <pre class="prettyprint"><code class="language-c">
             var wrapper;
             if (!langExtension && (wrapper = childContentWrapper(cs))
-                && "CODE" === wrapper.tagName) {
+                && 'code' === wrapper.tagName.toLowerCase()) {
               langExtension = wrapper.className.match(langExtensionRe);
             }
 
