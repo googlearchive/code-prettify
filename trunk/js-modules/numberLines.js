@@ -24,7 +24,7 @@ function numberLines(node, opt_startLineNum) {
   // in addition to <BR>s.
   var isPreformatted = whitespace && 'pre' === whitespace.substring(0, 3);
 
-  var li = document.createElement('LI');
+  var li = document.createElement('li');
   while (node.firstChild) {
     li.appendChild(node.firstChild);
   }
@@ -36,7 +36,7 @@ function numberLines(node, opt_startLineNum) {
     switch (node.nodeType) {
       case 1:  // Element
         if (nocode.test(node.className)) { break; }
-        if ('BR' === node.nodeName) {
+        if ('br' === node.nodeName) {
           breakAfter(node);
           // Discard the <BR> since it is now flush against a </LI>.
           if (node.parentNode) {
@@ -128,7 +128,7 @@ function numberLines(node, opt_startLineNum) {
     listItems[0].setAttribute('value', opt_startLineNum);
   }
 
-  var ol = document.createElement('OL');
+  var ol = document.createElement('ol');
   ol.className = 'linenums';
   var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
   for (var i = 0, n = listItems.length; i < n; ++i) {

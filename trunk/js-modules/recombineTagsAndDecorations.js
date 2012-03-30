@@ -89,7 +89,7 @@ function recombineTagsAndDecorations(job) {
         if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
         textNode.nodeValue = styledText;
         var document = textNode.ownerDocument;
-        var span = document.createElement('SPAN');
+        var span = document.createElement('span');
         span.className = decorations[decorationIndex + 1];
         var parentNode = textNode.parentNode;
         parentNode.replaceChild(span, textNode);

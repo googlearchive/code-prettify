@@ -519,8 +519,8 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
           for (var child = node.firstChild; child; child = child.nextSibling) {
             walk(child);
           }
-          var nodeName = node.nodeName;
-          if ('BR' === nodeName || 'LI' === nodeName) {
+          var nodeName = node.nodeName.toLowerCase();
+          if ('br' === nodeName || 'li' === nodeName) {
             chunks[k] = '\n';
             spans[k << 1] = length++;
             spans[(k++ << 1) | 1] = node;
@@ -930,7 +930,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
     // in addition to <BR>s.
     var isPreformatted = whitespace && 'pre' === whitespace.substring(0, 3);
   
-    var li = document.createElement('LI');
+    var li = document.createElement('li');
     while (node.firstChild) {
       li.appendChild(node.firstChild);
     }
@@ -942,7 +942,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
       switch (node.nodeType) {
         case 1:  // Element
           if (nocode.test(node.className)) { break; }
-          if ('BR' === node.nodeName) {
+          if ('br' === node.nodeName) {
             breakAfter(node);
             // Discard the <BR> since it is now flush against a </LI>.
             if (node.parentNode) {
@@ -1034,7 +1034,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
       listItems[0].setAttribute('value', opt_startLineNum);
     }
   
-    var ol = document.createElement('OL');
+    var ol = document.createElement('ol');
     ol.className = 'linenums';
     var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
     for (var i = 0, n = listItems.length; i < n; ++i) {
@@ -1143,7 +1143,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
           if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
           textNode.nodeValue = styledText;
           var document = textNode.ownerDocument;
-          var span = document.createElement('SPAN');
+          var span = document.createElement('span');
           span.className = decorations[decorationIndex + 1];
           var parentNode = textNode.parentNode;
           parentNode.replaceChild(span, textNode);
@@ -1343,7 +1343,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
    *     or the 1-indexed number of the first line in sourceCodeHtml.
    */
   function prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
-    var container = document.createElement('PRE');
+    var container = document.createElement('pre');
     // This could cause images to load and onload listeners to fire.
     // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
     // We assume that the inner HTML is from a trusted source.

@@ -65,8 +65,8 @@ function extractSourceSpans(node) {
         for (var child = node.firstChild; child; child = child.nextSibling) {
           walk(child);
         }
-        var nodeName = node.nodeName;
-        if ('BR' === nodeName || 'LI' === nodeName) {
+        var nodeName = node.nodeName.toLowerCase();
+        if ('br' === nodeName || 'li' === nodeName) {
           chunks[k] = '\n';
           spans[k << 1] = length++;
           spans[(k++ << 1) | 1] = node;

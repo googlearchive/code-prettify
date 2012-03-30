@@ -711,7 +711,7 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
    *     or the 1-indexed number of the first line in sourceCodeHtml.
    */
   function prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
-    var container = document.createElement('PRE');
+    var container = document.createElement('pre');
     // This could cause images to load and onload listeners to fire.
     // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
     // We assume that the inner HTML is from a trusted source.
