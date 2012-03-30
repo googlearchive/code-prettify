@@ -88,7 +88,7 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
       "stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort,var"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
       "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
-      "true,try,unless,until,when,while,yes";
+      "throw,true,try,unless,until,when,while,yes";
   var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
       "debugger,eval,export,function,get,null,set,undefined,var,with," +
       "Infinity,NaN"];
