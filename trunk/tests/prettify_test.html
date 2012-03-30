@@ -1096,7 +1096,7 @@ a { background-image: url(); }
 </pre>
 
 <h1>Issue 79 CSS highlighting</h1>
-<pre class=prettyprint>
+<pre class="prettyprint" id="issue79">
 &lt;style type='text/css'>
 /* desert scheme ported from vim to google prettify */
 code.prettyprint { display: block; padding: 2px; border: 1px solid #888;
@@ -2749,6 +2749,55 @@ var goldens = {
       'a `END`PUN{`END`PLN `END`KWDbackground-image`END`PUN:`END`PLN ' +
           '`END`KWDurl`END`PUN();`END`PLN `END`PUN}`END`PLN\n' +
       '`END`COM--&gt;`END'
+      ),
+  issue79: (
+      '`TAG&lt;style`END`PLN `END`ATNtype`END`PUN=`END`ATV\'text/css\'`END' +
+          '`TAG&gt;`END`PLN\n' +
+      '`END`COM/* desert scheme ported from vim to google prettify */`END' +
+          '`PLN\n' +
+      'code`END`PUN.`END`PLNprettyprint `END`PUN{`END`PLN `END' +
+          '`KWDdisplay`END`PUN:`END`PLN block`END`PUN;`END`PLN `END' +
+          '`KWDpadding`END`PUN:`END`PLN `END`LIT2px`END`PUN;`END`PLN `END' +
+          '`KWDborder`END`PUN:`END`PLN `END`LIT1px`END`PLN solid `END' +
+          '`LIT#888`END`PUN;`END`PLN\n' +
+      '`END`KWDbackground-color`END`PUN:`END`PLN `END`LIT#333`END`PUN;`END' +
+          '`PLN `END`PUN}`END`PLN\n' +
+      '`END`PUN.`END`PLNstr `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#ffa0a0`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* string  - pink */`END`PLN\n' +
+      '`END`PUN.`END`PLNkwd `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#f0e68c`END`PUN;`END`PLN `END`KWDfont-weight`END' +
+          '`PUN:`END`PLN bold`END`PUN;`END`PLN `END`PUN}`END`PLN\n' +
+      '`END`PUN.`END`PLNcom `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#87ceeb`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* comment - skyblue */`END`PLN\n' +
+      '`END`PUN.`END`PLNtyp `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#98fb98`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* type    - lightgreen */`END`PLN\n' +
+      '`END`PUN.`END`PLNlit `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#cd5c5c`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* literal - darkred */`END`PLN\n' +
+      '`END`PUN.`END`PLNpun `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#fff`END`PUN;`END`PLN `END`PUN}`END`PLN    `END' +
+          '`COM/* punctuation */`END`PLN\n' +
+      '`END`PUN.`END`PLNpln `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#fff`END`PUN;`END`PLN `END`PUN}`END`PLN    `END' +
+          '`COM/* plaintext */`END`PLN\n' +
+      '`END`PUN.`END`PLNtag `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#f0e68c`END`PUN;`END`PLN `END`KWDfont-weight`END' +
+          '`PUN:`END`PLN bold`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* html/xml tag    - lightyellow*/`END`PLN\n' +
+      '`END`PUN.`END`PLNatn `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#bdb76b`END`PUN;`END`PLN `END`KWDfont-weight`END' +
+          '`PUN:`END`PLN bold`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* attribute name  - khaki*/`END`PLN\n' +
+      '`END`PUN.`END`PLNatv `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#ffa0a0`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* attribute value - pink */`END`PLN\n' +
+      '`END`PUN.`END`PLNdec `END`PUN{`END`PLN `END`KWDcolor`END`PUN:`END' +
+          '`PLN `END`LIT#98fb98`END`PUN;`END`PLN `END`PUN}`END`PLN `END' +
+          '`COM/* decimal         - lightgreen */`END`PLN\n' +
+      '`END`TAG&lt;/style&gt;`END'
       ),
   issue84: '`KWDsuper`END`PUN(`END`STR"&amp;nbsp;"`END`PUN);`END',
   issue86_0: '`COM#One Two words`END',
