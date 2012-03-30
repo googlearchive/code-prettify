@@ -227,8 +227,13 @@ function runTests(goldens) {
           '<h2><a href="#' + html(lang) + '">' + html(lang) + '<\/a> OK<\/h2>');
     }
   }
-  var summary = (failures ? (failures + ' test(s) failed') : 'Tests Passed');
-  htmlOut.push('<h2>' + summary + '<\/h2>');
+  var summary = (
+      failures
+      ? (failures + ' test' + (failures === 1 ? '' : 's') + ' failed') 
+      : 'Tests Passed');
+  var summaryStr = '<h2>' + summary + '<\/h2>';
+  htmlOut.push(summaryStr);
+  htmlOut.splice(0, 0, summaryStr);
   document.title += ' \u2014 ' + summary;
   document.getElementById('errorReport').innerHTML =
       htmlOut.join('').replace(/&lt;br&gt;/g, '&lt;br&gt;\n');
