@@ -820,9 +820,10 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
               [PR_COMMENT, /^#(?:(?:define|elif|else|endif|error|ifdef|include|ifndef|line|pragma|undef|warning)\b|[^\r\n]*)/,
                null, '#']);
         }
+        // #include <stdio.h>
         fallthroughStylePatterns.push(
             [PR_STRING,
-             /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h|[a-z]\w*)>/,
+             /^<(?:(?:(?:\.\.\/)*|\/?)(?:[\w-]+(?:\/[\w-]+)+)?[\w-]+\.h(?:h|pp|\+\+)?|[a-z]\w*)>/,
              null]);
       } else {
         shortcutStylePatterns.push([PR_COMMENT, /^#[^\r\n]*/, null, '#']);
@@ -1113,48 +1114,60 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
   
     nDecorations = decorations.length = decPos;
   
-    var decoration = null;
-    while (spanIndex < nSpans) {
-      var spanStart = spans[spanIndex];
-      var spanEnd = spans[spanIndex + 2] || sourceLength;
+    var sourceNode = job.sourceNode;
+    var oldDisplay;
+    if (sourceNode) {
+      oldDisplay = sourceNode.style.display;
+      sourceNode.style.display = 'none';
+    }
+    try {
+      var decoration = null;
+      while (spanIndex < nSpans) {
+        var spanStart = spans[spanIndex];
+        var spanEnd = spans[spanIndex + 2] || sourceLength;
   
-      var decEnd = decorations[decorationIndex + 2] || sourceLength;
+        var decEnd = decorations[decorationIndex + 2] || sourceLength;
   
-      var end = Math.min(spanEnd, decEnd);
+        var end = Math.min(spanEnd, decEnd);
   
-      var textNode = spans[spanIndex + 1];
-      var styledText;
-      if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
-          // Don't introduce spans around empty text nodes.
-          && (styledText = source.substring(sourceIndex, end))) {
-        // This may seem bizarre, and it is.  Emitting LF on IE causes the
-        // code to display with spaces instead of line breaks.
-        // Emitting Windows standard issue linebreaks (CRLF) causes a blank
-        // space to appear at the beginning of every line but the first.
-        // Emitting an old Mac OS 9 line separator makes everything spiffy.
-        if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
-        textNode.nodeValue = styledText;
-        var document = textNode.ownerDocument;
-        var span = document.createElement('SPAN');
-        span.className = decorations[decorationIndex + 1];
-        var parentNode = textNode.parentNode;
-        parentNode.replaceChild(span, textNode);
-        span.appendChild(textNode);
-        if (sourceIndex < spanEnd) {  // Split off a text node.
-          spans[spanIndex + 1] = textNode
-              // TODO: Possibly optimize by using '' if there's no flicker.
-              = document.createTextNode(source.substring(end, spanEnd));
-          parentNode.insertBefore(textNode, span.nextSibling);
+        var textNode = spans[spanIndex + 1];
+        var styledText;
+        if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
+            // Don't introduce spans around empty text nodes.
+            && (styledText = source.substring(sourceIndex, end))) {
+          // This may seem bizarre, and it is.  Emitting LF on IE causes the
+          // code to display with spaces instead of line breaks.
+          // Emitting Windows standard issue linebreaks (CRLF) causes a blank
+          // space to appear at the beginning of every line but the first.
+          // Emitting an old Mac OS 9 line separator makes everything spiffy.
+          if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
+          textNode.nodeValue = styledText;
+          var document = textNode.ownerDocument;
+          var span = document.createElement('SPAN');
+          span.className = decorations[decorationIndex + 1];
+          var parentNode = textNode.parentNode;
+          parentNode.replaceChild(span, textNode);
+          span.appendChild(textNode);
+          if (sourceIndex < spanEnd) {  // Split off a text node.
+            spans[spanIndex + 1] = textNode
+                // TODO: Possibly optimize by using '' if there's no flicker.
+                = document.createTextNode(source.substring(end, spanEnd));
+            parentNode.insertBefore(textNode, span.nextSibling);
+          }
+        }
+  
+        sourceIndex = end;
+  
+        if (sourceIndex >= spanEnd) {
+          spanIndex += 2;
+        }
+        if (sourceIndex >= decEnd) {
+          decorationIndex += 2;
         }
       }
-  
-      sourceIndex = end;
-  
-      if (sourceIndex >= spanEnd) {
-        spanIndex += 2;
-      }
-      if (sourceIndex >= decEnd) {
-        decorationIndex += 2;
+    } finally {
+      if (sourceNode) {
+        sourceNode.style.display = oldDisplay;
       }
     }
   }
@@ -1381,26 +1394,6 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
         var cs = elements[k];
         var className = cs.className;
         if (className.indexOf('prettyprint') >= 0) {
-          // If the classes includes a language extensions, use it.
-          // Language extensions can be specified like
-          //     <pre class="prettyprint lang-cpp">
-          // the language extension "cpp" is used to find a language handler as
-          // passed to PR.registerLangHandler.
-          // HTML5 recommends that a language be specified using "language-"
-          // as the prefix instead.  Google Code Prettify supports both.
-          // http://dev.w3.org/html5/spec-author-view/the-code-element.html
-          var langExtension = className.match(langExtensionRe);
-          // Support <pre class="prettyprint"><code class="language-c">
-          var wrapper;
-          if (!langExtension && (wrapper = childContentWrapper(cs))
-              && "CODE" === wrapper.tagName) {
-            langExtension = wrapper.className.match(langExtensionRe);
-          }
-
-          if (langExtension) {
-            langExtension = langExtension[1];
-          }
-
           // make sure this is not nested in an already prettified element
           var nested = false;
           for (var p = cs.parentNode; p; p = p.parentNode) {
@@ -1412,6 +1405,24 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
             }
           }
           if (!nested) {
+            // If the classes includes a language extensions, use it.
+            // Language extensions can be specified like
+            //     <pre class="prettyprint lang-cpp">
+            // the language extension "cpp" is used to find a language handler
+            // as passed to PR.registerLangHandler.
+            // HTML5 recommends that a language be specified using "language-"
+            // as the prefix instead.  Google Code Prettify supports both.
+            // http://dev.w3.org/html5/spec-author-view/the-code-element.html
+            var langExtension = className.match(langExtensionRe);
+            // Support <pre class="prettyprint"><code class="language-c">
+            var wrapper;
+            if (!langExtension && (wrapper = childContentWrapper(cs))
+                && "CODE" === wrapper.tagName) {
+              langExtension = wrapper.className.match(langExtensionRe);
+            }
+
+            if (langExtension) { langExtension = langExtension[1]; }
+
             // Look for a class like linenums or linenums:<n> where <n> is the
             // 1-indexed number of the first line.
             var lineNums = cs.className.match(/\blinenums\b(?::(\d+))?/);
