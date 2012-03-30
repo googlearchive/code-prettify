@@ -885,6 +885,9 @@ Class [class]
     End Sub
 End Class
 
+' Comment
+&#x2018; Second Line comment with a smart quote _
+  continued line using VB6 syntax.
 Module [module]
     Sub Main()
         [class].[shared](True)
@@ -2443,6 +2446,9 @@ var goldens = {
       '    `END`KWDEnd`END`PLN `END`KWDSub`END`PLN\n' +
       '`END`KWDEnd`END`PLN `END`KWDClass`END`PLN\n' +
       '\n' +
+      '`END`COM\' Comment`END`PLN\n' +
+      '`END`COM\u2018 Second Line comment with a smart quote _\n' +
+      '  continued line using VB6 syntax.`END`PLN\n' +
       '`END`KWDModule`END`PLN [module]\n' +
       '    `END`KWDSub`END`PLN Main`END`PUN()`END`PLN\n' +
       '        [class]`END`PUN.`END`PLN[shared]`END' +
