@@ -2,9 +2,12 @@ SHELL := /bin/bash
 
 CLOSURE_COMPILER=java -jar closure-compiler/compiler.jar \
 	      --warning_level VERBOSE \
-	      --charset UTF-8 \
 	      --language_in ECMASCRIPT5 \
 	      --compilation_level ADVANCED_OPTIMIZATIONS
+# Don't specify --charset=UTF-8.  If we do, then non-ascii codepoints
+# that do not correspond to line terminators are converted
+# to UTF-8 sequences instead of being emitted as ASCII.
+# This makes the resulting JavaScript less portable.
 
 YUI_COMPRESSOR=java -jar yui-compressor/yuicompressor-2.4.4.jar \
 	      --charset UTF-8
@@ -55,14 +58,12 @@ distrib.tstamp: src/*.js src/*.css
 	done
 	@$(CLOSURE_COMPILER) --js src/prettify.js \
 	    --externs closure-compiler/console-externs.js \
-	    | perl -e 'binmode STDIN, ":utf8";' -pe 's/\xA0/\\xa0/' \
 	    > $(TAR_ROOT)/prettify.js
 	@wc -c src/prettify.js $(TAR_ROOT)/prettify.js \
 	    | grep -v total
 	@for f in src/lang*.js; do \
 	  if [ $$f -nt $(TAR_ROOT)/$$(basename $$f) ]; then \
 	    $(CLOSURE_COMPILER) --js $$f --externs js-modules/externs.js \
-	        | perl -e 'binmode STDIN, ":utf8";' -pe 's/\xA0/\\xa0/' \
 	        | perl -pe 's/\bPR\.PR_ATTRIB_NAME\b/"atn"/g; \
 			    s/\bPR\.PR_ATTRIB_VALUE\b/"atv"/g; \
 			    s/\bPR\.PR_COMMENT\b/"com"/g; \
