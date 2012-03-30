@@ -39,24 +39,17 @@
  * </p>
  *
  * @param {Node} node an HTML DOM subtree containing source-code.
+ * @param {boolean} isPreformatted true if white-space in text nodes should
+ *    be considered significant.
  * @return {Object} source code and the text nodes in which they occur.
  */
-function extractSourceSpans(node) {
+function extractSourceSpans(node, isPreformatted) {
   var nocode = /(?:^|\s)nocode(?:\s|$)/;
 
   var chunks = [];
   var length = 0;
   var spans = [];
   var k = 0;
-
-  var whitespace;
-  if (node.currentStyle) {
-    whitespace = node.currentStyle.whiteSpace;
-  } else if (window.getComputedStyle) {
-    whitespace = document.defaultView.getComputedStyle(node, null)
-        .getPropertyValue('white-space');
-  }
-  var isPreformatted = whitespace && 'pre' === whitespace.substring(0, 3);
 
   function walk(node) {
     switch (node.nodeType) {

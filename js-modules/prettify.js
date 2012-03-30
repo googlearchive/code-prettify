@@ -683,7 +683,7 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
 
     try {
       // Extract tags, and convert the source code to plain text.
-      var sourceAndSpans = extractSourceSpans(job.sourceNode);
+      var sourceAndSpans = extractSourceSpans(job.sourceNode, job.pre);
       /** Plain text. @type {string} */
       var source = sourceAndSpans.sourceCode;
       job.sourceCode = source;
@@ -717,13 +717,14 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
     // We assume that the inner HTML is from a trusted source.
     container.innerHTML = sourceCodeHtml;
     if (opt_numberLines) {
-      numberLines(container, opt_numberLines);
+      numberLines(container, opt_numberLines, true);
     }
 
     var job = {
       langExtension: opt_langExtension,
       numberLines: opt_numberLines,
-      sourceNode: container
+      sourceNode: container,
+      pre: 1
     };
     applyDecorator(job);
     return container.innerHTML;
@@ -753,6 +754,9 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
 
     var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
     var prettyPrintRe = /\bprettyprint\b/;
+    var preformattedTagNameRe = /pre|xmp/i;
+    var codeRe = /^code$/i;
+    var preCodeXmpRe = /^(?:pre|code|xmp)$/i;
 
     function doWork() {
       var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
@@ -761,14 +765,13 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
       for (; k < elements.length && clock['now']() < endTime; k++) {
         var cs = elements[k];
         var className = cs.className;
-        if (className.indexOf('prettyprint') >= 0) {
+        if (prettyPrintRe.test(className)) {
           // make sure this is not nested in an already prettified element
           var nested = false;
           for (var p = cs.parentNode; p; p = p.parentNode) {
             var tn = p.tagName;
-            tn = tn && tn.toLowerCase();
-            if ((tn === 'pre' || tn === 'code' || tn === 'xmp')
-                && p.className && p.className.indexOf('prettyprint') >= 0) {
+            if (preCodeXmpRe.test(tn)
+                && p.className && prettyPrintRe.test(p.className)) {
               nested = true;
               break;
             }
@@ -786,25 +789,43 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
             // Support <pre class="prettyprint"><code class="language-c">
             var wrapper;
             if (!langExtension && (wrapper = childContentWrapper(cs))
-                && 'code' === wrapper.tagName.toLowerCase()) {
+                && codeRe.test(wrapper.tagName)) {
               langExtension = wrapper.className.match(langExtensionRe);
             }
 
             if (langExtension) { langExtension = langExtension[1]; }
 
+            var preformatted;
+            if (preformattedTagNameRe.test(cs.tagName)) {
+              preformatted = 1;
+            } else {
+              var currentStyle = cs['currentStyle'];
+              var whitespace = (
+                  currentStyle
+                  ? currentStyle['whiteSpace']
+                  : (document.defaultView
+                     && document.defaultView.getComputedStyle)
+                  ? document.defaultView.getComputedStyle(cs, null)
+                  .getPropertyValue('white-space')
+                  : 0);
+              preformatted = whitespace
+                  && 'pre' === whitespace.substring(0, 3);
+            }
+
             // Look for a class like linenums or linenums:<n> where <n> is the
             // 1-indexed number of the first line.
             var lineNums = cs.className.match(/\blinenums\b(?::(\d+))?/);
             lineNums = lineNums
-                  ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
-                  : false;
-            if (lineNums) { numberLines(cs, lineNums); }
+                ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
+                : false;
+            if (lineNums) { numberLines(cs, lineNums, preformatted); }
 
             // do the pretty printing
             prettyPrintingJob = {
               langExtension: langExtension,
               sourceNode: cs,
-              numberLines: lineNums
+              numberLines: lineNums,
+              pre: preformatted
             };
             applyDecorator(prettyPrintingJob);
           }
