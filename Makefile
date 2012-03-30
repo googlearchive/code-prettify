@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 CLOSURE_COMPILER=java -jar closure-compiler/compiler.jar \
 	      --warning_level VERBOSE \
 	      --charset UTF-8 \
