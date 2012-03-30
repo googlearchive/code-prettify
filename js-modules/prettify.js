@@ -142,7 +142,7 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
    */
   var PR_PUNCTUATION = 'pun';
   /**
-   * token style for a punctuation string.
+   * token style for plain text.
    * @const
    */
   var PR_PLAIN = 'pln';
