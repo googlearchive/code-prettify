@@ -484,6 +484,9 @@ before CODE
 <code class="language-lisp">; foo</code>
 </pre>
 
+<h1>Issue 185: Don't reprettify prettified content</h1>
+<code class="prettyprint prettyprinted" id="issue185"
+><span class="str">"No tag backs."</span></code>
 </body>
 
 <script type="text/javascript">
@@ -886,7 +889,8 @@ var goldens = {
       '`END`COM; foo`END`PLN\n' +
       '`END</code>\n'),
   html5conv4: ('`PLNbefore CODE\n' +
-      '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n')
+      '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n'),
+  issue185: '`STR"No tag backs."`END'
 };
 </script>
 
