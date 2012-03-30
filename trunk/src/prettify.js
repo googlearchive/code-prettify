@@ -142,7 +142,7 @@ window['PR_SHOULD_USE_CONTINUATION'] = true;
    */
   var PR_PUNCTUATION = 'pun';
   /**
-   * token style for a punctuation string.
+   * token style for plain text.
    * @const
    */
   var PR_PLAIN = 'pln';
@@ -406,14 +406,14 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
         } else if ('\\' === p.charAt(0)) {
           var decimalValue = +p.substring(1);
           if (decimalValue && decimalValue <= groupIndex) {
-            parts[i] = '\\' + capturedGroups[groupIndex];
+            parts[i] = '\\' + capturedGroups[decimalValue];
           }
         }
       }
   
       // Remove any prefix anchors so that the output will match anywhere.
       // ^^ really does mean an anchored match though.
-      for (var i = 0, groupIndex = 0; i < n; ++i) {
+      for (var i = 0; i < n; ++i) {
         if ('^' === parts[i] && '^' !== parts[i + 1]) { parts[i] = ''; }
       }
   
