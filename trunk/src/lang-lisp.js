@@ -91,4 +91,4 @@ PR['registerLangHandler'](
          // A printable non-space non-special character
          [PR['PR_PUNCTUATION'], /^[^\w\t\n\r \xA0()\"\\\';]+/]
         ]),
-    ['cl', 'el', 'lisp', 'lsp', 'scm']);
+    ['cl', 'el', 'lisp', 'lsp', 'scm', 'ss', 'rkt']);
