@@ -1090,6 +1090,8 @@ TABLE.foo TR.bar A#visited { color: #001123; font-family: "monospace" }
   * regardless of case.
   */
 blink { text-decoration: BLINK !IMPORTANT; font-weight: bolder }
+/* Empty url() was causing infinite recursion */
+a { background-image: url(); }
 --&gt;
 </pre>
 
@@ -2743,6 +2745,9 @@ var goldens = {
       'blink `END`PUN{`END`PLN `END`KWDtext-decoration`END`PUN:`END' +
           '`PLN BLINK `END`KWD!IMPORTANT`END`PUN;`END`PLN `END' +
           '`KWDfont-weight`END`PUN:`END`PLN bolder `END`PUN}`END`PLN\n' +
+      '`END`COM/* Empty url() was causing infinite recursion */`END`PLN\n' +
+      'a `END`PUN{`END`PLN `END`KWDbackground-image`END`PUN:`END`PLN ' +
+          '`END`KWDurl`END`PUN();`END`PLN `END`PUN}`END`PLN\n' +
       '`END`COM--&gt;`END'
       ),
   issue84: '`KWDsuper`END`PUN(`END`STR"&amp;nbsp;"`END`PUN);`END',
