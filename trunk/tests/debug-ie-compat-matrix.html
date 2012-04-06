@@ -80,8 +80,8 @@ if (ieMajorVersionNumber) {
   } else {
     // Perform the action we are testing.
     try {
-      textNode.nodeValue = (twoLines.innerText || twoLines.textContent)
-          .replace(/\r\n?|\n/g, matrix(quirksMode, ieMajorVersionNumber));
+      textNode.nodeValue = twoLines.firstChild.nodeValue.replace
+          /\r\n?|\n/g, matrix(quirksMode, ieMajorVersionNumber);
     } catch (ex) {
       reason = String(ex);
     }
