@@ -12,7 +12,8 @@
  * @private
  */
 function recombineTagsAndDecorations(job) {
-  var isIE = /\bMSIE\b/.test(navigator.userAgent);
+  var isIE8OrEarlier = /\bMSIE\s(\d+)/.exec(navigator.userAgent);
+  isIE8OrEarlier = isIE8OrEarlier && +isIE8OrEarlier[1] <= 8;
   var newlineRe = /\n/g;
 
   var source = job.sourceCode;
@@ -86,7 +87,9 @@ function recombineTagsAndDecorations(job) {
         // Emitting Windows standard issue linebreaks (CRLF) causes a blank
         // space to appear at the beginning of every line but the first.
         // Emitting an old Mac OS 9 line separator makes everything spiffy.
-        if (isIE) { styledText = styledText.replace(newlineRe, '\r'); }
+        if (isIE8OrEarlier) {
+          styledText = styledText.replace(newlineRe, '\r');
+        }
         textNode.nodeValue = styledText;
         var document = textNode.ownerDocument;
         var span = document.createElement('span');
