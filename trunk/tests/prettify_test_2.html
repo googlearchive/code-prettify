@@ -487,6 +487,10 @@ before CODE
 <h1>Issue 185: Don't reprettify prettified content</h1>
 <code class="prettyprint prettyprinted" id="issue185"
 ><span class="str">"No tag backs."</span></code>
+
+<h1>Issue 201: C type not full word</h1>
+<code class="prettyprint lang-c" id="issue201"
+>static Persistent&lt;String&gt; listeners_symbol;</code>
 </body>
 
 <script type="text/javascript">
@@ -890,7 +894,9 @@ var goldens = {
       '`END</code>\n'),
   html5conv4: ('`PLNbefore CODE\n' +
       '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n'),
-  issue185: '`STR"No tag backs."`END'
+  issue185: '`STR"No tag backs."`END',
+  issue201: '`KWDstatic`END`PLN `END`TYPPersistent`END' +
+      '`PUN&lt;`END`TYPString`END`PUN&gt;`END`PLN listeners_symbol`END`PUN;`END'
 };
 </script>
 
