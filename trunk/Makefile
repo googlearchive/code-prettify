@@ -57,6 +57,7 @@ distrib.tstamp: src/*.js src/*.css
 	done
 	@$(CLOSURE_COMPILER) --js src/prettify.js \
 	    --externs closure-compiler/console-externs.js \
+            --externs closure-compiler/amd-externs.js \
 	    > $(TAR_ROOT)/prettify.js
 	@wc -c src/prettify.js $(TAR_ROOT)/prettify.js \
 	    | grep -v total
