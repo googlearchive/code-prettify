@@ -53,7 +53,7 @@
  */
 
 // JSLint declarations
-/*global console, document, navigator, setTimeout, window */
+/*global console, document, navigator, setTimeout, window, define */
 
 /**
  * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
@@ -62,7 +62,25 @@
  */
 window['PR_SHOULD_USE_CONTINUATION'] = true;
 
+/**
+ * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
+ * {@code class=prettyprint} and prettify them.
+ *
+ * @param {Function?} opt_whenDone if specified, called when the last entry
+ *     has been finished.
+ */
+var prettyPrintOne;
+/**
+ * Pretty print a chunk of code.
+ *
+ * @param {string} sourceCodeHtml code as html
+ * @return {string} code as html, but prettier
+ */
+var prettyPrint;
+
+
 (function () {
+  var win = window;
   // Keyword lists for various languages.
   // We use things that coerce to strings to make them compact when minified
   // and to defeat aggressive optimizers that fold large string constants.
@@ -1184,7 +1202,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
       var ext = fileExtensions[i];
       if (!langHandlerRegistry.hasOwnProperty(ext)) {
         langHandlerRegistry[ext] = handler;
-      } else if (window['console']) {
+      } else if (win['console']) {
         console['warn']('cannot override language handler %s', ext);
       }
     }
@@ -1318,7 +1336,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
       // modifying the sourceNode in place.
       recombineTagsAndDecorations(job);
     } catch (e) {
-      if ('console' in window) {
+      if (win['console']) {
         console['log'](e && e['stack'] ? e['stack'] : e);
       }
     }
@@ -1381,7 +1399,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
     var preCodeXmpRe = /^(?:pre|code|xmp)$/i;
 
     function doWork() {
-      var endTime = (window['PR_SHOULD_USE_CONTINUATION'] ?
+      var endTime = (win['PR_SHOULD_USE_CONTINUATION'] ?
                      clock['now']() + 250 /* ms */ :
                      Infinity);
       for (; k < elements.length && clock['now']() < endTime; k++) {
@@ -1473,26 +1491,11 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
     doWork();
   }
 
-   /**
-    * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
-    * {@code class=prettyprint} and prettify them.
-    *
-    * @param {Function?} opt_whenDone if specified, called when the last entry
-    *     has been finished.
-    */
-  window['prettyPrintOne'] = prettyPrintOne;
-   /**
-    * Pretty print a chunk of code.
-    *
-    * @param {string} sourceCodeHtml code as html
-    * @return {string} code as html, but prettier
-    */
-  window['prettyPrint'] = prettyPrint;
-   /**
-    * Contains functions for creating and registering new language handlers.
-    * @type {Object}
-    */
-  window['PR'] = {
+  /**
+   * Contains functions for creating and registering new language handlers.
+   * @type {Object}
+   */
+  var PR = win['PR'] = {
         'createSimpleLexer': createSimpleLexer,
         'registerLangHandler': registerLangHandler,
         'sourceDecorator': sourceDecorator,
@@ -1508,6 +1511,26 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
         'PR_SOURCE': PR_SOURCE,
         'PR_STRING': PR_STRING,
         'PR_TAG': PR_TAG,
-        'PR_TYPE': PR_TYPE
+        'PR_TYPE': PR_TYPE,
+        'prettyPrintOne': win['prettyPrintOne'] = prettyPrintOne,
+        'prettyPrint': win['prettyPrint'] = prettyPrint
       };
+
+  // Make PR available via the Asynchronous Module Definition (AMD) API.
+  // Per https://github.com/amdjs/amdjs-api/wiki/AMD:
+  // The Asynchronous Module Definition (AMD) API specifies a
+  // mechanism for defining modules such that the module and its
+  // dependencies can be asynchronously loaded.
+  // ...
+  // To allow a clear indicator that a global define function (as
+  // needed for script src browser loading) conforms to the AMD API,
+  // any global define function SHOULD have a property called "amd"
+  // whose value is an object. This helps avoid conflict with any
+  // other existing JavaScript code that could have defined a define()
+  // function that does not conform to the AMD API.
+  if (typeof define === "function" && define['amd']) {
+    define("google-code-prettify", [], function () {
+      return PR; 
+    });
+  }
 })();
