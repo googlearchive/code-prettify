@@ -87,6 +87,11 @@ function fib() {
 fib | /usr/bin/*head -10 | tail -1
 </pre>
 
+<h1>Issue 165</h1>
+<pre class="prettyprint lang-sh" id="issue_165"># Comment
+local $x = ${#x[@]}  # Previous is not a comment
+# A comment</pre>
+
 <h1>C</h1>
 
 <pre class="prettyprint" id="C">
@@ -1368,7 +1373,12 @@ var goldens = {
       '`#6`PLNfib `END`PUN|`END`PLN `END`PUN/`END`PLNusr`END`PUN/`END`PLNbin`END' +
           '`PUN/*`END`PLNhead `END`PUN-`END`LIT10`END`PLN `END`PUN|`END' +
           '`PLN tail `END`PUN-`END`LIT1`END</li></ol>'),
-  C: (
+  issue_165: (
+      '`COM# Comment`END`PLN\n' +
+      '`END`KWDlocal`END`PLN $x `END`PUN=`END`PLN $`END`PUN{#`END`PLNx`END`PUN[@]}`END`PLN  `END'
+          + '`COM# Previous is not a comment`END`PLN\n' +
+      '`END`COM# A comment`END'),
+ C: (
       '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN\n' +
       '\n' +
       '`END`COM/* the n-th fibonacci number.\n' +
