@@ -493,6 +493,51 @@ before CODE
 >static Persistent&lt;String&gt; listeners_symbol;</code>
 </body>
 
+<h1>Dart language handler</h1>
+<pre class="prettyprint lang-dart" id="dart">
+part of myLib;
+
+part 'something.dart';
+
+import 'dart:math' as test show foo, bar;
+
+class Point {
+  final num x, y;
+
+  Point(this.x, this.y);
+  Point.zero() : x = 0, y = 0;  // Named constructor
+                                // with an initializer list.
+
+  num distanceTo(Point other) {
+    var dx = x - other.x;
+    var dy = y - other.y;
+    return sqrt(dx * dx + dy * dy);
+  }
+}
+
+// This is a single-line comment.
+
+/*
+This is a
+multiline comment.
+*/
+
+main() {
+  Point p = new Point(7, 12);
+  String thing = 'It\'s awesome!';
+  String thing2 = '''
+This is a test! \'''
+This is the end of the test''';
+  String thing3 = r"""
+This is a raw
+multiline string!""";
+  num x = 0x123ABC;
+  num y = 1.8e-12;
+  bool flag = false;
+  String raw = r"This is a raw string, where \n doesn't matter";
+}
+</pre>
+
 <script type="text/javascript">
 /**
  * maps ids of rewritten code to the expected output.
@@ -896,7 +941,68 @@ var goldens = {
       '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n'),
   issue185: '`STR"No tag backs."`END',
   issue201: '`KWDstatic`END`PLN `END`TYPPersistent`END' +
-      '`PUN&lt;`END`TYPString`END`PUN&gt;`END`PLN listeners_symbol`END`PUN;`END'
+      '`PUN&lt;`END`TYPString`END`PUN&gt;`END`PLN listeners_symbol`END`PUN;`END',
+  dart: '`PLNpart of myLib`END`PUN;`END`PLN\n' +
+        '\n' +
+        'part `END`STR\'something.dart\'`END`PUN;`END`PLN\n' +
+        '\n' +
+        '`END`KWDimport`END`PLN `END`STR\'dart:math\'`END`PLN `END' +
+          '`KWDas`END`PLN test show foo`END`PUN,`END`PLN bar`END`PUN;`END' +
+          '`PLN\n' +
+        '\n' +
+        '`END`KWDclass`END`PLN `END`TYPPoint`END`PLN `END`PUN{`END`PLN\n' +
+        '  `END`KWDfinal`END`PLN num x`END`PUN,`END`PLN y`END`PUN;`END`PLN\n' +
+        '\n' +
+        '  `END`TYPPoint`END`PUN(`END`KWDthis`END`PUN.`END`PLNx`END' +
+          '`PUN,`END`PLN `END`KWDthis`END`PUN.`END`PLNy`END`PUN);`END`PLN\n' +
+        '  `END`TYPPoint`END`PUN.`END`PLNzero`END`PUN()`END`PLN `END' +
+          '`PUN:`END`PLN x `END`PUN=`END`PLN `END`LIT0`END`PUN,`END' +
+          '`PLN y `END`PUN=`END`PLN `END`LIT0`END`PUN;`END`PLN  `END' +
+          '`COM// Named constructor`END`PLN\n' +
+        '                                `END' +
+          '`COM// with an initializer list.`END`PLN\n' +
+        '\n' +
+        '  num distanceTo`END`PUN(`END`TYPPoint`END`PLN other`END' +
+          '`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+        '    `END`KWDvar`END`PLN dx `END`PUN=`END`PLN x `END`PUN-`END' +
+          '`PLN other`END`PUN.`END`PLNx`END`PUN;`END`PLN\n' +
+        '    `END`KWDvar`END`PLN dy `END`PUN=`END`PLN y `END`PUN-`END' +
+          '`PLN other`END`PUN.`END`PLNy`END`PUN;`END`PLN\n' +
+        '    `END`KWDreturn`END`PLN sqrt`END`PUN(`END`PLNdx `END`PUN*`END' +
+          '`PLN dx `END`PUN+`END`PLN dy `END`PUN*`END`PLN dy`END`PUN);`END' +
+          '`PLN\n' +
+        '  `END`PUN}`END`PLN\n' +
+        '`END`PUN}`END`PLN\n' +
+        '\n' +
+        '`END`COM// This is a single-line comment.`END`PLN\n' +
+        '\n' +
+        '`END`COM/*\n' +
+        'This is a\n' +
+        'multiline comment.\n' +
+        '*/`END`PLN\n' +
+        '\n' +
+        'main`END`PUN()`END`PLN `END`PUN{`END`PLN\n' +
+        '  `END`TYPPoint`END`PLN p `END`PUN=`END`PLN `END`KWDnew`END' +
+          '`PLN `END`TYPPoint`END`PUN(`END`LIT7`END`PUN,`END`PLN `END' +
+          '`LIT12`END`PUN);`END`PLN\n' +
+        '  `END`TYPString`END`PLN thing `END`PUN=`END`PLN `END' +
+          '`STR\'It\\\'s awesome!\'`END`PUN;`END`PLN\n' +
+        '  `END`TYPString`END`PLN thing2 `END`PUN=`END`PLN `END' +
+          '`STR\'\'\'\n' +
+        'This is a test! \\\'\'\'\n' +
+        'This is the end of the test\'\'\'`END`PUN;`END`PLN\n' +
+        '  `END`TYPString`END`PLN thing3 `END`PUN=`END`PLN r`END' +
+          '`STR\"\"\"\n' +
+        'This is a raw\n' +
+        'multiline string!\"\"\"`END`PUN;`END`PLN\n' +
+        '  num x `END`PUN=`END`PLN `END`LIT0x123ABC`END`PUN;`END`PLN\n' +
+        '  num y `END`PUN=`END`PLN `END`LIT1.8e-12`END`PUN;`END`PLN\n' +
+        '  `END`KWDbool`END`PLN flag `END`PUN=`END`PLN `END`KWDfalse`END' +
+          '`PUN;`END`PLN\n' +
+        '  `END`TYPString`END`PLN raw `END`PUN=`END`PLN r`END' +
+          '`STR\"This is a raw string, where \\n doesn\'t matter\"`END' +
+          '`PUN;`END`PLN\n' +
+        '`END`PUN}`END'
 };
 </script>
 
