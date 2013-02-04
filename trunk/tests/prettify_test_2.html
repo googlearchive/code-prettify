@@ -13,6 +13,7 @@
       "lang-lisp.js",
       "lang-xq.js",
       "lang-n.js",
+      "lang-r.js",
       "lang-tcl.js",
       "lang-tex.js"
  ];
@@ -557,6 +558,161 @@ proc fib {n} {
 }
 </pre>
 
+<h1>R, S language support</h1>
+<pre class="prettyprint lang-r" id="r_lang">
+### Example R script for syntax highlighting
+
+# This is a comment
+
+## Valid names
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a <- NULL
+.foo_ <- NULL
+._foo <- NULL
+
+## Invalid names
+0abc <- NULL
+.0abc <- NULL
+abc+cde <- NULL
+
+## Reserved Words
+NA
+NA_integer_
+NA_real_
+NA_character_
+NA_complex_
+NULL
+NaN
+Inf
+## Not reserved
+NULLa <- NULL
+NULL1 <- NULL
+NULL. <- NULL
+NA_foo_ <- NULL
+
+## Numbers
+12345678901
+123456.78901
+123e3
+123E3
+1.23e-3
+1.23e3
+1.23e-3
+## integer constants
+123L
+1.23L
+## imaginary numbers
+123i
+-123i
+123e4i
+123e-4i
+## Hex numbers
+0xabcdefABCDEF01234
+0xabcp123
+0xabcP123
+## Not hex
+0xg
+
+## Special operators %xyz%
+## %xyz%
+1 %% 2
+diag(2) %*% diag(2)
+1 %/% 2
+1 %in% 1:10
+diag(2) %o% diag(2)
+diag(2) %x% diag(2)
+`%foo bar%` <- function(x, y) x + y
+1 %foo bar% 2
+
+## Control Structures (3.2) and Function
+## if, else
+if (TRUE) print("foo") else print("bar")
+## For, in
+for(i in 1:5) {
+    print(i)
+}
+## While, break
+i <- 1
+while (TRUE) {
+    i <- i + 1
+    if (i > 3) break
+}
+## Repeat
+repeat {1+1}
+## Switch
+x <- 3
+switch(x, 2+2, mean(1:10), rnorm(5))
+## Function, dot-dot-dot, return
+foo <- function(...) {
+    return(sum(...))
+}
+# Not keywords
+functiona <- 2 + 2
+function. <- 2 + 2
+function1 <- 2 + 2
+
+
+## Grouping Tokens 10.3.7
+## Parentheses
+1 + (2 + 3)
+## brackets
+foo <- function(a) {
+    a + 1
+}
+
+## Indexing 10.3.8
+## []
+bar <- 1:10
+bar[3]
+## [[]]
+foo <- list(a=1, b=2, c=3)
+foo[["a"]]
+## $
+foo$a
+foo$"a"
+
+## Operators
+2 - 2
+2 + 2
+2 ~ 2
+! TRUE
+?"help"
+1:2
+2 * 2
+2 / 2
+2^2
+2 < 2
+2 > 2
+2 == 2
+2 >= 2
+2 <= 2
+2 != 2
+TRUE & FALSE
+TRUE && FALSE
+TRUE | FALSE
+TRUE || FALSE
+foo <- 2 + 2
+foo = 2 + 2
+2 + 2 -> foo
+foo <<- 2 + 2
+2 + 2 ->> foo
+base:::sum
+base::sum
+
+## Strings
+foo <- "hello, world!"
+foo <- 'hello, world!'
+foo <- "Hello, 'world!"
+foo <- 'Hello, "world!'
+foo <- 'Hello, \'world!\''
+foo <- "Hello, \"world!\""
+foo <- "Hello,
+world!"
+foo <- 'Hello,
+world!'
+
+## Backtick strings
+`foo123 +!"bar'baz` <- 2 + 2
+</pre>
 
 <script type="text/javascript">
 /**
@@ -1037,6 +1193,160 @@ var goldens = {
       '    `END`CLO}`END`PLN\n' +
       '    `END`KWDreturn`END`PLN `END`PUN$`END`PLNa\n' +
       '`END`CLO}`END'
+  ),
+  r_lang: (
+      '`COM### Example R script for syntax highlighting`END`PLN\n' +
+      '\n' +
+      '`END`COM# This is a comment`END`PLN\n' +
+      '\n' +
+      '`END`COM## Valid names`END`PLN\n' +
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      '.foo_ `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      '._foo `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      '\n' +
+      '`END`COM## Invalid names`END`PLN\n' +
+      '`END`LIT0`END`PLNabc `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      '`END`LIT.0`END`PLNabc `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      'abc`END`PUN+`END`PLNcde `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      '\n' +
+      '`END`COM## Reserved Words`END`PLN\n' +
+      '`END`LITNA`END`PLN\n' +
+      '`END`LITNA_integer_`END`PLN\n' +
+      '`END`LITNA_real_`END`PLN\n' +
+      '`END`LITNA_character_`END`PLN\n' +
+      '`END`LITNA_complex_`END`PLN\n' +
+      '`END`LITNULL`END`PLN\n' +
+      '`END`LITNaN`END`PLN\n' +
+      '`END`LITInf`END`PLN\n' +
+      '`END`COM## Not reserved`END`PLN\n' +
+      'NULLa `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      'NULL1 `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      'NULL. `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      'NA_foo_ `END`PUN&lt;-`END`PLN `END`LITNULL`END`PLN\n' +
+      '\n' +
+      '`END`COM## Numbers`END`PLN\n' +
+      '`END`LIT12345678901`END`PLN\n' +
+      '`END`LIT123456.78901`END`PLN\n' +
+      '`END`LIT123e3`END`PLN\n' +
+      '`END`LIT123E3`END`PLN\n' +
+      '`END`LIT1.23e-3`END`PLN\n' +
+      '`END`LIT1.23e3`END`PLN\n' +
+      '`END`LIT1.23e-3`END`PLN\n' +
+      '`END`COM## integer constants`END`PLN\n' +
+      '`END`LIT123L`END`PLN\n' +
+      '`END`LIT1.23L`END`PLN\n' +
+      '`END`COM## imaginary numbers`END`PLN\n' +
+      '`END`LIT123i`END`PLN\n' +
+      '`END`LIT-123i`END`PLN\n' +
+      '`END`LIT123e4i`END`PLN\n' +
+      '`END`LIT123e-4i`END`PLN\n' +
+      '`END`COM## Hex numbers`END`PLN\n' +
+      '`END`LIT0xabcdefABCDEF01234`END`PLN\n' +
+      '`END`LIT0xabcp123`END`PLN\n' +
+      '`END`LIT0xabcP123`END`PLN\n' +
+      '`END`COM## Not hex`END`PLN\n' +
+      '`END`LIT0`END`PLNxg\n' +
+      '\n' +
+      '`END`COM## Special operators %xyz%`END`PLN\n' +
+      '`END`COM## %xyz%`END`PLN\n' +
+      '`END`LIT1`END`PLN `END`PUN%%`END`PLN `END`LIT2`END`PLN\n' +
+      'diag`END`PUN(`END`LIT2`END`PUN)`END`PLN `END`PUN%*%`END`PLN diag`END`PUN(`END`LIT2`END`PUN)`END`PLN\n' +
+      '`END`LIT1`END`PLN `END`PUN%/%`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT1`END`PLN `END`PUN%in%`END`PLN `END`LIT1`END`PUN:`END`LIT10`END`PLN\n' +
+      'diag`END`PUN(`END`LIT2`END`PUN)`END`PLN `END`PUN%o%`END`PLN diag`END`PUN(`END`LIT2`END`PUN)`END`PLN\n' +
+      'diag`END`PUN(`END`LIT2`END`PUN)`END`PLN `END`PUN%x%`END`PLN diag`END`PUN(`END`LIT2`END`PUN)`END`PLN\n' +
+      '`END`STR`%foo bar%``END`PLN `END`PUN&lt;-`END`PLN `END`KWDfunction`END`PUN(`END`PLNx`END`PUN,`END`PLN y`END`PUN)`END`PLN x `END`PUN+`END`PLN y\n' +
+      '`END`LIT1`END`PLN `END`PUN%foo bar%`END`PLN `END`LIT2`END`PLN\n' +
+      '\n' +
+      '`END`COM## Control Structures (3.2) and Function`END`PLN\n' +
+      '`END`COM## if, else`END`PLN\n' +
+      '`END`KWDif`END`PLN `END`PUN(`END`LITTRUE`END`PUN)`END`PLN print`END`PUN(`END`STR"foo"`END`PUN)`END`PLN `END`KWDelse`END`PLN print`END`PUN(`END`STR"bar"`END`PUN)`END`PLN\n' +
+      '`END`COM## For, in`END`PLN\n' +
+      '`END`KWDfor`END`PUN(`END`PLNi `END`KWDin`END`PLN `END`LIT1`END`PUN:`END`LIT5`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+      '    print`END`PUN(`END`PLNi`END`PUN)`END`PLN\n' +
+      '`END`PUN}`END`PLN\n' +
+      '`END`COM## While, break`END`PLN\n' +
+      'i `END`PUN&lt;-`END`PLN `END`LIT1`END`PLN\n' +
+      '`END`KWDwhile`END`PLN `END`PUN(`END`LITTRUE`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+      '    i `END`PUN&lt;-`END`PLN i `END`PUN+`END`PLN `END`LIT1`END`PLN\n' +
+      '    `END`KWDif`END`PLN `END`PUN(`END`PLNi `END`PUN&gt;`END`PLN `END`LIT3`END`PUN)`END`PLN `END`KWDbreak`END`PLN\n' +
+      '`END`PUN}`END`PLN\n' +
+      '`END`COM## Repeat`END`PLN\n' +
+      '`END`KWDrepeat`END`PLN `END`PUN{`END`LIT1+1`END`PUN}`END`PLN\n' +
+      '`END`COM## Switch`END`PLN\n' +
+      'x `END`PUN&lt;-`END`PLN `END`LIT3`END`PLN\n' +
+      '`END`KWDswitch`END`PUN(`END`PLNx`END`PUN,`END`PLN `END`LIT2+2`END`PUN,`END`PLN mean`END`PUN(`END`LIT1`END`PUN:`END`LIT10`END`PUN),`END`PLN rnorm`END`PUN(`END`LIT5`END`PUN))`END`PLN\n' +
+      '`END`COM## Function, dot-dot-dot, return`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`KWDfunction`END`PUN(`END`LIT...`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+      '    `END`KWDreturn`END`PUN(`END`PLNsum`END`PUN(`END`LIT...`END`PUN))`END`PLN\n' +
+      '`END`PUN}`END`PLN\n' +
+      '`END`COM# Not keywords`END`PLN\n' +
+      'functiona `END`PUN&lt;-`END`PLN `END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN\n' +
+      'function. `END`PUN&lt;-`END`PLN `END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN\n' +
+      'function1 `END`PUN&lt;-`END`PLN `END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN\n' +
+      '\n' +
+      '\n' +
+      '`END`COM## Grouping Tokens 10.3.7`END`PLN\n' +
+      '`END`COM## Parentheses`END`PLN\n' +
+      '`END`LIT1`END`PLN `END`PUN+`END`PLN `END`PUN(`END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT3`END`PUN)`END`PLN\n' +
+      '`END`COM## brackets`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`KWDfunction`END`PUN(`END`PLNa`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+      '    a `END`PUN+`END`PLN `END`LIT1`END`PLN\n' +
+      '`END`PUN}`END`PLN\n' +
+      '\n' +
+      '`END`COM## Indexing 10.3.8`END`PLN\n' +
+      '`END`COM## []`END`PLN\n' +
+      'bar `END`PUN&lt;-`END`PLN `END`LIT1`END`PUN:`END`LIT10`END`PLN\n' +
+      'bar`END`PUN[`END`LIT3`END`PUN]`END`PLN\n' +
+      '`END`COM## [[]]`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN list`END`PUN(`END`PLNa`END`PUN=`END`LIT1`END`PUN,`END`PLN b`END`PUN=`END`LIT2`END`PUN,`END`PLN c`END`PUN=`END`LIT3`END`PUN)`END`PLN\n' +
+      'foo`END`PUN[[`END`STR"a"`END`PUN]]`END`PLN\n' +
+      '`END`COM## $`END`PLN\n' +
+      'foo`END`PUN$`END`PLNa\n' +
+      'foo`END`PUN$`END`STR"a"`END`PLN\n' +
+      '\n' +
+      '`END`COM## Operators`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN-`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN~`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`PUN!`END`PLN `END`LITTRUE`END`PLN\n' +
+      '`END`PUN?`END`STR"help"`END`PLN\n' +
+      '`END`LIT1`END`PUN:`END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN*`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN/`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PUN^`END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN&lt;`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN&gt;`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN==`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN&gt;=`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN&lt;=`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN!=`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LITTRUE`END`PLN `END`PUN&amp;`END`PLN `END`LITFALSE`END`PLN\n' +
+      '`END`LITTRUE`END`PLN `END`PUN&amp;&amp;`END`PLN `END`LITFALSE`END`PLN\n' +
+      '`END`LITTRUE`END`PLN `END`PUN|`END`PLN `END`LITFALSE`END`PLN\n' +
+      '`END`LITTRUE`END`PLN `END`PUN||`END`PLN `END`LITFALSE`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN\n' +
+      'foo `END`PUN=`END`PLN `END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN `END`PUN-&gt;`END`PLN foo\n' +
+      'foo `END`PUN&lt;&lt;-`END`PLN `END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN\n' +
+      '`END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END`PLN `END`PUN-&gt;&gt;`END`PLN foo\n' +
+      'base`END`PUN:::`END`PLNsum\n' +
+      'base`END`PUN::`END`PLNsum\n' +
+      '\n' +
+      '`END`COM## Strings`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR"hello, world!"`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR\'hello, world!\'`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR"Hello, \'world!"`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR\'Hello, "world!\'`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR\'Hello, \\\'world!\\\'\'`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR"Hello, \\"world!\\""`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR"Hello,\n' +
+      'world!"`END`PLN\n' +
+      'foo `END`PUN&lt;-`END`PLN `END`STR\'Hello,\n' +
+      'world!\'`END`PLN\n' +
+      '\n' +
+      '`END`COM## Backtick strings`END`PLN\n' +
+      '`END`STR`foo123 +!"bar\'baz``END`PLN `END`PUN&lt;-`END`PLN `END`LIT2`END`PLN `END`PUN+`END`PLN `END`LIT2`END'
   )
 };
 </script>
