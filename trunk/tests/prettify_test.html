@@ -1100,6 +1100,7 @@ TABLE.foo TR.bar A#visited { color: #001123; font-family: "monospace" }
 blink { text-decoration: BLINK !IMPORTANT; font-weight: bolder }
 /* Empty url() was causing infinite recursion */
 a { background-image: url(); }
+p#featured{background:#fea}
 --&gt;
 </pre>
 
@@ -2764,6 +2765,7 @@ var goldens = {
       '`END`COM/* Empty url() was causing infinite recursion */`END`PLN\n' +
       'a `END`PUN{`END`PLN `END`KWDbackground-image`END`PUN:`END`PLN ' +
           '`END`KWDurl`END`PUN();`END`PLN `END`PUN}`END`PLN\n' +
+      'p`END`PUN#`END`PLNfeatured`END`PUN{`END`KWDbackground`END`PUN:`END`LIT#fea`END`PUN}`END`PLN\n' +
       '`END`COM--&gt;`END'
       ),
   issue79: (
