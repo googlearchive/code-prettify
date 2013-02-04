@@ -13,6 +13,7 @@
       "lang-lisp.js",
       "lang-xq.js",
       "lang-n.js",
+      "lang-tcl.js",
       "lang-tex.js"
  ];
   var styles = [
@@ -538,6 +539,22 @@ multiline string!""";
 }
 </pre>
 
+<h1>TCL_lang</h1>
+<pre class="prettyprint lang-tcl" id="tcl_lang">#!/bin/tclsh
+proc fib {n} {
+    set a 0
+    set b 1
+    while {$n > 0} {
+        set tmp $a
+        set a [expr $a + $b]
+        set b $tmp
+        incr n -1
+    }
+    return $a
+}
+</pre>
+
+
 <script type="text/javascript">
 /**
  * maps ids of rewritten code to the expected output.
@@ -1002,7 +1019,21 @@ var goldens = {
         '  `END`TYPString`END`PLN raw `END`PUN=`END`PLN r`END' +
           '`STR\"This is a raw string, where \\n doesn\'t matter\"`END' +
           '`PUN;`END`PLN\n' +
-        '`END`PUN}`END'
+        '`END`PUN}`END',
+  tcl_lang: (
+      '`COM#!/bin/tclsh`END`PLN\n' +
+      '`END`KWDproc`END`PLN fib `END`OPN{`END`PLNn`END`CLO}`END`PLN `END`OPN{`END`PLN\n' +
+      '    `END`KWDset`END`PLN a `END`LIT0`END`PLN\n' +
+      '    `END`KWDset`END`PLN b `END`LIT1`END`PLN\n' +
+      '    `END`KWDwhile`END`PLN `END`OPN{`END`PUN$`END`PLNn `END`PUN&gt;`END`PLN `END`LIT0`END`CLO}`END`PLN `END`OPN{`END`PLN\n' +
+      '        `END`KWDset`END`PLN tmp `END`PUN$`END`PLNa\n' +
+      '        `END`KWDset`END`PLN a `END`PUN[`END`KWDexpr`END`PLN `END`PUN$`END`PLNa `END`PUN+`END`PLN `END`PUN$`END`PLNb`END`PUN]`END`PLN\n' +
+      '        `END`KWDset`END`PLN b `END`PUN$`END`PLNtmp\n' +
+      '        `END`KWDincr`END`PLN n `END`LIT-1`END`PLN\n' +
+      '    `END`CLO}`END`PLN\n' +
+      '    `END`KWDreturn`END`PLN `END`PUN$`END`PLNa\n' +
+      '`END`CLO}`END'
+  )
 };
 </script>
 
