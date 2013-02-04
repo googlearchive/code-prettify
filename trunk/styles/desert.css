@@ -1,5 +1,5 @@
 /* desert scheme ported from vim to google prettify */
-pre.prettify { display: block; background-color: #333 }
+pre.prettyprint { display: block; background-color: #333 }
 pre .nocode { background-color: none; color: #000 }
 pre .str { color: #ffa0a0 } /* string  - pink */
 pre .kwd { color: #f0e68c; font-weight: bold }
@@ -20,7 +20,7 @@ li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { list-style-type: none }
 li.L1,li.L3,li.L5,li.L7,li.L9 { }
 
 @media print {
-  pre.prettify { background-color: none }
+  pre.prettyprint { background-color: none }
   pre .str, code .str { color: #060 }
   pre .kwd, code .kwd { color: #006; font-weight: bold }
   pre .com, code .com { color: #600; font-style: italic }
