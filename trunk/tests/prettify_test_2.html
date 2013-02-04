@@ -485,9 +485,12 @@ before CODE
 <code class="language-lisp">; foo</code>
 </pre>
 
-<h1>Issue 185: Don't reprettify prettified content</h1>
+<h1>Issues 185 and 261: Don't reprettify prettified content</h1>
 <code class="prettyprint prettyprinted" id="issue185"
 ><span class="str">"No tag backs."</span></code>
+
+<pre class="prettyprint prettyprinted linenums" id="issue261"
+><ol class="linenums"><li class="L0"><span class="str">"No tag backs."</span></li></ol></pre>
 
 <h1>Issue 201: C type not full word</h1>
 <code class="prettyprint lang-c" id="issue201"
@@ -957,6 +960,7 @@ var goldens = {
   html5conv4: ('`PLNbefore CODE\n' +
       '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n'),
   issue185: '`STR"No tag backs."`END',
+  issue261: '<ol class="linenums"><li class="L0">`STR"No tag backs."`END</li></ol>',
   issue201: '`KWDstatic`END`PLN `END`TYPPersistent`END' +
       '`PUN&lt;`END`TYPString`END`PUN&gt;`END`PLN listeners_symbol`END`PUN;`END',
   dart: '`PLNpart of myLib`END`PUN;`END`PLN\n' +
