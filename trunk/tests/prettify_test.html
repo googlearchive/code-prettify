@@ -908,6 +908,9 @@ Module [module]
 
         ' This prints out: &quot;.
         Console.WriteLine(""""c)
+
+        REM an old-style comment
+        REMOVE(not_a_comment)
     End Sub
 End Module
 
@@ -2485,6 +2488,9 @@ var goldens = {
           '`PLN\n' +
       '        Console`END`PUN.`END`PLNWriteLine`END' +
           '`PUN(`END`STR""""c`END`PUN)`END`PLN\n' +
+      '\n' +
+      '        `END`COMREM an old-style comment`END`PLN\n' +
+      '        REMOVE`END`PUN(`END`PLNnot_a_comment`END`PUN)`END`PLN\n' +
       '    `END`KWDEnd`END`PLN `END`KWDSub`END`PLN\n' +
       '`END`KWDEnd`END`PLN `END`KWDModule`END`PLN\n' +
       '\n' +
