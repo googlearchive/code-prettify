@@ -8,6 +8,7 @@
   var sources = [
       "prettify.js",
       "lang-css.js",
+      "lang-erlang.js",
       "lang-go.js",
       "lang-hs.js",
       "lang-lisp.js",
@@ -1320,6 +1321,35 @@ func main() {
 
 /* " */  &quot;foo /* "  /*/  */
 /* ` */  `foo /* `  /*/  */
+</pre>
+
+<h1>Erlang mode</h1>
+<pre class="prettyprint lang-erlang" id="erlang">
+% Sample comment
+
+-module(my_test).
+-include_lib("my_sample_lib.hrl").
+-export([
+    test/2
+]).
+
+%% @doc Define a macro
+-define(my_macro, Variable).
+
+%% @doc My function
+test(Variables, MoreVariables) ->
+    % Inline comment
+    {ok,Scanned,_} = my_lib:do_stuff(),
+
+    Variable = fun(V) -> {ok, V} end,
+
+    try ?my_macro({value, test}) of
+        {value, Result, _} ->
+            {ok, Result}
+    catch
+        Type:Error ->
+            {'error', Type, Error}
+    end.
 </pre>
 
 Test IE by copy/pasting content here.
@@ -2992,7 +3022,32 @@ var goldens = {
       '}\n' +
       '\n' +
       '`END`COM/* " *\/`END`PLN  "foo /* "  `END`COM/*\/  *\/`END`PLN\n' +
-      '`END`COM/* ` *\/`END`PLN  `foo /* `  `END`COM/*\/  *\/`END'
+      '`END`COM/* ` *\/`END`PLN  `foo /* `  `END`COM/*\/  *\/`END',
+  erlang: '`COM% Sample comment`END`PLN\n' + 
+      '\n' + 
+      '`END`KWD-module`END`PLN(my_test)`END`PUN.`END`PLN\n' + 
+      '`END`KWD-include_lib`END`PLN(`END`STR"my_sample_lib.hrl"`END`PLN)`END`PUN.`END`PLN\n' + 
+      '`END`KWD-export`END`PLN([\n' + 
+      '    test/`END`LIT2`END`PLN\n' + 
+      '])`END`PUN.`END`PLN\n' + 
+      '\n' + 
+      '`END`COM%% @doc Define a macro`END`PLN\n' + 
+      '`END`KWD-define`END`PLN(my_macro`END`PUN,`END`PLN `END`TYPVariable`END`PLN)`END`PUN.`END`PLN\n' + 
+      '\n' + 
+      '`END`COM%% @doc My function`END`PLN\n' + 
+      'test(`END`TYPVariables`END`PUN,`END`PLN `END`TYPMoreVariables`END`PLN) -&gt;\n' + 
+      '    `END`COM% Inline comment`END`PLN\n' + 
+      '    {ok`END`PUN,`END`TYPScanned`END`PUN,`END`TYP_`END`PLN} = my_lib:do_stuff()`END`PUN,`END`PLN\n' + 
+      '\n' + 
+      '    `END`TYPVariable`END`PLN = `END`KWDfun`END`PLN(`END`TYPV`END`PLN) -&gt; {ok`END`PUN,`END`PLN `END`TYPV`END`PLN} `END`KWDend`END`PUN,`END`PLN\n' + 
+      '\n' + 
+      '    `END`KWDtry`END`PLN `END`LIT?my_macro`END`PLN({value`END`PUN,`END`PLN test}) `END`KWDof`END`PLN\n' + 
+      '        {value`END`PUN,`END`PLN `END`TYPResult`END`PUN,`END`PLN `END`TYP_`END`PLN} -&gt;\n' + 
+      '            {ok`END`PUN,`END`PLN `END`TYPResult`END`PLN}\n' + 
+      '    `END`KWDcatch`END`PLN\n' + 
+      '        `END`TYPType`END`PLN:`END`TYPError`END`PLN -&gt;\n' + 
+      '            {`END`LIT\'error\'`END`PUN,`END`PLN `END`TYPType`END`PUN,`END`PLN `END`TYPError`END`PLN}\n' + 
+      '    `END`KWDend`END`PUN.`END'
 };
 </script>
 
