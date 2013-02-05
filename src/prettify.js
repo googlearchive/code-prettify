@@ -96,12 +96,12 @@ var prettyPrint;
       "mutable,namespace,nullptr,reinterpret_cast,static_assert,static_cast," +
       "template,typeid,typename,using,virtual,where"];
   var JAVA_KEYWORDS = [COMMON_KEYWORDS,
-      "abstract,boolean,byte,extends,final,finally,implements,import," +
-      "instanceof,null,native,package,strictfp,super,synchronized,throws," +
-      "transient"];
+      "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
+      "instanceof,interface,null,native,package,strictfp,super,synchronized," +
+      "throws,transient"];
   var CSHARP_KEYWORDS = [JAVA_KEYWORDS,
       "as,base,by,checked,decimal,delegate,descending,dynamic,event," +
-      "fixed,foreach,from,group,implicit,in,interface,internal,into,is,let," +
+      "fixed,foreach,from,group,implicit,in,internal,into,is,let," +
       "lock,object,out,override,orderby,params,partial,readonly,ref,sbyte," +
       "sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort," +
       "var,virtual,where"];
