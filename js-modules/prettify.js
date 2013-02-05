@@ -63,18 +63,23 @@
 window['PR_SHOULD_USE_CONTINUATION'] = true;
 
 /**
- * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
- * {@code class=prettyprint} and prettify them.
- *
- * @param {Function?} opt_whenDone if specified, called when the last entry
- *     has been finished.
+ * Pretty print a chunk of code.
+ * @param {string} sourceCodeHtml The HTML to pretty print.
+ * @param {string} opt_langExtension The language name to use.
+ *     Typically, a filename extension like 'cpp' or 'java'.
+ * @param {number|boolean} opt_numberLines True to number lines,
+ *     or the 1-indexed number of the first line in sourceCodeHtml.
+ * @return {string} code as html, but prettier
  */
 var prettyPrintOne;
 /**
- * Pretty print a chunk of code.
+ * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
+ * {@code class=prettyprint} and prettify them.
  *
- * @param {string} sourceCodeHtml code as html
- * @return {string} code as html, but prettier
+ * @param {Function} opt_whenDone called when prettifying is done.
+ * @param {HTMLElement|HTMLDocument} opt_root an element or document
+ *   containing all the elements to pretty print.
+ *   Defaults to {@code document.body}.
  */
 var prettyPrint;
 
@@ -763,6 +768,7 @@ var prettyPrint;
   }
 
   /**
+   * Pretty print a chunk of code.
    * @param sourceCodeHtml {string} The HTML to pretty print.
    * @param opt_langExtension {string} The language name to use.
    *     Typically, a filename extension like 'cpp' or 'java'.
@@ -794,8 +800,19 @@ var prettyPrint;
     return container.innerHTML;
   }
 
-  function prettyPrint(opt_whenDone) {
-    function byTagName(tn) { return document.getElementsByTagName(tn); }
+   /**
+    * Find all the {@code <pre>} and {@code <code>} tags in the DOM with
+    * {@code class=prettyprint} and prettify them.
+    *
+    * @param {Function} opt_whenDone called when prettifying is done.
+    * @param {HTMLElement|HTMLDocument} opt_root an element or document
+    *   containing all the elements to pretty print.
+    *   Defaults to {@code document.body}.
+    */
+  function prettyPrint(opt_whenDone, opt_root) {
+    var root = opt_root || document.body;
+    var doc = root.ownerDocument || document;
+    function byTagName(tn) { return root.getElementsByTagName(tn); }
     // fetch a list of nodes to rewrite
     var codeSegments = [byTagName('pre'), byTagName('code'), byTagName('xmp')];
     var elements = [];
@@ -874,12 +891,13 @@ var prettyPrint;
               preformatted = 1;
             } else {
               var currentStyle = cs['currentStyle'];
+              var defaultView = doc.defaultView;
               var whitespace = (
                   currentStyle
                   ? currentStyle['whiteSpace']
-                  : (document.defaultView
-                     && document.defaultView.getComputedStyle)
-                  ? document.defaultView.getComputedStyle(cs, null)
+                  : (defaultView
+                     && defaultView.getComputedStyle)
+                  ? defaultView.getComputedStyle(cs, null)
                   .getPropertyValue('white-space')
                   : 0);
               preformatted = whitespace
@@ -908,7 +926,7 @@ var prettyPrint;
       if (k < elements.length) {
         // finish up in a continuation
         setTimeout(doWork, 250);
-      } else if (opt_whenDone) {
+      } else if ('function' === typeof opt_whenDone) {
         opt_whenDone();
       }
     }
