@@ -91,13 +91,13 @@ var prettyPrint;
   // and to defeat aggressive optimizers that fold large string constants.
   var FLOW_CONTROL_KEYWORDS = ["break,continue,do,else,for,if,return,while"];
   var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," + 
-      "double,enum,extern,float,goto,int,long,register,short,signed,sizeof," +
-      "static,struct,switch,typedef,union,unsigned,void,volatile"];
+      "double,enum,extern,float,goto,inline,int,long,register,short,signed," +
+      "sizeof,static,struct,switch,typedef,union,unsigned,void,volatile"];
   var COMMON_KEYWORDS = [C_KEYWORDS,"catch,class,delete,false,import," +
       "new,operator,private,protected,public,this,throw,true,try,typeof"];
   var CPP_KEYWORDS = [COMMON_KEYWORDS,"alignof,align_union,asm,axiom,bool," +
       "concept,concept_map,const_cast,constexpr,decltype," +
-      "dynamic_cast,explicit,export,friend,inline,late_check," +
+      "dynamic_cast,explicit,export,friend,generic,late_check," +
       "mutable,namespace,nullptr,reinterpret_cast,static_assert,static_cast," +
       "template,typeid,typename,using,virtual,where"];
   var JAVA_KEYWORDS = [COMMON_KEYWORDS,
