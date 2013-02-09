@@ -7,6 +7,7 @@
       ? "../distrib/google-code-prettify/" : "../src/";
   var sources = [
       "prettify.js",
+      "lang-basic.js",
       "lang-css.js",
       // Language extensions tested.
       "lang-clj.js",
@@ -14,10 +15,11 @@
       "lang-xq.js",
       "lang-mumps.js",
       "lang-n.js",
+      "lang-pascal.js",
       "lang-r.js",
       "lang-tcl.js",
       "lang-tex.js"
- ];
+  ];
   var styles = [
       "prettify.css"
   ];
@@ -497,6 +499,45 @@ before CODE
 <h1>Issue 201: C type not full word</h1>
 <code class="prettyprint lang-c" id="issue201"
 >static Persistent&lt;String&gt; listeners_symbol;</code>
+
+<h1>Pascal w/ language specified</h1>
+<pre class="prettyprint lang-pascal" id="pascal_lang">
+(* some comment here *)
+PROCEDURE TestCase.AssertEquals(msg:String; expect, act:Longint);
+VAR ex, ac:String;
+BEGIN
+  IF expect &lt;&gt; act THEN
+  BEGIN
+    Str(expect, ex);
+    Fail(Concat(msg,' expected ',ex,' but was ',ac));
+  END;
+
+  factors := new(ArrayListPtr, Init);
+
+  FOR candidate := 2 TO i DO
+  BEGIN
+    WHILE i MOD candidate = 0 DO
+    BEGIN
+      factors^.Add(candidate);
+      i := i DIV candidate;
+    END;
+  END;
+END;
+</pre>
+
+<h1>BASIC w/ language specified</h1>
+<pre class="prettyprint lang-basic" id="basic_lang">
+200 REM ----- method teardown
+210 PRINT "green"
+220 RETURN
+470 IF af=0 THEN GOTO 520
+480 FOR j=1 TO af
+500 ac=pf(j) : me$=STR$(j)+". factor" : GOSUB 100
+510 NEXT
+530 RETURN
+1000 DATA "one", 1, 0
+</pre>
+
 </body>
 
 <h1>Dart language handler</h1>
@@ -1384,7 +1425,41 @@ var goldens = {
       ' `END`KWDW`END`PUN:`END`PLNVALMCC IOUOFF `END`KWDI`END`PLN `END`DEC$E`END`PUN(`END`PLNIOST`END`PUN,`END`LIT1`END`PUN,`END`LIT2`END`PUN)=`END`STR"C-"`END`PLN `END`KWDD`END`PLN IOXY^VALM4`END`PUN(`END`LIT0`END`PUN,`END`LIT0`END`PUN)`END`PLN `END`COM; -- turn off undln`END`PLN\n' +
       ' `END`KWDF`END`PLN `END`KWDI`END`PUN=`END`LIT1`END`PUN:`END`LIT1`END`PUN:`END`PLNVALM`END`PUN(`END`STR"TM"`END`PUN)`END`LIT-3`END`PLN `END`KWDW`END`PLN `END`PUN!,`END`DEC$S`END`PUN(\'`END`DEC$D`END`PUN(`END`PLNVALMHDR`END`PUN(`END`KWDI`END`PUN)):`END`STR""`END`PUN,`END`DEC$L`END`PUN(`END`PLNVALMHDR`END`PUN(`END`KWDI`END`PUN))&gt;(`END`PLNVALMWD`END`LIT-1`END`PUN):`END`PLN$`END`DEC$EXTRACT`END`PLN^VALM4`END`PUN(`END`DEC$G`END`PUN(`END`PLNVALMHDR`END`PUN(`END`KWDI`END`PUN))),`END`LIT1`END`PUN:`END`PLNVALMHDR`END`PUN(`END`KWDI`END`PUN))`END`PLN `END`COM; -- prt hdr`END`PLN\n' +
       ' `END`KWDQ`END'
-  )
+      ),
+  basic_lang: (
+      '`LIT200`END`PLN `END`COMREM ----- method teardown`END`PLN\n' + 
+      '`END`LIT210`END`PLN `END`KWDPRINT`END`PLN `END`STR"green"`END`PLN\n' + 
+      '`END`LIT220`END`PLN `END`KWDRETURN`END`PLN\n' + 
+      '`END`LIT470`END`PLN `END`KWDIF`END`PLN af`END`PUN=`END`LIT0`END`PLN `END`KWDTHEN`END`PLN `END`KWDGOTO`END`PLN `END`LIT520`END`PLN\n' + 
+      '`END`LIT480`END`PLN `END`KWDFOR`END`PLN j`END`PUN=`END`LIT1`END`PLN `END`KWDTO`END`PLN af\n' + 
+      '`END`LIT500`END`PLN ac`END`PUN=`END`PLNpf`END`PUN(`END`PLNj`END`PUN)`END`PLN `END`PUN:`END`PLN me$`END`PUN=`END`PLNSTR$`END`PUN(`END`PLNj`END`PUN)+`END`STR". factor"`END`PLN `END`PUN:`END`PLN `END`KWDGOSUB`END`PLN `END`LIT100`END`PLN\n' + 
+      '`END`LIT510`END`PLN `END`KWDNEXT`END`PLN\n' + 
+      '`END`LIT530`END`PLN `END`KWDRETURN`END`PLN\n' + 
+      '`END`LIT1000`END`PLN `END`KWDDATA`END`PLN `END`STR"one"`END`PUN,`END`PLN `END`LIT1`END`PUN,`END`PLN `END`LIT0`END'
+      ),
+  pascal_lang: (
+      '`COM(* some comment here *)`END`PLN\n' + 
+      '`END`KWDPROCEDURE`END`PLN TestCase`END`PUN.`END`PLNAssertEquals`END`PUN(`END`PLNmsg`END`PUN:`END`PLNString`END`PUN;`END`PLN expect`END`PUN,`END`PLN act`END`PUN:`END`PLNLongint`END`PUN);`END`PLN\n' + 
+      '`END`KWDVAR`END`PLN ex`END`PUN,`END`PLN ac`END`PUN:`END`PLNString`END`PUN;`END`PLN\n' + 
+      '`END`KWDBEGIN`END`PLN\n' + 
+      '  `END`KWDIF`END`PLN expect `END`PUN&lt;&gt;`END`PLN act `END`KWDTHEN`END`PLN\n' + 
+      '  `END`KWDBEGIN`END`PLN\n' + 
+      '    Str`END`PUN(`END`PLNexpect`END`PUN,`END`PLN ex`END`PUN);`END`PLN\n' + 
+      '    Fail`END`PUN(`END`PLNConcat`END`PUN(`END`PLNmsg`END`PUN,`END`STR\' expected \'`END`PUN,`END`PLNex`END`PUN,`END`STR\' but was \'`END`PUN,`END`PLNac`END`PUN));`END`PLN\n' + 
+      '  `END`KWDEND`END`PUN;`END`PLN\n' + 
+      '\n' + 
+      '  factors `END`PUN:=`END`PLN new`END`PUN(`END`PLNArrayListPtr`END`PUN,`END`PLN Init`END`PUN);`END`PLN\n' + 
+      '\n' + 
+      '  `END`KWDFOR`END`PLN candidate `END`PUN:=`END`PLN `END`LIT2`END`PLN `END`KWDTO`END`PLN i `END`KWDDO`END`PLN\n' + 
+      '  `END`KWDBEGIN`END`PLN\n' + 
+      '    `END`KWDWHILE`END`PLN i `END`KWDMOD`END`PLN candidate `END`PUN=`END`PLN `END`LIT0`END`PLN `END`KWDDO`END`PLN\n' + 
+      '    `END`KWDBEGIN`END`PLN\n' + 
+      '      factors`END`PUN^.`END`PLNAdd`END`PUN(`END`PLNcandidate`END`PUN);`END`PLN\n' + 
+      '      i `END`PUN:=`END`PLN i `END`KWDDIV`END`PLN candidate`END`PUN;`END`PLN\n' + 
+      '    `END`KWDEND`END`PUN;`END`PLN\n' + 
+      '  `END`KWDEND`END`PUN;`END`PLN\n' + 
+      '`END`KWDEND`END`PUN;`END'      
+      )
 };
 </script>
 

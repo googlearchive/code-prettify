@@ -53,8 +53,10 @@ PR['registerLangHandler'](
          // A boolean, numeric, or date literal.
          [PR['PR_LITERAL'],
           /^(?:True\b|False\b|Nothing\b|\d+(?:E[+\-]?\d+[FRD]?|[FRDSIL])?|(?:&H[0-9A-F]+|&O[0-7]+)[SIL]?|\d*\.\d+(?:E[+\-]?\d+)?[FRD]?|#\s+(?:\d+[\-\/]\d+[\-\/]\d+(?:\s+\d+:\d+(?::\d+)?(\s*(?:AM|PM))?)?|\d+:\d+(?::\d+)?(\s*(?:AM|PM))?)\s+#)/i],
-         // An identifier?
-         [PR['PR_PLAIN'], /^(?:(?:[a-z]|_\w)\w*|\[(?:[a-z]|_\w)\w*\])/i],
+         // An identifier.  Keywords can be turned into identifers
+         // with square brackets, and there may be optional type
+         // characters after a normal identifier in square brackets.
+         [PR['PR_PLAIN'], /^(?:(?:[a-z]|_\w)\w*(?:\[[%&@!#]+\])?|\[(?:[a-z]|_\w)\w*\])/i],
          // A run of punctuation
          [PR['PR_PUNCTUATION'],
           /^[^\w\t\n\r \"\'\[\]\xA0\u2018\u2019\u201C\u201D\u2028\u2029]+/],
