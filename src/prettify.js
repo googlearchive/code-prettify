@@ -984,42 +984,37 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
     var listItems = [li];
   
     function walk(node) {
-      switch (node.nodeType) {
-        case 1:  // Element
-          if (nocode.test(node.className)) { break; }
-          if ('br' === node.nodeName) {
-            breakAfter(node);
-            // Discard the <BR> since it is now flush against a </LI>.
-            if (node.parentNode) {
-              node.parentNode.removeChild(node);
-            }
-          } else {
-            for (var child = node.firstChild; child; child = child.nextSibling) {
-              walk(child);
-            }
+      var type = node.nodeType;
+      if (type == 1 && !nocode.test(node.className)) {  // Element
+        if ('br' === node.nodeName) {
+          breakAfter(node);
+          // Discard the <BR> since it is now flush against a </LI>.
+          if (node.parentNode) {
+            node.parentNode.removeChild(node);
           }
-          break;
-        case 3: case 4:  // Text
-          if (isPreformatted) {
-            var text = node.nodeValue;
-            var match = text.match(lineBreak);
-            if (match) {
-              var firstLine = text.substring(0, match.index);
-              node.nodeValue = firstLine;
-              var tail = text.substring(match.index + match[0].length);
-              if (tail) {
-                var parent = node.parentNode;
-                parent.insertBefore(
-                    document.createTextNode(tail), node.nextSibling);
-              }
-              breakAfter(node);
-              if (!firstLine) {
-                // Don't leave blank text nodes in the DOM.
-                node.parentNode.removeChild(node);
-              }
-            }
+        } else {
+          for (var child = node.firstChild; child; child = child.nextSibling) {
+            walk(child);
           }
-          break;
+        }
+      } else if ((type == 3 || type == 4) && isPreformatted) {  // Text
+        var text = node.nodeValue;
+        var match = text.match(lineBreak);
+        if (match) {
+          var firstLine = text.substring(0, match.index);
+          node.nodeValue = firstLine;
+          var tail = text.substring(match.index + match[0].length);
+          if (tail) {
+            var parent = node.parentNode;
+            parent.insertBefore(
+              document.createTextNode(tail), node.nextSibling);
+          }
+          breakAfter(node);
+          if (!firstLine) {
+            // Don't leave blank text nodes in the DOM.
+            node.parentNode.removeChild(node);
+          }
+        }
       }
     }
   
