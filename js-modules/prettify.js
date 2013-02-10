@@ -55,9 +55,6 @@
 // JSLint declarations
 /*global console, document, navigator, setTimeout, window, define */
 
-/** @define {boolean} */
-var IN_GLOBAL_SCOPE = true;
-
 /**
  * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
  * UI events.
@@ -786,7 +783,7 @@ var prettyPrint;
    * @param opt_numberLines {number|boolean} True to number lines,
    *     or the 1-indexed number of the first line in sourceCodeHtml.
    */
-  function $prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
+  function prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
     var container = document.createElement('div');
     // This could cause images to load and onload listeners to fire.
     // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
@@ -820,7 +817,7 @@ var prettyPrint;
     *   containing all the elements to pretty print.
     *   Defaults to {@code document.body}.
     */
-  function $prettyPrint(opt_whenDone, opt_root) {
+  function prettyPrint(opt_whenDone, opt_root) {
     var root = opt_root || document.body;
     var doc = root.ownerDocument || document;
     function byTagName(tn) { return root.getElementsByTagName(tn); }
@@ -966,14 +963,8 @@ var prettyPrint;
         'PR_STRING': PR_STRING,
         'PR_TAG': PR_TAG,
         'PR_TYPE': PR_TYPE,
-        'prettyPrintOne':
-           IN_GLOBAL_SCOPE
-             ? (win['prettyPrintOne'] = $prettyPrintOne)
-             : (prettyPrintOne = $prettyPrintOne),
-        'prettyPrint': prettyPrint =
-           IN_GLOBAL_SCOPE
-             ? (win['prettyPrint'] = $prettyPrint)
-             : (prettyPrint = $prettyPrint)
+        'prettyPrintOne': win['prettyPrintOne'] = prettyPrintOne,
+        'prettyPrint': win['prettyPrint'] = prettyPrint
       };
 
   // Make PR available via the Asynchronous Module Definition (AMD) API.
