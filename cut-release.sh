@@ -103,7 +103,7 @@ if build; then
   panic "Make failed"
 fi
 
-if [-n "$(svn stat "$VERSION_BASE/trunk")"; then
+if [ -n "$(svn stat "$VERSION_BASE/trunk")" ]; then
   svn stat "$VERSION_BASE/trunk"
   panic "Uncommitted changes"
 fi
@@ -149,8 +149,10 @@ function svn_sync() {
 }
 
 # Deploy the current compiled source to /loader
-sync svn_sync "$VERSION_BASE/trunk/src" "$VERSION_BASE/loader" js css
-sync svn_sync "$VERSION_BASE/trunk/styles" "$VERSION_BASE/loader/skins" css
+sync svn_sync "$VERSION_BASE/trunk/distrib/google-code-prettify" \
+    "$VERSION_BASE/loader" js css
+sync svn_sync "$VERSION_BASE/trunk/styles" \
+    "$VERSION_BASE/loader/skins" css
 
 # Cut branch
 command svn copy "$VERSION_BASE/trunk" "$VERSION_BASE/branches/$RELEASE_LABEL"
