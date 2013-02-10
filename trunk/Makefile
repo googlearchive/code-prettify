@@ -14,39 +14,26 @@ YUI_COMPRESSOR=java -jar yui-compressor/yuicompressor-2.4.4.jar \
 
 TAR_ROOT=distrib/google-code-prettify
 
-all: src/prettify.js distrib
+all: distrib
 
 clean:
-	rm -rf distrib.tstamp distrib src/prettify.js
+	rm -rf distrib.tstamp distrib src/prettify.js src/run_prettify.js
 
 src/prettify.js: js-modules/*.js js-modules/*.pl
-	@if [ -e $@ ]; then chmod +w $@; fi
-	@perl -e '\
-	  sub readInclude($$$$) {\
-	    my $$prefix = $$_[0];\
-	    my $$name = "js-modules/" . $$_[1];\
-	    my $$buf = "";\
-	    if ($$name =~ /\.pl$$/) {\
-	      open(IN, "|perl $$name") or die "$$name: $$!";\
-	    } else {\
-	      open(IN, "<$$name") or die "$$name: $$!";\
-	    }\
-	    while (<IN>) {\
-	      $$buf .= "$$prefix$$_";\
-	    }\
-	    return $$buf;\
-	  }' \
-	  -pe 's/^(\s*)include\("([^"]+)"\);/readInclude($$1, $$2)/ge' \
-	  js-modules/prettify.js \
-	  > src/prettify.js \
-	  || rm src/prettify.js
-	@if [ -e $@ ]; then chmod -w $@; fi
+	@if [ -e "$@" ]; then chmod +w "$@"; fi
+	@perl js-modules/js_include.pl "$$(basename $@)" > "$@"
+	@if [ -e "$@" ]; then chmod -w "$@"; fi
+
+src/run_prettify.js: js-modules/*.js js-modules/*.pl
+	@if [ -e "$@" ]; then chmod +w "$@"; fi
+	@perl js-modules/js_include.pl "$$(basename $@)" > "$@"
+	@if [ -e "$@" ]; then chmod -w "$@"; fi
 
 distrib: distrib.tstamp distrib/prettify-small.tgz distrib/prettify-small.zip distrib/prettify-small.tar.bz2
 	@wc -c distrib/prettify-small.{tar.bz2,tgz,zip} \
 	    | grep -v total
 
-distrib.tstamp: src/*.js src/*.css
+distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 	@echo Compiling
 	@mkdir -p $(TAR_ROOT)
 	@for f in src/*.css; do \
@@ -57,9 +44,19 @@ distrib.tstamp: src/*.js src/*.css
 	done
 	@$(CLOSURE_COMPILER) --js src/prettify.js \
 	    --externs closure-compiler/console-externs.js \
-            --externs closure-compiler/amd-externs.js \
+	    --externs closure-compiler/amd-externs.js \
+	    --define IN_GLOBAL_SCOPE=true \
+	    --output_wrapper='!function(){%output%}()' \
 	    > $(TAR_ROOT)/prettify.js
 	@wc -c src/prettify.js $(TAR_ROOT)/prettify.js \
+	    | grep -v total
+	@$(CLOSURE_COMPILER) --js src/run_prettify.js \
+	    --externs closure-compiler/console-externs.js \
+	    --externs closure-compiler/amd-externs.js \
+	    --define IN_GLOBAL_SCOPE=false \
+	    --output_wrapper='!function(){%output%}()' \
+	    > $(TAR_ROOT)/run_prettify.js
+	@wc -c src/run_prettify.js $(TAR_ROOT)/run_prettify.js \
 	    | grep -v total
 	@for f in src/lang*.js; do \
 	  if [ $$f -nt $(TAR_ROOT)/$$(basename $$f) ]; then \

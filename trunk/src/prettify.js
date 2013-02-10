@@ -55,6 +55,9 @@
 // JSLint declarations
 /*global console, document, navigator, setTimeout, window, define */
 
+/** @define {boolean} */
+var IN_GLOBAL_SCOPE = true;
+
 /**
  * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
  * UI events.
@@ -207,35 +210,34 @@ var prettyPrint;
    */
   var PR_NOCODE = 'nocode';
 
-
-
-/**
- * A set of tokens that can precede a regular expression literal in
- * javascript
- * http://web.archive.org/web/20070717142515/http://www.mozilla.org/js/language/js20/rationale/syntax.html
- * has the full list, but I've removed ones that might be problematic when
- * seen in languages that don't support regular expression literals.
- *
- * <p>Specifically, I've removed any keywords that can't precede a regexp
- * literal in a syntactically legal javascript program, and I've removed the
- * "in" keyword since it's not a keyword in many languages, and might be used
- * as a count of inches.
- *
- * <p>The link above does not accurately describe EcmaScript rules since
- * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
- * very well in practice.
- *
- * @private
- * @const
- */
-var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[+\\-]=|->|\\/=?|::?|<<?=?|>>?>?=?|,|;|\\?|@|\\[|~|{|\\^\\^?=?|\\|\\|?=?|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
-
-// CAVEAT: this does not properly handle the case where a regular
-// expression immediately follows another since a regular expression may
-// have flags for case-sensitivity and the like.  Having regexp tokens
-// adjacent is not valid in any language I'm aware of, so I'm punting.
-// TODO: maybe style special characters inside a regexp as punctuation.
-
+  
+  
+  /**
+   * A set of tokens that can precede a regular expression literal in
+   * javascript
+   * http://web.archive.org/web/20070717142515/http://www.mozilla.org/js/language/js20/rationale/syntax.html
+   * has the full list, but I've removed ones that might be problematic when
+   * seen in languages that don't support regular expression literals.
+   *
+   * <p>Specifically, I've removed any keywords that can't precede a regexp
+   * literal in a syntactically legal javascript program, and I've removed the
+   * "in" keyword since it's not a keyword in many languages, and might be used
+   * as a count of inches.
+   *
+   * <p>The link above does not accurately describe EcmaScript rules since
+   * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
+   * very well in practice.
+   *
+   * @private
+   * @const
+   */
+  var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[+\\-]=|->|\\/=?|::?|<<?=?|>>?>?=?|,|;|\\?|@|\\[|~|{|\\^\\^?=?|\\|\\|?=?|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
+  
+  // CAVEAT: this does not properly handle the case where a regular
+  // expression immediately follows another since a regular expression may
+  // have flags for case-sensitivity and the like.  Having regexp tokens
+  // adjacent is not valid in any language I'm aware of, so I'm punting.
+  // TODO: maybe style special characters inside a regexp as punctuation.
 
   /**
    * Given a group of {@link RegExp}s, returns a {@code RegExp} that globally
@@ -478,7 +480,6 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
     return new RegExp(rewritten.join('|'), ignoreCase ? 'gi' : 'g');
   }
 
-
   /**
    * Split markup into a string of source code and an array mapping ranges in
    * that string to the text nodes in which they appear.
@@ -569,7 +570,6 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
       spans: spans
     };
   }
-
 
   /**
    * Apply the given language handler to sourceCode and add the resulting
@@ -1094,7 +1094,6 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
   
     node.appendChild(ol);
   }
-
   /**
    * Breaks {@code job.sourceCode} around style boundaries in
    * {@code job.decorations} and modifies {@code job.sourceNode} in place.
@@ -1217,7 +1216,6 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
       }
     }
   }
-
 
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
@@ -1395,7 +1393,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
    * @param opt_numberLines {number|boolean} True to number lines,
    *     or the 1-indexed number of the first line in sourceCodeHtml.
    */
-  function prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
+  function $prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
     var container = document.createElement('div');
     // This could cause images to load and onload listeners to fire.
     // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
@@ -1429,7 +1427,7 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
     *   containing all the elements to pretty print.
     *   Defaults to {@code document.body}.
     */
-  function prettyPrint(opt_whenDone, opt_root) {
+  function $prettyPrint(opt_whenDone, opt_root) {
     var root = opt_root || document.body;
     var doc = root.ownerDocument || document;
     function byTagName(tn) { return root.getElementsByTagName(tn); }
@@ -1575,8 +1573,14 @@ var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[
         'PR_STRING': PR_STRING,
         'PR_TAG': PR_TAG,
         'PR_TYPE': PR_TYPE,
-        'prettyPrintOne': win['prettyPrintOne'] = prettyPrintOne,
-        'prettyPrint': win['prettyPrint'] = prettyPrint
+        'prettyPrintOne':
+           IN_GLOBAL_SCOPE
+             ? (win['prettyPrintOne'] = $prettyPrintOne)
+             : (prettyPrintOne = $prettyPrintOne),
+        'prettyPrint': prettyPrint =
+           IN_GLOBAL_SCOPE
+             ? (win['prettyPrint'] = $prettyPrint)
+             : (prettyPrint = $prettyPrint)
       };
 
   // Make PR available via the Asynchronous Module Definition (AMD) API.
