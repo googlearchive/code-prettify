@@ -34,12 +34,6 @@
 // |                  |               | google-code-prettify/source/ |        |
 // |                  |               | browse/trunk/styles          |        |
 // +------------------+---------------+------------------------------+--------+
-// | namespace=       | dotted ident  | Attaches prettyPrint and     | none   |
-// |                  |               | related functions to the     |        |
-// |                  |               | global object at that path   |        |
-// |                  |               | so they are accessible to    |        |
-// |                  |               | client code.                 |        |
-// +------------------+---------------+------------------------------+--------+
 // | callback=        | JS identifier | When "prettyPrint" finishes  | none   |
 // |                  |               | window.exports[js_ident] is  |        |
 // |                  |               | called.                      |        |
@@ -58,7 +52,6 @@
 //      stylesheet.
 //      A gallery of stylesheets is available at
 //      https://google-code-prettify.googlecode.com/svn/trunk/styles/index.html
-//       http://google-code-prettify.googlecode.com/svn/trunk/styles/index.html
 //   3. Since autorun=false is not specified, calls prettyPrint() on page load.
 
 
@@ -86,29 +79,29 @@ var IN_GLOBAL_SCOPE = false;
         pre = doc.addEventListener ? '' : 'on',
     
         init = function(e) {
-	  if (e.type == 'readystatechange' && doc.readyState != 'complete') {
+          if (e.type == 'readystatechange' && doc.readyState != 'complete') {
             return;
           }
-	  (e.type == 'load' ? win : doc)[rem](pre + e.type, init, false);
-	  if (!done && (done = true)) { callback.call(win, e.type || e); }
-	},
+          (e.type == 'load' ? win : doc)[rem](pre + e.type, init, false);
+          if (!done && (done = true)) { callback.call(win, e.type || e); }
+        },
 
         poll = function() {
-	  try {
+          try {
             root.doScroll('left');
           } catch(e) {
             setTimeout(poll, 50);
             return;
           }
-	  init('poll');
-	};
+          init('poll');
+        };
 
     if (doc.readyState == 'complete') {
       callback.call(win, 'lazy');
     } else {
       if (doc.createEventObject && root.doScroll) {
-	try { top = !win.frameElement; } catch(e) { }
-	if (top) { poll(); }
+        try { top = !win.frameElement; } catch(e) { }
+        if (top) { poll(); }
       }
       doc[add](pre + 'DOMContentLoaded', init, false);
       doc[add](pre + 'readystatechange', init, false);
@@ -160,7 +153,6 @@ var IN_GLOBAL_SCOPE = false;
   var autorun = true;
   var langs = [];
   var skins = [];
-  var namespaces = [];
   var callbacks = [];
   scriptQuery.replace(
       /[?&]([^&=]+)=([^&]+)/g,
@@ -170,7 +162,6 @@ var IN_GLOBAL_SCOPE = false;
         if (name == 'autorun')   { autorun = !/^[0fn]/i.test(value); } else
         if (name == 'lang')      { langs.push(value);                } else
         if (name == 'skin')      { skins.push(value);                } else
-        if (name == 'namespace') { namespaces.push(value);           } else
         if (name == 'callback')  { callbacks.push(value);            }
       });
 
@@ -178,23 +169,23 @@ var IN_GLOBAL_SCOPE = false;
   // prevent a MITM from rewrite prettify mid-flight.
   // This only works if this script is loaded via https : something
   // over which we exercise no control.
-  var PRETTIFY_CODE_HOME =
-    'https://google-code-prettify.googlecode.com/svn/trunk';
+  var LOADER_BASE_URL =
+     'https://google-code-prettify.googlecode.com/svn/loader';
 
   for (var i = 0, n = langs.length; i < n; ++i) {
     var script = doc.createElement('script');
     script.type = 'text/javascript';
-    script.src = PRETTIFY_CODE_HOME
-      + '/src/lang-' + encodeURIComponent(langs[i]) + '.js';
+    script.src = LOADER_BASE_URL
+      + '/lang-' + encodeURIComponent(langs[i]) + '.js';
     head.appendChild(script);
   }
   
   var skinUrls = [];
   for (var i = 0, n = skins.length; i < n; ++i) {
-    skinUrls.push(PRETTIFY_CODE_HOME
-        + '/styles/' + encodeURIComponent(skins[i]) + '.css');
+    skinUrls.push(LOADER_BASE_URL
+        + '/skins/' + encodeURIComponent(skins[i]) + '.css');
   }
-  skinUrls.push(PRETTIFY_CODE_HOME + '/src/prettify.css');
+  skinUrls.push(LOADER_BASE_URL + '/prettify.css');
   loadStylesheetsFallingBack(skinUrls);
 
   var prettyPrint = (function () {
@@ -1798,19 +1789,6 @@ var IN_GLOBAL_SCOPE = false;
         });
       }
     })();
-    for (var i = 0, n = namespaces.length; i < n; ++i) {
-      var namespace = namespaces[i];
-      var namespaceObj = win;
-      if (namespace) {
-        var parts = namespace.split('.');
-        for (var j = 0, nParts = parts.length; j < nParts; ++j) {
-          var part = parts[j];
-          namespaceObj = (namespaceObj[part] || (namespaceObj[part] = {}));
-        }
-      }
-      namespaceObj['prettyPrint']    = prettyPrint;
-      namespaceObj['prettyPrintOne'] = prettyPrintOne;
-    }
     return prettyPrint;
   })();
 
