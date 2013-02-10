@@ -132,22 +132,24 @@ function sync() {
     local ext
     local src_file
     local dest_file
-    for ext in $exts; do
-        for src_file in "$src_dir"/*."$ext"; do
-            if [ "$src_file" == "$src_dir/\*.$ext" ]; then continue; fi
-            dest_file="$dest_dir"/"$(basename "$src_file")"
-            if ! [ -e "$dest_file" ] || diff -q "$src_file" "$dest_file"; then
-                "$action" "$src_file" "$dest_file"
-            fi
+    (
+        shopt -s nullglob
+        for ext in $exts; do
+            for src_file in "$src_dir"/*."$ext"; do
+                dest_file="$dest_dir"/"$(basename "$src_file")"
+                if ! [ -e "$dest_file" ] || \
+                    diff -q "$src_file" "$dest_file"; then
+                    "$action" "$src_file" "$dest_file"
+                fi
+            done
+            for dest_file in "$dest_dir"/*."$ext"; do
+                src_file="$src_dir"/"$(basename "$dest_file")"
+                if ! [ -e "$src_file" ]; then
+                    "$action" "$src_file" "$dest_file"
+                fi
+            done
         done
-        for dest_file in "$dest_dir"/*."$ext"; do
-            if [ "$dest_file" == "$dest_dir/\*.$ext" ]; then continue; fi
-            src_file="$src_dir"/"$(basename "$dest_file")"
-            if ! [ -e "$src_file" ]; then
-                "$action" "$src_file" "$dest_file"
-            fi
-        done
-    done
+    )
 }
 
 function svn_sync() {
