@@ -1,13 +1,15 @@
 #!/bin/bash
 
 function help_and_exit() {
-    echo "Usage: $0 [-go] [-verbose]"
+    echo "Usage: $0 [-go] [-verbose] [-force]"
     echo
     echo "Moves minified CSS and JS to distribution directories and"
     echo "creates a branch in SVN."
     echo
     echo "  -go:      Run commands instead of just echoing them."
     echo "  -verbose: More verbose logging."
+    echo "  -force:   Ignore sanity checks for testing."
+    echo "            Incompatible with -go."
     exit "$1"
 }
 
@@ -15,48 +17,61 @@ function help_and_exit() {
 export VERBOSE="0"
 # 1 if commands that have side-effects should actually be run instead of logged
 export EFFECT="0"
+# 1 to not exit on panic.
+export NO_PANIC="0"
 
 function panic() {
-    echo "$*"
-    exit -1
+    echo "PANIC: $*"
+
+    if ! (( $NO_PANIC )); then
+        exit -1
+    fi
 }
 
 function command() {
     if (( $VERBOSE )) || ! (( $EFFECT )); then
-	echo '$' "$*"
+        echo '$' "$*"
     fi
     if (( $EFFECT )); then
-	"$@" || panic "command failed: $@"
+        "$@" || panic "command failed: $@"
     fi
 }
 
 function mime_for_file() {
     local path="$1"
     case "${path##*.}" in
-	js)   echo -n "text/javascript;charset=UTF-8";;
-	css)  echo -n "text/css;charset=UTF-8";;
-	html) echo -n "text/html;charset=UTF-8";;
-	*)    panic "unrecognized extension for $path";;
+        js)   echo -n "text/javascript;charset=UTF-8";;
+        css)  echo -n "text/css;charset=UTF-8";;
+        html) echo -n "text/html;charset=UTF-8";;
+        *)    panic "unrecognized extension for $path";;
     esac
 }
 
 for var in "$@"; do
   case "$var" in
       -verbose)
-	  VERBOSE="1"
-	  ;;
+          VERBOSE="1"
+          ;;
       -go)
-	  EFFECT="1"
-	  ;;
+          EFFECT="1"
+          ;;
+      -force)
+          NO_PANIC="1"
+          ;;
       -h)
-	  help_and_exit 0
-	  ;;
+          help_and_exit 0
+          ;;
       *)
-	  echo "Unrecognized variable $var"
-	  help_and_exit -1
-	  ;;
+          echo "Unrecognized variable $var"
+          help_and_exit -1
+          ;;
   esac
 done
+
+if (( $NO_PANIC )) && (( $EFFECT )); then
+    NO_PANIC="0"
+    panic "-force is incompatible with -go"
+fi
 
 # Find svn root
 export VERSION_BASE="$(
@@ -118,18 +133,20 @@ function sync() {
     local src_file
     local dest_file
     for ext in $exts; do
-	for src_file in "$src_dir"/*."$ext"; do
-	    dest_file="$dest_dir"/"$(basename "$src_file")"
-	    if ! [ -e "$dest_file" ] || diff -q "$src_file" "$dest_file"; then
-		"$action" "$src_file" "$dest_file"
-	    fi
-	done
-	for dest_file in "$dest_dir"/*."$ext"; do
-	    src_file="$src_dir"/"$(basename "$dest_file")"
-	    if ! [ -e "$src_file" ]; then
-		"$action" "$src_file" "$dest_file"
-	    fi
-	done
+        for src_file in "$src_dir"/*."$ext"; do
+            if [ "$src_file" == "$src_dir/\*.$ext" ]; then continue; fi
+            dest_file="$dest_dir"/"$(basename "$src_file")"
+            if ! [ -e "$dest_file" ] || diff -q "$src_file" "$dest_file"; then
+                "$action" "$src_file" "$dest_file"
+            fi
+        done
+        for dest_file in "$dest_dir"/*."$ext"; do
+            if [ "$dest_file" == "$dest_dir/\*.$ext" ]; then continue; fi
+            src_file="$src_dir"/"$(basename "$dest_file")"
+            if ! [ -e "$src_file" ]; then
+                "$action" "$src_file" "$dest_file"
+            fi
+        done
     done
 }
 
@@ -137,14 +154,14 @@ function svn_sync() {
     local src_file="$1"
     local dest_file="$2"
     if ! [ -e "$src_file" ]; then
-	command svn delete "$dest_file"
+        command svn delete "$dest_file"
     else
-	command cp "$src_file" "$dest_file"
-	if ! [ -e "$dest_file" ]; then
-	    command svn add "$dest_file"
-	    command svn propset svn:mime-type "$(mime_for_file "$src_file")" \
-		"$dest_file"
-	fi
+        command cp "$src_file" "$dest_file"
+        if ! [ -e "$dest_file" ]; then
+            command svn add "$dest_file"
+            command svn propset svn:mime-type "$(mime_for_file "$src_file")" \
+                "$dest_file"
+        fi
     fi
 }
 
