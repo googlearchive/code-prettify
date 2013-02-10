@@ -158,8 +158,10 @@ function svn_sync() {
     if ! [ -e "$src_file" ]; then
         command svn delete "$dest_file"
     else
-        command cp "$src_file" "$dest_file"
-        if ! [ -e "$dest_file" ]; then
+        if [ -e "$dest_file" ]; then
+            command cp "$src_file" "$dest_file"
+        else
+            command cp "$src_file" "$dest_file"
             command svn add "$dest_file"
             command svn propset svn:mime-type "$(mime_for_file "$src_file")" \
                 "$dest_file"
