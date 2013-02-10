@@ -182,7 +182,7 @@ command svn copy "$VERSION_BASE/trunk" "$VERSION_BASE/branches/$RELEASE_LABEL"
 echo
 if (( $EFFECT )); then
     echo "Finally run"
-    echo "    $ svn commit -m 'Release $VERSION_BASE'"
+    echo "    $ svn commit -m 'Release $RELEASE_LABEL'"
     echo "to commit the new release then upload"
     echo "    $VERSION_BASE/trunk/distrib/prettify-small.*"
     echo "to"

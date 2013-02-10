@@ -1,0 +1,110 @@
+<style>
+code {
+  white-space: pre; padding: 0; margin: 0; display: block
+}
+</style>
+
+<code id="one-line"
+>one short line,</code>
+
+<hr>
+
+<code id="two-lines"
+>one giant leap for
+cross-browser compatibility</code>
+
+<hr>
+
+<code id="two-lines-mutated"
+>two turtledoves
+a partridge in a pear tree
+zero fencepost errors</code>
+
+<hr>
+
+<p id="error" style="white-space: pre"></p>
+
+<script>
+// Function under test
+var matrix;
+
+(function () {
+  var table = {
+    quirks: { "6": "\r", "7": "\r", "8": "\r", "9": "\r", "10": "\n" },
+    standards: { "6": "\r", "7": "\r", "8": "\r", "9": "\n", "10": "\n" }
+  };
+
+  matrix = function (quirksMode, ieMajorVersionNumber) {
+    if ("boolean" !== typeof quirksMode) {
+      throw new Error(quirksMode);
+    } else if ("number" !== typeof ieMajorVersionNumber
+        || !table.quirks.hasOwnProperty(+ieMajorVersionNumber)) {
+      throw new Error(ieMajorVersionNumber);
+    }
+    return table[quirksMode ? "quirks" : "standards"][ieMajorVersionNumber];
+  };
+})();
+</script>
+
+<script>
+// Configuration we're testing.
+var quirksMode;
+var ieMajorVersionNumber;
+
+quirksMode = document.compatMode == "BackCompat";
+ieMajorVersionNumber = navigator.userAgent.match(/MSIE\s(\d+)/) || NaN;
+if (ieMajorVersionNumber) {
+  ieMajorVersionNumber = +ieMajorVersionNumber[1];
+}
+</script>
+
+<script>
+(function () {
+  // DOM elements.
+  var oneLine = document.getElementById("one-line");
+  var twoLines = document.getElementById("two-lines");
+  var twoLinesMutated = document.getElementById("two-lines-mutated");
+
+  var originalHeight = twoLinesMutated.offsetHeight;
+
+  // If the matrix cell being tested is correct, the following should
+  // end up true.
+  var pass = false;
+  var reason = "unknown";
+
+  // The DOM subtree to modify.
+  var textNode = twoLinesMutated.firstChild;
+
+  if (textNode.nodeType !== 3 /* TEXT */ || textNode.nextSibling) {
+    reason = "unexpected DOM structure";  // Maybe not normalized.
+  } else {
+    // Perform the action we are testing.
+    try {
+      textNode.nodeValue = twoLines.firstChild.nodeValue.replace
+          /\r\n?|\n/g, matrix(quirksMode, ieMajorVersionNumber);
+    } catch (ex) {
+      reason = String(ex);
+    }
+
+    // Check it against known good DOM subtrees.
+    if (Math.abs(twoLinesMutated.offsetHeight - twoLines.offsetHeight) <= 1) {
+      pass = true;
+    } else if (Math.abs(twoLinesMutated.offsetHeight - oneLine.offsetHeight) <= 1) {
+      reason = "newlines not preserved";
+    } else {
+      // offsetHeight should trigger layout, but might not have???
+    }
+  }
+
+  document.title += " : " + pass ? "PASS" : "FAIL";
+  if (!pass) {
+    document.getElementById("error").appendChild(document.createTextNode(
+       "quirksMode is " + quirksMode +
+       "\nieMajorVersionNumber is " + ieMajorVersionNumber +
+       "\nheight was " + originalHeight +
+       "\nheight is " + twoLinesMutated.offsetHeight +
+       "\nexpected " + twoLines.offsetHeight +
+       "\nreason=" + reason));
+  }
+})();
+</script>
