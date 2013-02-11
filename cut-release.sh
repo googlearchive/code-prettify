@@ -123,6 +123,10 @@ if [ -n "$(svn stat "$VERSION_BASE/trunk")" ]; then
   panic "Uncommitted changes"
 fi
 
+function diffq() {
+    ! diff -q "$@" > /dev/null
+}
+
 function sync() {
     local action="$1"
     local src_dir="$2"
@@ -138,7 +142,7 @@ function sync() {
             for src_file in "$src_dir"/*."$ext"; do
                 dest_file="$dest_dir"/"$(basename "$src_file")"
                 if ! [ -e "$dest_file" ] || \
-                    diff -q "$src_file" "$dest_file"; then
+                    diffq "$src_file" "$dest_file"; then
                     "$action" "$src_file" "$dest_file"
                 fi
             done
