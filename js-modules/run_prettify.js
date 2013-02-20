@@ -134,7 +134,8 @@
   // If the script is loaded twice, then this will run in reverse order.
   for (var scripts = doc.scripts, i = scripts.length; --i >= 0;) {
     var script = scripts[i];
-    var match = script.src.match(/\/run_prettify\.js(?:\?([^#]*))?(?:#.*)?$/);
+    var match = script.src.match(
+        /^[^?#]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);
     if (match) {
       scriptQuery = match[1] || '';
       // Remove the script from the DOM so that multiple runs at least run
