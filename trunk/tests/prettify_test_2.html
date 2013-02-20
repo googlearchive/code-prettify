@@ -12,6 +12,7 @@
       // Language extensions tested.
       "lang-clj.js",
       "lang-lisp.js",
+      "lang-llvm.js",
       "lang-xq.js",
       "lang-mumps.js",
       "lang-n.js",
@@ -538,8 +539,6 @@ END;
 1000 DATA "one", 1, 0
 </pre>
 
-</body>
-
 <h1>Dart language handler</h1>
 <pre class="prettyprint lang-dart" id="dart">
 part of myLib;
@@ -774,6 +773,32 @@ HDR ; -- prt/display header
  F I=1:1:VALM("TM")-3 W !,$S('$D(VALMHDR(I)):"",$L(VALMHDR(I))>(VALMWD-1):$$EXTRACT^VALM4($G(VALMHDR(I))),1:VALMHDR(I)) ; -- prt hdr
  Q
 </pre>
+
+<h1>LLVM</h1>
+<a href="http://llvm.org/docs/LangRef.html">Hello world module</a>
+<pre class="prettyprint lang-llvm" id="llvm">
+; Declare the string constant as a global constant.
+@.str = private unnamed_addr constant [13 x i8] c"hello world\0A\00"
+
+; External declaration of the puts function
+declare i32 @puts(i8* nocapture) nounwind
+
+; Definition of main function
+define i32 @main() {   ; i32()*
+  ; Convert [13 x i8]* to i8  *...
+  %cast210 = getelementptr [13 x i8]* @.str, i64 0, i64 0
+
+  ; Call puts function to write out the string to stdout.
+  call i32 @puts(i8* %cast210)
+  ret i32 0
+}
+
+; Named metadata
+!1 = metadata !{i32 42}
+!foo = !{!1, null}
+</pre>
+
+</body>
 
 <script type="text/javascript">
 /**
@@ -1459,6 +1484,27 @@ var goldens = {
       '    `END`KWDEND`END`PUN;`END`PLN\n' +
       '  `END`KWDEND`END`PUN;`END`PLN\n' +
       '`END`KWDEND`END`PUN;`END'
+      ),
+  llvm: (
+        '`COM; Declare the string constant as a global constant.`END`PLN\n' +
+        '@.str `END`PUN=`END`PLN `END`KWDprivate`END`PLN `END`KWDunnamed_addr`END`PLN `END`KWDconstant`END`PLN `END`PUN[`END`LIT13`END`PLN `END`KWDx`END`PLN `END`KWDi8`END`PUN]`END`PLN `END`KWDc`END`STR"hello world\\0A\\00"`END`PLN\n' +
+        '\n' +
+        '`END`COM; External declaration of the puts function`END`PLN\n' +
+        '`END`KWDdeclare`END`PLN `END`KWDi32`END`PLN @puts`END`PUN(`END`KWDi8`END`PUN*`END`PLN `END`KWDnocapture`END`PUN)`END`PLN `END`KWDnounwind`END`PLN\n' +
+        '\n' +
+        '`END`COM; Definition of main function`END`PLN\n' +
+        '`END`KWDdefine`END`PLN `END`KWDi32`END`PLN @main`END`PUN()`END`PLN `END`PUN{`END`PLN   `END`COM; i32()*`END`PLN\n' +
+        '  `END`COM; Convert [13 x i8]* to i8  *...`END`PLN\n' +
+        '  %cast210 `END`PUN=`END`PLN `END`KWDgetelementptr`END`PLN `END`PUN[`END`LIT13`END`PLN `END`KWDx`END`PLN `END`KWDi8`END`PUN]*`END`PLN @.str`END`PUN,`END`PLN `END`KWDi64`END`PLN `END`LIT0`END`PUN,`END`PLN `END`KWDi64`END`PLN `END`LIT0`END`PLN\n' +
+        '\n' +
+        '  `END`COM; Call puts function to write out the string to stdout.`END`PLN\n' +
+        '  `END`KWDcall`END`PLN `END`KWDi32`END`PLN @puts`END`PUN(`END`KWDi8`END`PUN*`END`PLN %cast210`END`PUN)`END`PLN\n' +
+        '  `END`KWDret`END`PLN `END`KWDi32`END`PLN `END`LIT0`END`PLN\n' +
+        '`END`PUN}`END`PLN\n' +
+        '\n' +
+        '`END`COM; Named metadata`END`PLN\n' +
+        '!1 `END`PUN=`END`PLN `END`KWDmetadata`END`PLN !`END`PUN{`END`KWDi32`END`PLN `END`LIT42`END`PUN}`END`PLN\n' +
+        '!foo `END`PUN=`END`PLN !`END`PUN{`END`PLN!1`END`PUN,`END`PLN `END`KWDnull`END`PUN}`END'
       )
 };
 </script>
