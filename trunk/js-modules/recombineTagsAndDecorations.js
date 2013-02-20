@@ -3,6 +3,7 @@
  * {@code job.decorations} and modifies {@code job.sourceNode} in place.
  * @param {Object} job like <pre>{
  *    sourceCode: {string} source as plain text,
+ *    sourceNode: {HTMLElement} the element containing the source,
  *    spans: {Array.<number|Node>} alternating span start indices into source
  *       and the text node or element (e.g. {@code <BR>}) corresponding to that
  *       span.
