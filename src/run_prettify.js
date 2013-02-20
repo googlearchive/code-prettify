@@ -1287,6 +1287,7 @@ var IN_GLOBAL_SCOPE = false;
        * {@code job.decorations} and modifies {@code job.sourceNode} in place.
        * @param {Object} job like <pre>{
        *    sourceCode: {string} source as plain text,
+       *    sourceNode: {HTMLElement} the element containing the source,
        *    spans: {Array.<number|Node>} alternating span start indices into source
        *       and the text node or element (e.g. {@code <BR>}) corresponding to that
        *       span.
@@ -1568,7 +1569,7 @@ var IN_GLOBAL_SCOPE = false;
           recombineTagsAndDecorations(job);
         } catch (e) {
           if (win['console']) {
-            console['log'](e && e['stack'] ? e['stack'] : e);
+            console['log'](e && e['stack'] || e);
           }
         }
       }
@@ -1712,7 +1713,7 @@ var IN_GLOBAL_SCOPE = false;
     
                 // Look for a class like linenums or linenums:<n> where <n> is the
                 // 1-indexed number of the first line.
-                var lineNums = cs.className.match(/\blinenums\b(?::(\d+))?/);
+                var lineNums = className.match(/\blinenums\b(?::(\d+))?/);
                 lineNums = lineNums
                     ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
                     : false;
