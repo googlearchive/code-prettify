@@ -490,6 +490,26 @@ before CODE
 <code class="language-lisp">; foo</code>
 </pre>
 
+<p>The language is attached to an HTML5 comment that looks like an XML
+processing instruction.</p>
+<?prettify lang=lisp?>
+<pre class="prettyprint" id="procinstr1">; foo</pre>
+
+<p>The language is attached to a regular HTML5 comment that looks like an XML
+processing instruction.</p>
+<!--prettify linenums=4 lang=lisp-->
+<pre class="prettyprint" id="procinstr2">; foo</pre>
+
+<p>The language is attached to a regular HTML5 comment that looks like an XML
+processing instruction.</p>
+<!--prettify linenums=true lang=lisp-->
+<pre class="prettyprint" id="procinstr3">; foo</pre>
+
+<p>The language is attached to a regular HTML5 comment that looks like an XML
+processing instruction.</p>
+<!--prettify linenums=false lang=lisp-->
+<pre class="prettyprint" id="procinstr4">; foo</pre>
+
 <h1>Issues 185 and 261: Don't reprettify prettified content</h1>
 <code class="prettyprint prettyprinted" id="issue185"
 ><span class="str">"No tag backs."</span></code>
@@ -1201,6 +1221,11 @@ var goldens = {
       '`END</code>\n'),
   html5conv4: ('`PLNbefore CODE\n' +
       '`END<code class="language-lisp">`PUN;`END`PLN foo`END</code>\n'),
+  procinstr1: '`COM; foo`END',
+  procinstr2:
+      '<ol class="linenums"><li class="L3" value="4">`COM; foo`END</li></ol>',
+  procinstr3: '<ol class="linenums"><li class="L0">`COM; foo`END</li></ol>',
+  procinstr4: '`COM; foo`END',
   issue185: '`STR"No tag backs."`END',
   issue261: '<ol class="linenums"><li class="L0">`STR"No tag backs."`END</li></ol>',
   issue201: '`KWDstatic`END`PLN `END`TYPPersistent`END' +
