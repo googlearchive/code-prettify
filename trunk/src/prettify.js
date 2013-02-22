@@ -1458,6 +1458,7 @@ var prettyPrint;
     var preformattedTagNameRe = /pre|xmp/i;
     var codeRe = /^code$/i;
     var preCodeXmpRe = /^(?:pre|code|xmp)$/i;
+    var EMPTY = {};
 
     function doWork() {
       var endTime = (win['PR_SHOULD_USE_CONTINUATION'] ?
@@ -1487,6 +1488,31 @@ var prettyPrint;
             // we shouldn't try again.
             cs.className += ' prettyprinted';
 
+            // Look for a preceding comment like
+            // <?prettify lang="..." linenums="..."?>
+            var attrs = EMPTY;
+            {
+              for (var preceder = cs; (preceder = preceder.previousSibling);) {
+                var nt = preceder.nodeType;
+                // <?foo?> is parsed by HTML 5 to a comment node (8)
+                // like <!--?foo?-->, but in XML is a processing instruction
+                var value = (nt === 7 || nt === 8) && preceder.nodeValue;
+                if (value
+                    ? !/^\??prettify\b/.test(value)
+                    : (nt !== 3 || /\S/.test(preceder.nodeValue))) {
+                  // Skip over white-space text nodes but not others.
+                  break;
+                }
+                if (value) {
+                  attrs = {};
+                  value.replace(
+                      /\b(\w+)=([\w:.%+-]+)/g,
+                      function (_, name, value) { attrs[name] = value; });
+                  break;
+                }
+              }
+            }
+
             // If the classes includes a language extensions, use it.
             // Language extensions can be specified like
             //     <pre class="prettyprint lang-cpp">
@@ -1495,15 +1521,18 @@ var prettyPrint;
             // HTML5 recommends that a language be specified using "language-"
             // as the prefix instead.  Google Code Prettify supports both.
             // http://dev.w3.org/html5/spec-author-view/the-code-element.html
-            var langExtension = className.match(langExtensionRe);
-            // Support <pre class="prettyprint"><code class="language-c">
-            var wrapper;
-            if (!langExtension && (wrapper = childContentWrapper(cs))
-                && codeRe.test(wrapper.tagName)) {
-              langExtension = wrapper.className.match(langExtensionRe);
-            }
+            var langExtension = attrs['lang'];
+            if (!langExtension) {
+              langExtension = className.match(langExtensionRe);
+              // Support <pre class="prettyprint"><code class="language-c">
+              var wrapper;
+              if (!langExtension && (wrapper = childContentWrapper(cs))
+                  && codeRe.test(wrapper.tagName)) {
+                langExtension = wrapper.className.match(langExtensionRe);
+              }
 
-            if (langExtension) { langExtension = langExtension[1]; }
+              if (langExtension) { langExtension = langExtension[1]; }
+            }
 
             var preformatted;
             if (preformattedTagNameRe.test(cs.tagName)) {
@@ -1525,10 +1554,15 @@ var prettyPrint;
 
             // Look for a class like linenums or linenums:<n> where <n> is the
             // 1-indexed number of the first line.
-            var lineNums = className.match(/\blinenums\b(?::(\d+))?/);
-            lineNums = lineNums
-                ? lineNums[1] && lineNums[1].length ? +lineNums[1] : true
+            var lineNums = attrs['linenums'];
+            if (!(lineNums = lineNums === 'true' || +lineNums)) {
+              lineNums = className.match(/\blinenums\b(?::(\d+))?/);
+              lineNums =
+                lineNums
+                ? lineNums[1] && lineNums[1].length
+                  ? +lineNums[1] : true
                 : false;
+            }
             if (lineNums) { numberLines(cs, lineNums, preformatted); }
 
             // do the pretty printing
