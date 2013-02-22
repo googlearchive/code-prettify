@@ -5,7 +5,7 @@
 <title>Making Quines Prettier</title>
 <!-- The defer is not necessary for autoloading, but is necessary for the
      script at the bottom to work as a Quine. -->
-<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?autoload=true&skin=sunburst&lang=css" defer="defer"></script>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css" defer="defer"></script>
 <style>.operative { font-weight: bold; border:1px solid yellow }</style>
 </head>
 
@@ -40,7 +40,7 @@ specifies that every fifth line should be numbered.
 
   var quineHtml = html(
         '<!DOCTYPE html>\n<html>\n'
-      +  document.documentElement.innerHTML 
+      + document.documentElement.innerHTML 
       + '\n<\/html>\n');
 
   // Highlight the operative parts:
