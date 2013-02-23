@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-CLOSURE_COMPILER=java -jar closure-compiler/compiler.jar \
+CLOSURE_COMPILER=java -jar tools/closure-compiler/compiler.jar \
 	      --warning_level VERBOSE \
 	      --language_in ECMASCRIPT5 \
 	      --compilation_level ADVANCED_OPTIMIZATIONS
@@ -9,7 +9,7 @@ CLOSURE_COMPILER=java -jar closure-compiler/compiler.jar \
 # to UTF-8 sequences instead of being emitted as ASCII.
 # This makes the resulting JavaScript less portable.
 
-YUI_COMPRESSOR=java -jar yui-compressor/yuicompressor-2.4.4.jar \
+YUI_COMPRESSOR=java -jar tools/yui-compressor/yuicompressor-2.4.4.jar \
 	      --charset UTF-8
 
 TAR_ROOT=distrib/google-code-prettify
@@ -43,16 +43,16 @@ distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 	      | grep -v total; \
 	done
 	@$(CLOSURE_COMPILER) --js src/prettify.js \
-	    --externs closure-compiler/console-externs.js \
-	    --externs closure-compiler/amd-externs.js \
+	    --externs tools/closure-compiler/console-externs.js \
+	    --externs tools/closure-compiler/amd-externs.js \
 	    --define IN_GLOBAL_SCOPE=true \
 	    --output_wrapper='!function(){%output%}()' \
 	    > $(TAR_ROOT)/prettify.js
 	@wc -c src/prettify.js $(TAR_ROOT)/prettify.js \
 	    | grep -v total
 	@$(CLOSURE_COMPILER) --js src/run_prettify.js \
-	    --externs closure-compiler/console-externs.js \
-	    --externs closure-compiler/amd-externs.js \
+	    --externs tools/closure-compiler/console-externs.js \
+	    --externs tools/closure-compiler/amd-externs.js \
 	    --define IN_GLOBAL_SCOPE=false \
 	    --output_wrapper='!function(){%output%}()' \
 	    > $(TAR_ROOT)/run_prettify.js
@@ -83,15 +83,20 @@ distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 	@gzip -c -9 $^ > $@
 
 %.tar.bz2: %.tar
-	@bzip2 -9f $^
+	@bzip2 -k -9f $^
 
 distrib/prettify-small.tar: distrib.tstamp
-	@pushd distrib >& /dev/null; \
-	tar cf ../$@ google-code-prettify; \
-	popd >& /dev/null
+	tar cf $@ -C distrib google-code-prettify
 
 distrib/prettify-small.zip: distrib.tstamp
 	@pushd distrib >& /dev/null; \
 	rm -f ../$@; \
 	zip -q -9 -r ../$@ google-code-prettify; \
 	popd >& /dev/null
+
+distrib/prettify.tar: distrib.tstamp
+	mkdir -p distrib/sources/google-code-prettify
+	cp -fr CHANGES.html COPYING README.html Makefile \
+	  examples js-modules src styles tests tools \
+	  distrib/sources/google-code-prettify
+	tar cf distrib/prettify.tar -C distrib/sources google-code-prettify

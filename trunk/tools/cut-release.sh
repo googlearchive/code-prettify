@@ -75,7 +75,7 @@ fi
 
 # Find svn root
 export VERSION_BASE="$(
-  pushd "$(dirname "$0")/.." > /dev/null; pwd; popd > /dev/null)"
+  pushd "$(dirname "$0")/../.." > /dev/null; pwd; popd > /dev/null)"
 
 if [ -z "$VERSION_BASE" ] || ! [ -d "$VERSION_BASE" ]; then
     panic "unknown VERSION_BASE"
@@ -95,7 +95,8 @@ if (( $VERBOSE )); then
 fi
 
 # Choose a release label
-export RELEASE_LABEL="$(date -u +release-%e-%b-%Y)"
+export TODAY="$(date -u +release-%e-%b-%Y)"
+export RELEASE_LABEL="release-$TODAY"
 
 if (( $VERBOSE )); then
     echo "RELEASE_LABEL=$RELEASE_LABEL"
@@ -109,7 +110,7 @@ fi
 # Make the distribution
 function build() {
   pushd "$VERSION_BASE/trunk" > /dev/null
-  make distrib
+  make distrib distrib/prettify.tar.bz2 distrib/prettify-small.tar.bz2
   local status=$?
   popd > /dev/null
   (($status))
@@ -182,14 +183,28 @@ sync svn_sync "$VERSION_BASE/trunk/styles" \
 # Cut branch
 command svn copy "$VERSION_BASE/trunk" "$VERSION_BASE/branches/$RELEASE_LABEL"
 
+command cp distrib/prettify.tar.bz2 \
+          "distrib/prettify-$TODAY.tar.bz2"
+command cp distrib/prettify-small.tar.bz2 \
+          "distrib/prettify-small-$TODAY.tar.bz2"
+
 # Dump final instructions for caller.
 echo
 if (( $EFFECT )); then
     echo "Finally run"
     echo "    $ svn commit -m 'Release $RELEASE_LABEL'"
-    echo "to commit the new release then upload"
-    echo "    $VERSION_BASE/trunk/distrib/prettify-small.*"
-    echo "to"
+    echo "to commit the new release then run"
+    echo "$ $VERSION_BASE/trunk/tools/googlecode_upload.py \\"
+    echo "    --summary='Bundle of source files, tests, and documentation' \\"
+    echo "    -p google-code-prettify -u mikesamuel \\"
+    echo "    --labels='Type-Archive,OpSys-All,Featured' \\"
+    echo "    distrib/prettify-$TODAY.tar.bz2"
+    echo "$ $VERSION_BASE/trunk/tools/googlecode_upload.py \\"
+    echo "    --summary='Minimized JS and CSS sources' \\"
+    echo "    -p google-code-prettify -u mikesamuel \\"
+    echo "    --labels='Type-Archive,OpSys-All,Featured' \\"
+    echo "    distrib/prettify-small-$TODAY.tar.bz2"
+    echo "and finally check"
     echo "    http://code.google.com/p/google-code-prettify/downloads/list"
 else
    echo "Rerun with -go flag to actually execute these commands."
