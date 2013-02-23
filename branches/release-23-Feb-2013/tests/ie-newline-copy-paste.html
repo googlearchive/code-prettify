@@ -1,0 +1,144 @@
+<title>IE Newline Copy/Paste Info Gathering</title>
+
+<body>
+<p>
+I'm trying to squash, <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=20">once</a> and <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=104">for</a> <a href="http://code.google.com/p/google-code-prettify/issues/detail?id=128">all</a>, the problems with newlines in
+<tt>&lt;PRE&gt;</tt>s in IE.  I can't run 3 versions of IE, so I'd
+really appreciate any help from people who have IE open and running.
+</p>
+
+<p>
+Please copy from START through END below and paste it into the
+textarea below.
+Then hit Ctrl-A, Ctrl-C to copy the textarea contents, and paste that
+into an email.
+Please also copy and paste the RESULTS section below and include it in
+the email response as well and send it
+to <a href="mailto:mikesamuel@gmail.com">me</a> or respond to the
+discussion list.
+</p>
+
+<p>
+In case you're interested, there are two problems: choosing a way to
+split lines that doesn't introduce too few or extra newlines, and a
+way to make sure that the resulting code can be copy-pasted into a
+plain text editors such as the textarea below.  This is my attempt to
+gather information on both issues by IE version.
+</p>
+
+cheers.
+</body>
+
+<script>
+function makeCodeJoiningOn(text, htmlNewline, start, end) {
+  start = start || '';
+  end = end || '';
+  var code = document.createElement('PRE');
+  code.innerHTML = start + ['before', '[' + text + ']', 'after'].join(htmlNewline) + end;
+  code.id = text.replace('+', 'plus').replace(/[^\w\-_]/g, '_');
+  document.body.appendChild(code);
+}
+</script>
+
+<h2>START</h2>
+
+<script>makeCodeJoiningOn('CR', '&#160;\r');</script>
+
+<script>makeCodeJoiningOn('CRLF', '&#160;\r\n');</script>
+
+<script>makeCodeJoiningOn('LFCR', '&#160;\n \r');</script>
+
+<script>makeCodeJoiningOn('LF', '&#160;\n');</script>
+
+<script>makeCodeJoiningOn('VTAB', '&#160;\u000b');</script>
+
+<script>makeCodeJoiningOn('x2028', '&#160;\u2028');</script>
+
+<script>makeCodeJoiningOn('x2029', '&#160;\u2029');</script>
+
+<script>makeCodeJoiningOn('BR', '&#160;<br>');</script>
+
+<script>makeCodeJoiningOn('CR+BR', '&#160;\r<br>');</script>
+
+<script>makeCodeJoiningOn('CRLF+BR', '&#160;\r\n<br>');</script>
+
+<script>makeCodeJoiningOn('LFCR+BR', '&#160;\n\r<br>');</script>
+
+<script>makeCodeJoiningOn('LF+BR', '&#160;\n<br>');</script>
+
+<script>makeCodeJoiningOn('VTAB+BR', '&#160;\u000b<br>');</script>
+
+<script>makeCodeJoiningOn('x2028+BR', '&#160;\u2028<br>');</script>
+
+<script>makeCodeJoiningOn('x2029+BR', '&#160;\u2029<br>');</script>
+
+<script>makeCodeJoiningOn('BR+CR', '&#160;<br>\r');</script>
+
+<script>makeCodeJoiningOn('BR+CRLF', '&#160;<br>\r\n');</script>
+
+<script>makeCodeJoiningOn('BR+LFCR', '&#160;<br>\n\r');</script>
+
+<script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
+
+<script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
+
+<script>makeCodeJoiningOn('BR+VTAB', '&#160;<br>\u000b');</script>
+
+<script>makeCodeJoiningOn('BR+x2028', '&#160;<br>\u2028');</script>
+
+<script>makeCodeJoiningOn('BR+x2029', '&#160;<br>\u2029');</script>
+
+<script>makeCodeJoiningOn('divs', '</div><div>', '<div>', '<\/div>');</script>
+
+<script>makeCodeJoiningOn('ul', '<li>', '<ul style=list-style:none;padding:0;margin:0><li>', '<\/ul>');</script>
+
+<pre id=notgen-cr>before
+[Not generated via innerHTML CR]
+after</pre>
+
+<pre id=notgen-br>before<br>[Not generated via innerHTML BR]<br>after</pre>
+
+<pre id=notgen-brcr>before<br>
+[Not generated via innerHTML CR + BR]<br>
+after</pre>
+
+<pre id=notgen-crbr>before
+<br>[Not generated via innerHTML BR + CR]
+<br>after</pre>
+
+<h2>END</h2>
+
+<pre id=threelines>one
+two
+three</pre>
+
+<h2>RESULTS</h2>
+<script>(function () {
+  var threelines = document.getElementById('threelines');
+  var codeElements = document.getElementsByTagName('PRE');
+  var threelinesHeight = threelines.offsetHeight;
+
+  var ok = [];
+  var bad = [];
+  for (var i = 0, n = codeElements.length; i < n; ++i) {
+    var codeElement = codeElements[i];
+    if (codeElement !== threelines) {
+      var codeElementHeight = codeElement.offsetHeight;
+      (Math.abs(threelinesHeight - codeElementHeight) < 3
+       ? ok : bad).push(codeElement.id + ':' + codeElementHeight);
+    }
+  }
+
+  function emit(text) {
+    var p = document.createElement('P');
+    p.appendChild(document.createTextNode(text));
+    document.body.appendChild(p);
+  }
+
+  emit(navigator.userAgent);
+  emit('Ok: ' + ok);
+  emit('Bad: ' + bad);
+})();</script>
+
+<h2>TEXTAREA</h2>
+<textarea style="font-size: 50%" cols=40 rows=50></textarea>
