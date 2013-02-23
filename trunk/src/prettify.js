@@ -1466,8 +1466,34 @@ var prettyPrint;
                      Infinity);
       for (; k < elements.length && clock['now']() < endTime; k++) {
         var cs = elements[k];
+
+        // Look for a preceding comment like
+        // <?prettify lang="..." linenums="..."?>
+        var attrs = EMPTY;
+        {
+          for (var preceder = cs; (preceder = preceder.previousSibling);) {
+            var nt = preceder.nodeType;
+            // <?foo?> is parsed by HTML 5 to a comment node (8)
+            // like <!--?foo?-->, but in XML is a processing instruction
+            var value = (nt === 7 || nt === 8) && preceder.nodeValue;
+            if (value
+                ? !/^\??prettify\b/.test(value)
+                : (nt !== 3 || /\S/.test(preceder.nodeValue))) {
+              // Skip over white-space text nodes but not others.
+              break;
+            }
+            if (value) {
+              attrs = {};
+              value.replace(
+                  /\b(\w+)=([\w:.%+-]+)/g,
+                function (_, name, value) { attrs[name] = value; });
+              break;
+            }
+          }
+        }
+
         var className = cs.className;
-        if (prettyPrintRe.test(className)
+        if ((attrs !== EMPTY || prettyPrintRe.test(className))
             // Don't redo this if we've already done it.
             // This allows recalling pretty print to just prettyprint elements
             // that have been added to the page since last call.
@@ -1487,31 +1513,6 @@ var prettyPrint;
             // Mark done.  If we fail to prettyprint for whatever reason,
             // we shouldn't try again.
             cs.className += ' prettyprinted';
-
-            // Look for a preceding comment like
-            // <?prettify lang="..." linenums="..."?>
-            var attrs = EMPTY;
-            {
-              for (var preceder = cs; (preceder = preceder.previousSibling);) {
-                var nt = preceder.nodeType;
-                // <?foo?> is parsed by HTML 5 to a comment node (8)
-                // like <!--?foo?-->, but in XML is a processing instruction
-                var value = (nt === 7 || nt === 8) && preceder.nodeValue;
-                if (value
-                    ? !/^\??prettify\b/.test(value)
-                    : (nt !== 3 || /\S/.test(preceder.nodeValue))) {
-                  // Skip over white-space text nodes but not others.
-                  break;
-                }
-                if (value) {
-                  attrs = {};
-                  value.replace(
-                      /\b(\w+)=([\w:.%+-]+)/g,
-                      function (_, name, value) { attrs[name] = value; });
-                  break;
-                }
-              }
-            }
 
             // If the classes includes a language extensions, use it.
             // Language extensions can be specified like
