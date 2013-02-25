@@ -101,7 +101,7 @@ if (( $VERBOSE )); then
 fi
 
 # Choose a release label
-export TODAY="$(date -u +release-%e-%b-%Y)"
+export TODAY="$(date -u +%e-%b-%Y)"
 export RELEASE_LABEL="release-$TODAY"
 
 if (( $VERBOSE )); then
