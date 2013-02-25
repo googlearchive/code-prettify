@@ -39,7 +39,7 @@ function command() {
 
 function cp_if_different() {
     if ! [ -e "$2" ] || diffq "$1" "$2"; then
-	command cp "$1" "$2"
+        command cp "$1" "$2"
     fi
 }
 
@@ -169,6 +169,11 @@ function svn_sync() {
     if ! [ -e "$src_file" ]; then
         command svn delete "$dest_file"
     else
+        # Require lower-7 octets only so that it can be served even without
+        # the UTF-8 charset header.
+        if ! perl -ne 'exit -1 if m/[^\x00-\x7f]/' "$src_file"; then
+            panic "Non-ascii export $src_file"
+        fi
         if [ -e "$dest_file" ]; then
             cp_if_different "$src_file" "$dest_file"
         else
@@ -204,12 +209,12 @@ if (( $EFFECT )); then
     echo "    --summary='Bundle of source files, tests, and documentation' \\"
     echo "    -p google-code-prettify -u mikesamuel \\"
     echo "    --labels='Type-Archive,OpSys-All,Featured' \\"
-    echo "    distrib/prettify-$TODAY.tar.bz2"
+    echo "    $VERSION_BASE/trunk/distrib/prettify-$TODAY.tar.bz2"
     echo "$ $VERSION_BASE/trunk/tools/googlecode_upload.py \\"
     echo "    --summary='Minimized JS and CSS sources' \\"
     echo "    -p google-code-prettify -u mikesamuel \\"
     echo "    --labels='Type-Archive,OpSys-All,Featured' \\"
-    echo "    distrib/prettify-small-$TODAY.tar.bz2"
+    echo "    $VERSION_BASE/trunk/distrib/prettify-small-$TODAY.tar.bz2"
     echo "and finally check"
     echo "    http://code.google.com/p/google-code-prettify/downloads/list"
 else
