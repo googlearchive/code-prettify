@@ -189,10 +189,10 @@ sync svn_sync "$VERSION_BASE/trunk/styles" \
 # Cut branch
 command svn copy "$VERSION_BASE/trunk" "$VERSION_BASE/branches/$RELEASE_LABEL"
 
-cp_if_different distrib/prettify.tar.bz2 \
-          "distrib/prettify-$TODAY.tar.bz2"
-cp_if_different distrib/prettify-small.tar.bz2 \
-          "distrib/prettify-small-$TODAY.tar.bz2"
+cp_if_different "$VERSION_BASE/trunk/distrib/prettify.tar.bz2" \
+          "$VERSION_BASE/trunk/distrib/prettify-$TODAY.tar.bz2"
+cp_if_different "$VERSION_BASE/trunk/distrib/prettify-small.tar.bz2" \
+          "$VERSION_BASE/trunk/distrib/prettify-small-$TODAY.tar.bz2"
 
 # Dump final instructions for caller.
 echo
