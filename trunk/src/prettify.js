@@ -926,7 +926,10 @@ var prettyPrint;
       // If that does turn out to be a problem, we should change the below
       // when hc is truthy to include # in the run of punctuation characters
       // only when not followint [|&;<>].
-      /^.[^\s\w\.$@\'\"\`\/\\]*/;
+      '^.[^\\s\\w.$@\'"`/\\\\]*';
+    if (options['regexLiterals']) {
+      punctuation += '(?!\s*\/)';
+    }
 
     fallthroughStylePatterns.push(
         // TODO(mikesamuel): recognize non-latin letters and numerals in idents
@@ -946,9 +949,10 @@ var prettyPrint;
              // with an optional modifier like UL for unsigned long
              + '[a-z]*', 'i'),
          null, '0123456789'],
-        // Don't treat escaped quotes in bash as starting strings.  See issue 144.
+        // Don't treat escaped quotes in bash as starting strings.
+        // See issue 144.
         [PR_PLAIN,       /^\\[\s\S]?/, null],
-        [PR_PUNCTUATION, punctuation, null]);
+        [PR_PUNCTUATION, new RegExp(punctuation), null]);
 
     return createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns);
   }

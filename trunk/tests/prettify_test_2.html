@@ -818,6 +818,13 @@ define i32 @main() {   ; i32()*
 !foo = !{!1, null}
 </pre>
 
+<h1>Issue 217 : Regex following '!'</h1>
+<pre id="issue217" class="prettyprint lang-js">
+if(!/^https?:\/\//i.test(val) &amp;&amp; foo == 'bar') {
+    val = 'http://' + val;
+}
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -1530,6 +1537,11 @@ var goldens = {
         '`END`COM; Named metadata`END`PLN\n' +
         '!1 `END`PUN=`END`PLN `END`KWDmetadata`END`PLN !`END`PUN{`END`KWDi32`END`PLN `END`LIT42`END`PUN}`END`PLN\n' +
         '!foo `END`PUN=`END`PLN !`END`PUN{`END`PLN!1`END`PUN,`END`PLN `END`KWDnull`END`PUN}`END'
+      ),
+  issue217: (
+      '`KWDif`END`PUN(!`END`STR/^https?:\\/\\//`END`PLNi`END`PUN.`END`PLNtest`END`PUN(`END`PLNval`END`PUN)`END`PLN `END`PUN&amp;&amp;`END`PLN foo `END`PUN==`END`PLN `END`STR\'bar\'`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+      '    val `END`PUN=`END`PLN `END`STR\'http://\'`END`PLN `END`PUN+`END`PLN val`END`PUN;`END`PLN\n' +
+      '`END`PUN}`END'
       )
 };
 </script>
