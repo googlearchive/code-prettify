@@ -37,6 +37,12 @@ function command() {
     fi
 }
 
+function cp_if_different() {
+    if ! [ -e "$2" ] || diffq "$1" "$2"; then
+	command cp "$1" "$2"
+    fi
+}
+
 function mime_for_file() {
     local path="$1"
     case "${path##*.}" in
@@ -164,7 +170,7 @@ function svn_sync() {
         command svn delete "$dest_file"
     else
         if [ -e "$dest_file" ]; then
-            command cp "$src_file" "$dest_file"
+            cp_if_different "$src_file" "$dest_file"
         else
             command cp "$src_file" "$dest_file"
             command svn add "$dest_file"
@@ -183,9 +189,9 @@ sync svn_sync "$VERSION_BASE/trunk/styles" \
 # Cut branch
 command svn copy "$VERSION_BASE/trunk" "$VERSION_BASE/branches/$RELEASE_LABEL"
 
-command cp distrib/prettify.tar.bz2 \
+cp_if_different distrib/prettify.tar.bz2 \
           "distrib/prettify-$TODAY.tar.bz2"
-command cp distrib/prettify-small.tar.bz2 \
+cp_if_different distrib/prettify-small.tar.bz2 \
           "distrib/prettify-small-$TODAY.tar.bz2"
 
 # Dump final instructions for caller.
