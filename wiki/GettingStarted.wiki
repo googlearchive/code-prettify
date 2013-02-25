@@ -43,7 +43,7 @@ will load the entire system and schedule the prettifier to run on page load.  Th
 || *CGI parameter* || default || meaning ||
 || autoload=(true | false) || true || run automatically on page load ||
 || lang=... || none || Loads the language handler for the given language which is usually the file extension for source files for that language.  See the [http://code.google.com/p/google-code-prettify/source/browse/trunk/src index of language handlers].  If specified multiple times (`?lang=css&lang=ml`) then all are loaded. ||
-|| skin=... || none || See the [http://code.google.com/p/google-code-prettify/source/browse/trunk/styles skin gallery ].  If specified multiple times, the first one to successfully load is used. ||
+|| skin=... || none || See the [http://google-code-prettify.googlecode.com/svn/trunk/styles/index.html skin gallery ].  If specified multiple times, the first one to successfully load is used. ||
 || callback=js_ident || || `window.exports["js_ident"]` will be called when prettyprinting finishes.  If specified multiple times, all are called. ||
 
 For example
