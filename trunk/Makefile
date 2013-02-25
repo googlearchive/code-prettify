@@ -3,7 +3,8 @@ SHELL := /bin/bash
 CLOSURE_COMPILER=java -jar tools/closure-compiler/compiler.jar \
 	      --warning_level VERBOSE \
 	      --language_in ECMASCRIPT5 \
-	      --compilation_level ADVANCED_OPTIMIZATIONS
+	      --compilation_level ADVANCED_OPTIMIZATIONS \
+	      --charset US-ASCII
 # Don't specify --charset=UTF-8.  If we do, then non-ascii codepoints
 # that do not correspond to line terminators are converted
 # to UTF-8 sequences instead of being emitted as ASCII.
