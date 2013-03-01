@@ -67,14 +67,14 @@ for var in "$@"; do
       -force)
           NO_PANIC="1"
           ;;
-      --nobranch)
+      -nobranch)
           BRANCH="0"
           ;;
       -h)
           help_and_exit 0
           ;;
       *)
-          echo "Unrecognized variable $var"
+          echo "Unrecognized argument $var"
           help_and_exit -1
           ;;
   esac
