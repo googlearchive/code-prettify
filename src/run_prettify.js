@@ -62,9 +62,10 @@ var IN_GLOBAL_SCOPE = false;
   "use strict";
 
   var win = window;
+  var setTimeout = win.setTimeout;
   var doc = document;
   var root = doc.documentElement;
-  var head = doc.getElementsByTagName('head')[0] || doc.documentElement;
+  var head = doc['head'] || doc.getElementsByTagName("head")[0] || root;
 
   // From http://javascript.nwbox.com/ContentLoaded/contentloaded.js
   // Author: Diego Perini (diego.perini at gmail.com)
@@ -73,11 +74,12 @@ var IN_GLOBAL_SCOPE = false;
   // License: MIT
   // Version: 1.2
   function contentLoaded(callback) {
+    var addEventListener = doc['addEventListener'];
     var done = false, top = true,
-        add = doc.addEventListener ? 'addEventListener' : 'attachEvent',
-        rem = doc.addEventListener ? 'removeEventListener' : 'detachEvent',
-        pre = doc.addEventListener ? '' : 'on',
-    
+        add = addEventListener ? 'addEventListener' : 'attachEvent',
+        rem = addEventListener ? 'removeEventListener' : 'detachEvent',
+        pre = addEventListener ? '' : 'on',
+
         init = function(e) {
           if (e.type == 'readystatechange' && doc.readyState != 'complete') {
             return;
@@ -173,14 +175,45 @@ var IN_GLOBAL_SCOPE = false;
   var LOADER_BASE_URL =
      'https://google-code-prettify.googlecode.com/svn/loader';
 
-  for (var i = 0, n = langs.length; i < n; ++i) {
-    var script = doc.createElement('script');
+  for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
+    var script = doc.createElement("script");
+
+    // Excerpted from jQuery.ajaxTransport("script") to fire events when
+    // a script is finished loading.
+    // Attach handlers for each script
+    script.onload = script.onerror = script.onreadystatechange = function () {
+      if (script && (
+            !script.readyState || /loaded|complete/.test(script.readyState))) {
+        // Handle memory leak in IE
+        script.onerror = script.onload = script.onreadystatechange = null;
+
+        --pendingLanguages;
+        checkPendingLanguages();
+
+        // Remove the script
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+
+        script = null;
+      }
+    };
+
     script.type = 'text/javascript';
     script.src = LOADER_BASE_URL
       + '/lang-' + encodeURIComponent(langs[i]) + '.js';
-    head.appendChild(script);
+
+    // Circumvent IE6 bugs with base elements (#2709 and #4378) by prepending
+    head.insertBefore(script, head.firstChild);
+  })(langs[i]);
+
+  var pendingLanguages = langs.length;
+  function checkPendingLanguages() {
+    if (!pendingLanguages) {
+      setTimeout(onLangsLoaded, 0);
+    }
   }
-  
+
   var skinUrls = [];
   for (var i = 0, n = skins.length; i < n; ++i) {
     skinUrls.push(LOADER_BASE_URL
@@ -1833,12 +1866,11 @@ var IN_GLOBAL_SCOPE = false;
     return prettyPrint;
   })();
 
-  if (autorun) {
-    // If this script is deferred or async and the document is already
-    // loaded we need to wait for language handlers to load before performing
-    // any autorun.
-    var OWN_NAMESPACE = 'code_google_com_googleprettify';
-    (win[OWN_NAMESPACE] || (win[OWN_NAMESPACE] = {}))['run'] = function () {
+  // If this script is deferred or async and the document is already
+  // loaded we need to wait for language handlers to load before performing
+  // any autorun.
+  function onLangsLoaded() {
+    if (autorun) {
       contentLoaded(
         function () {
           var n = callbacks.length;
@@ -1854,12 +1886,8 @@ var IN_GLOBAL_SCOPE = false;
           } : void 0;
           prettyPrint(callback);
         });
-    };
-
-    var endScript = doc.createElement('script');
-    endScript.type = 'text/javascript';
-    endScript.appendChild(doc.createTextNode(OWN_NAMESPACE + '.run()'));
-    (doc.body || doc.documentElement).appendChild(endScript);
+    }
   }
+  checkPendingLanguages();
 
 }());
