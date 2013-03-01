@@ -6,10 +6,11 @@ function help_and_exit() {
     echo "Moves minified CSS and JS to distribution directories and"
     echo "creates a branch in SVN."
     echo
-    echo "  -go:      Run commands instead of just echoing them."
-    echo "  -verbose: More verbose logging."
-    echo "  -force:   Ignore sanity checks for testing."
-    echo "            Incompatible with -go."
+    echo "  -go:       Run commands instead of just echoing them."
+    echo "  -verbose:  More verbose logging."
+    echo "  -force:    Ignore sanity checks for testing."
+    echo "             Incompatible with -go."
+    echo "  -nobranch: Don't create a new release branch."
     exit "$1"
 }
 
@@ -19,6 +20,8 @@ export VERBOSE="0"
 export EFFECT="0"
 # 1 to not exit on panic.
 export NO_PANIC="0"
+# 1 to create a new branch under branches/
+export BRANCH="1"
 
 function panic() {
     echo "PANIC: $*"
@@ -64,6 +67,9 @@ for var in "$@"; do
       -force)
           NO_PANIC="1"
           ;;
+      --nobranch)
+          BRANCH="0"
+          ;;
       -h)
           help_and_exit 0
           ;;
@@ -92,7 +98,7 @@ fi
 if ! [ -d "$VERSION_BASE/loader" ]; then
     panic "missing loader in $VERSION_BASE"
 fi
-if ! [ -d "$VERSION_BASE/branches" ]; then
+if (( $BRANCH )) && ! [ -d "$VERSION_BASE/branches" ]; then
     panic "missing branches in $VERSION_BASE"
 fi
 
@@ -108,7 +114,7 @@ if (( $VERBOSE )); then
     echo "RELEASE_LABEL=$RELEASE_LABEL"
 fi
 
-if [ -e "$VERSION_BASE/branches/$RELEASE_LABEL" ]; then
+if (( $BRANCH )) && [ -e "$VERSION_BASE/branches/$RELEASE_LABEL" ]; then
     panic "duplicate release $VERSION_BASE/branches/$RELEASE_LABEL"
 fi
 
@@ -192,7 +198,9 @@ sync svn_sync "$VERSION_BASE/trunk/styles" \
     "$VERSION_BASE/loader/skins" css
 
 # Cut branch
-command svn copy "$VERSION_BASE/trunk" "$VERSION_BASE/branches/$RELEASE_LABEL"
+if (( $BRANCH )); then
+  command svn copy "$VERSION_BASE/trunk" "$VERSION_BASE/branches/$RELEASE_LABEL"
+fi
 
 cp_if_different "$VERSION_BASE/trunk/distrib/prettify.tar.bz2" \
           "$VERSION_BASE/trunk/distrib/prettify-$TODAY.tar.bz2"
