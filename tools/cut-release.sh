@@ -107,7 +107,8 @@ if (( $VERBOSE )); then
 fi
 
 # Choose a release label
-export TODAY="$(date -u +%e-%b-%Y)"
+# %e has a leading 0.  get rid of that.
+export TODAY="$(date -u +%e-%b-%Y | perl -pe 's/\s+//g')"
 export RELEASE_LABEL="release-$TODAY"
 
 if (( $VERBOSE )); then
