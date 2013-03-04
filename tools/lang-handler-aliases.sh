@@ -41,6 +41,7 @@ for JS in "$LANG_DIR"/lang-*.js; do
   ("$JS_INTERPRETER" \
     <(echo '
 
+      var window = this;
       var PR = {
         registerLangHandler: function (_, exts) {
           for (var i = 0, n = exts.length; i < n; ++i) {
