@@ -13,13 +13,14 @@
       "lang-clj.js",
       "lang-lisp.js",
       "lang-llvm.js",
-      "lang-xq.js",
+      "lang-matlab.js",
       "lang-mumps.js",
       "lang-n.js",
       "lang-pascal.js",
       "lang-r.js",
       "lang-tcl.js",
-      "lang-tex.js"
+"lang-tex.js",
+      "lang-xq.js"
   ];
   var styles = [
       "prettify.css"
@@ -825,6 +826,231 @@ if(!/^https?:\/\//i.test(val) &amp;&amp; foo == 'bar') {
 }
 </pre>
 
+<h1>Issue 32 : Matlab</h1>
+<pre id="matlab" class="prettyprint lang-matlab">
+%%%%%%%%%%%%%%%%%% DATA TYPES %%%%%%%%%%%%%%%%%%
+
+v = [1,2,3;4,5,6];
+v(v&gt;4) = 0;
+
+s = struct('key',1, 'key2','string');
+s.key = 2;
+
+C = cell(1,2);
+C{1,1} = 0:9;
+
+double(1)
+single(1)
+uint8(1)
+int8(1)
+
+%%%%%%%%%%%%%%%%%% STRINGS &amp; TRANSPOSE %%%%%%%%%%%%%%%%%%
+
+plot(data');
+legend(labels)
+
+str = 'asdasd';     % this is a string
+str = 'asdas';
+str = 'sdasd''sdasd';
+
+str = ['one' 'two' 'three'];
+str = strcat('one', 'two', 'three');
+
+% matrix transpose
+M = rand(3,3)';
+x = M.';
+x = [10 20; 30, 40]';
+disp(x')
+fprintf('%d\n', x(:)')      % with comment
+{1,2}'                      % another comment
+
+%%%%%%%%%%%%%%%%%% LINE CONTINUATION %%%%%%%%%%%%%%%%%%
+
+[1 20; ...
+30 4]
+
+['gdgsd'...
+'sdfs']
+
+{...
+'sdasd' ;
+'asdsad'}
+
+%%%%%%%%%%%%%%%%%% SYSTEM COMMANDS %%%%%%%%%%%%%%%%%%
+
+!touch file.txt
+
+%%%%%%%%%%%%%%%%%% COMMAND OUTPUT %%%%%%%%%%%%%%%%%%
+
+&gt;&gt; 1+1
+ans =
+     2
+
+&gt;&gt; 1+1
+
+ans =
+
+     2
+
+%%%%%%%%%%%%%%%%%% KEYWORDS %%%%%%%%%%%%%%%%%%
+
+function ret = fcn(in)
+	ret = sum(in.^2);
+end
+
+classdef CC &lt; handle
+	properties (SetAccess = public)
+		x = 0;
+	end
+	methods
+		function this = CC(varargin)
+			this.x = 9;
+		end
+	end
+end
+
+x = [];
+parfor i=1:10
+	x[i] = i;
+end
+
+true ~= false
+
+if x==1
+	true
+elseif
+	false
+else
+	return
+end
+
+while true
+	continue
+	break
+end
+
+try
+	error('aa:aa', 'asdasd')
+catch ME
+	warning(ME)
+end
+
+switch x
+	case 1
+		disp(1)
+	otherwise
+		0
+end
+
+%%%%%%%%%%%%%%%%%% NUM LITERALS %%%%%%%%%%%%%%%%%%
+
+1
+1.
+.1
+1.0
+-1
+-1.
+-.1
+-1.0
++10
++01.
++.1
++1.0
+1e1
+1e-1
+1.e1
+1.e-1
+1.0e1
+1.0e-1
+.1e1
+.1e-1
+-.1e+1
++1.e-1
+
+1i
+.10j
+-1.001i
++1e-100j
+-.10e-01i
+
+% unary vs binary operators
+1+1
+1+ 1
+1 +1
+1 + 1
++1+1
++1+ 1
++1 +1
++1 + 1
+
+%%%%%%%%%%%%%%%%%% COMMENTS %%%%%%%%%%%%%%%%%%
+
+% % comment % %
+   % comment
+% comment
+%# comment
+%% comment
+%#x = sum(x);
+
+%{
+block comment
+%}
+
+%{
+%}
+
+%{
+
+%}
+
+%{
+1
+2
+%}
+
+%{
+% sdf {}
+sdf
+%asda{}
+sfds
+%}
+
+    %{
+dsf
+        %}
+
+%{%}
+
+%{ zzz=10; %}
+
+%{%x=10;%}
+
+%{  x
+a=10;
+%}
+
+%{
+%a=10;
+%}   x
+
+% nested block comments fail
+%{
+dfsdf
+%{
+xxx
+%}
+dfsdf
+%}
+
+% fails here!
+%{
+x=10;
+%%{
+%%}
+y=20;
+%}
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -1542,6 +1768,229 @@ var goldens = {
       '`KWDif`END`PUN(!`END`STR/^https?:\\/\\//`END`PLNi`END`PUN.`END`PLNtest`END`PUN(`END`PLNval`END`PUN)`END`PLN `END`PUN&amp;&amp;`END`PLN foo `END`PUN==`END`PLN `END`STR\'bar\'`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
       '    val `END`PUN=`END`PLN `END`STR\'http://\'`END`PLN `END`PUN+`END`PLN val`END`PUN;`END`PLN\n' +
       '`END`PUN}`END'
+      ),
+  matlab: (
+      '`COM%%%%%%%%%%%%%%%%%% DATA TYPES %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END<span class="ident">v`END`PLN `END`PUN=`END`PLN `END`TAG[`END`LIT1`END`PUN,`END`LIT2`END`PUN,`END`LIT3`END`PUN;`END`LIT4`END`PUN,`END`LIT5`END`PUN,`END`LIT6`END`TAG]`END`PUN;`END`PLN\n' +
+      '`END<span class="ident">v`END`TAG(`END<span class="ident">v`END`PUN&gt;`END`LIT4`END`TAG)`END`PLN `END`PUN=`END`PLN `END`LIT0`END`PUN;`END`PLN\n' +
+      '\n' +
+      '`END<span class="ident">s`END`PLN `END`PUN=`END`PLN `END`TYPstruct`END`TAG(`END`STR\'key\'`END`PUN,`END`LIT1`END`PUN,`END`PLN `END`STR\'key2\'`END`PUN,`END`STR\'string\'`END`TAG)`END`PUN;`END`PLN\n' +
+      '`END<span class="ident">s.key`END`PLN `END`PUN=`END`PLN `END`LIT2`END`PUN;`END`PLN\n' +
+      '\n' +
+      '`END<span class="ident">C`END`PLN `END`PUN=`END`PLN `END`TYPcell`END`TAG(`END`LIT1`END`PUN,`END`LIT2`END`TAG)`END`PUN;`END`PLN\n' +
+      '`END<span class="ident">C`END`TAG{`END`LIT1`END`PUN,`END`LIT1`END`TAG}`END`PLN `END`PUN=`END`PLN `END`LIT0`END`PUN:`END`LIT9`END`PUN;`END`PLN\n' +
+      '\n' +
+      '`END`TYPdouble`END`TAG(`END`LIT1`END`TAG)`END`PLN\n' +
+      '`END`TYPsingle`END`TAG(`END`LIT1`END`TAG)`END`PLN\n' +
+      '`END`TYPuint8`END`TAG(`END`LIT1`END`TAG)`END`PLN\n' +
+      '`END`TYPint8`END`TAG(`END`LIT1`END`TAG)`END`PLN\n' +
+      '\n' +
+      '`END`COM%%%%%%%%%%%%%%%%%% STRINGS &amp; TRANSPOSE %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END`FUNplot`END`TAG(`END<span class="ident">data`END<span class="transpose">\'`END`TAG)`END`PUN;`END`PLN\n' +
+      '`END`FUNlegend`END`TAG(`END<span class="ident">labels`END`TAG)`END`PLN\n' +
+      '\n' +
+      '`END<span class="ident">str`END`PLN `END`PUN=`END`PLN `END`STR\'asdasd\'`END`PUN;`END`PLN     `END`COM% this is a string`END`PLN\n' +
+      '`END<span class="ident">str`END`PLN `END`PUN=`END`PLN `END`STR\'asdas\'`END`PUN;`END`PLN\n' +
+      '`END<span class="ident">str`END`PLN `END`PUN=`END`PLN `END`STR\'sdasd\'\'sdasd\'`END`PUN;`END`PLN\n' +
+      '\n' +
+      '`END<span class="ident">str`END`PLN `END`PUN=`END`PLN `END`TAG[`END`STR\'one\'`END`PLN `END`STR\'two\'`END`PLN `END`STR\'three\'`END`TAG]`END`PUN;`END`PLN\n' +
+      '`END<span class="ident">str`END`PLN `END`PUN=`END`PLN `END`FUNstrcat`END`TAG(`END`STR\'one\'`END`PUN,`END`PLN `END`STR\'two\'`END`PUN,`END`PLN `END`STR\'three\'`END`TAG)`END`PUN;`END`PLN\n' +
+      '\n' +
+      '`END`COM% matrix transpose`END`PLN\n' +
+      '`END<span class="ident">M`END`PLN `END`PUN=`END`PLN `END`FUNrand`END`TAG(`END`LIT3`END`PUN,`END`LIT3`END`TAG)`END<span class="transpose">\'`END`PUN;`END`PLN\n' +
+      '`END<span class="ident">x`END`PLN `END`PUN=`END`PLN `END<span class="ident">M`END`PUN.`END<span class="transpose">\'`END`PUN;`END`PLN\n' +
+      '`END<span class="ident">x`END`PLN `END`PUN=`END`PLN `END`TAG[`END`LIT10`END`PLN `END`LIT20`END`PUN;`END`PLN `END`LIT30`END`PUN,`END`PLN `END`LIT40`END`TAG]`END<span class="transpose">\'`END`PUN;`END`PLN\n' +
+      '`END`FUNdisp`END`TAG(`END<span class="ident">x`END<span class="transpose">\'`END`TAG)`END`PLN\n' +
+      '`END`FUNfprintf`END`TAG(`END`STR\'%d\\n\'`END`PUN,`END`PLN `END<span class="ident">x`END`TAG(`END`PUN:`END`TAG)`END<span class="transpose">\'`END`TAG)`END`PLN      `END`COM% with comment`END`PLN\n' +
+      '`END`TAG{`END`LIT1`END`PUN,`END`LIT2`END`TAG}`END<span class="transpose">\'`END`PLN                      `END`COM% another comment`END`PLN\n' +
+      '\n' +
+      '`END`COM%%%%%%%%%%%%%%%%%% LINE CONTINUATION %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END`TAG[`END`LIT1`END`PLN `END`LIT20`END`PUN;`END`PLN `END<span class="linecont">...\n' +
+      '`END`LIT30`END`PLN `END`LIT4`END`TAG]`END`PLN\n' +
+      '\n' +
+      '`END`TAG[`END`STR\'gdgsd\'`END<span class="linecont">...\n' +
+      '`END`STR\'sdfs\'`END`TAG]`END`PLN\n' +
+      '\n' +
+      '`END`TAG{`END<span class="linecont">...\n' +
+      '`END`STR\'sdasd\'`END`PLN `END`PUN;`END`PLN\n' +
+      '`END`STR\'asdsad\'`END`TAG}`END`PLN\n' +
+      '\n' +
+      '`END`COM%%%%%%%%%%%%%%%%%% SYSTEM COMMANDS %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END<span class="syscmd">!touch file.txt`END`PLN\n' +
+      '\n' +
+      '`END`COM%%%%%%%%%%%%%%%%%% COMMAND OUTPUT %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END<span class="codeoutput">&gt;&gt; `END`LIT1+1`END`PLN\n' +
+      '`END<span class="const">ans`END`PLN `END`PUN=`END`PLN\n' +
+      '     `END`LIT2`END`PLN\n' +
+      '\n' +
+      '`END<span class="codeoutput">&gt;&gt; `END`LIT1+1`END`PLN\n' +
+      '\n' +
+      '`END<span class="const">ans`END`PLN `END`PUN=`END`PLN\n' +
+      '\n' +
+      '     `END`LIT2`END`PLN\n' +
+      '\n' +
+      '`END`COM%%%%%%%%%%%%%%%%%% KEYWORDS %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END`KWDfunction`END`PLN `END<span class="ident">ret`END`PLN `END`PUN=`END`PLN `END<span class="ident">fcn`END`TAG(`END<span class="ident">in`END`TAG)`END`PLN\n' +
+      '	`END<span class="ident">ret`END`PLN `END`PUN=`END`PLN `END`FUNsum`END`TAG(`END<span class="ident">in`END`PUN.^`END`LIT2`END`TAG)`END`PUN;`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END`KWDclassdef`END`PLN `END<span class="ident">CC`END`PLN `END`PUN&lt;`END`PLN `END`FUNhandle`END`PLN\n' +
+      '	`END<span class="ident">properties`END`PLN `END`TAG(`END<span class="ident">SetAccess`END`PLN `END`PUN=`END`PLN `END<span class="ident">public`END`TAG)`END`PLN\n' +
+      '		`END<span class="ident">x`END`PLN `END`PUN=`END`PLN `END`LIT0`END`PUN;`END`PLN\n' +
+      '	`END`KWDend`END`PLN\n' +
+      '	`END`FUNmethods`END`PLN\n' +
+      '		`END`KWDfunction`END`PLN `END<span class="ident">this`END`PLN `END`PUN=`END`PLN `END<span class="ident">CC`END`TAG(`END<span class="const">varargin`END`TAG)`END`PLN\n' +
+      '			`END<span class="ident">this.x`END`PLN `END`PUN=`END`PLN `END`LIT9`END`PUN;`END`PLN\n' +
+      '		`END`KWDend`END`PLN\n' +
+      '	`END`KWDend`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END<span class="ident">x`END`PLN `END`PUN=`END`PLN `END`TAG[]`END`PUN;`END`PLN\n' +
+      '`END`KWDparfor`END`PLN `END<span class="ident">i`END`PUN=`END`LIT1`END`PUN:`END`LIT10`END`PLN\n' +
+      '	`END<span class="ident">x`END`TAG[`END<span class="ident">i`END`TAG]`END`PLN `END`PUN=`END`PLN `END<span class="ident">i`END`PUN;`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END<span class="const">true`END`PLN `END`PUN~=`END`PLN `END<span class="const">false`END`PLN\n' +
+      '\n' +
+      '`END`KWDif`END`PLN `END<span class="ident">x`END`PUN==`END`LIT1`END`PLN\n' +
+      '	`END<span class="const">true`END`PLN\n' +
+      '`END`KWDelseif`END`PLN\n' +
+      '	`END<span class="const">false`END`PLN\n' +
+      '`END`KWDelse`END`PLN\n' +
+      '	`END`KWDreturn`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END`KWDwhile`END`PLN `END<span class="const">true`END`PLN\n' +
+      '	`END`KWDcontinue`END`PLN\n' +
+      '	`END`KWDbreak`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END`KWDtry`END`PLN\n' +
+      '	`END`FUNerror`END`TAG(`END`STR\'aa:aa\'`END`PUN,`END`PLN `END`STR\'asdasd\'`END`TAG)`END`PLN\n' +
+      '`END`KWDcatch`END`PLN `END<span class="ident">ME`END`PLN\n' +
+      '	`END`FUNwarning`END`TAG(`END<span class="ident">ME`END`TAG)`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END`KWDswitch`END`PLN `END<span class="ident">x`END`PLN\n' +
+      '	`END`KWDcase`END`PLN `END`LIT1`END`PLN\n' +
+      '		`END`FUNdisp`END`TAG(`END`LIT1`END`TAG)`END`PLN\n' +
+      '	`END`KWDotherwise`END`PLN\n' +
+      '		`END`LIT0`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END`COM%%%%%%%%%%%%%%%%%% NUM LITERALS %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END`LIT1`END`PLN\n' +
+      '`END`LIT1.`END`PLN\n' +
+      '`END`LIT.1`END`PLN\n' +
+      '`END`LIT1.0`END`PLN\n' +
+      '`END`LIT-1`END`PLN\n' +
+      '`END`LIT-1.`END`PLN\n' +
+      '`END`LIT-.1`END`PLN\n' +
+      '`END`LIT-1.0`END`PLN\n' +
+      '`END`LIT+10`END`PLN\n' +
+      '`END`LIT+01.`END`PLN\n' +
+      '`END`LIT+.1`END`PLN\n' +
+      '`END`LIT+1.0`END`PLN\n' +
+      '`END`LIT1e1`END`PLN\n' +
+      '`END`LIT1e-1`END`PLN\n' +
+      '`END`LIT1.e1`END`PLN\n' +
+      '`END`LIT1.e-1`END`PLN\n' +
+      '`END`LIT1.0e1`END`PLN\n' +
+      '`END`LIT1.0e-1`END`PLN\n' +
+      '`END`LIT.1e1`END`PLN\n' +
+      '`END`LIT.1e-1`END`PLN\n' +
+      '`END`LIT-.1e+1`END`PLN\n' +
+      '`END`LIT+1.e-1`END`PLN\n' +
+      '\n' +
+      '`END`LIT1i`END`PLN\n' +
+      '`END`LIT.10j`END`PLN\n' +
+      '`END`LIT-1.001i`END`PLN\n' +
+      '`END`LIT+1e-100j`END`PLN\n' +
+      '`END`LIT-.10e-01i`END`PLN\n' +
+      '\n' +
+      '`END`COM% unary vs binary operators`END`PLN\n' +
+      '`END`LIT1+1`END`PLN\n' +
+      '`END`LIT1`END`PUN+`END`PLN `END`LIT1`END`PLN\n' +
+      '`END`LIT1`END`PLN `END`LIT+1`END`PLN\n' +
+      '`END`LIT1`END`PLN `END`PUN+`END`PLN `END`LIT1`END`PLN\n' +
+      '`END`LIT+1+1`END`PLN\n' +
+      '`END`LIT+1`END`PUN+`END`PLN `END`LIT1`END`PLN\n' +
+      '`END`LIT+1`END`PLN `END`LIT+1`END`PLN\n' +
+      '`END`LIT+1`END`PLN `END`PUN+`END`PLN `END`LIT1`END`PLN\n' +
+      '\n' +
+      '`END`COM%%%%%%%%%%%%%%%%%% COMMENTS %%%%%%%%%%%%%%%%%%`END`PLN\n' +
+      '\n' +
+      '`END`COM% % comment % %`END`PLN\n' +
+      '   `END`COM% comment`END`PLN\n' +
+      '`END`COM% comment`END`PLN\n' +
+      '`END`COM%# comment`END`PLN\n' +
+      '`END`COM%% comment`END`PLN\n' +
+      '`END`COM%#x = sum(x);`END`PLN\n' +
+      '\n' +
+      '`END`COM%{\n' +
+      'block comment\n' +
+      '%}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{\n' +
+      '%}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{\n' +
+      '\n' +
+      '%}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{\n' +
+      '1\n' +
+      '2\n' +
+      '%}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{\n' +
+      '% sdf {}\n' +
+      'sdf\n' +
+      '%asda{}\n' +
+      'sfds\n' +
+      '%}`END`PLN\n' +
+      '\n' +
+      '    `END`COM%{\n' +
+      'dsf\n' +
+      '        %}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{%}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{ zzz=10; %}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{%x=10;%}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{  x\n' +
+      'a=10;\n' +
+      '%}`END`PLN\n' +
+      '\n' +
+      '`END`COM%{\n' +
+      '%a=10;\n' +
+      '%}`END`PLN   `END<span class="ident">x`END`PLN\n' +
+      '\n' +
+      '`END`COM% nested block comments fail`END`PLN\n' +
+      '`END`COM%{\n' +
+      'dfsdf\n' +
+      '%{\n' +
+      'xxx\n' +
+      '%}`END`PLN\n' +
+      '`END<span class="ident">dfsdf`END`PLN\n' +
+      '`END`COM%}`END`PLN\n' +
+      '\n' +
+      '`END`COM% fails here!`END`PLN\n' +
+      '`END`COM%{\n' +
+      'x=10;\n' +
+      '%%{\n' +
+      '%%}`END`PLN\n' +
+      '`END<span class="ident">y`END`PUN=`END`LIT20`END`PUN;`END`PLN\n' +
+      '`END`COM%}`END'
       )
 };
 </script>
