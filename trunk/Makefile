@@ -80,6 +80,13 @@ distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 	done
 	@touch distrib.tstamp
 
+lang-aliases : lang-aliases.tstamp
+lang-aliases.tstamp : distrib.tstamp
+	@tools/lang-handler-aliases.sh \
+            distrib/sources/google-code-prettify/src \
+	  | perl -ne 'system("cp $$1 $$2") if m/^(\S+) (\S+)$$/ && ! -e $$2' \
+	  && touch lang-aliases.tstamp
+
 %.tgz: %.tar
 	@gzip -c -9 $^ > $@
 
@@ -101,3 +108,4 @@ distrib/prettify.tar: distrib.tstamp
 	  examples js-modules src styles tests tools \
 	  distrib/sources/google-code-prettify
 	tar cf distrib/prettify.tar -C distrib/sources google-code-prettify
+

@@ -12,7 +12,7 @@ if [ -n "$*" ] || [ -z "$LANG_DIR" ] || ! (( $HAS_LANG_FILES )); then
   echo "Usage: $0 <LANG_DIR>"
   echo
   echo "Dumps lines of the form"
-  echo "    lang-foo.js : <extension>"
+  echo "    $LANG_DIR/lang-foo.js $LANG_DIR/lang-<extension>.js"
   echo "where the first element is a path name under LANG_DIR"
   echo "and the second is the name of a language extension for which"
   echo "it registers an extension."
@@ -60,6 +60,8 @@ for JS in "$LANG_DIR"/lang-*.js; do
     "$JS" \
     < /dev/null \
    || echo "Failed to execute $JS" 1>&2 ) \
-    | perl -e '$BASE=shift; while (<STDIN>) { s/^(?=\w)/$BASE : /; print; }' \
-      "$(basename "$JS")"
+    | perl -e '$JS=shift;' \
+      -e 'use File::Basename; $DIR=dirname($JS);' \
+      -e 'while (<STDIN>) { s/^\w+$/$JS $DIR\/lang-$&.js/; print; }' \
+      "$JS"
 done
