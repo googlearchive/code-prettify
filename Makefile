@@ -83,7 +83,7 @@ distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 lang-aliases : lang-aliases.tstamp
 lang-aliases.tstamp : distrib.tstamp
 	@tools/lang-handler-aliases.sh \
-            distrib/sources/google-code-prettify/src \
+            distrib/google-code-prettify \
 	  | perl -ne 'system("cp $$1 $$2") if m/^(\S+) (\S+)$$/ && ! -e $$2' \
 	  && touch lang-aliases.tstamp
 
