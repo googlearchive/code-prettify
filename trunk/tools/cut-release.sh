@@ -123,9 +123,8 @@ fi
 # Make the distribution
 function build() {
   pushd "$VERSION_BASE/trunk" > /dev/null
-  make clean \
-    && make distrib distrib/prettify.tar.bz2 distrib/prettify-small.tar.bz2 \
-    && make lang-aliases
+  make distrib distrib/prettify.tar.bz2 distrib/prettify-small.tar.bz2 \
+    lang-aliases
   local status=$?
   popd > /dev/null
   (($status))
