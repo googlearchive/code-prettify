@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Number Lines Test</title>
+<script src="numberLines.js"></script>
+<script src="http://github.com/douglascrockford/JSON-js/raw/master/json2.js"></script>
+<style>
+.ok { background: #dfd }
+.error, .failure { background: #fdd }
+td { font-family: monospace }
+tr { vertical-align: top }
+</style>
+</head>
+
+<body>
+<h1>Number Lines Test</h1>
+
+<table>
+  <tr><th colspan=3>Test Nothing to Split</th></tr>
+  <tr>
+    <td><code class="testinput">Hello, World!</code></td>
+    <td><code><ol class="linenums"><li class="L0">Hello, World!</li></ol></code></td>
+  </tr>
+  <tr><th colspan=3>Test Normalized Spaces</th></tr>
+  <tr>
+    <td><code class="testinput">Hello,&#10;World!</code></td>
+    <td><code><ol class="linenums"><li class="L0">Hello,&#10;World!</li></ol></code></td>
+  </tr>
+  <tr><th colspan=3>Test BR</th></tr>
+  <tr>
+    <td><pre class="testinput">Hello,<br>World!</pre></td>
+    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">World!</li></ol></pre></td>
+  </tr>
+  <tr><th colspan=3>Test line breaks</th></tr>
+  <tr>
+    <td><pre class="testinput">Hello,&#10;there&#10;World!</pre></td>
+    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">there</li><li class="L2">World!</li></ol></pre></td>
+  </tr>
+  <tr><th colspan=3>Test line breaks with followers</th></tr>
+  <tr>
+    <td><pre class="testinput"><b>Hello,&#10;there&#10;World!&#10;</b><button>OK</button></pre></td>
+    <td><pre><ol class="linenums"><li class="L0"><b>Hello,</b></li><li class="L1"><b>there</b></li><li class="L2"><b>World!</b></li><li class="L3"><button>OK</button></ol></pre></td>
+  </tr>
+  <tr><th colspan=3>Test nocode</th></tr>
+  <tr>
+    <td><pre class="testinput">Hello,&#10;the<span class="nocode">re&#10;World!</span></pre></td>
+    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<span class="nocode">re&#10;World!</span></li></ol></pre></td>
+  </tr>
+  <tr><th colspan=3>Test link</th></tr>
+  <tr>
+    <td><pre class="testinput">Hello,&#10;the<a href="#" style="font-weight: bold">re&#10;Wor</a>ld!</pre></td>
+    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<a href="#" style="font-weight: bold">re</a></li><li class="L2"><a href="#" style="font-weight: bold">Wor</a>ld!</li></ol></pre></td>
+  </tr>
+  <tr><th colspan=3>Test blank lines</th></tr>
+  <tr>
+    <td><pre class="testinput">One&#10;&#10;Three</pre></td>
+    <td><pre><ol class="linenums"><li class="L0">One</li><li class="L1">&nbsp;</li><li class="L2">Three</li></ol></pre></td>
+  </tr>
+</table>
+
+<script>
+if (!document.body.getElementsByClassName) {
+  document.body.getElementsByClassName = function (className) {
+    className = className.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, ' ');
+    var results = [];
+    function walk(node) {
+      if (node.nodeType !== 1) { return; }
+      // This test should be order-insensitive.
+      if ((' ' + node.className + ' ').indexOf(className) >= 0) {
+        results[results.length] = node;
+      }
+      for (var child = node.firstChild; child; child = child.nextSibling) {
+        walk(child);
+      }
+    }
+    walk(document.body);
+    return results;
+  };
+}
+
+setTimeout(function () {
+  function normListItems(html) {
+    // IE likes to leave out </li>s before <li>s.
+    return html.replace(/<\/li>(<li\b)/gi, '$1');
+  }
+
+  var testInputs = Array.prototype.slice.call(
+     document.body.getElementsByClassName('testinput'), 0);
+  for (var i = 0, n = testInputs.length; i < n; ++i) {
+    var testInput = testInputs[i];
+    var testResult = testInput.parentNode.nextSibling;
+    while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
+    var actual = document.createElement('TD');
+    testResult.parentNode.appendChild(actual);
+    try {
+      var testInputClone = testInput.cloneNode(true);
+      testInputClone.className = '';  // IE
+      testInputClone.removeAttribute('class');  // Not IE.
+      actual.appendChild(testInputClone);
+      numberLines(testInputClone);
+      var goldenNorm = normListItems(testResult.innerHTML);
+      var actualNorm = normListItems(actual.innerHTML);
+      var passed = goldenNorm === actualNorm;
+      if (!passed) {
+        console.log(JSON.stringify(goldenNorm)
+                    + ' !==\n' + JSON.stringify(actualNorm));
+      }
+      actual.className = passed ? 'ok' : 'failure';
+    } catch (ex) {
+      actual.className = 'error';
+      actual.appendChild(document.createTextNode('Error: ' + (ex.message || ex)));
+    }
+    actual.className += ' actual';
+  }
+}, 0)</script>
+
+<hr>
+<address></address>
+<!-- hhmts start --> Last modified: Tue Mar 29 16:44:05 PDT 2011 <!-- hhmts end -->
+</body> </html>

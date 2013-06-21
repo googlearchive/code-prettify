@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Extract Source Spans Test</title>
+<script src="extractSourceSpans.js"></script>
+<script src="http://github.com/douglascrockford/JSON-js/raw/master/json2.js"></script>
+<style>
+.ok { background: #dfd }
+.error, .failure { background: #fdd }
+td { font-family: monospace }
+.actual { white-space: pre }
+tr { vertical-align: top }
+.break { padding-left: 2px; border-right-style: dotted !important }
+.odd, .even { border-style: solid; border-width: 1px }
+.even { background: #fff; border-color: #888 }
+.odd { background: #ddd; border-color: #000 }
+</style>
+</head>
+
+<body>
+<h1>Extract Source Spans Test</h1>
+
+<table border=1 cellpadding=2 cellspacing=0>
+  <tr><th colspan=3>Test space preserved in PRE</th></tr>
+  <tr>
+    <td><pre class="testinput"><b>print </b>'Hello '<br>  + '&lt;World&gt;';</pre></td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
+  </tr>
+  <tr><th colspan=3>Test class="nocode"</th></tr>
+  <tr>
+    <td><pre class="testinput"><span class=nocode>1. </span><b>print </b>'Hello '<br><span class=nocode>2. </span>  + '&lt;World&gt;';</pre></td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
+  </tr>
+  <tr><th colspan=3>Test whitespace normalized in code</th></tr>
+  <tr>
+    <td><code class="testinput"><b>print </b>'Hello '
+  + '&lt;World&gt;';</pre></td>
+    <td class="golden"><pre>^print ^'Hello ' + '&lt;World&gt;';^</pre></td>
+  </tr>
+  <tr><th colspan=3>Test XMP</th></tr>
+  <tr>
+    <td><xmp class="testinput">print 'Hello '
+  + '<World>';</xmp></td>
+    <td class="golden"><pre>^print 'Hello '\n  + '&lt;World&gt;';^</pre></td>
+  </tr>
+  <tr><th colspan=3>Test tabs</th></tr>
+  <tr>
+    <td><pre class="testinput">print 'Hello '
+&#9;+ '&lt;World&gt;';</pre></td>
+    <td class="golden"><pre>^print 'Hello '\n\t+ '&lt;World&gt;';^</pre></td>
+  </tr>
+  <tr><th colspan=3>Test number lines output</th></tr>
+  <tr>
+    <td><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</pre></li></ul></td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^^</pre></td>
+  </tr>
+</table>
+
+<script>
+if (!document.body.getElementsByClassName) {
+  document.body.getElementsByClassName = function (className) {
+    className = className.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, ' ');
+    var results = [];
+    function walk(node) {
+      if (node.nodeType !== 1) { return; }
+      // This test should be order-insensitive.
+      if ((' ' + node.className + ' ').indexOf(className) >= 0) {
+        results[results.length] = node;
+      }
+      for (var child = node.firstChild; child; child = child.nextSibling) {
+        walk(child);
+      }
+    }
+    walk(document.body);
+    return results;
+  };
+}
+
+setTimeout(function () {
+  function stringify(s) {
+    return JSON.stringify(s).replace(/\r/g, '\\r').replace(/\n/g, '\\n')
+        .replace(/\t/g, '\\t');
+  }
+
+  var testInputs = Array.prototype.slice.call(
+     document.body.getElementsByClassName('testinput'), 0);
+  for (var i = 0, n = testInputs.length; i < n; ++i) {
+    var testInput = testInputs[i];
+    var testResult = testInput.parentNode.nextSibling;
+    while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
+    var actual = document.createElement('TD');
+    actual.className = 'actual';
+    testResult.parentNode.appendChild(actual);
+    try {
+      var sourceAndSpans = extractSourceSpans(testInput);
+      var source = sourceAndSpans.source;
+      var actualText = '^';
+      var actualHtml = '';
+      var spans = sourceAndSpans.spans;
+      for (var j = 0, m = spans.length; j < m; j += 2) {
+        var start = spans[j], end = spans[j + 2] || source.length;
+        var span = source.substring(start, end);
+        actualText += span + '^';
+        var spanClass = ((j & 2) ? 'odd' : 'even');
+        if (spans[j + 1].nodeName === 'BR') {
+          spanClass += ' break';
+        }
+        actualHtml += '<span class="' + spanClass+ '">'
+            + span.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '<\/span>';
+      }
+      actual.innerHTML = '<pre>' + actualHtml + '<\/pre>';
+      var goldenText = testResult.innerText || testResult.textContent;
+      var goldenNormalized = '"' + goldenText.replace(/(?:\r\n?|\n)$/, '') + '"';
+      var actualNormalized = stringify(actualText);
+      var passed = actualNormalized === goldenNormalized;
+      if (!passed) {
+        console.log(goldenNormalized + ' !==\n' + actualNormalized);
+      }
+      actual.className += passed ? ' ok' : ' failure';
+    } catch (ex) {
+      actual.className += ' error';
+      actual.appendChild(document.createTextNode('Error: ' + (ex.message || ex)));
+    }
+  }
+}, 0)</script>
+
+<hr>
+<address></address>
+<!-- hhmts start --> Last modified: Tue Mar 29 16:38:23 PDT 2011 <!-- hhmts end -->
+</body> </html>

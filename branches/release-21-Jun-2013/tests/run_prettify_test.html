@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Run_Prettify Test</title>
+    <script>
+      (function () {
+        var knownGlobals = {};
+        for (var k in window) {
+          if (Object.hasOwnProperty.call(window, k)) {
+            knownGlobals[k] = knownGlobals;
+          }
+        }
+        function dump(s) {
+          var p = document.createElement('p');
+          p.appendChild(document.createTextNode(s));
+          document.body.appendChild(p);
+        }
+        function printDone() { dump('done'); }
+        function dumpGlobals() {
+          for (var k in window) {
+            if (knownGlobals[k] !== knownGlobals
+                && Object.hasOwnProperty.call(window, k)) {
+              dump('global ' + k);
+            } 
+          }
+        }
+        window.exports = { print_done: printDone, dump_globals: dumpGlobals };
+      })();
+    </script>
+
+    <script>
+      (function () {
+        var srcDir = '../src';
+        if (/[&?]distrib\b/.test(location.search)) {
+          srcDir = '../distrib/google-code-prettify';
+        }
+        document.write(
+            '<script src="' + srcDir + '/run_prettify.js'
+            + '?lang=css'
+            + '&callback=print_done'
+            + '&skin=sunburst'
+            + '&callback=bogus'
+            + '&callback=dump_globals"><\/script>');
+      })();
+    </script>
+
+
+    
+  </head>
+  <body>
+    <pre class="prettyprint linenums">
+&lt;div style="color: #f00"&gt;
+  Hello, <b>World!</b>
+&lt;/div&gt;
+</pre>
+  </body>
+</html>
