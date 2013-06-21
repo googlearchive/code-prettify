@@ -134,7 +134,8 @@
   // This starts looking at the end instead of just considering the last
   // because deferred and async scripts run out of order.
   // If the script is loaded twice, then this will run in reverse order.
-  for (var scripts = doc.scripts, i = scripts.length; --i >= 0;) {
+  var scripts = doc.getElementsByTagName('script');
+  for (var i = scripts.length; --i >= 0;) {
     var script = scripts[i];
     var match = script.src.match(
         /^[^?#]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);

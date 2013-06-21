@@ -8,6 +8,7 @@
     <link href="src/prettify.css" type="text/css" rel="stylesheet" />
 
     <script src="src/prettify.js" type="text/javascript"></script>
+    <script src="src/lang-css.js" type="text/javascript"></script>
 
     <style type="text/css">
       body { margin-left: .5in }
@@ -223,11 +224,28 @@ int y = bar();
     <code>&lt;?prettify ...?&gt;</code> works as explained in 
     <a href="http://code.google.com/p/google-code-prettify/wiki/GettingStarted">Getting Started</a></p>
 
+    <h3>How can I put line numbers on every line instead of just every
+    fifth line?</h3>
+
+    <p>Prettify puts lines into an HTML list element so that line
+    numbers aren't caught by copy/paste, and the line numbering is
+    controlled by CSS in the default stylesheet, "prettify.css".</p>
+
+    <pre class="prettyprint lang-css">
+&lt;style&gt;
+li.L0, li.L1, li.L2, li.L3,
+li.L5, li.L6, li.L7, li.L8
+{ list-style-type: decimal !important }
+&lt;/style&gt;
+    </pre>
+
+    should turn line numbering back on for the other lines.
+
     <br><br><br>
 
     <div class="footer">
 <!-- Created: Tue Oct  3 17:51:56 PDT 2006 -->
-<!-- hhmts start -->Last modified: Wed May 15 16:35:48 EDT 2013 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Fri Jun 21 15:14:20 EDT 2013 <!-- hhmts end -->
     </div>
   </body>
 </html>
