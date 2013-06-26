@@ -107,12 +107,12 @@ var prettyPrint;
       "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
       "instanceof,interface,null,native,package,strictfp,super,synchronized," +
       "throws,transient"];
-  var CSHARP_KEYWORDS = [JAVA_KEYWORDS,
-      "as,base,by,checked,decimal,delegate,descending,dynamic,event," +
-      "fixed,foreach,from,group,implicit,in,internal,into,is,let," +
-      "lock,object,out,override,orderby,params,partial,readonly,ref,sbyte," +
-      "sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort," +
-      "var,virtual,where"];
+  var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
+      "abstract,as,base,bool,by,byte,checked,decimal,delegate,descending," +
+      "dynamic,event,finally,fixed,foreach,from,group,implicit,in,interface," +
+      "internal,into,is,let,lock,null,object,out,override,orderby,params," +
+      "partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong," +
+      "unchecked,unsafe,ushort,var,virtual,where"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
       "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
       "throw,true,try,unless,until,when,while,yes";
