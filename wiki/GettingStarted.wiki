@@ -62,6 +62,11 @@ You can [http://code.google.com/p/google-code-prettify/downloads/list download] 
 <script type="text/javascript" src="prettify.js"></script>
 }}}
 
+and then run the `prettyPrint` function once your page has finished loading.  One way to do this is via the `onload` handler thus:
+
+{{{
+<body onload="prettyPrint()">
+}}}
 
 == Styling ==
 The prettifier only adds `class`es; it does not specify exact colors or fonts, so you can swap in a different stylesheet to change the way code is prettified.
