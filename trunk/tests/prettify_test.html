@@ -32,19 +32,33 @@
     document.write(
         "<script src=\"" + sourceBaseUrl + sources[i] + "\"><\/script>");
   }
+  document.write(
+       "<script src=\"test_base.js\" type=\"text/javascript\"><\/script>");
   for (var i = 0; i < styles.length; ++i) {
     document.write(
         "<link rel=\"stylesheet\" href=\"" + sourceBaseUrl + styles[i] + "\">");
   }
 })();
+
+window.onload = (function() {
+  var attempt = function() {
+    var go = window["go"];
+    var prettyPrint = window["prettyPrint"];
+    var goldens = window["goldens"];
+    if(go && prettyPrint && goldens) {
+      go(goldens);
+    } else {
+      setTimeout(attempt, 20);
+    }
+  };
+  return attempt;
+})();
 </script>
 
-<script src="test_base.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
 <link rel="stylesheet" type="text/css" href="test_styles.css" />
 </head>
 
-<body onload="go(goldens)" bgcolor="white">
+<body bgcolor="white">
 <div id="timing"></div>
 <div id="errorReport" style="white-space: pre"></div>
 
