@@ -14,13 +14,13 @@
 ## 29 March 2007
 
  * Added [tests](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#PHP)
-   for PHP support to address issue #3.
- * Fixed bug #6: `prettyPrintOne` was not halting. This was not reachable
-   through the normal entry point.
- * Fixed bug #4: recursing into a script block or PHP tag that was not properly
-   closed would not silently drop the content.
+   for PHP support to address issue [#3](https://github.com/google/code-prettify/issues/3).
+ * Fixed bug [#6](https://github.com/google/code-prettify/issues/6): `prettyPrintOne`
+   was not halting. This was not reachable through the normal entry point.
+ * Fixed bug [#4](https://github.com/google/code-prettify/issues/4): recursing into a
+   script block or PHP tag that was not properly closed would not silently drop the content.
    ([test](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue4))
- * Fixed bug #8: was eating tabs
+ * Fixed bug [#8](https://github.com/google/code-prettify/issues/8): was eating tabs
    ([test](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue8))
  * Fixed entity handling so that the caveat
 
@@ -28,16 +28,17 @@
    > and use `"` instead of `&quot;` for string delimiters.
 
    is no longer applicable.
- * Added *noisefree*'s C# patch #4
+ * Added *noisefree*'s C# patch [#7](https://github.com/google/code-prettify/issues/7)
  * Added a [distribution](http://google-code-prettify.googlecode.com/files/prettify-small.zip)
    that has comments and whitespace removed to reduce download size from 45.5kB
    to 12.8kB.
 
 ## 4 Jul 2008
 
- * Added #17 language specific formatters that are triggered by the presence of
-   a `lang-<language-file-extension>`
- * Fixed bug #29: python handling of `'''string'''`
+ * Added [#17](https://github.com/google/code-prettify/issues/17) language specific
+   formatters that are triggered by the presence of a `lang-<language-file-extension>`
+ * Fixed bug [#29](https://github.com/google/code-prettify/issues/29): python
+   handling of `'''string'''`
  * Fixed bug: `/` in regex `[charsets] should not end regex`
 
 ## 5 Jul 2008
@@ -49,16 +50,17 @@
  * Language handlers for F#, OCAML, SQL
  * Support for `nocode` spans to allow embedding of line numbers and code
    annotations which should not be styled or otherwise affect the tokenization
-   of prettified code. See the issue #22
+   of prettified code. See the issue [#22](https://github.com/google/code-prettify/issues/22)
    [testcase](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue22).
 
 ## 6 Jan 2009
 
  * Language handlers for Visual Basic, Haskell, CSS, and WikiText
  * Added `.mxml` extension to the markup style handler for
-   Flex [MXML files](http://en.wikipedia.org/wiki/MXML). See issue #37.
+   Flex [MXML files](http://en.wikipedia.org/wiki/MXML).
+   See issue [#37](https://github.com/google/code-prettify/issues/37).
  * Added `.m` extension to the C style handler so that Objective C source files
-   properly highlight. See issue #58.
+   properly highlight. See issue [#58](https://github.com/google/code-prettify/issues/58).
  * Changed HTML lexer to use the same embedded source mechanism as the wiki
    language handler, and changed to use the registered CSS handler for STYLE
    element content.
@@ -81,14 +83,15 @@
 
 ## 19 July 2010
 
- * Added support for line numbers. Bug #22
- * Added YAML support. Bug #123
+ * Added support for line numbers. Bug [#22](https://github.com/google/code-prettify/issues/22)
+ * Added YAML support. Bug [#123](https://github.com/google/code-prettify/issues/123)
  * Added VHDL support courtesy *Le Poussin*.
- * IE performance improvements. Bug #102 courtesy *jacobly*.
+ * IE performance improvements. Bug [#102](https://github.com/google/code-prettify/issues/102)
+   courtesy *jacobly*.
  * A variety of markup formatting fixes courtesy *smain* and *thezbyg*.
  * Fixed copy and paste in IE 6, 7, 8.
  * Changed output to use `&#160;` instead of `&nbsp;` so that the output works
-   when embedded in XML. Bug #108.
+   when embedded in XML. Bug [#108](https://github.com/google/code-prettify/issues/108).
 
 ## 7 September 2010
 
