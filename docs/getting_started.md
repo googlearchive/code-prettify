@@ -50,8 +50,8 @@ will load the entire system and schedule the prettifier to run on page
 load.  There are a variety of additional options you can specify (as
 CGI arguments) to configure the runner.
 
-| *CGI parameter* | default | meaning |
----------------------------------------
+| CGI parameter | default | meaning |
+| ------------- | ------- | ------- |
 | autoload=(true | false) | true | run automatically on page load |
 | lang=... | none | Loads the language handler for the given language which is usually the file extension for source files for that language.  See the [index of language handlers](https://github.com/google/code-prettify/tree/master/src).  If specified multiple times (`?lang=css&lang=ml`) then all are loaded. |
 | skin=... | none | See the [skin gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html).  If specified multiple times, the first one to successfully load is used. |
