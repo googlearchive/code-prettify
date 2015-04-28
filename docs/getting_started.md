@@ -52,7 +52,7 @@ CGI arguments) to configure the runner.
 
 | CGI parameter | default | meaning |
 | ------------- | ------- | ------- |
-| autoload=(true | false) | true | run automatically on page load |
+| autoload=(true, false) | true | run automatically on page load |
 | lang=... | none | Loads the language handler for the given language which is usually the file extension for source files for that language.  See the [index of language handlers](https://github.com/google/code-prettify/tree/master/src).  If specified multiple times (`?lang=css&lang=ml`) then all are loaded. |
 | skin=... | none | See the [skin gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html).  If specified multiple times, the first one to successfully load is used. |
 | callback=js_ident | | `window.exports["js_ident"]` will be called when prettyprinting finishes.  If specified multiple times, all are called. |
@@ -60,7 +60,7 @@ CGI arguments) to configure the runner.
 For example
 
 ```HTML
-<script src="https://cdn.rawgit.com/google/code-prettify/master/src/run_prettify.js?lang=css&skin=sunburst"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/src/run_prettify.js?lang=css&amp;skin=sunburst"></script>
 ```
 
 specifies the `lang` parameter to also load the CSS language extension
