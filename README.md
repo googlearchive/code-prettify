@@ -31,6 +31,13 @@ public:
 }</pre>
 ```
 
+## Discussion
+
+Please use the official support group for discussions, suggestions, and
+general feedback at:
+
+http://groups.google.com/group/js-code-prettifier
+
 ## FAQ
 
 ### For which languages does it work?
