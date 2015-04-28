@@ -39,33 +39,33 @@ Smalltalk, OCaml, etc. without a language extension.
 
 Other languages are supported via extensions:
 
-[Apollo](https://github.com/google/code-prettify/tree/master/src/lang-apollo.js)
-[Basic](https://github.com/google/code-prettify/tree/master/src/lang-basic.js)
-[Clojure](https://github.com/google/code-prettify/tree/master/src/lang-clj.js)
-[CSS](https://github.com/google/code-prettify/tree/master/src/lang-css.js)
-[Dart](https://github.com/google/code-prettify/tree/master/src/lang-dart.js)
-[Erlang](https://github.com/google/code-prettify/tree/master/src/lang-erlang.js)
-[Go](https://github.com/google/code-prettify/tree/master/src/lang-go.js)
-[Haskell](https://github.com/google/code-prettify/tree/master/src/lang-hs.js)
-[Lisp, Scheme](https://github.com/google/code-prettify/tree/master/src/lang-lisp.js)
-[Llvm](https://github.com/google/code-prettify/tree/master/src/lang-llvm.js)
-[Lua](https://github.com/google/code-prettify/tree/master/src/lang-lua.js)
-[Matlab](https://github.com/google/code-prettify/tree/master/src/lang-matlab.js)
-[MLs:F#, Ocaml,SML](https://github.com/google/code-prettify/tree/master/src/lang-ml.js)
-[Mumps](https://github.com/google/code-prettify/tree/master/src/lang-mumps.js)
-[Nemerle](https://github.com/google/code-prettify/tree/master/src/lang-n.js)
-[Pascal](https://github.com/google/code-prettify/tree/master/src/lang-pascal.js)
-[Protocol buffers](https://github.com/google/code-prettify/tree/master/src/lang-proto.js)
-[R, S](https://github.com/google/code-prettify/tree/master/src/lang-r.js)
-[RD](https://github.com/google/code-prettify/tree/master/src/lang-rd.js)
-[Scala](https://github.com/google/code-prettify/tree/master/src/lang-scala.js)
-[SQL](https://github.com/google/code-prettify/tree/master/src/lang-sql.js)
-[TCL](https://github.com/google/code-prettify/tree/master/src/lang-tcl.js)
-[Latek](https://github.com/google/code-prettify/tree/master/src/lang-tex.js)
-[Visual Basic](https://github.com/google/code-prettify/tree/master/src/lang-vb.js)
-[CHDL](https://github.com/google/code-prettify/tree/master/src/lang-vhdl.js)
-[Wiki](https://github.com/google/code-prettify/tree/master/src/lang-wiki.js)
-[XQ](https://github.com/google/code-prettify/tree/master/src/lang-xq.js)
+[Apollo](https://github.com/google/code-prettify/tree/master/src/lang-apollo.js);
+[Basic](https://github.com/google/code-prettify/tree/master/src/lang-basic.js);
+[Clojure](https://github.com/google/code-prettify/tree/master/src/lang-clj.js);
+[CSS](https://github.com/google/code-prettify/tree/master/src/lang-css.js);
+[Dart](https://github.com/google/code-prettify/tree/master/src/lang-dart.js);
+[Erlang](https://github.com/google/code-prettify/tree/master/src/lang-erlang.js);
+[Go](https://github.com/google/code-prettify/tree/master/src/lang-go.js);
+[Haskell](https://github.com/google/code-prettify/tree/master/src/lang-hs.js);
+[Lisp, Scheme](https://github.com/google/code-prettify/tree/master/src/lang-lisp.js);
+[Llvm](https://github.com/google/code-prettify/tree/master/src/lang-llvm.js);
+[Lua](https://github.com/google/code-prettify/tree/master/src/lang-lua.js);
+[Matlab](https://github.com/google/code-prettify/tree/master/src/lang-matlab.js);
+[MLs:F#, Ocaml,SML](https://github.com/google/code-prettify/tree/master/src/lang-ml.js);
+[Mumps](https://github.com/google/code-prettify/tree/master/src/lang-mumps.js);
+[Nemerle](https://github.com/google/code-prettify/tree/master/src/lang-n.js);
+[Pascal](https://github.com/google/code-prettify/tree/master/src/lang-pascal.js);
+[Protocol buffers](https://github.com/google/code-prettify/tree/master/src/lang-proto.js);
+[R, S](https://github.com/google/code-prettify/tree/master/src/lang-r.js);
+[RD](https://github.com/google/code-prettify/tree/master/src/lang-rd.js);
+[Scala](https://github.com/google/code-prettify/tree/master/src/lang-scala.js);
+[SQL](https://github.com/google/code-prettify/tree/master/src/lang-sql.js);
+[TCL](https://github.com/google/code-prettify/tree/master/src/lang-tcl.js);
+[Latek](https://github.com/google/code-prettify/tree/master/src/lang-tex.js);
+[Visual Basic](https://github.com/google/code-prettify/tree/master/src/lang-vb.js);
+[CHDL](https://github.com/google/code-prettify/tree/master/src/lang-vhdl.js);
+[Wiki](https://github.com/google/code-prettify/tree/master/src/lang-wiki.js);
+[XQ](https://github.com/google/code-prettify/tree/master/src/lang-xq.js);
 [YAML](https://github.com/google/code-prettify/tree/master/src/lang-yaml.js)
 
 If you'd like to add an extension for your favorite language, please
