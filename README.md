@@ -64,7 +64,7 @@ Other languages are supported via extensions:
 [Llvm](src/lang-llvm.js);
 [Lua](src/lang-lua.js);
 [Matlab](src/lang-matlab.js);
-[MLs:F#, Ocaml,SML](src/lang-ml.js);
+[MLs: F#, Ocaml,SML](src/lang-ml.js);
 [Mumps](src/lang-mumps.js);
 [Nemerle](src/lang-n.js);
 [Pascal](src/lang-pascal.js);
@@ -120,7 +120,7 @@ to see if it works in your browser.
 
 ### What's changed?
 
-See the [change log](https://rawgit.com/google/code-prettify/master/CHANGES.html)
+See the [change log](CHANGES.md)
 
 ### Why doesn't Prettyprinting of strings work on WordPress?
 
@@ -196,7 +196,7 @@ for examples.
 
 ### I can't add classes to my code (because it comes from Markdown, etc.)
 
-Instead of ```<pre class="prettyprint ...">``` you can use a comment
+Instead of `<pre class="prettyprint ...">` you can use a comment
 or processing instructions that survives processing instructions :
 `<?prettify ...?>` works as explained in
 [Getting Started](docs/getting_started.md).
@@ -205,7 +205,7 @@ or processing instructions that survives processing instructions :
 
 Prettify puts lines into an HTML list element so that line numbers
 aren't caught by copy/paste, and the line numbering is controlled by
-CSS in the default stylesheet, "prettify.css".
+CSS in the default stylesheet, `prettify.css`.
 
 ```HTML
 <style>
