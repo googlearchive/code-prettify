@@ -12,7 +12,7 @@ An embeddable script that makes source-code snippets in HTML prettier.
 ```
  * See [Getting Started](docs/getting_started.md) to configure that URL with
    options you need.
- * Look at the [skin gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html)
+ * Look at the [skin gallery](https://rawgit.com/google/code-prettify/master/styles/index.html)
    and pick styles that suit you.
 
 ## Usage
@@ -184,7 +184,7 @@ which will confuse it.
 Prettify adds `<span>` with `class`es describing the kind of code.
 You can create CSS styles to matches these classes.
 
-See the [theme gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html)
+See the [theme gallery](https://rawgit.com/google/code-prettify/master/styles/index.html)
 for examples.
 
 ### I can't add classes to my code (because it comes from Markdown, etc.)
