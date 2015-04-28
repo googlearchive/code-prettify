@@ -10,8 +10,10 @@ An embeddable script that makes source-code snippets in HTML prettier.
 ```HTML
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 ```
- * See [Getting Started](docs/getting_started.md) to configure that URL with options you need.
- * Look at the [skin gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html) and pick styles that suit you.
+ * See [Getting Started](docs/getting_started.md) to configure that URL with
+   options you need.
+ * Look at the [skin gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html)
+   and pick styles that suit you.
 
 ## Usage
 
@@ -43,37 +45,37 @@ Smalltalk, OCaml, etc. without a language extension.
 
 Other languages are supported via extensions:
 
-[Apollo](https://github.com/google/code-prettify/tree/master/src/lang-apollo.js);
-[Basic](https://github.com/google/code-prettify/tree/master/src/lang-basic.js);
-[Clojure](https://github.com/google/code-prettify/tree/master/src/lang-clj.js);
-[CSS](https://github.com/google/code-prettify/tree/master/src/lang-css.js);
-[Dart](https://github.com/google/code-prettify/tree/master/src/lang-dart.js);
-[Erlang](https://github.com/google/code-prettify/tree/master/src/lang-erlang.js);
-[Go](https://github.com/google/code-prettify/tree/master/src/lang-go.js);
-[Haskell](https://github.com/google/code-prettify/tree/master/src/lang-hs.js);
-[Lisp, Scheme](https://github.com/google/code-prettify/tree/master/src/lang-lisp.js);
-[Llvm](https://github.com/google/code-prettify/tree/master/src/lang-llvm.js);
-[Lua](https://github.com/google/code-prettify/tree/master/src/lang-lua.js);
-[Matlab](https://github.com/google/code-prettify/tree/master/src/lang-matlab.js);
-[MLs:F#, Ocaml,SML](https://github.com/google/code-prettify/tree/master/src/lang-ml.js);
-[Mumps](https://github.com/google/code-prettify/tree/master/src/lang-mumps.js);
-[Nemerle](https://github.com/google/code-prettify/tree/master/src/lang-n.js);
-[Pascal](https://github.com/google/code-prettify/tree/master/src/lang-pascal.js);
-[Protocol buffers](https://github.com/google/code-prettify/tree/master/src/lang-proto.js);
-[R, S](https://github.com/google/code-prettify/tree/master/src/lang-r.js);
-[RD](https://github.com/google/code-prettify/tree/master/src/lang-rd.js);
-[Scala](https://github.com/google/code-prettify/tree/master/src/lang-scala.js);
-[SQL](https://github.com/google/code-prettify/tree/master/src/lang-sql.js);
-[TCL](https://github.com/google/code-prettify/tree/master/src/lang-tcl.js);
-[Latek](https://github.com/google/code-prettify/tree/master/src/lang-tex.js);
-[Visual Basic](https://github.com/google/code-prettify/tree/master/src/lang-vb.js);
-[CHDL](https://github.com/google/code-prettify/tree/master/src/lang-vhdl.js);
-[Wiki](https://github.com/google/code-prettify/tree/master/src/lang-wiki.js);
-[XQ](https://github.com/google/code-prettify/tree/master/src/lang-xq.js);
-[YAML](https://github.com/google/code-prettify/tree/master/src/lang-yaml.js)
+[Apollo](src/lang-apollo.js);
+[Basic](src/lang-basic.js);
+[Clojure](src/lang-clj.js);
+[CSS](src/lang-css.js);
+[Dart](src/lang-dart.js);
+[Erlang](src/lang-erlang.js);
+[Go](src/lang-go.js);
+[Haskell](src/lang-hs.js);
+[Lisp, Scheme](src/lang-lisp.js);
+[Llvm](src/lang-llvm.js);
+[Lua](src/lang-lua.js);
+[Matlab](src/lang-matlab.js);
+[MLs:F#, Ocaml,SML](src/lang-ml.js);
+[Mumps](src/lang-mumps.js);
+[Nemerle](src/lang-n.js);
+[Pascal](src/lang-pascal.js);
+[Protocol buffers](src/lang-proto.js);
+[R, S](src/lang-r.js);
+[RD](src/lang-rd.js);
+[Scala](src/lang-scala.js);
+[SQL](src/lang-sql.js);
+[TCL](src/lang-tcl.js);
+[Latek](src/lang-tex.js);
+[Visual Basic](src/lang-vb.js);
+[CHDL](src/lang-vhdl.js);
+[Wiki](src/lang-wiki.js);
+[XQ](src/lang-xq.js);
+[YAML](src/lang-yaml.js)
 
 If you'd like to add an extension for your favorite language, please
-look at `src/lang-lisp.js` and submit a patch.
+look at `src/lang-lisp.js` and submit a pull request.
 
 ### How do I specify the language of my code?
 
@@ -93,19 +95,20 @@ along with the `prettyprint` class:
 
 You may also use the
 [HTML 5](http://dev.w3.org/html5/spec-author-view/the-code-element.html#the-code-element)
-convention of embedding a `code` element inside the `PRE` and using `language-java` style classes.
+convention of embedding a `code` element inside the `PRE` and using
+`language-java` style classes.
 
 E.g. `<pre class="prettyprint"><code class="language-java">...</code></pre>`
 
 ### It doesn't work on `<obfuscated code sample>`?
 
-Yes.  Prettifying obfuscated code is like putting lipstick on a pig --
+Yes. Prettifying obfuscated code is like putting lipstick on a pig &mdash;
 i.e. outside the scope of this tool.
 
 ### Which browsers does it work with?
 
-It's been tested with IE 6, Firefox 1.5 & 2, and Safari 2.0.4.
-Look at [the tests](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html)
+It's been tested with IE 6, Firefox 1.5 & 2, and Safari 2.0.4. Look at
+[the tests](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html)
 to see if it works in your browser.
 
 ### What's changed?
@@ -156,7 +159,7 @@ int y = bar();
 ```
 
 For a more complete example see the issue22
-[testcase](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue22)
+[testcase](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue22).
 
 ### I get an error message "a is not a function" or "opt_whenDone is not a function"
 
@@ -181,7 +184,8 @@ which will confuse it.
 Prettify adds `<span>` with `class`es describing the kind of code.
 You can create CSS styles to matches these classes.
 
-See the [theme gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html) for examples.
+See the [theme gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html)
+for examples.
 
 ### I can't add classes to my code (because it comes from Markdown, etc.)
 
