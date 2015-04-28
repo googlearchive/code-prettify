@@ -170,7 +170,7 @@
   // This only works if this script is loaded via https : something
   // over which we exercise no control.
   var LOADER_BASE_URL =
-     'https://cdn.rawgit.com/google/code-prettify/master/loader/';
+     'https://cdn.rawgit.com/google/code-prettify/master/loader';
 
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");

@@ -87,10 +87,16 @@ lang-aliases.tstamp : distrib.tstamp
 	  | perl -ne 'system("cp $$1 $$2") if m/^(\S+) (\S+)$$/ && ! -e $$2' \
 	  && touch lang-aliases.tstamp
 
-loader : loader.tstamp lang-aliases.tstamp
+loader : loader.tstamp lang-aliases.tstamp styles/*.css
 
 loader.tstamp : distrib.tstamp
 	@cp distrib/google-code-prettify/*.{css,js} loader/ \
+	&& for f in styles/*.css; do \
+	  $(YUI_COMPRESSOR) --type css $$f \
+	      > loader/$$(basename $$f); \
+	  wc -c $$f loader/$$(basename $$f) \
+	      | grep -v total; \
+	done \
 	&& touch loader.tstamp
 
 %.tgz: %.tar
