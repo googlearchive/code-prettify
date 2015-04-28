@@ -93,8 +93,8 @@ loader.tstamp : distrib.tstamp
 	@cp distrib/google-code-prettify/*.{css,js} loader/ \
 	&& for f in styles/*.css; do \
 	  $(YUI_COMPRESSOR) --type css $$f \
-	      > loader/$$(basename $$f); \
-	  wc -c $$f loader/$$(basename $$f) \
+	      > loader/skins/$$(basename $$f); \
+	  wc -c $$f loader/skins/$$(basename $$f) \
 	      | grep -v total; \
 	done \
 	&& touch loader.tstamp
