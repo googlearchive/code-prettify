@@ -2,7 +2,8 @@
 
 ## Setup
 
- * Include the script tag below in your document ```HTML
+ * Include the script tag below in your document
+```HTML
 <script src="https://cdn.rawgit.com/google/code-prettify/master/src/run_prettify.js"></script>
 ```
  * See [Getting Started](docs/getting_started.md) to configure that URL with options you need.
