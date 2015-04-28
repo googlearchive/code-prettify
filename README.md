@@ -2,8 +2,7 @@
 
 ## Setup
 
- * Include the script tag below in your document
-  ```HTML
+ * Include the script tag below in your document ```HTML
 <script src="https://cdn.rawgit.com/google/code-prettify/master/src/run_prettify.js"></script>
 ```
  * See [Getting Started](docs/getting_started.md) to configure that URL with options you need.
@@ -39,34 +38,34 @@ Smalltalk, OCaml, etc. without a language extension.
 
 Other languages are supported via extensions:
 
-      [Apollo](https://github.com/google/code-prettify/tree/master/src/lang-apollo.js)
-      [Basic](https://github.com/google/code-prettify/tree/master/src/lang-basic.js)
-      [Clojure](https://github.com/google/code-prettify/tree/master/src/lang-clj.js)
-      [CSS](https://github.com/google/code-prettify/tree/master/src/lang-css.js)
-      [Dart](https://github.com/google/code-prettify/tree/master/src/lang-dart.js)
-      [Erlang](https://github.com/google/code-prettify/tree/master/src/lang-erlang.js)
-      [Go](https://github.com/google/code-prettify/tree/master/src/lang-go.js)
-      [Haskell](https://github.com/google/code-prettify/tree/master/src/lang-hs.js)
-      [Lisp, Scheme](https://github.com/google/code-prettify/tree/master/src/lang-lisp.js)
-      [Llvm](https://github.com/google/code-prettify/tree/master/src/lang-llvm.js)
-      [Lua](https://github.com/google/code-prettify/tree/master/src/lang-lua.js)
-      [Matlab](https://github.com/google/code-prettify/tree/master/src/lang-matlab.js)
-      [MLs:F#, Ocaml,SML](https://github.com/google/code-prettify/tree/master/src/lang-ml.js)
-      [Mumps](https://github.com/google/code-prettify/tree/master/src/lang-mumps.js)
-      [Nemerle](https://github.com/google/code-prettify/tree/master/src/lang-n.js)
-      [Pascal](https://github.com/google/code-prettify/tree/master/src/lang-pascal.js)
-      [Protocol buffers](https://github.com/google/code-prettify/tree/master/src/lang-proto.js)
-      [R, S](https://github.com/google/code-prettify/tree/master/src/lang-r.js)
-      [RD](https://github.com/google/code-prettify/tree/master/src/lang-rd.js)
-      [Scala](https://github.com/google/code-prettify/tree/master/src/lang-scala.js)
-      [SQL](https://github.com/google/code-prettify/tree/master/src/lang-sql.js)
-      [TCL](https://github.com/google/code-prettify/tree/master/src/lang-tcl.js)
-      [Latek](https://github.com/google/code-prettify/tree/master/src/lang-tex.js)
-      [Visual Basic](https://github.com/google/code-prettify/tree/master/src/lang-vb.js)
-      [CHDL](https://github.com/google/code-prettify/tree/master/src/lang-vhdl.js)
-      [Wiki](https://github.com/google/code-prettify/tree/master/src/lang-wiki.js)
-      [XQ](https://github.com/google/code-prettify/tree/master/src/lang-xq.js)
-      [YAML](https://github.com/google/code-prettify/tree/master/src/lang-yaml.js)
+[Apollo](https://github.com/google/code-prettify/tree/master/src/lang-apollo.js)
+[Basic](https://github.com/google/code-prettify/tree/master/src/lang-basic.js)
+[Clojure](https://github.com/google/code-prettify/tree/master/src/lang-clj.js)
+[CSS](https://github.com/google/code-prettify/tree/master/src/lang-css.js)
+[Dart](https://github.com/google/code-prettify/tree/master/src/lang-dart.js)
+[Erlang](https://github.com/google/code-prettify/tree/master/src/lang-erlang.js)
+[Go](https://github.com/google/code-prettify/tree/master/src/lang-go.js)
+[Haskell](https://github.com/google/code-prettify/tree/master/src/lang-hs.js)
+[Lisp, Scheme](https://github.com/google/code-prettify/tree/master/src/lang-lisp.js)
+[Llvm](https://github.com/google/code-prettify/tree/master/src/lang-llvm.js)
+[Lua](https://github.com/google/code-prettify/tree/master/src/lang-lua.js)
+[Matlab](https://github.com/google/code-prettify/tree/master/src/lang-matlab.js)
+[MLs:F#, Ocaml,SML](https://github.com/google/code-prettify/tree/master/src/lang-ml.js)
+[Mumps](https://github.com/google/code-prettify/tree/master/src/lang-mumps.js)
+[Nemerle](https://github.com/google/code-prettify/tree/master/src/lang-n.js)
+[Pascal](https://github.com/google/code-prettify/tree/master/src/lang-pascal.js)
+[Protocol buffers](https://github.com/google/code-prettify/tree/master/src/lang-proto.js)
+[R, S](https://github.com/google/code-prettify/tree/master/src/lang-r.js)
+[RD](https://github.com/google/code-prettify/tree/master/src/lang-rd.js)
+[Scala](https://github.com/google/code-prettify/tree/master/src/lang-scala.js)
+[SQL](https://github.com/google/code-prettify/tree/master/src/lang-sql.js)
+[TCL](https://github.com/google/code-prettify/tree/master/src/lang-tcl.js)
+[Latek](https://github.com/google/code-prettify/tree/master/src/lang-tex.js)
+[Visual Basic](https://github.com/google/code-prettify/tree/master/src/lang-vb.js)
+[CHDL](https://github.com/google/code-prettify/tree/master/src/lang-vhdl.js)
+[Wiki](https://github.com/google/code-prettify/tree/master/src/lang-wiki.js)
+[XQ](https://github.com/google/code-prettify/tree/master/src/lang-xq.js)
+[YAML](https://github.com/google/code-prettify/tree/master/src/lang-yaml.js)
 
 If you'd like to add an extension for your favorite language, please
 look at `src/lang-lisp.js` and submit a patch.
@@ -136,6 +135,7 @@ boo();
 far();
 faz();
 </pre>
+```
 
 ### How do I prevent a portion of markup from being marked as code?
 
@@ -158,11 +158,15 @@ For a more complete example see the issue22
 If you are calling `prettyPrint` via an event handler, wrap it in a function.
 Instead of doing
 
-> ```addEventListener('load', prettyPrint, false);```
+```JavaScript
+addEventListener('load', prettyPrint, false);
+```
 
 wrap it in a closure like
 
-> ```addEventListener('load', function (event) { prettyPrint() }, false);```
+```JavaScript
+addEventListener('load', function (event) { prettyPrint() }, false);
+```
 
 so that the browser does not pass an event object to `prettyPrint`
 which will confuse it.
@@ -196,7 +200,3 @@ li.L5, li.L6, li.L7, li.L8
 ```
 
 should turn line numbering back on for the other lines.
-
-
-<!-- Created: Tue Oct  3 17:51:56 PDT 2006 -->
-<!-- hhmts start -->Last modified: Fri Jun 21 15:23:18 EDT 2013 <!-- hhmts end --
