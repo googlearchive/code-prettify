@@ -8,7 +8,7 @@ An embeddable script that makes source-code snippets in HTML prettier.
 
  * Include the script tag below in your document
 ```HTML
-<script src="https://cdn.rawgit.com/google/code-prettify/master/src/run_prettify.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 ```
  * See [Getting Started](docs/getting_started.md) to configure that URL with options you need.
  * Look at the [skin gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html) and pick styles that suit you.

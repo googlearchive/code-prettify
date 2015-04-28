@@ -19,7 +19,7 @@
  *
  * <p>
  * For a fairly comprehensive set of languages see the
- * <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html#langs">README</a>
+ * <a href="https://github.com/google/code-prettify#for-which-languages-does-it-work">README</a>
  * file that came with this source.  At a minimum, the lexer should work on a
  * number of languages including C and friends, Java, Python, Bash, SQL, HTML,
  * XML, CSS, Javascript, and Makefiles.  It works passably on Ruby, PHP and Awk

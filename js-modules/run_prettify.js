@@ -24,15 +24,15 @@
 // | lang=            | language name | Loads the language handler   | Can    |
 // |                  |               | named "lang-<NAME>.js".      | appear |
 // |                  |               | See available handlers at    | many   |
-// |                  |               | http://code.google.com/p/    | times. |
-// |                  |               | google-code-prettify/source/ |        |
-// |                  |               | browse/trunk/src             |        |
+// |                  |               | https://github.com/google/   | times. |
+// |                  |               | code-prettify/tree/master/   |        |
+// |                  |               | src                          |        |
 // +------------------+---------------+------------------------------+--------+
 // | skin=            | skin name     | Loads the skin stylesheet    | none.  |
 // |                  |               | named "<NAME>.css".          |        |
-// |                  |               | http://code.google.com/p/    |        |
-// |                  |               | google-code-prettify/source/ |        |
-// |                  |               | browse/trunk/styles          |        |
+// |                  |               | https://cdn.rawgit.com/      |        |
+// |                  |               | google/code-prettify/master/ |        |
+// |                  |               | styles/index.html            |        |
 // +------------------+---------------+------------------------------+--------+
 // | callback=        | JS identifier | When "prettyPrint" finishes  | none   |
 // |                  |               | window.exports[js_ident] is  |        |
@@ -51,7 +51,7 @@
 //   2. Loads the sunburst.css stylesheet instead of the default prettify.css
 //      stylesheet.
 //      A gallery of stylesheets is available at
-//      https://google-code-prettify.googlecode.com/svn/trunk/styles/index.html
+//      https://cdn.rawgit.com/google/code-prettify/master/styles/index.html
 //   3. Since autorun=false is not specified, calls prettyPrint() on page load.
 
 (function () {
@@ -170,7 +170,7 @@
   // This only works if this script is loaded via https : something
   // over which we exercise no control.
   var LOADER_BASE_URL =
-     'https://google-code-prettify.googlecode.com/svn/loader';
+     'https://cdn.rawgit.com/google/code-prettify/master/loader/';
 
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");

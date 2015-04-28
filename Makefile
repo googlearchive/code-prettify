@@ -15,10 +15,10 @@ YUI_COMPRESSOR=java -jar tools/yui-compressor/yuicompressor-2.4.4.jar \
 
 TAR_ROOT=distrib/google-code-prettify
 
-all: distrib
+all: distrib loader
 
 clean:
-	rm -rf distrib.tstamp distrib src/prettify.js src/run_prettify.js
+	rm -rf distrib.tstamp distrib loader.tstamp src/prettify.js src/run_prettify.js
 
 src/prettify.js: js-modules/*.js js-modules/*.pl
 	@if [ -e "$@" ]; then chmod +w "$@"; fi
@@ -82,10 +82,16 @@ distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 
 lang-aliases : lang-aliases.tstamp
 lang-aliases.tstamp : distrib.tstamp
-	@tools/lang-handler-aliases.sh \
+	tools/lang-handler-aliases.sh \
             distrib/google-code-prettify \
 	  | perl -ne 'system("cp $$1 $$2") if m/^(\S+) (\S+)$$/ && ! -e $$2' \
 	  && touch lang-aliases.tstamp
+
+loader : loader.tstamp lang-aliases.tstamp
+
+loader.tstamp : distrib.tstamp
+	@cp distrib/google-code-prettify/*.{css,js} loader/ \
+	&& touch loader.tstamp
 
 %.tgz: %.tar
 	@gzip -c -9 $^ > $@
@@ -108,4 +114,3 @@ distrib/prettify.tar: distrib.tstamp
 	  examples js-modules src styles tests tools \
 	  distrib/sources/google-code-prettify
 	tar cf distrib/prettify.tar -C distrib/sources google-code-prettify
-

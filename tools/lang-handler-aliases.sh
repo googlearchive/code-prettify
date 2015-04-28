@@ -20,7 +20,7 @@ if [ -n "$*" ] || [ -z "$LANG_DIR" ] || ! (( $HAS_LANG_FILES )); then
 fi
 
 if [ -z "$JS_INTERPRETER" ]; then
-  JS_INTERPRETER="jsc-1"
+  JS_INTERPRETER="js17"
 fi
 
 if ! which "$JS_INTERPRETER" >& /dev/null; then
@@ -39,7 +39,7 @@ for JS in "$LANG_DIR"/lang-*.js; do
   # The JS interpreter is run with STDIN of /dev/null so that it does not
   # hand waiting for REPL input.
   ("$JS_INTERPRETER" \
-    <(echo '
+    -e '
 
       var window = this;
       var PR = {
@@ -55,9 +55,8 @@ for JS in "$LANG_DIR"/lang-*.js; do
         sourceDecorator:   function () {}
       };
 
-      ') \
-    \
-    "$JS" \
+      ' \
+    -f "$JS" \
     < /dev/null \
    || echo "Failed to execute $JS" 1>&2 ) \
     | perl -e '$JS=shift;' \

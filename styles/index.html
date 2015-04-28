@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html><head>
 <title>Prettify Themes Gallery</title>
 <style type="text/css">
@@ -42,7 +42,7 @@ function adjustChildIframeSize(themeName, width, height) {
 <noscript>This page requires JavaScript</noscript>
 
 <h1>Gallery of themes for
-<a href="http://code.google.com/p/google-code-prettify/">code prettify</a></h1>
+<a href="https://github.com/google/code-prettify">code prettify</a></h1>
 <p>
 Click on a theme name for a link to the file in revision control.
 Print preview this page to see how the themes work on the printed page.
@@ -62,7 +62,7 @@ Print preview this page to see how the themes work on the printed page.
     header.id = theme.name;
     var linkToThemeSrc = document.createElement('a');
     linkToThemeSrc.href = (
-        'http://code.google.com/p/google-code-prettify/source/browse/trunk/' +
+        'https://cdn.rawgit.com/google/code-prettify/master/' +
         (theme.name === 'default'
          ? 'src/prettify.css'
          : 'styles/' + encodeURIComponent(theme.name) + '.css'));

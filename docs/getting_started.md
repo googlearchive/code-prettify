@@ -43,7 +43,7 @@ code here
 You can load the JavaScript and CSS for prettify via one URL
 
 ```HTML
-<script src="https://cdn.rawgit.com/google/code-prettify/master/src/run_prettify.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 ```
 
 will load the entire system and schedule the prettifier to run on page
@@ -60,7 +60,7 @@ CGI arguments) to configure the runner.
 For example
 
 ```HTML
-<script src="https://cdn.rawgit.com/google/code-prettify/master/src/run_prettify.js?lang=css&amp;skin=sunburst"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=css&amp;skin=sunburst"></script>
 ```
 
 specifies the `lang` parameter to also load the CSS language extension
@@ -70,7 +70,7 @@ and the `skin` parameter to load the
 ## Serving your own JS & CSS
 
 You can
-[download](https://raw.githubusercontent.com/google/code-prettify/master/src/prettify.js)
+[download](https://raw.githubusercontent.com/google/code-prettify/master/distrib/prettify-small.tgz)
 the scripts and styles and serve them yourself.  Make sure to include
 both the script and a stylesheet:
 
