@@ -1,5 +1,9 @@
 # Javascript code prettifier
 
+An embeddable script that makes source-code snippets in HTML prettier.
+
+[See an example](https://rawgit.com/google/code-prettify/master/examples/quine.html)
+
 ## Setup
 
  * Include the script tag below in your document
