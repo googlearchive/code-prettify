@@ -216,3 +216,7 @@ li.L5, li.L6, li.L7, li.L8
 ```
 
 should turn line numbering back on for the other lines.
+
+## License
+
+[Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
