@@ -1,0 +1,160 @@
+/* Atelier Savanna Light by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/savanna) */
+
+/* plain text */
+.pln {
+  color: #171c19;
+}
+
+@media screen {
+  /* string content */
+  .str {
+    color: #489963;
+  }
+
+  /* a keyword */
+  .kwd {
+    color: #55859b;
+  }
+
+  /* a comment */
+  .com {
+    color: #78877d;
+  }
+
+  /* a type name */
+  .typ {
+    color: #478c90;
+  }
+
+  /* a literal value */
+  .lit {
+    color: #9f713c;
+  }
+
+  /* punctuation */
+  .pun {
+    color: #171c19;
+  }
+
+  /* lisp open bracket */
+  .opn {
+    color: #171c19;
+  }
+
+  /* lisp close bracket */
+  .clo {
+    color: #171c19;
+  }
+
+  /* a markup tag name */
+  .tag {
+    color: #b16139;
+  }
+
+  /* a markup attribute name */
+  .atn {
+    color: #9f713c;
+  }
+
+  /* a markup attribute value */
+  .atv {
+    color: #1c9aa0;
+  }
+
+  /* a declaration */
+  .dec {
+    color: #9f713c;
+  }
+
+  /* a variable name */
+  .var {
+    color: #b16139;
+  }
+
+  /* a function name */
+  .fun {
+    color: #478c90;
+  }
+}
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .str {
+    color: #006600;
+  }
+
+  .kwd {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .com {
+    color: #600;
+    font-style: italic;
+  }
+
+  .typ {
+    color: #404;
+    font-weight: bold;
+  }
+
+  .lit {
+    color: #004444;
+  }
+
+  .pun, .opn, .clo {
+    color: #444400;
+  }
+
+  .tag {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .atn {
+    color: #440044;
+  }
+
+  .atv {
+    color: #006600;
+  }
+}
+/* Style */
+pre.prettyprint {
+  background: #ecf4ee;
+  color: #87928a;
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Monaco, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  border: 1px solid #dfe7e2;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* IE indents via margin-left */
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L4,
+li.L5,
+li.L6,
+li.L7,
+li.L8,
+li.L9 {
+  /* */
+}
+
+/* Alternate shading for lines */
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 {
+  /* */
+}

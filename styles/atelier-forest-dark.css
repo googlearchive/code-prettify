@@ -1,0 +1,160 @@
+/* Atelier Forest Dark by Bram de Haan (http://atelierbram.github.io/syntax-highlighting/atelier-schemes/forest) */
+
+/* plain text */
+.pln {
+  color: #f1efee;
+}
+
+@media screen {
+  /* string content */
+  .str {
+    color: #7b9726;
+  }
+
+  /* a keyword */
+  .kwd {
+    color: #6666ea;
+  }
+
+  /* a comment */
+  .com {
+    color: #766e6b;
+  }
+
+  /* a type name */
+  .typ {
+    color: #407ee7;
+  }
+
+  /* a literal value */
+  .lit {
+    color: #df5320;
+  }
+
+  /* punctuation */
+  .pun {
+    color: #f1efee;
+  }
+
+  /* lisp open bracket */
+  .opn {
+    color: #f1efee;
+  }
+
+  /* lisp close bracket */
+  .clo {
+    color: #f1efee;
+  }
+
+  /* a markup tag name */
+  .tag {
+    color: #f22c40;
+  }
+
+  /* a markup attribute name */
+  .atn {
+    color: #df5320;
+  }
+
+  /* a markup attribute value */
+  .atv {
+    color: #3d97b8;
+  }
+
+  /* a declaration */
+  .dec {
+    color: #df5320;
+  }
+
+  /* a variable name */
+  .var {
+    color: #f22c40;
+  }
+
+  /* a function name */
+  .fun {
+    color: #407ee7;
+  }
+}
+/* Use higher contrast and text-weight for printable form. */
+@media print, projection {
+  .str {
+    color: #006600;
+  }
+
+  .kwd {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .com {
+    color: #600;
+    font-style: italic;
+  }
+
+  .typ {
+    color: #404;
+    font-weight: bold;
+  }
+
+  .lit {
+    color: #004444;
+  }
+
+  .pun, .opn, .clo {
+    color: #444400;
+  }
+
+  .tag {
+    color: #006;
+    font-weight: bold;
+  }
+
+  .atn {
+    color: #440044;
+  }
+
+  .atv {
+    color: #006600;
+  }
+}
+/* Style */
+pre.prettyprint {
+  background: #1b1918;
+  color: #68615e;
+  font-family: Consolas, Menlo, "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Monaco, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  border: 1px solid #1b1918;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* IE indents via margin-left */
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L4,
+li.L5,
+li.L6,
+li.L7,
+li.L8,
+li.L9 {
+  /* */
+}
+
+/* Alternate shading for lines */
+li.L1,
+li.L3,
+li.L5,
+li.L7,
+li.L9 {
+  /* */
+}
