@@ -71,6 +71,7 @@ Other languages are supported via extensions:
 [Protocol buffers](src/lang-proto.js);
 [R, S](src/lang-r.js);
 [RD](src/lang-rd.js);
+[Rust](src/lang-rust.js);
 [Scala](src/lang-scala.js);
 [SQL](src/lang-sql.js);
 [TCL](src/lang-tcl.js);
