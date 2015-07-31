@@ -28,7 +28,7 @@
  * I used https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AboutTheLanguageReference.html
  * as the basis for this. In particular, I targeted the revision from
  * 2015-04-08. Swift is still evolving, and this was the latest version 
- * available at the time.
+ * available at the time. I will keep the code unoptimized to ease changes that come with new Swift standards.
  *
  * @author cerech@google.com
  */
@@ -37,13 +37,16 @@ PR['registerLangHandler'](
     PR['createSimpleLexer'](
         [
           //whitespace
+          //unicodes are vertical tab, form feed, and null, respectively
           [PR['PR_PLAIN'],                /^[\s\n\r\t\u000B\u000C\u0000]+/, null, '\s\n\r\t\u000B\u000C\u0000']
         ],
         [
-          //single-line comment
-          [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null]
-          //multiline comment
-          [PR['PR_COMMENT'],              /^\/\*.*?\/\*\//, null]
+          //keywords
+          [PR['PR_KEYWORD'],              /^\b(?:__COLUMN__|__FILE__|__FUNCTION__|__LINE__|associativity|as|break|case|class|continue|convenience|default|deinit|didSet|do|dynamic|dynamicType|enum|fallthrough|false|final|for|func|get|import|infix|init|inout|internal|in|is|lazy|left|let|mutating|nil|none|nonmutating|operator|optional|override|postfix|precedence|prefix|private|protocol|Protocol|public|required|return|right|safe|self|set|static|struct|subscript|super|switch|true|Type|typealias|unowned|unsafe|var|weak|while|willSet)\b/, null],
+          //double slash comments
+          [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null],
+          //slash star comments
+          [PR['PR_COMMENT'],              /^\/\*[\s\S]*?(?:\*\/|$)/, null]
         ]),
     ['swift']); 
 
