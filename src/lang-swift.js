@@ -46,7 +46,9 @@ PR['registerLangHandler'](
           //double slash comments
           [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null],
           //slash star comments
-          [PR['PR_COMMENT'],              /^\/\*[\s\S]*?(?:\*\/|$)/, null]
+          [PR['PR_COMMENT'],              /^\/\*[\s\S]*?(?:\*\/|$)/, null],
+          //string literals
+          [PR['PR_STRING'],               /^".*?"/, null]
         ]),
     ['swift']); 
 
