@@ -40,11 +40,15 @@ PR['registerLangHandler'](
           //unicodes are vertical tab, form feed, and null, respectively
           [PR['PR_PLAIN'],                /^[\s\n\r\t\u000B\u000C\u0000]+/, null, '\s\n\r\t\u000B\u000C\u0000'],
           //string literals
-          [PR['PR_STRING']                /^".*?"/, null, '"']
+          [PR['PR_STRING'],               /^".*?"/, null, '"']
         ],
         [
+          //integer literals
+          [PR['PR_LITERAL'],              /^(?:0(?:(?:b[01_]+)|(?:o[0-7_]+)|(?:x[\da-fA-F_]+)))|(?:\d[\d_]*)/, null],
+          //some other literals
+          [PR['PR_LITERAL'],              /^(?:true|false|nil)\b/, null],
           //keywords
-          [PR['PR_KEYWORD'],              /^\b(?:__COLUMN__|__FILE__|__FUNCTION__|__LINE__|associativity|as|break|case|class|continue|convenience|default|deinit|didSet|do|dynamic|dynamicType|enum|fallthrough|false|final|for|func|get|import|infix|init|inout|internal|in|is|lazy|left|let|mutating|nil|none|nonmutating|operator|optional|override|postfix|precedence|prefix|private|protocol|Protocol|public|required|return|right|safe|self|set|static|struct|subscript|super|switch|true|Type|typealias|unowned|unsafe|var|weak|while|willSet)\b/, null],
+          [PR['PR_KEYWORD'],              /^\b(?:__COLUMN__|__FILE__|__FUNCTION__|__LINE__|associativity|as|break|case|class|continue|convenience|default|deinit|didSet|do|dynamic|dynamicType|enum|fallthrough|final|for|func|get|import|infix|init|inout|internal|in|is|lazy|left|let|mutating|none|nonmutating|operator|optional|override|postfix|precedence|prefix|private|protocol|Protocol|public|required|return|right|safe|self|set|static|struct|subscript|super|switch|Type|typealias|unowned|unsafe|var|weak|while|willSet)\b/, null],
           //double slash comments
           [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null],
           //slash star comments
