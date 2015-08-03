@@ -42,6 +42,8 @@ PR['registerLangHandler'](
           [PR['PR_STRING'],               /^".*?"/, null, '"']
         ],
         [
+          //floating point literals
+          [PR['PR_LITERAL'],              /^(?:(?:0x[\da-fA-F][\da-fA-F_]*\.[\da-fA-F][\da-fA-F_]*[pP]?)|(?:\d[\d_]*\.\d[\d_]*[eE]?))[+-]?\d[\d_]*/, null],
           //integer literals
           [PR['PR_LITERAL'],              /^-?(?:(?:0(?:(?:b[01][01_]*)|(?:o[0-7][0-7_]*)|(?:x[\da-fA-F][\da-fA-F_]*)))|(?:\d[\d_]*))/, null],
           //some other literals
