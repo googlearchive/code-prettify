@@ -37,14 +37,13 @@ PR['registerLangHandler'](
     PR['createSimpleLexer'](
         [
           //whitespace
-          //unicodes are vertical tab, form feed, and null, respectively
-          [PR['PR_PLAIN'],                /^[\s\n\r\t\u000B\u000C\u0000]+/, null, '\s\n\r\t\u000B\u000C\u0000'],
+          [PR['PR_PLAIN'],                /^[ \n\r\t\v\f\0]+/, null, ' \n\r\t\v\f\0'],
           //string literals
           [PR['PR_STRING'],               /^".*?"/, null, '"']
         ],
         [
           //integer literals
-          [PR['PR_LITERAL'],              /^(?:0(?:(?:b[01_]+)|(?:o[0-7_]+)|(?:x[\da-fA-F_]+)))|(?:\d[\d_]*)/, null],
+          [PR['PR_LITERAL'],              /^-?(?:(?:0(?:(?:b[01][01_]*)|(?:o[0-7][0-7_]*)|(?:x[\da-fA-F][\da-fA-F_]*)))|(?:\d[\d_]*))/, null],
           //some other literals
           [PR['PR_LITERAL'],              /^(?:true|false|nil)\b/, null],
           //keywords
