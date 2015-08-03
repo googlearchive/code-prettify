@@ -38,7 +38,9 @@ PR['registerLangHandler'](
         [
           //whitespace
           //unicodes are vertical tab, form feed, and null, respectively
-          [PR['PR_PLAIN'],                /^[\s\n\r\t\u000B\u000C\u0000]+/, null, '\s\n\r\t\u000B\u000C\u0000']
+          [PR['PR_PLAIN'],                /^[\s\n\r\t\u000B\u000C\u0000]+/, null, '\s\n\r\t\u000B\u000C\u0000'],
+          //string literals
+          [PR['PR_STRING']                /^".*?"/, null, '"']
         ],
         [
           //keywords
@@ -46,9 +48,7 @@ PR['registerLangHandler'](
           //double slash comments
           [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null],
           //slash star comments
-          [PR['PR_COMMENT'],              /^\/\*[\s\S]*?(?:\*\/|$)/, null],
-          //string literals
-          [PR['PR_STRING'],               /^".*?"/, null]
+          [PR['PR_COMMENT'],              /^\/\*[\s\S]*?(?:\*\/|$)/, null]
         ]),
     ['swift']); 
 
