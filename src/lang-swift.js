@@ -39,7 +39,7 @@ PR['registerLangHandler'](
           //whitespace
           [PR['PR_PLAIN'],                /^[ \n\r\t\v\f\0]+/, null, ' \n\r\t\v\f\0'],
           //string literals
-          [PR['PR_STRING'],               /^".*?"/, null, '"']
+          [PR['PR_STRING'],               /^".*?"/, null, '"'],
         ],
         [
           //floating point literals
@@ -53,7 +53,9 @@ PR['registerLangHandler'](
           //double slash comments
           [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null],
           //slash star comments
-          [PR['PR_COMMENT'],              /^\/\*[\s\S]*?(?:\*\/|$)/, null]
+          [PR['PR_COMMENT'],              /^\/\*[\s\S]*?(?:\*\/|$)/, null],
+          //punctuation
+          [PR['PR_PUNCTUATION'],          /^<<=|<=|<<|>>=|>=|>>|===|==|\.\.\.|&&=|\.\.<|!==|!=|&=|~=|~|\(|\)|\[|\]|{|}|@|#|;|\.|,|:|\|\|=|\?\?|\|\||&&|&\*|&\+|&-|&=|\+=|-=|\/=|\*=|\^=|%=|\|=|->|`|==|\+\+|--|\/|\+|!|\*|%|<|>|&|\||\^|\?|=|-|_/, null]
         ]),
     ['swift']); 
 
