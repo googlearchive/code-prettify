@@ -13,7 +13,7 @@ perform a left-to-right parse.
 ## Marking code sections
 
 The prettyprinter looks for `<pre>`, `<code>`, or `<xmp>` elements
-with the _prettyprint_ class:
+with the *prettyprint* class:
 
 ```HTML
 <pre class="prettyprint">
