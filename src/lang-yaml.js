@@ -22,6 +22,6 @@ PR['registerLangHandler'](
     [
       [PR['PR_DECLARATION'], /^(?:---|\.\.\.)(?:[\r\n]|$)/],
       [PR['PR_PUNCTUATION'], /^-/],
-      [PR['PR_KEYWORD'], /^\w+:[ \r\n]/],
+      [PR['PR_KEYWORD'], /^[\w-]+:[ \r\n]/],
       [PR['PR_PLAIN'], /^\w+/]
     ]), ['yaml', 'yml']);
