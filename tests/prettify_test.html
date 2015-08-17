@@ -15,6 +15,7 @@
       "lang-lua.js",
       "lang-ml.js",
       "lang-proto.js",
+      "lang-rust.js",
       "lang-scala.js",
       "lang-sql.js",
       "lang-wiki.js",
@@ -1364,6 +1365,38 @@ test(Variables, MoreVariables) ->
         Type:Error ->
             {'error', Type, Error}
     end.
+</pre>
+
+<h1>Rust mode</h1>
+<pre class="prettyprint lang-rust" id="rust">
+// Single line comment
+/* Multi-line (nesting not highlighted properly, sorry)
+comment */
+
+#![feature(code_prettification)]
+
+use std::io::{self, Write};
+
+impl&lt;'a, T: 'a + ?Sized&gt; Foo&lt;'a, 'static&gt; for Bar&lt;'b&gt;
+where T: Iterator&lt;Item = Box&lt;Fn() -&gt; u32&gt;&gt; {
+    fn something(&amp;mut self) -&gt; u32 {
+        if let Some(ref x) = self.foo("multi li\ne
+s\tring") {
+            panic!(r"\things is going wrong!");
+            panic!(r#"Things is "really" goig\n wront!"#);
+            panic!(r##"Raw strings are #"#fancy#"#"##);
+        }
+    }
+}
+
+pub type CowString&lt;'a&gt; = std::cow::Cow&lt;'a, str&gt;;
+
+fn main() {
+    let (i, r) = (1u8, 'c');
+    let s = r#"Take a raw egg,
+        "break" it (or the line),
+        and beat it"#;
+}
 </pre>
 
 Test IE by copy/pasting content here.
@@ -3061,7 +3094,35 @@ var goldens = {
       '    `END`KWDcatch`END`PLN\n' + 
       '        `END`TYPType`END`PLN:`END`TYPError`END`PLN -&gt;\n' + 
       '            {`END`LIT\'error\'`END`PUN,`END`PLN `END`TYPType`END`PUN,`END`PLN `END`TYPError`END`PLN}\n' + 
-      '    `END`KWDend`END`PUN.`END'
+      '    `END`KWDend`END`PUN.`END',
+  rust: '`COM// Single line comment`END`PLN\n' +
+      '`END`COM/* Multi-line (nesting not highlighted properly, sorry)\n' +
+      'comment */`END`PLN\n' +
+      '\n' +
+      '`END`ATN#![feature(code_prettification)]`END`PLN\n' +
+      '\n' +
+      '`END`KWDuse`END`PLN std`END`PUN::`END`PLNio`END`PUN::{`END`LITself`END`PUN,`END`PLN Write`END`PUN};`END`PLN\n' +
+      '\n' +
+      '`END`KWDimpl`END`PUN&lt;`END`TAG\'a`END`PUN,`END`PLN T`END`PUN:`END`PLN `END`TAG\'a`END`PLN `END`PUN+`END`PLN `END`PUN?`END`TYPSized`END`PUN&gt;`END`PLN Foo`END`PUN&lt;`END`TAG\'a`END`PUN,`END`PLN `END`TAG\'static`END`PUN&gt;`END`PLN `END`KWDfor`END`PLN Bar`END`PUN&lt;`END`TAG\'b`END`PUN&gt;`END`PLN\n' +
+      '`END`KWDwhere`END`PLN T`END`PUN:`END`PLN `END`TYPIterator`END`PUN&lt;`END`PLNItem `END`PUN=`END`PLN `END`TYPBox`END`PUN&lt;`END`TYPFn`END`PUN()`END`PLN `END`PUN-&gt;`END`PLN `END`TYPu32`END`PUN&gt;&gt;`END`PLN `END`PUN{`END`PLN\n' +
+      '    `END`KWDfn`END`PLN something`END`PUN(&amp;`END`KWDmut`END`PLN `END`LITself`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN `END`TYPu32`END`PLN `END`PUN{`END`PLN\n' +
+      '        `END`KWDif`END`PLN `END`KWDlet`END`PLN `END`TYPSome`END`PUN(`END`KWDref`END`PLN x`END`PUN)`END`PLN `END`PUN=`END`PLN `END`LITself`END`PUN.`END`PLNfoo`END`PUN(`END`STR"multi li\\ne\n' +
+      's\\tring"`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+      '            panic`END`PUN!(`END`STRr"\\things is going wrong!"`END`PUN);`END`PLN\n' +
+      '            panic`END`PUN!(`END`STRr#"Things is "really" goig\\n wront!"#`END`PUN);`END`PLN\n' +
+      '            panic`END`PUN!(`END`STRr##"Raw strings are #"#fancy#"#"##`END`PUN);`END`PLN\n' +
+      '        `END`PUN}`END`PLN\n' +
+      '    `END`PUN}`END`PLN\n' +
+      '`END`PUN}`END`PLN\n' +
+      '\n' +
+      '`END`KWDpub`END`PLN `END`KWDtype`END`PLN CowString`END`PUN&lt;`END`TAG\'a`END`PUN&gt;`END`PLN `END`PUN=`END`PLN std`END`PUN::`END`PLNcow`END`PUN::`END`PLNCow`END`PUN&lt;`END`TAG\'a`END`PUN,`END`PLN `END`TYPstr`END`PUN&gt;;`END`PLN\n' +
+      '\n' +
+      '`END`KWDfn`END`PLN main`END`PUN()`END`PLN `END`PUN{`END`PLN\n' +
+      '    `END`KWDlet`END`PLN `END`PUN(`END`PLNi`END`PUN,`END`PLN r`END`PUN)`END`PLN `END`PUN=`END`PLN `END`PUN(`END`LIT1u8`END`PUN,`END`PLN `END`STR\'c\'`END`PUN);`END`PLN\n' +
+      '    `END`KWDlet`END`PLN s `END`PUN=`END`PLN `END`STRr#"Take a raw egg,\n' +
+      '        "break" it (or the line),\n' +
+      '        and beat it"#`END`PUN;`END`PLN\n' +
+      '`END`PUN}`END'
 };
 </script>
 

@@ -130,9 +130,6 @@ var prettyPrint;
       "def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo," +
       "rescue,retry,self,super,then,true,undef,unless,until,when,yield," +
       "BEGIN,END"];
-   var RUST_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "as,assert,const,copy,drop," +
-      "enum,extern,fail,false,fn,impl,let,log,loop,match,mod,move,mut,priv," +
-      "pub,pure,ref,self,static,struct,true,trait,type,unsafe,use"];
   var SH_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "case,done,elif,esac,eval,fi," +
       "function,in,local,set,then,until"];
   var ALL_KEYWORDS = [
@@ -1369,11 +1366,6 @@ var prettyPrint;
           'tripleQuotedStrings': true,
           'regexLiterals': true
         }), ['coffee']);
-  registerLangHandler(sourceDecorator({
-          'keywords': RUST_KEYWORDS,
-          'cStyleComments': true,
-          'multilineStrings': true
-        }), ['rc', 'rs', 'rust']);
   registerLangHandler(
       createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
 
