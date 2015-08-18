@@ -1,0 +1,3 @@
+code-prettify will not do any lexical error checking or any logical error checking contains in the code
+it will only modify the look and feel of the source code. there will be no relation between semantic analysing 
+of the code and code prettifyl
