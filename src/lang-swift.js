@@ -47,7 +47,7 @@ PR['registerLangHandler'](
           //some other literals
           [PR['PR_LITERAL'],              /^(?:true|false|nil)\b/, null],
           //keywords
-          [PR['PR_KEYWORD'],              /^\b(?:__COLUMN__|__FILE__|__FUNCTION__|__LINE__|associativity|as|break|case|class|continue|convenience|default|deinit|didSet|do|dynamic|dynamicType|enum|fallthrough|final|for|func|get|import|infix|init|inout|internal|in|is|lazy|left|let|mutating|none|nonmutating|operator|optional|override|postfix|precedence|prefix|private|protocol|Protocol|public|required|return|right|safe|self|set|static|struct|subscript|super|switch|Type|typealias|unowned|unsafe|var|weak|while|willSet)\b/, null],
+          [PR['PR_KEYWORD'],              /^\b(?:__COLUMN__|__FILE__|__FUNCTION__|__LINE__|associativity|as|break|case|class|continue|convenience|default|deinit|didSet|do|dynamic|dynamicType|else|enum|fallthrough|final|for|func|get|import|infix|init|inout|internal|if|in|is|lazy|left|let|mutating|none|nonmutating|operator|optional|override|postfix|precedence|prefix|private|protocol|Protocol|public|required|return|right|safe|self|set|static|struct|subscript|super|switch|Type|typealias|unowned|unsafe|var|weak|while|willSet)\b/, null],
           //double slash comments
           [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null],
           //slash star comments
