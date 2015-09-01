@@ -37,7 +37,7 @@ PR['registerLangHandler'](
           //whitespace
           [PR['PR_PLAIN'],                /^[ \n\r\t\v\f\0]+/, null, ' \n\r\t\v\f\0'],
           //string literals
-          [PR['PR_STRING'],               /^"(?:[^"\\]|(?:\\.)|(?:\\\((?:[^"\\)]|\\.)*\)))*"/, null, '"'],
+          [PR['PR_STRING'],               /^"(?:[^"\\]|(?:\\.)|(?:\\\((?:[^"\\)]|\\.)*\)))*"/, null, '"']
         ],
         [
           //floating point literals
