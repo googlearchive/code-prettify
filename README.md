@@ -62,6 +62,7 @@ Other languages are supported via extensions:
 [Haskell](src/lang-hs.js);
 [Lisp, Scheme](src/lang-lisp.js);
 [Llvm](src/lang-llvm.js);
+[Logtalk](src/lang-logtalk.js);
 [Lua](src/lang-lua.js);
 [Matlab](src/lang-matlab.js);
 [MLs: F#, Ocaml,SML](src/lang-ml.js);
@@ -74,10 +75,11 @@ Other languages are supported via extensions:
 [Rust](src/lang-rust.js);
 [Scala](src/lang-scala.js);
 [SQL](src/lang-sql.js);
+[Swift](src/lang-swift.js);
 [TCL](src/lang-tcl.js);
 [Latek](src/lang-tex.js);
 [Visual Basic](src/lang-vb.js);
-[CHDL](src/lang-vhdl.js);
+[VHDL](src/lang-vhdl.js);
 [Wiki](src/lang-wiki.js);
 [XQ](src/lang-xq.js);
 [YAML](src/lang-yaml.js)
