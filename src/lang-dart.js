@@ -71,7 +71,7 @@ PR['registerLangHandler'](
 
       // Identifiers.
       [PR['PR_PLAIN'], /^[a-z_$][a-z0-9_]*/i],
-      
+
       // Operators.
       [PR['PR_PUNCTUATION'], /^[~!%^&*+=|?:<>/-]/],
 
