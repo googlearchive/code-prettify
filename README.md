@@ -60,6 +60,7 @@ Other languages are supported via extensions:
 [Erlang](src/lang-erlang.js);
 [Go](src/lang-go.js);
 [Haskell](src/lang-hs.js);
+[Lasso](src/lang-lasso.js);
 [Lisp, Scheme](src/lang-lisp.js);
 [Llvm](src/lang-llvm.js);
 [Logtalk](src/lang-logtalk.js);
