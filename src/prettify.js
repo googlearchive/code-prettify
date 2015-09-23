@@ -1270,6 +1270,15 @@ var prettyPrint;
     }
     return langHandlerRegistry[extension];
   }
+  // It would be silly to add prettyprint to something marked lang-none, but if
+  // some code does so carelessly, it's also silly to highlight it.
+  registerLangHandler(
+      createSimpleLexer(
+          [],
+          [
+           [PR_PLAIN, /^.+/],
+          ]),
+      ['none']);
   registerLangHandler(decorateSource, ['default-code']);
   registerLangHandler(
       createSimpleLexer(

@@ -1065,6 +1065,17 @@ y=20;
 %}
 </pre>
 
+<h1>lang-none</h1>
+If code adds prettyprint to all the code-blocks, let's still respect lang-none.
+<pre id="lang-none" class="prettyprint lang-none">
+#! /bin/bash
+# toascii.sh
+for i in $(echo $* | fold -w 1);do
+  printf "%x " \'$i;
+done;
+echo
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -2005,7 +2016,17 @@ var goldens = {
       '%%}`END`PLN\n' +
       '`END<span class="ident">y`END`PUN=`END`LIT20`END`PUN;`END`PLN\n' +
       '`END`COM%}`END'
-      )
+      ),
+      lang-none: (
+      '`PLN#! /bin/bash\n' +
+      '# toascii.sh\n' +
+      'for i in $(echo $*' +
+          ' | fold -w 1);' +
+          'do\n' +
+        '  printf "%x " \\\'$i;\n' +
+        'done;\n' +
+        'echo`END'
+      ),
 };
 </script>
 
