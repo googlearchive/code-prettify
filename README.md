@@ -178,7 +178,7 @@ If you are calling `prettyPrint` via an event handler, wrap it in a function.
 Instead of doing
 
 ```JavaScript
-addEventListener('load', prettyPrint, false);
+addEventListener('load', PR.prettyPrint, false);
 ```
 
 wrap it in a closure like
@@ -187,7 +187,7 @@ wrap it in a closure like
 addEventListener('load', function (event) { PR.prettyPrint() }, false);
 ```
 
-so that the browser does not pass an event object to `prettyPrint`
+so that the browser does not pass an event object to `PR.prettyPrint`
 which will confuse it.
 
 ### How can I customize the colors and styles of my code?
