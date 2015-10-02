@@ -90,7 +90,7 @@ look at `src/lang-lisp.js` and submit a pull request.
 
 ### How do I specify the language of my code?
 
-You don't need to specify the language since `prettyprint()`
+You don't need to specify the language since `PR.prettyprint()`
 will guess.  You can specify a language by specifying the language extension
 along with the `prettyprint` class:
 
@@ -184,7 +184,7 @@ addEventListener('load', prettyPrint, false);
 wrap it in a closure like
 
 ```JavaScript
-addEventListener('load', function (event) { prettyPrint() }, false);
+addEventListener('load', function (event) { PR.prettyPrint() }, false);
 ```
 
 so that the browser does not pass an event object to `prettyPrint`
