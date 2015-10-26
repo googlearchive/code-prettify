@@ -133,6 +133,13 @@ var IN_GLOBAL_SCOPE = false;
     load(0);
   }
 
+  // Use https to avoid mixed content warnings in client pages and to
+  // prevent a MITM from rewrite prettify mid-flight.
+  // This only works if this script is loaded via https : something
+  // over which we exercise no control.
+  var LOADER_BASE_URL =
+     'https://cdn.rawgit.com/google/code-prettify/master/loader';
+
   var scriptQuery = '';
   // Look for the <script> node that loads this script to get its parameters.
   // This starts looking at the end instead of just considering the last
@@ -142,12 +149,13 @@ var IN_GLOBAL_SCOPE = false;
   for (var i = scripts.length; --i >= 0;) {
     var script = scripts[i];
     var match = script.src.match(
-        /^[^?#]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);
+        /^([^?#]*)\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);
     if (match) {
-      scriptQuery = match[1] || '';
+      scriptQuery = match[2] || '';
       // Remove the script from the DOM so that multiple runs at least run
       // multiple times even if parameter sets are interpreted in reverse
       // order.
+      LOADER_BASE_URL = match[1];
       script.parentNode.removeChild(script);
       break;
     }
@@ -168,13 +176,6 @@ var IN_GLOBAL_SCOPE = false;
         if (name == 'skin')      { skins.push(value);                } else
         if (name == 'callback')  { callbacks.push(value);            }
       });
-
-  // Use https to avoid mixed content warnings in client pages and to
-  // prevent a MITM from rewrite prettify mid-flight.
-  // This only works if this script is loaded via https : something
-  // over which we exercise no control.
-  var LOADER_BASE_URL =
-     'https://cdn.rawgit.com/google/code-prettify/master/loader';
 
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
