@@ -35,11 +35,11 @@ PR['registerLangHandler'](
 		// Block comments (sadly I do not see how to make this cope with comment nesting as it should)
 		[PR['PR_COMMENT'], /^\/\*[\s\S]*?(?:\*\/|$)/],//, null],
 		// String and character literals
-		[PR['PR_STRING'], /^b"(?:[^\\]|\\(?:.|x\x\x))*?"/],  // Bytes literal
-		[PR['PR_STRING'], /^"(?:[^\\]|\\(?:.|x\x\x|u\{\x{1,6}\}))*?"/],  // String literal
+		[PR['PR_STRING'], /^b"(?:[^\\]|\\(?:.|x[\da-fA-F]{2}))*?"/],  // Bytes literal
+		[PR['PR_STRING'], /^"(?:[^\\]|\\(?:.|x[\da-fA-F]{2}|u\{\[\da-fA-F]{1,6}\}))*?"/],  // String literal
 		[PR['PR_STRING'], /^b?r(#*)\"[\s\S]*?\"\1/],  // Raw string/bytes literal
-		[PR['PR_STRING'], /^b'([^\\]|\\(.|x\x\x))'/],  // Byte literal
-		[PR['PR_STRING'], /^'([^\\]|\\(.|x\x\x|u\{\x{1,6}\}))'/],  // Character literal
+		[PR['PR_STRING'], /^b'([^\\]|\\(.|x[\da-fA-F]{2}))'/],  // Byte literal
+		[PR['PR_STRING'], /^'([^\\]|\\(.|x[\da-fA-F]{2}|u\{[\da-fA-F]{1,6}\}))'/],  // Character literal
 
 		// Lifetime
 		[PR['PR_TAG'], /^'\w+?\b/],
