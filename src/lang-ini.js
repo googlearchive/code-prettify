@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (C) 2012 Jeffrey B. Arnold
+ * Copyright (C) 2015 Felix Schumacher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
  * To use, include prettify.js and this file in your HTML page.
  * Then put your code in an HTML tag like
  *      <pre class="prettyprint lang-ini"> code </pre>
+ * @author felix.schumacher at internetallee.de
  */
 PR['registerLangHandler'](
     PR['createSimpleLexer'](
