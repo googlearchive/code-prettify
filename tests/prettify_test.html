@@ -121,6 +121,10 @@ key = value
 # comment = no key/value
 
 whatever = "test long", with comma
+comment="comments # within quotes"
+quote="single ' tick"
+unix_path=/home/user
+dos_path='C:\DOS'
 ; empty value
 key.with.dots =
 key=value # comment after key/value</pre>
@@ -1493,8 +1497,12 @@ var goldens = {
       '\n'+
       'whatever `END' +
       '`PUN=`END' +
-      '`PLN "test long", with comma\n`END' +
-      '`COM; empty value`END`PLN\n' +
+      '`PLN `END`STR"test long"`END`PLN, with comma\n' +
+      'comment`END`PUN=`END`STR"comments # within quotes"`END`PLN\n' +
+      'quote`END`PUN=`END`STR"single \' tick"`END`PLN\n' +
+      'unix_path`END`PUN=`END`PLN/home/user\n' +
+      'dos_path`END`PUN=`END`STR\'C:\\DOS\'`END`PLN\n' +
+      '`END`COM; empty value`END`PLN\n' +
       'key.with.dots `END' +
       '`PUN=`END`PLN\n' +
       'key`END`PUN=`END`PLNvalue `END`COM# comment after key/value`END'

@@ -36,7 +36,8 @@ PR['registerLangHandler'](
             [PR['PR_KEYWORD'],     /^\[.*\]/, null, '[]']
         ],
         [
-            [PR['PR_PLAIN'],       /^(?:"'\w+)(\w\s,.-"')*/, null, '"'],
+            [PR['PR_STRING'],      /^(["'])(?:\\.|[^\1])*?\1/],
+            [PR['PR_PLAIN'],       /^\w+[^\r\n=#]*/],
             [PR['PR_PUNCTUATION'], /^=/]
         ]),
     ['ini', 'properties']);
