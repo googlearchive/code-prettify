@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/google/code-prettify.git"
   },
-  "author": "",
+  "author": "google",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/google/code-prettify/issues"
