@@ -1594,8 +1594,8 @@ var goldens = {
       '`END`COM/**\n' +
       ' * the fibonacci series implemented as an Iterable.\n' +
       ' *\/`END`PLN\n' +
-      '`END`KWDpublic`END`PLN final `END`KWDclass`END' +
-          '`PLN `END`TYPFibonacci`END`PLN implements `END' +
+      '`END`KWDpublic`END`PLN `END`KWDfinal`END`PLN `END`KWDclass`END' +
+          '`PLN `END`TYPFibonacci`END`PLN `END`KWDimplements`END`PLN `END' +
           '`TYPIterable`END`PUN&lt;`END`TYPInteger`END`PUN&gt;`END`PLN `END`' +
           'PUN{`END`PLN\n' +
       '  `END' +
@@ -1614,8 +1614,8 @@ var goldens = {
           '`PUN{`END`PLN\n' +
       '      `END`COM/** the series is infinite. *\/`END' +
           '`PLN\n' +
-      '      `END`KWDpublic`END`PLN boolean' +
-          ' hasNext`END`PUN()`END`PLN `END`PUN{`END`PLN `END' +
+      '      `END`KWDpublic`END`PLN `END`KWDboolean`END' +
+          '`PLN hasNext`END`PUN()`END`PLN `END`PUN{`END`PLN `END' +
           '`KWDreturn`END`PLN `END`KWDtrue`END`PUN;`END`PLN `END`PUN}`END' +
           '`PLN\n' +
       '      `END`KWDpublic`END`PLN `END`TYPInteger`END' +
@@ -1630,10 +1630,7 @@ var goldens = {
           '`PLN\n' +
       '      `END`PUN}`END`PLN\n' +
       '      `END`KWDpublic`END`PLN `END`KWDvoid`END' +
-          // We incorrectly highlight the "remove" keyword here, though that's a keyword in
-          // C#, not Java. That's correct in the java_lang test-case below, where language
-          // is specified.
-          '`PLN `END`KWDremove`END`PUN()`END`PLN `END`PUN{`END`PLN `END`KWDthrow`END' +
+          '`PLN remove`END`PUN()`END`PLN `END`PUN{`END`PLN `END`KWDthrow`END' +
           '`PLN `END`KWDnew`END`PLN `END' +
           '`TYPUnsupportedOperationException`END`PUN();`END`PLN `END' +
           '`PUN}`END`PLN\n' +
@@ -1654,7 +1651,7 @@ var goldens = {
           '`TYPIterable`END`PUN&lt;`END`PLNT`END`PUN&gt;`END' +
           '`PLN iterable`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
       '    `END`TYPIterator`END`PUN&lt;?`END`PLN ' +
-          'extends T`END`PUN&gt;`END`PLN it `END`PUN=`END' +
+          '`END`KWDextends`END`PLN T`END`PUN&gt;`END`PLN it `END`PUN=`END' +
           '`PLN iterable`END`PUN.`END`PLNiterator`END`PUN();`END`PLN\n' +
       '    `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END' +
           '`PUN&gt;`END`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
@@ -2281,7 +2278,7 @@ var goldens = {
           'should still work`END`PLN\n' +
       '`END`PUN&amp;`END`STR/foo/`END`PUN;`END`PLN\n' +
       '\n' +
-      'extends `END`PUN=`END`PLN `END`STR/extends/`END' +
+      '`END`KWDextends`END`PLN `END`PUN=`END`PLN `END`STR/extends/`END' +
           '`PUN;`END'),
   issue12_lang: (
       '`STR/foo/`END`PUN;`END`PLN  `END`COM// a slash starting a line ' +
