@@ -3099,7 +3099,7 @@ var goldens = {
       '`END`COM/* Multi-line (nesting not highlighted properly, sorry)\n' +
       'comment */`END`PLN\n' +
       '\n' +
-      '`END`ATN#![feature(code_prettification)]`END`PLN\n' +
+      '`END`ATV#![feature(code_prettification)]`END`PLN\n' +
       '\n' +
       '`END`KWDuse`END`PLN std`END`PUN::`END`PLNio`END`PUN::{`END`LITself`END`PUN,`END`PLN Write`END`PUN};`END`PLN\n' +
       '\n' +
@@ -3108,9 +3108,9 @@ var goldens = {
       '    `END`KWDfn`END`PLN something`END`PUN(&amp;`END`KWDmut`END`PLN `END`LITself`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN `END`TYPu32`END`PLN `END`PUN{`END`PLN\n' +
       '        `END`KWDif`END`PLN `END`KWDlet`END`PLN `END`TYPSome`END`PUN(`END`KWDref`END`PLN x`END`PUN)`END`PLN `END`PUN=`END`PLN `END`LITself`END`PUN.`END`PLNfoo`END`PUN(`END`STR"multi li\\ne\n' +
       's\\tring"`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
-      '            panic`END`PUN!(`END`STRr"\\things is going wrong!"`END`PUN);`END`PLN\n' +
-      '            panic`END`PUN!(`END`STRr#"Things is "really" goig\\n wront!"#`END`PUN);`END`PLN\n' +
-      '            panic`END`PUN!(`END`STRr##"Raw strings are #"#fancy#"#"##`END`PUN);`END`PLN\n' +
+      '            `END`ATNpanic!`END`PUN(`END`STRr"\\things is going wrong!"`END`PUN);`END`PLN\n' +
+      '            `END`ATNpanic!`END`PUN(`END`STRr#"Things is "really" goig\\n wront!"#`END`PUN);`END`PLN\n' +
+      '            `END`ATNpanic!`END`PUN(`END`STRr##"Raw strings are #"#fancy#"#"##`END`PUN);`END`PLN\n' +
       '        `END`PUN}`END`PLN\n' +
       '    `END`PUN}`END`PLN\n' +
       '`END`PUN}`END`PLN\n' +
