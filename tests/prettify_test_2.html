@@ -11,6 +11,7 @@
       "lang-css.js",
       // Language extensions tested.
       "lang-clj.js",
+      "lang-dart.js",
       "lang-lisp.js",
       "lang-llvm.js",
       "lang-matlab.js",
@@ -19,7 +20,7 @@
       "lang-pascal.js",
       "lang-r.js",
       "lang-tcl.js",
-"lang-tex.js",
+      "lang-tex.js",
       "lang-xq.js"
   ];
   var styles = [
@@ -1477,16 +1478,16 @@ var goldens = {
   issue261: '<ol class="linenums"><li class="L0">`STR"No tag backs."`END</li></ol>',
   issue201: '`KWDstatic`END`PLN `END`TYPPersistent`END' +
       '`PUN&lt;`END`TYPString`END`PUN&gt;`END`PLN listeners_symbol`END`PUN;`END',
-  dart: '`PLNpart of myLib`END`PUN;`END`PLN\n' +
+  dart: '`KWDpart of`END`PLN myLib`END`PUN;`END`PLN\n' +
         '\n' +
-        'part `END`STR\'something.dart\'`END`PUN;`END`PLN\n' +
+        '`END`KWDpart`END`PLN `END`STR\'something.dart\'`END`PUN;`END`PLN\n' +
         '\n' +
         '`END`KWDimport`END`PLN `END`STR\'dart:math\'`END`PLN `END' +
-          '`KWDas`END`PLN test show foo`END`PUN,`END`PLN bar`END`PUN;`END' +
+          '`KWDas`END`PLN test `END`KWDshow`END`PLN foo`END`PUN,`END`PLN bar`END`PUN;`END' +
           '`PLN\n' +
         '\n' +
         '`END`KWDclass`END`PLN `END`TYPPoint`END`PLN `END`PUN{`END`PLN\n' +
-        '  `END`KWDfinal`END`PLN num x`END`PUN,`END`PLN y`END`PUN;`END`PLN\n' +
+        '  `END`KWDfinal`END`PLN `END`TYPnum`END`PLN x`END`PUN,`END`PLN y`END`PUN;`END`PLN\n' +
         '\n' +
         '  `END`TYPPoint`END`PUN(`END`KWDthis`END`PUN.`END`PLNx`END' +
           '`PUN,`END`PLN `END`KWDthis`END`PUN.`END`PLNy`END`PUN);`END`PLN\n' +
@@ -1497,7 +1498,7 @@ var goldens = {
         '                                `END' +
           '`COM// with an initializer list.`END`PLN\n' +
         '\n' +
-        '  num distanceTo`END`PUN(`END`TYPPoint`END`PLN other`END' +
+        '  `END`TYPnum`END`PLN distanceTo`END`PUN(`END`TYPPoint`END`PLN other`END' +
           '`PUN)`END`PLN `END`PUN{`END`PLN\n' +
         '    `END`KWDvar`END`PLN dx `END`PUN=`END`PLN x `END`PUN-`END' +
           '`PLN other`END`PUN.`END`PLNx`END`PUN;`END`PLN\n' +
@@ -1526,16 +1527,16 @@ var goldens = {
           '`STR\'\'\'\n' +
         'This is a test! \\\'\'\'\n' +
         'This is the end of the test\'\'\'`END`PUN;`END`PLN\n' +
-        '  `END`TYPString`END`PLN thing3 `END`PUN=`END`PLN r`END' +
-          '`STR\"\"\"\n' +
+        '  `END`TYPString`END`PLN thing3 `END`PUN=`END`PLN `END' +
+          '`STRr\"\"\"\n' +
         'This is a raw\n' +
         'multiline string!\"\"\"`END`PUN;`END`PLN\n' +
-        '  num x `END`PUN=`END`PLN `END`LIT0x123ABC`END`PUN;`END`PLN\n' +
-        '  num y `END`PUN=`END`PLN `END`LIT1.8e-12`END`PUN;`END`PLN\n' +
-        '  `END`KWDbool`END`PLN flag `END`PUN=`END`PLN `END`KWDfalse`END' +
+        '  `END`TYPnum`END`PLN x `END`PUN=`END`PLN `END`LIT0x123ABC`END`PUN;`END`PLN\n' +
+        '  `END`TYPnum`END`PLN y `END`PUN=`END`PLN `END`LIT1.8e-12`END`PUN;`END`PLN\n' +
+        '  `END`TYPbool`END`PLN flag `END`PUN=`END`PLN `END`KWDfalse`END' +
           '`PUN;`END`PLN\n' +
-        '  `END`TYPString`END`PLN raw `END`PUN=`END`PLN r`END' +
-          '`STR\"This is a raw string, where \\n doesn\'t matter\"`END' +
+        '  `END`TYPString`END`PLN raw `END`PUN=`END`PLN `END' +
+          '`STRr\"This is a raw string, where \\n doesn\'t matter\"`END' +
           '`PUN;`END`PLN\n' +
         '`END`PUN}`END',
   tcl_lang: (
