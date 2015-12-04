@@ -224,20 +224,22 @@ var IN_GLOBAL_SCOPE = false;
   loadStylesheetsFallingBack(skinUrls);
 
   var prettyPrint = (function () {
-    // Copyright (C) 2006 Google Inc.
-    //
-    // Licensed under the Apache License, Version 2.0 (the "License");
-    // you may not use this file except in compliance with the License.
-    // You may obtain a copy of the License at
-    //
-    //      http://www.apache.org/licenses/LICENSE-2.0
-    //
-    // Unless required by applicable law or agreed to in writing, software
-    // distributed under the License is distributed on an "AS IS" BASIS,
-    // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    // See the License for the specific language governing permissions and
-    // limitations under the License.
-    
+    /**
+     * @license
+     * Copyright (C) 2006 Google Inc.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     *      http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
     
     /**
      * @fileoverview
@@ -1205,10 +1207,14 @@ var IN_GLOBAL_SCOPE = false;
        *     HTMLOListElement, and each line is moved into a separate list item.
        *     This requires cloning elements, so the input might not have unique
        *     IDs after numbering.
+       * @param {number|null|boolean} startLineNum
+       *     If truthy, coerced to an integer which is the 1-indexed line number
+       *     of the first line of code.  The number of the first line will be
+       *     attached to the list.
        * @param {boolean} isPreformatted true iff white-space in text nodes should
        *     be treated as significant.
        */
-      function numberLines(node, opt_startLineNum, isPreformatted) {
+      function numberLines(node, startLineNum, isPreformatted) {
         var nocode = /(?:^|\s)nocode(?:\s|$)/;
         var lineBreak = /\r\n?|\n/;
       
@@ -1309,13 +1315,13 @@ var IN_GLOBAL_SCOPE = false;
         }
       
         // Make sure numeric indices show correctly.
-        if (opt_startLineNum === (opt_startLineNum|0)) {
-          listItems[0].setAttribute('value', opt_startLineNum);
+        if (startLineNum === (startLineNum|0)) {
+          listItems[0].setAttribute('value', startLineNum);
         }
       
         var ol = document.createElement('ol');
         ol.className = 'linenums';
-        var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
+        var offset = Math.max(0, ((startLineNum - 1 /* zero index */)) | 0) || 0;
         for (var i = 0, n = listItems.length; i < n; ++i) {
           li = listItems[i];
           // Stick a class on the LIs so that stylesheets can
@@ -1329,7 +1335,8 @@ var IN_GLOBAL_SCOPE = false;
         }
       
         node.appendChild(ol);
-      }    
+      }
+    
       /**
        * Breaks {@code job.sourceCode} around style boundaries in
        * {@code job.decorations} and modifies {@code job.sourceNode} in place.

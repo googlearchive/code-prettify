@@ -1,4 +1,20 @@
-!function(){var r=null;
+!function(){/*
+
+ Copyright (C) 2006 Google Inc.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+var r=null;
 (function(){function Z(e){function k(){try{K.doScroll("left")}catch(e){Q(k,50);return}w("poll")}function w(k){if(!(k.type=="readystatechange"&&t.readyState!="complete")&&((k.type=="load"?m:t)[A](o+k.type,w,!1),!l&&(l=!0)))e.call(m,k.type||k)}var X=t.addEventListener,l=!1,D=!0,v=X?"addEventListener":"attachEvent",A=X?"removeEventListener":"detachEvent",o=X?"":"on";if(t.readyState=="complete")e.call(m,"lazy");else{if(t.createEventObject&&K.doScroll){try{D=!m.frameElement}catch(B){}D&&k()}t[v](o+"DOMContentLoaded",
 w,!1);t[v](o+"readystatechange",w,!1);m[v](o+"load",w,!1)}}function R(){S&&Z(function(){var e=L.length;$(e?function(){for(var k=0;k<e;++k)(function(e){Q(function(){m.exports[L[e]].apply(m,arguments)},0)})(k)}:void 0)})}for(var m=window,Q=m.setTimeout,t=document,K=t.documentElement,M=t.head||t.getElementsByTagName("head")[0]||K,A="",B=t.getElementsByTagName("script"),l=B.length;--l>=0;){var N=B[l],T=N.src.match(/^[^#?]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);if(T){A=T[1]||"";N.parentNode.removeChild(N);
 break}}var S=!0,E=[],O=[],L=[];A.replace(/[&?]([^&=]+)=([^&]+)/g,function(e,k,w){w=decodeURIComponent(w);k=decodeURIComponent(k);k=="autorun"?S=!/^[0fn]/i.test(w):k=="lang"?E.push(w):k=="skin"?O.push(w):k=="callback"&&L.push(w)});l=0;for(A=E.length;l<A;++l)(function(){var e=t.createElement("script");e.onload=e.onerror=e.onreadystatechange=function(){if(e&&(!e.readyState||/loaded|complete/.test(e.readyState)))e.onerror=e.onload=e.onreadystatechange=r,--P,P||Q(R,0),e.parentNode&&e.parentNode.removeChild(e),
