@@ -104,22 +104,21 @@ var prettyPrint;
       "mutable,namespace,nullptr,property,reinterpret_cast,static_assert," +
       "static_cast,template,typeid,typename,using,virtual,where"];
   var JAVA_KEYWORDS = [COMMON_KEYWORDS,
-      "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
+      "abstract,assert,boolean,byte,extends,finally,final,implements,import," +
       "instanceof,interface,null,native,package,strictfp,super,synchronized," +
       "throws,transient"];
   var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
-      "abstract,add,alias,as,ascending,async,await,base,bool,by,byte,checked," +
-      "decimal,delegate,descending,dynamic,event,finally,fixed,foreach,from," +
-      "get,global,group,implicit,in,interface,internal,into,is,join,let,lock," +
-      "null,object,out,override,orderby,params,partial,readonly,ref,remove," +
-      "sbyte,sealed,select,set,stackalloc,string,uint,ulong,unchecked,unsafe," +
-      "ushort,value,var,virtual,where,yield"];
+      "abstract,as,base,bool,by,byte,checked,decimal,delegate,descending," +
+      "dynamic,event,finally,fixed,foreach,from,group,implicit,in,interface," +
+      "internal,into,is,let,lock,null,object,out,override,orderby,params," +
+      "partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong," +
+      "unchecked,unsafe,ushort,var,virtual,where"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
       "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
       "throw,true,try,unless,until,when,while,yes";
   var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
-      "debugger,eval,export,function,get,null,set,undefined,var,with," +
-      "Infinity,NaN"];
+      "debugger,eval,export,function,get,instanceof,null,set,undefined," +
+      "var,with,Infinity,NaN"];
   var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
       "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
       "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
