@@ -35,3 +35,7 @@ PR.PR_SOURCE = 'src';
 PR.PR_STRING = 'str';
 PR.PR_TAG = 'tag';
 PR.PR_TYPE = 'typ';
+
+
+// See https://github.com/amdjs/amdjs-api/wiki/AMD
+var define;

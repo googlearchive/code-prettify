@@ -6,10 +6,14 @@
  *     HTMLOListElement, and each line is moved into a separate list item.
  *     This requires cloning elements, so the input might not have unique
  *     IDs after numbering.
+ * @param {number|null|boolean} startLineNum
+ *     If truthy, coerced to an integer which is the 1-indexed line number
+ *     of the first line of code.  The number of the first line will be
+ *     attached to the list.
  * @param {boolean} isPreformatted true iff white-space in text nodes should
  *     be treated as significant.
  */
-function numberLines(node, opt_startLineNum, isPreformatted) {
+function numberLines(node, startLineNum, isPreformatted) {
   var nocode = /(?:^|\s)nocode(?:\s|$)/;
   var lineBreak = /\r\n?|\n/;
 
@@ -110,13 +114,13 @@ function numberLines(node, opt_startLineNum, isPreformatted) {
   }
 
   // Make sure numeric indices show correctly.
-  if (opt_startLineNum === (opt_startLineNum|0)) {
-    listItems[0].setAttribute('value', opt_startLineNum);
+  if (startLineNum === (startLineNum|0)) {
+    listItems[0].setAttribute('value', startLineNum);
   }
 
   var ol = document.createElement('ol');
   ol.className = 'linenums';
-  var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
+  var offset = Math.max(0, ((startLineNum - 1 /* zero index */)) | 0) || 0;
   for (var i = 0, n = listItems.length; i < n; ++i) {
     li = listItems[i];
     // Stick a class on the LIs so that stylesheets can
