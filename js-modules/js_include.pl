@@ -21,8 +21,9 @@ sub extractGlobalDefs($) {
     last unless $s =~ m#^\s*(?://[^\r\n]*|/\*.*?\*/[ \t]*)[\r\n]*#s;
     my $comment = $&;
     $s = $';
-    if ($comment =~ /[\@]define/ && $s =~ /^\s*var\s+[^;]+;[ \t]*[\r\n]*/) {
-      my $global = $&;
+    if ($comment =~ /[\@](define|typedef)/
+        && $s =~ /^\s*var\s+[^;]+;[ \t]*[\r\n]*/) {
+      my $global = "$&";
       $s = $';
       $global =~ s/(var\s*IN_GLOBAL_SCOPE\s*=\s*)true\b/$1false/;
       $global_defs .= "$comment$global";

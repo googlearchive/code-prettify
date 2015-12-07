@@ -1,64 +1,70 @@
-// Copyright (C) 2013 Google Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/**
+ * @license
+ * Copyright (C) 2013 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-
-// Looks at query parameters to decide which language handlers and style-sheets
-// to load.
-
-// Query Parameter     Format           Effect                        Default
-// +------------------+---------------+------------------------------+--------+
-// | autorun=         | true | false  | If true then prettyPrint()   | "true" |
-// |                  |               | is called on page load.      |        |
-// +------------------+---------------+------------------------------+--------+
-// | lang=            | language name | Loads the language handler   | Can    |
-// |                  |               | named "lang-<NAME>.js".      | appear |
-// |                  |               | See available handlers at    | many   |
-// |                  |               | https://github.com/google/   | times. |
-// |                  |               | code-prettify/tree/master/   |        |
-// |                  |               | src                          |        |
-// +------------------+---------------+------------------------------+--------+
-// | skin=            | skin name     | Loads the skin stylesheet    | none.  |
-// |                  |               | named "<NAME>.css".          |        |
-// |                  |               | https://cdn.rawgit.com/      |        |
-// |                  |               | google/code-prettify/master/ |        |
-// |                  |               | styles/index.html            |        |
-// +------------------+---------------+------------------------------+--------+
-// | callback=        | JS identifier | When "prettyPrint" finishes  | none   |
-// |                  |               | window.exports[js_ident] is  |        |
-// |                  |               | called.                      |        |
-// |                  |               | The callback must be under   |        |
-// |                  |               | exports to reduce the risk   |        |
-// |                  |               | of XSS via query parameter   |        |
-// |                  |               | injection.                   |        |
-// +------------------+---------------+------------------------------+--------+
-
-// Exmaples
-// .../prettify.js?lang=css&skin=sunburst
-//   1. Loads the CSS language handler which can be used to prettify CSS
-//      stylesheets, HTML <style> element bodies and style="..." attributes
-//      values.
-//   2. Loads the sunburst.css stylesheet instead of the default prettify.css
-//      stylesheet.
-//      A gallery of stylesheets is available at
-//      https://cdn.rawgit.com/google/code-prettify/master/styles/index.html
-//   3. Since autorun=false is not specified, calls prettyPrint() on page load.
+/**
+ * @fileoverview
+ * <div style="white-space: pre">
+ * Looks at query parameters to decide which language handlers and style-sheets
+ * to load.
+ *
+ * Query Parameter     Format           Effect                        Default
+ * +------------------+---------------+------------------------------+--------+
+ * | autorun=         | true | false  | If true then prettyPrint()   | "true" |
+ * |                  |               | is called on page load.      |        |
+ * +------------------+---------------+------------------------------+--------+
+ * | lang=            | language name | Loads the language handler   | Can    |
+ * |                  |               | named "lang-<NAME>.js".      | appear |
+ * |                  |               | See available handlers at    | many   |
+ * |                  |               | https://github.com/google/   | times. |
+ * |                  |               | code-prettify/tree/master/   |        |
+ * |                  |               | src                          |        |
+ * +------------------+---------------+------------------------------+--------+
+ * | skin=            | skin name     | Loads the skin stylesheet    | none.  |
+ * |                  |               | named "<NAME>.css".          |        |
+ * |                  |               | https://cdn.rawgit.com/      |        |
+ * |                  |               | google/code-prettify/master/ |        |
+ * |                  |               | styles/index.html            |        |
+ * +------------------+---------------+------------------------------+--------+
+ * | callback=        | JS identifier | When "prettyPrint" finishes  | none   |
+ * |                  |               | window.exports[js_ident] is  |        |
+ * |                  |               | called.                      |        |
+ * |                  |               | The callback must be under   |        |
+ * |                  |               | exports to reduce the risk   |        |
+ * |                  |               | of XSS via query parameter   |        |
+ * |                  |               | injection.                   |        |
+ * +------------------+---------------+------------------------------+--------+
+ *
+ * Exmaples
+ * .../prettify.js?lang=css&skin=sunburst
+ *   1. Loads the CSS language handler which can be used to prettify CSS
+ *      stylesheets, HTML <style> element bodies and style="..." attributes
+ *      values.
+ *   2. Loads the sunburst.css stylesheet instead of the default prettify.css
+ *      stylesheet.
+ *      A gallery of stylesheets is available at
+ *      https://cdn.rawgit.com/google/code-prettify/master/styles/index.html
+ *   3. Since autorun=false is not specified, calls prettyPrint() on page load.
+ * </div>
+ */
 
 (function () {
   "use strict";
 
   var win = window;
-  var setTimeout = win.setTimeout;
   var doc = document;
   var root = doc.documentElement;
   var head = doc['head'] || doc.getElementsByTagName("head")[0] || root;
@@ -88,7 +94,7 @@
           try {
             root.doScroll('left');
           } catch(e) {
-            setTimeout(poll, 50);
+            win.setTimeout(poll, 50);
             return;
           }
           init('poll');
@@ -207,7 +213,7 @@
   var pendingLanguages = langs.length;
   function checkPendingLanguages() {
     if (!pendingLanguages) {
-      setTimeout(onLangsLoaded, 0);
+      win.setTimeout(onLangsLoaded, 0);
     }
   }
 
@@ -235,7 +241,7 @@
           var callback = n ? function () {
             for (var i = 0; i < n; ++i) {
               (function (i) {
-                 setTimeout(
+                win.setTimeout(
                    function () {
                      win['exports'][callbacks[i]].apply(win, arguments);
                    }, 0);
