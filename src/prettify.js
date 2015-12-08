@@ -59,9 +59,27 @@
 
 
 /**
- * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
- * UI events.
- * If set to {@code false}, {@code prettyPrint()} is synchronous.
+ * {@type !{
+ *   'createSimpleLexer': function (Array, Array): (function (JobT)),
+ *   'registerLangHandler': function (function (JobT), Array.<string>),
+ *   'PR_ATTRIB_NAME': string,
+ *   'PR_ATTRIB_NAME': string,
+ *   'PR_ATTRIB_VALUE': string,
+ *   'PR_COMMENT': string,
+ *   'PR_DECLARATION': string,
+ *   'PR_KEYWORD': string,
+ *   'PR_LITERAL': string,
+ *   'PR_NOCODE': string,
+ *   'PR_PLAIN': string,
+ *   'PR_PUNCTUATION': string,
+ *   'PR_SOURCE': string,
+ *   'PR_STRING': string,
+ *   'PR_TAG': string,
+ *   'PR_TYPE': string,
+ *   'prettyPrintOne': function (string, string, number|boolean),
+ *   'prettyPrint': function (?function, ?(HTMLElement|HTMLDocument))
+ * }}
+ * @const
  */
 /**
 * @typedef {!Array.<number|string>}
@@ -114,6 +132,13 @@ var SourceSpansT;
 /** @define {boolean} */
 var IN_GLOBAL_SCOPE = false;
 
+var PR;
+
+/**
+ * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
+ * UI events.
+ * If set to {@code false}, {@code prettyPrint()} is synchronous.
+ */
 window['PR_SHOULD_USE_CONTINUATION'] = true;
 
 /**
