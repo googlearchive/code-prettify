@@ -15,6 +15,16 @@
  * limitations under the License.
  */
 
+
+/**
+ *
+ * @fileoverview
+ * This file allows separate compilation of language handlers and the
+ * core library.
+ * @externs 
+ */
+
+
 var PR = {};
 
 /**
@@ -53,6 +63,3 @@ PR.PR_STRING = 'str';
 PR.PR_TAG = 'tag';
 PR.PR_TYPE = 'typ';
 
-
-// See https://github.com/amdjs/amdjs-api/wiki/AMD
-var define;
