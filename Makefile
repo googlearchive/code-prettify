@@ -10,7 +10,7 @@ CLOSURE_COMPILER=java -jar tools/closure-compiler/compiler.jar \
 # to UTF-8 sequences instead of being emitted as ASCII.
 # This makes the resulting JavaScript less portable.
 
-YUI_COMPRESSOR=java -jar tools/yui-compressor/yuicompressor-2.4.4.jar \
+YUI_COMPRESSOR=java -jar tools/yui-compressor/yuicompressor-2.4.8.jar \
 	      --charset UTF-8
 
 TAR_ROOT=distrib/google-code-prettify
