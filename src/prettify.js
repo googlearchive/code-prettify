@@ -1276,7 +1276,7 @@ var prettyPrint;
       createSimpleLexer(
           [],
           [
-           [PR_NOCODE, /^[\S\s]+/],
+           [PR_PLAIN, /^[\S\s]+/],
           ]),
       ['none']);
   registerLangHandler(decorateSource, ['default-code']);
