@@ -412,7 +412,7 @@ var IN_GLOBAL_SCOPE = false;
           "instanceof,interface,null,native,package,strictfp,super,synchronized," +
           "throws,transient"];
       var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
-          "abstract,as,base,bool,by,byte,checked,decimal,delegate,descending," +
+          "abstract,as,async,await,base,bool,by,byte,checked,decimal,delegate,descending," +
           "dynamic,event,finally,fixed,foreach,from,group,implicit,in,interface," +
           "internal,into,is,let,lock,null,object,out,override,orderby,params," +
           "partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong," +
