@@ -145,8 +145,7 @@ add a colon and a line number to the end of that class as in
 For example
 
 ```HTML
-<pre class="prettyprint linenums:4"
->// This is line 4.
+<pre class="prettyprint linenums:4">// This is line 4.
 foo();
 bar();
 baz();
@@ -162,7 +161,7 @@ You can use the `nocode` class to identify a span of markup
 that is not code.
 
 ```HTML
-<pre class=prettyprint>
+<pre class="prettyprint">
 int x = foo();  /* This is a comment  <span class="nocode">This is not code</span>
   Continuation of comment */
 int y = bar();
