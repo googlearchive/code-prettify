@@ -90,7 +90,7 @@ look at `src/lang-lisp.js` and submit a pull request.
 
 ### How do I specify the language of my code?
 
-You don't need to specify the language since `PR.prettyprint()`
+You don't need to specify the language since `PR.prettyPrint()`
 will guess.  You can specify a language by specifying the language extension
 along with the `prettyprint` class:
 
