@@ -1349,7 +1349,7 @@ var IN_GLOBAL_SCOPE = false;
               breakAfter(node);
               if (!firstLine) {
                 // Don't leave blank text nodes in the DOM.
-                node.parentNode.removeChild(node);
+                node.parentNode.innerHTML = "&nbsp";
               }
             }
           }
