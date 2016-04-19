@@ -18,6 +18,7 @@
       "lang-rust.js",
       "lang-scala.js",
       "lang-sql.js",
+      "lang-sv.js",
       "lang-wiki.js",
       "lang-vhdl.js",
       "lang-vb.js",
@@ -877,7 +878,7 @@ do
           t[i] = testval; i = j
         end
         t[i] = v
-      end 
+      end
     end
     return t
   end
@@ -1025,14 +1026,14 @@ let f' x' = x' + 1
 (setq indent-tabs-mode nil)
 
 ;; Text mode
-(add-hook 'text-mode-hook 
+(add-hook 'text-mode-hook
   '(lambda ()
      (turn-on-auto-fill)
    )
 )
 
 ;; Fundamental mode
-(add-hook 'fundamental-mode-hook 
+(add-hook 'fundamental-mode-hook
   '(lambda ()
      (turn-on-auto-fill)
    )
@@ -1044,7 +1045,7 @@ let f' x' = x' + 1
 
 <h1>Bug 45 - Square brackets in strings</h1>
 <pre class="prettyprint" id="issue45">
-throw new RuntimeException("Element [" + element.getName() + 
+throw new RuntimeException("Element [" + element.getName() +
   "] missing attribute.");
 variable++;
 </pre>
@@ -1163,7 +1164,7 @@ Two lines</code></p>
 &lt;kml xmlns="http://www.opengis.net/kml/2.2"&gt;
   &lt;Placemark&gt;
     &lt;name&gt;Simple placemark&lt;/name&gt;
-    &lt;description Lang="en"&gt;Attached to the ground. Intelligently places itself 
+    &lt;description Lang="en"&gt;Attached to the ground. Intelligently places itself
        at the height of the underlying terrain.&lt;/description&gt;
     &lt;Point&gt;
       &lt;coordinates&gt;-122.0822035425683,37.42228990140251,0&lt;/coordinates&gt;
@@ -1178,6 +1179,85 @@ Two lines</code></p>
 string a = "C:\\";
 // is equivalent to a verbatim string
 string b = @"C:\";
+</pre>
+
+<h1>SystemVerilog mode</h1>
+<pre class="prettyprint lang-sv" id="sv">
+// Code copied from https://en.wikipedia.org/wiki/SystemVerilog
+module top;
+  intf i (); // instantiate an interface
+  u_a m1 (.i1(i));
+  u_b m2 (.i2(i));
+endmodule : top
+
+interface intf;
+  logic a;
+  logic b;
+  modport in (input a, output b);
+  modport out (input b, output a);
+endinterface
+
+typedef enum logic [2:0] {
+   RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW
+} color_t;
+
+color_t   my_color = GREEN;
+initial $display("The color is %s", my_color.name());
+
+/*
+   Block header
+*/
+typedef struct packed {
+    bit [10:0]  expo;
+    bit         sign;
+    bit [51:0]  mant;
+} FP;
+
+FP zero = 64'b0;
+
+always_comb begin
+  tmp = b * b - 4 * a * c;
+  no_root = (tmp < 0);
+end
+
+int x = 32'd5;
+
+string s1 = "Hello";
+string s2 = "world";
+
+virtual class Memory;
+  virtual function bit [31:0] read(bit [31:0] addr); endfunction
+  virtual function void write(bit [31:0] addr, bit [31:0] data); endfunction
+endclass
+
+class eth_frame;
+    rand bit [47:0] dest;
+    rand bit [47:0] src;
+    rand bit [15:0] type;
+    rand byte       payload[];
+    bit [31:0]      fcs;
+    rand bit [31:0] fcs_corrupt;
+
+    constraint basic {
+        payload.size inside {[46:1500]};
+    }
+
+    constraint good_fr {
+        fcs_corrupt == 0;
+    }
+endclass : eth_frame
+
+logic x = 1'hx;
+logic z = 1'hz;
+logic [44:0] omega = 45'h01X23x56Z7z;
+
+real floater = 1.2;
+
+property req_gnt;
+    @(posedge clk) req |=&gt gnt;
+endproperty
+
+assert_req_gnt: assert property (req_gnt) else $error("req not followed by gnt.");
 </pre>
 
 <h1>VHDL mode</h1>
@@ -1205,7 +1285,7 @@ end entity foo_entity;
 architecture foo_architecture of foo_entity is
   signal bar_s : std_logic_vector(2 downto 0);
 begin
-  
+
   bar_s &lt;= b"101";
 
   dummy_p : process (clk_i)
@@ -3070,30 +3150,30 @@ var goldens = {
       '\n' +
       '`END`COM/* " *\/`END`PLN  "foo /* "  `END`COM/*\/  *\/`END`PLN\n' +
       '`END`COM/* ` *\/`END`PLN  `foo /* `  `END`COM/*\/  *\/`END',
-  erlang: '`COM% Sample comment`END`PLN\n' + 
-      '\n' + 
-      '`END`KWD-module`END`PLN(my_test)`END`PUN.`END`PLN\n' + 
-      '`END`KWD-include_lib`END`PLN(`END`STR"my_sample_lib.hrl"`END`PLN)`END`PUN.`END`PLN\n' + 
-      '`END`KWD-export`END`PLN([\n' + 
-      '    test/`END`LIT2`END`PLN\n' + 
-      '])`END`PUN.`END`PLN\n' + 
-      '\n' + 
-      '`END`COM%% @doc Define a macro`END`PLN\n' + 
-      '`END`KWD-define`END`PLN(my_macro`END`PUN,`END`PLN `END`TYPVariable`END`PLN)`END`PUN.`END`PLN\n' + 
-      '\n' + 
-      '`END`COM%% @doc My function`END`PLN\n' + 
-      'test(`END`TYPVariables`END`PUN,`END`PLN `END`TYPMoreVariables`END`PLN) -&gt;\n' + 
-      '    `END`COM% Inline comment`END`PLN\n' + 
-      '    {ok`END`PUN,`END`TYPScanned`END`PUN,`END`TYP_`END`PLN} = my_lib:do_stuff()`END`PUN,`END`PLN\n' + 
-      '\n' + 
-      '    `END`TYPVariable`END`PLN = `END`KWDfun`END`PLN(`END`TYPV`END`PLN) -&gt; {ok`END`PUN,`END`PLN `END`TYPV`END`PLN} `END`KWDend`END`PUN,`END`PLN\n' + 
-      '\n' + 
-      '    `END`KWDtry`END`PLN `END`LIT?my_macro`END`PLN({value`END`PUN,`END`PLN test}) `END`KWDof`END`PLN\n' + 
-      '        {value`END`PUN,`END`PLN `END`TYPResult`END`PUN,`END`PLN `END`TYP_`END`PLN} -&gt;\n' + 
-      '            {ok`END`PUN,`END`PLN `END`TYPResult`END`PLN}\n' + 
-      '    `END`KWDcatch`END`PLN\n' + 
-      '        `END`TYPType`END`PLN:`END`TYPError`END`PLN -&gt;\n' + 
-      '            {`END`LIT\'error\'`END`PUN,`END`PLN `END`TYPType`END`PUN,`END`PLN `END`TYPError`END`PLN}\n' + 
+  erlang: '`COM% Sample comment`END`PLN\n' +
+      '\n' +
+      '`END`KWD-module`END`PLN(my_test)`END`PUN.`END`PLN\n' +
+      '`END`KWD-include_lib`END`PLN(`END`STR"my_sample_lib.hrl"`END`PLN)`END`PUN.`END`PLN\n' +
+      '`END`KWD-export`END`PLN([\n' +
+      '    test/`END`LIT2`END`PLN\n' +
+      '])`END`PUN.`END`PLN\n' +
+      '\n' +
+      '`END`COM%% @doc Define a macro`END`PLN\n' +
+      '`END`KWD-define`END`PLN(my_macro`END`PUN,`END`PLN `END`TYPVariable`END`PLN)`END`PUN.`END`PLN\n' +
+      '\n' +
+      '`END`COM%% @doc My function`END`PLN\n' +
+      'test(`END`TYPVariables`END`PUN,`END`PLN `END`TYPMoreVariables`END`PLN) -&gt;\n' +
+      '    `END`COM% Inline comment`END`PLN\n' +
+      '    {ok`END`PUN,`END`TYPScanned`END`PUN,`END`TYP_`END`PLN} = my_lib:do_stuff()`END`PUN,`END`PLN\n' +
+      '\n' +
+      '    `END`TYPVariable`END`PLN = `END`KWDfun`END`PLN(`END`TYPV`END`PLN) -&gt; {ok`END`PUN,`END`PLN `END`TYPV`END`PLN} `END`KWDend`END`PUN,`END`PLN\n' +
+      '\n' +
+      '    `END`KWDtry`END`PLN `END`LIT?my_macro`END`PLN({value`END`PUN,`END`PLN test}) `END`KWDof`END`PLN\n' +
+      '        {value`END`PUN,`END`PLN `END`TYPResult`END`PUN,`END`PLN `END`TYP_`END`PLN} -&gt;\n' +
+      '            {ok`END`PUN,`END`PLN `END`TYPResult`END`PLN}\n' +
+      '    `END`KWDcatch`END`PLN\n' +
+      '        `END`TYPType`END`PLN:`END`TYPError`END`PLN -&gt;\n' +
+      '            {`END`LIT\'error\'`END`PUN,`END`PLN `END`TYPType`END`PUN,`END`PLN `END`TYPError`END`PLN}\n' +
       '    `END`KWDend`END`PUN.`END',
   rust: '`COM// Single line comment`END`PLN\n' +
       '`END`COM/* Multi-line (nesting not highlighted properly, sorry)\n' +

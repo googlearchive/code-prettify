@@ -76,6 +76,7 @@ Other languages are supported via extensions:
 [Rust](src/lang-rust.js);
 [Scala](src/lang-scala.js);
 [SQL](src/lang-sql.js);
+[SystemVerilog](src/lang-sv.js);
 [Swift](src/lang-swift.js);
 [TCL](src/lang-tcl.js);
 [Latek](src/lang-tex.js);

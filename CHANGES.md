@@ -135,3 +135,7 @@
 ## 28 Apr 2015
 
  * Migrated to Github
+
+## 19 Apr 2016
+
+ * Added SystemVerilog
