@@ -52,6 +52,7 @@ Smalltalk, OCaml, etc. without a language extension.
 
 Other languages are supported via extensions:
 
+[ANTLR 4](src/lang-antlr4.js);
 [Apollo](src/lang-apollo.js);
 [Basic](src/lang-basic.js);
 [Clojure](src/lang-clj.js);
