@@ -1692,7 +1692,7 @@ var prettyPrint;
    * Contains functions for creating and registering new language handlers.
    * @type {Object}
    */
-  var PR = win['PR'] = {
+  var PR = {
         'createSimpleLexer': createSimpleLexer,
         'registerLangHandler': registerLangHandler,
         'sourceDecorator': sourceDecorator,
@@ -1709,14 +1709,8 @@ var prettyPrint;
         'PR_STRING': PR_STRING,
         'PR_TAG': PR_TAG,
         'PR_TYPE': PR_TYPE,
-        'prettyPrintOne':
-           IN_GLOBAL_SCOPE
-             ? (win['prettyPrintOne'] = $prettyPrintOne)
-             : (prettyPrintOne = $prettyPrintOne),
-        'prettyPrint': prettyPrint =
-           IN_GLOBAL_SCOPE
-             ? (win['prettyPrint'] = $prettyPrint)
-             : (prettyPrint = $prettyPrint)
+        'prettyPrintOne': $prettyPrintOne,
+        'prettyPrint': $prettyPrint
       };
 
   // Make PR available via the Asynchronous Module Definition (AMD) API.
@@ -1737,5 +1731,14 @@ var prettyPrint;
     });
   } else if (typeof module === 'object' && module.exports) {
     module.exports = PR;
+  } else {
+    win.PR = PR;
+    if (IN_GLOBAL_SCOPE) {
+      win.prettyPrintOne = $prettyPrintOne;
+      win.prettyPrint = $prettyPrint;
+    } else {
+      prettyPrintOne = $prettyPrintOne;
+      prettyPrint = $prettyPrint;
+    }
   }
 })();
