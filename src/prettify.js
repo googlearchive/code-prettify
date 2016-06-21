@@ -1731,10 +1731,11 @@ var prettyPrint;
   // whose value is an object. This helps avoid conflict with any
   // other existing JavaScript code that could have defined a define()
   // function that does not conform to the AMD API.
-  var define = win['define'];
-  if (typeof define === "function" && define['amd']) {
-    define("google-code-prettify", [], function () {
+  if (typeof define === 'function' && define.amd) {
+    define([], function() {
       return PR;
     });
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = PR;
   }
 })();
