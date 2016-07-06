@@ -59,6 +59,8 @@
 
 include("defs.js");
 
+var HACK_TO_FIX_JS_INCLUDE_PL;
+
 /**
  * {@type !{
  *   'createSimpleLexer': function (Array, Array): (function (JobT)),
