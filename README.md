@@ -70,6 +70,7 @@ Other languages are supported via extensions:
 [Mumps](src/lang-mumps.js);
 [Nemerle](src/lang-n.js);
 [Pascal](src/lang-pascal.js);
+[Php](src/lang-php.js);
 [Protocol buffers](src/lang-proto.js);
 [R, S](src/lang-r.js);
 [RD](src/lang-rd.js);
@@ -84,6 +85,8 @@ Other languages are supported via extensions:
 [Wiki](src/lang-wiki.js);
 [XQ](src/lang-xq.js);
 [YAML](src/lang-yaml.js)
+
+* Note: The PHP extension had been added later. Check [Php](src/lang-php.js)
 
 If you'd like to add an extension for your favorite language, please
 look at `src/lang-lisp.js` and submit a pull request.
