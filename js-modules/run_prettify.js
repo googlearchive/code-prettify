@@ -49,7 +49,7 @@
  * +------------------+---------------+------------------------------+--------+
  *
  * Exmaples
- * .../prettify.js?lang=css&skin=sunburst
+ * .../run_prettify.js?lang=css&skin=sunburst
  *   1. Loads the CSS language handler which can be used to prettify CSS
  *      stylesheets, HTML <style> element bodies and style="..." attributes
  *      values.
