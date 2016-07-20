@@ -21,7 +21,8 @@
       "lang-r.js",
       "lang-tcl.js",
       "lang-tex.js",
-      "lang-xq.js"
+      "lang-xq.js",
+      "lang-rebol.js"
   ];
   var styles = [
       "prettify.css"
@@ -1066,6 +1067,21 @@ y=20;
 %}
 </pre>
 
+<h1>Rebol / Red</h1>
+<pre class="prettyprint lang-rebol" id="rebol">Rebol [
+    title: "Prettify"
+    author: 'draegtun
+    date: 12-Dec-2012
+    file: %../src/lang-rebol.js
+    version: 1.2.3
+]
+
+; hello!
+
+f: function [a b] [a + b]
+print {hello world!}
+</pre>
+
 </body>
 
 <script type="text/javascript">
@@ -2006,7 +2022,19 @@ var goldens = {
       '%%}`END`PLN\n' +
       '`END<span class="ident">y`END`PUN=`END`LIT20`END`PUN;`END`PLN\n' +
       '`END`COM%}`END'
-      )
+      ),
+  rebol: (
+      '`KWDRebol`END`PLN `END`OPN[`END`PLN\n' +
+      '    `END`DECtitle:`END`PLN `END`STR"Prettify"`END`PLN\n' +
+      '    `END`DECauthor:`END`PLN `END`LIT\'draegtun`END`PLN\n' +
+      '    `END`DECdate:`END`PLN `END`STR12-Dec-2012`END`PLN\n' +
+      '    `END`DECfile:`END`PLN `END`STR%../src/lang-rebol.js`END`PLN\n' +
+      '    `END`DECversion:`END`PLN `END`LIT1.2.3`END`PLN\n`END' +
+      '`CLO]`END`PLN\n\n`END' +
+      '`COM; hello!`END`PLN\n\n`END' +
+      '`DECf:`END`PLN `END`KWDfunction`END`PLN `END`OPN[`END`LITa`END`PLN `END`LITb`END`CLO]`END`PLN `END`OPN[`END`LITa`END`PLN `END`KWD+`END`PLN `END`LITb`END`CLO]`END`PLN\n`END' +
+      '`KWDprint`END`PLN `END`STR{hello world!}`END'
+  )
 };
 </script>
 

@@ -50,58 +50,59 @@
  *
  */
 
-var REB = {
-    'word!': "lit dt-word",
-    'get-word!': "lit dt-get-word",
-    'function!': "kwd dt-function",
-    'native!': "kwd dt-native",
-    'op!': "kwd dt-native",
-    'datatype!': "typ dt-datatype",
-    'binary!': "str dt-binary",
-    'bitset!': "str dt-bitset",
-    'char!': "str dt-char",
-    'date!': "str dt-date",
-    'decimal!': "lit dt-decimal",
-    'email!': "str dt-email",
-    'file!': "str dt-file",
-    'integer!': "lit dt-integer",
-    'issue!': "str dt-issue",
-    'lit-word!': "lit dt-lit-word",
-    'logic!': "lit dt-logic",
-    'money!': "lit dt-money",
-    'none!': "lit dt-none",
-    'number!': "lit dt-integer",
-    'pair!': "lit dt-pair",
-    'percent!': "lit dt-percent",
-    'string!': "str dt-string",
-    'tag!': "tag dt-tag",
-    'time!': "lit dt-time",
-    'tuple!': "lit dt-tuple",
-    'url!': "str dt-url",
-    'refinement!': "lit dt-refinement",
-    'set-word!': "dec dt-set-word",
-    'set-path!': "fun dt-set-path",
-    'rebol!': "kwd dt-rebol",
-    'comment!': "com dt-cmt",
-    'literal-block-hack': "opn"
-};
+(function(){
+    var REB = {
+        'word!': "lit",
+        'get-word!': "lit",
+        'function!': "kwd",
+        'native!': "kwd",
+        'op!': "kwd",
+        'datatype!': "typ",
+        'binary!': "str",
+        'bitset!': "str",
+        'char!': "str",
+        'date!': "str",
+        'decimal!': "lit",
+        'email!': "str",
+        'file!': "str",
+        'integer!': "lit",
+        'issue!': "str",
+        'lit-word!': "lit",
+        'logic!': "lit",
+        'money!': "lit",
+        'none!': "lit",
+        'number!': "lit",
+        'pair!': "lit",
+        'percent!': "lit",
+        'string!': "str",
+        'tag!': "tag",
+        'time!': "lit",
+        'tuple!': "lit",
+        'url!': "str",
+        'refinement!': "lit",
+        'set-word!': "dec",
+        'set-path!': "fun",
+        'rebol!': "kwd",
+        'comment!': "com",
+        'literal-block-hack': "opn"
+    };
 
-PR['registerLangHandler'](
-    PR['createSimpleLexer'](
+    PR['registerLangHandler'](
+        PR['createSimpleLexer'](
+            [
+             // Rebol block/parens.  Is opn/clo really needed for Rebol?
+             ['opn',             /^[\(\[]+/, null, '(['],
+             //['opn',             /^#\[/, null, '#['],
+             ['clo',             /^[\)\]]+/, null, ')]'],
+             //
+             // Whitespace
+             [PR['PR_PLAIN'],       /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
+             //
+             // Multi-line string {braces} - allowed within:  { ^{ ^}  
+             // [PR['PR_STRING'],      /^\{(?:[^\}\^]|\^[\s\S])*(?:\}|$)/, null, '{}'],
+        ],
         [
-         // Rebol block/parens.  Is opn/clo really needed for Rebol?
-         ['opn',             /^[\(\[]+/, null, '(['],
-         //['opn',             /^#\[/, null, '#['],
-         ['clo',             /^[\)\]]+/, null, ')]'],
-         //
-         // Whitespace
-         [PR['PR_PLAIN'],       /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
-         //
-         // Multi-line string {braces} - allowed within:  { ^{ ^}  
-         // [PR['PR_STRING'],      /^\{(?:[^\}\^]|\^[\s\S])*(?:\}|$)/, null, '{}'],
-    ],
-    [
-         [REB['literal-block-hack'], /^#\[/],
+             [REB['literal-block-hack'], /^#\[/],
          //
          // Types
          // -- comment!
@@ -168,9 +169,10 @@ PR['registerLangHandler'](
          [REB['none!'], /^none$/],
          // -- word!
          [REB['word!'], /^[A-Za-z=\-?!_*+.`~&][A-Za-z0-9=\-!?_*+.`~&]*/],
-         //
-         // Above is the Rebol data types grammar.  
-         // Punctuation (from lisp)
-         [PR['PR_PUNCTUATION'], /^[^\w\t\n\r \xA0()\"\\\';]+/]
-        ]),
-    ['rebol', 'red']);
+             //
+             // Above is the Rebol data types grammar.  
+             // Punctuation (from lisp)
+             [PR['PR_PUNCTUATION'], /^[^\w\t\n\r \xA0()\"\\\';]+/]
+            ]),
+        ['rebol', 'red']);
+})();
