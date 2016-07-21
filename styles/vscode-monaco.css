@@ -1,0 +1,52 @@
+/* Pretty printing styles. Used with prettify.js. */
+/* Visual Studio Code - Monaco theme by Alex Rodin, based on Vim sunburst theme by David Leibovic */
+
+pre .com, code .com { color: rgba(96, 139, 78, 1); }    /* comment */
+pre .str, code .str { color: rgba(206, 145, 120, 1); }  /* string */
+pre .atv, code .atv { color: rgba(206, 145, 120, 1); }  /* html/xml attribute value */
+pre .kwd, code .kwd { color: rgba(197, 134, 192, 1); }  /* keyword */
+pre .typ, code .typ { color: rgba(156, 220, 254, 1); }  /* type */
+pre .tag, code .tag { color: rgba(78, 201, 176, 1); }   /* html/xml tag */
+pre .atn, code .atn { color: rgba(156, 220, 254, 1); }  /* html/xml attribute name*/
+pre .pun, code .pun { color: rgba(212, 212, 212, 1); }  /* punctuation*/
+pre .pln, code .pln { color: rgba(220, 220, 170, 1); }  /* plaintext*/
+pre .lit, code .lit { color: rgba(181, 206, 168, 1); }  /* literal */
+pre .dec, code .dec { color: rgba(181, 206, 168, 1); }  /* decimal*/
+
+pre.prettyprint,
+code.prettyprint {
+    border: 0;
+    border-radius: 3px;
+    color: #bbb;
+    background-color: #1e1e1e;
+    width: 95%;
+}
+
+pre.prettyprint {
+    margin: 1em auto;
+    padding: 1em;
+    white-space: pre-wrap;    
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 19px;
+}
+
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums { margin-top: 0; margin-bottom: 0; color: #5a5a5a;} /* IE indents via margin-left */
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { padding-left: 5px; }
+/* Alternate shading for lines */
+li.L1,li.L3,li.L5,li.L7,li.L9 { }
+
+@media print {
+    pre .str, code .str { color: #060; }
+    pre .kwd, code .kwd { color: #006; font-weight: bold; }
+    pre .com, code .com { color: #600; font-style: italic; }
+    pre .typ, code .typ { color: #404; font-weight: bold; }
+    pre .lit, code .lit { color: #044; }
+    pre .pun, code .pun { color: #440; }
+    pre .pln, code .pln { color: #000; }
+    pre .tag, code .tag { color: #006; font-weight: bold; }
+    pre .atn, code .atn { color: #404; }
+    pre .atv, code .atv { color: #060; }
+}
