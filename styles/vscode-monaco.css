@@ -25,7 +25,7 @@ code.prettyprint {
 pre.prettyprint {
     margin: 1em auto;
     padding: 1em;
-    white-space: pre-wrap;    
+    white-space: pre-wrap;
     font-family: Consolas, 'Courier New', monospace;
     font-size: 14px;
     line-height: 19px;
@@ -34,8 +34,8 @@ pre.prettyprint {
 
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums { margin-top: 0; margin-bottom: 0; color: #5a5a5a;} /* IE indents via margin-left */
-li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { padding-left: 5px; }
-/* Alternate shading for lines */
+pre.prettyprint li {padding-left: 5px;}
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { }
 li.L1,li.L3,li.L5,li.L7,li.L9 { }
 
 @media print {
