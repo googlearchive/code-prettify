@@ -45,6 +45,9 @@ PR['registerLangHandler'](
             [PR['PR_STRING'],      /^\'(?:([^\'\r\n]|\'\')*\')/, null, '\'']
         ],
         [
+            // 'type(foo)' is a type
+            // 'type foo' is a keyword
+            [PR['PR_TYPE'], /^type *(?:\([^ \r\n]+\))/i],
             // Keywords from all versions of Fortran
             [PR['PR_KEYWORD'], /^(?:abstract|allocatable|allocate|all *stop|assign|asynchronous|backspace|bind|call|case|class|close|codimension|common|contains|contiguous|continue|cycle|data|deallocate|deferred|dimension|do *,? *concurrent|elemental|entry|enumerator|equivalence|error stop|exit|extends|external|final|flush|format|generic|go *to|implicit|import|in *out|include|inquire|intent|intrinsic|lock|namelist|nopass|nullify|only|open|operator|optional|overridable|parameter|pass|pause|pointer|print|private|protected|public|pure|read|recursive|result|return|rewind|rewrite|non_save|sequence|stop|target|then|unlock|use|value|volatile|wait|where|while|write)\b/i],
             // Block beginning/end statements (optional spaces)
@@ -53,7 +56,7 @@ PR['registerLangHandler'](
             [PR['PR_KEYWORD'], /^(?:else *)(?:if|where)?/i],
             // User defined .operators.
             [PR['PR_KEYWORD'], /^\.\w*\./i],
-            [PR['PR_TYPE'], /^(?:character|complex|double *precision|integer|real|type)\b/i],
+            [PR['PR_TYPE'], /^(?:character|complex|double *precision|integer|real)\b/i],
             [PR['PR_LITERAL'], /^[+\-]?\.?\d+(?:\.\d*)?(?:[EeDd][+\-]?\d+)?/],
             [PR['PR_PUNCTUATION'], /^[+\-/*=^&|<>%[\]()?:.,]/ ]
         ]
