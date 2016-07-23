@@ -58,6 +58,7 @@ Other languages are supported via extensions:
 [CSS](src/lang-css.js);
 [Dart](src/lang-dart.js);
 [Erlang](src/lang-erlang.js);
+[Fortran](src/lang-fortran.js);
 [Go](src/lang-go.js);
 [Haskell](src/lang-hs.js);
 [Lasso](src/lang-lasso.js);
