@@ -54,6 +54,8 @@ PR['registerLangHandler'](
             [PR['PR_KEYWORD'], /^(?:end *)?(?:associate|block|block *data|critical|do|enum|file|forall|function|if|interface|module|procedure|program|select|submodule|subroutine|type|where)\b/i],
             [PR['PR_KEYWORD'], /^(?:sync *)(?:all|images|memory)/i],
             [PR['PR_KEYWORD'], /^(?:else *)(?:if|where)?/i],
+            // Boolean literals
+            [PR['PR_LITERAL'], /^\.(?:true|false)\./i],
             // User defined .operators.
             [PR['PR_KEYWORD'], /^\.\w*\./i],
             [PR['PR_TYPE'], /^(?:character|complex|double *precision|integer|real)\b/i],
