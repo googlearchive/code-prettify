@@ -63,7 +63,12 @@ PR['registerLangHandler'](
             [PR['PR_KEYWORD'], /^\.\w*\./i],
             [PR['PR_TYPE'], /^(?:character|complex|double *precision|integer|real)\b/i],
             [PR['PR_LITERAL'], /^[+\-]?\.?\d+(?:\.\d*)?(?:[EeDd][+\-]?\d+)?/],
-            [PR['PR_PUNCTUATION'], /^[+\-/*=^&|<>%[\]()?:.,]/ ]
+            //
+            [PR['PR_PUNCTUATION'], /^[+\-/*=^&|<>%[\]()?:.,]/ ],
+            // iso_c_binding
+            [PR['PR_TYPE'], /^c_(ptr|funptr)/i],
+            // List of constants from GNU Fortran manual
+            [PR['PR_LITERAL'], /^c_(int|short|long|long_long|signed_char|size_t|int8_t|int16_t|int32_t|int64_t|int128_t|int_least8_t|int_least16_t|int_least32_t|int_least64_t|int_least128_t|int_fast8_t|int_fast16_t|int_fast32_t|int_fast64_t|int_fast128_t|intmax_t|intptr_t|ptrdiff_t|float|double|long_double|float128|float_complex|double_complex|long_double_complex|float128_complex|bool|char|null_char|alert|backspace|form_feed|new_line|carriage_return|horizontal_tab|vertical_tab|null_ptr|null_funptr)/i]
         ]
     ),
     ['f', 'f90', 'F', 'F90', 'fortran']);
