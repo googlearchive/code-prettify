@@ -37,14 +37,17 @@ PR['registerLangHandler'](
         [
             // A line comment that starts with !
             [PR['PR_COMMENT'],     /^![^\r\n]*/, null, '!'],
-            // Whitespace
-            [PR['PR_PLAIN'],       /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
+            // Whitespace - don't match newlines or old-style comments
+            // won't work
+            [PR['PR_PLAIN'],       /^[\t\r \xA0]+/, null, '\t\r \xA0'],
             // Strings may use embedded double delimiters to represent
             // a single character of that delimiter
             [PR['PR_STRING'],      /^\"(?:([^\\"\r\n]|\"\")*\")/, null, '\"'],
             [PR['PR_STRING'],      /^\'(?:([^\'\r\n]|\'\')*\')/, null, '\'']
         ],
         [
+            // Fixed-form style comment - c or * in first column
+            [PR['PR_COMMENT'], /^\n+(?:c|\*).*/i],
             // 'type(foo)' is a type
             // 'type foo' is a keyword
             [PR['PR_TYPE'], /^type *(?:\([^ \r\n]+\))/i],
