@@ -48,7 +48,7 @@ PR['registerLangHandler'](
           // single-line or block comments
           [PR['PR_COMMENT'],      /^\/\/[^\r\n]*|\/\*[\s\S]*?\*\//],
           // member variables or keyword parameters
-          [PR['PR_ATTRIB_NAME'],  /^-(?!infinity)[a-z_][\w.]*|\.\s*'[a-z_][\w.]*'/i],
+          [PR['PR_ATTRIB_NAME'],  /^-(?!infinity)[a-z_][\w.]*|\.\s*'[a-z_][\w.]*'|\.{3}/i],
           // numeral as decimal or scientific notation
           [PR['PR_LITERAL'],      /^\d*\.\d+(?:e[-+]?\d+)?|(infinity|NaN)\b/i],
           // tag literals
