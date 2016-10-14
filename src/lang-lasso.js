@@ -1,19 +1,17 @@
-/**
- * @license
- * Copyright (C) 2013 Eric Knibbe
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright (C) 2013 Eric Knibbe
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 
 /**
  * @fileoverview
@@ -38,7 +36,7 @@ PR['registerLangHandler'](
           // ticked strings
           [PR['PR_STRING'],       /^\`[^\`]*(?:\`|$)/, null, '`'],
           // numeral as integer or hexidecimal
-          [PR['PR_LITERAL'],      /^0x[\da-f]+|\d+/i, null, '0123456789'],
+          [PR['PR_LITERAL'],      /^0\x[\da-f]+|\d+/i, null, '0123456789'],
           // local or thread variables, or hashbang
           [PR['PR_ATTRIB_NAME'],  /^#\d+|[#$][a-z_][\w.]*|#![ \S]+lasso9\b/i, null, '#$']
         ],

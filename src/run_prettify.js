@@ -1,113 +1,59 @@
-/**
- * @license
- * Copyright (C) 2013 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright (C) 2013 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-/**
- * @fileoverview
- * <div style="white-space: pre">
- * Looks at query parameters to decide which language handlers and style-sheets
- * to load.
- *
- * Query Parameter     Format           Effect                        Default
- * +------------------+---------------+------------------------------+--------+
- * | autorun=         | true | false  | If true then prettyPrint()   | "true" |
- * |                  |               | is called on page load.      |        |
- * +------------------+---------------+------------------------------+--------+
- * | lang=            | language name | Loads the language handler   | Can    |
- * |                  |               | named "lang-<NAME>.js".      | appear |
- * |                  |               | See available handlers at    | many   |
- * |                  |               | https://github.com/google/   | times. |
- * |                  |               | code-prettify/tree/master/   |        |
- * |                  |               | src                          |        |
- * +------------------+---------------+------------------------------+--------+
- * | skin=            | skin name     | Loads the skin stylesheet    | none.  |
- * |                  |               | named "<NAME>.css".          |        |
- * |                  |               | https://cdn.rawgit.com/      |        |
- * |                  |               | google/code-prettify/master/ |        |
- * |                  |               | styles/index.html            |        |
- * +------------------+---------------+------------------------------+--------+
- * | callback=        | JS identifier | When "prettyPrint" finishes  | none   |
- * |                  |               | window.exports[js_ident] is  |        |
- * |                  |               | called.                      |        |
- * |                  |               | The callback must be under   |        |
- * |                  |               | exports to reduce the risk   |        |
- * |                  |               | of XSS via query parameter   |        |
- * |                  |               | injection.                   |        |
- * +------------------+---------------+------------------------------+--------+
- *
- * Exmaples
- * .../prettify.js?lang=css&skin=sunburst
- *   1. Loads the CSS language handler which can be used to prettify CSS
- *      stylesheets, HTML <style> element bodies and style="..." attributes
- *      values.
- *   2. Loads the sunburst.css stylesheet instead of the default prettify.css
- *      stylesheet.
- *      A gallery of stylesheets is available at
- *      https://cdn.rawgit.com/google/code-prettify/master/styles/index.html
- *   3. Since autorun=false is not specified, calls prettyPrint() on page load.
- * </div>
- */
 
-/**
-* @typedef {!Array.<number|string>}
-* Alternating indices and the decorations that should be inserted there.
-* The indices are monotonically increasing.
-*/
-var DecorationsT;
+// Looks at query parameters to decide which language handlers and style-sheets
+// to load.
 
-/**
-* @typedef {!{
-*   sourceNode: !Element,
-*   pre: !(number|boolean),
-*   langExtension: ?string,
-*   numberLines: ?(number|boolean),
-*   sourceCode: ?string,
-*   spans: ?(Array.<number|Node>),
-*   basePos: ?number,
-*   decorations: ?DecorationsT
-* }}
-* <dl>
-*  <dt>sourceNode<dd>the element containing the source
-*  <dt>sourceCode<dd>source as plain text
-*  <dt>pre<dd>truthy if white-space in text nodes
-*     should be considered significant.
-*  <dt>spans<dd> alternating span start indices into source
-*     and the text node or element (e.g. {@code <BR>}) corresponding to that
-*     span.
-*  <dt>decorations<dd>an array of style classes preceded
-*     by the position at which they start in job.sourceCode in order
-*  <dt>basePos<dd>integer position of this.sourceCode in the larger chunk of
-*     source.
-* </dl>
-*/
-var JobT;
+// Query Parameter     Format           Effect                        Default
+// +------------------+---------------+------------------------------+--------+
+// | autorun=         | true | false  | If true then prettyPrint()   | "true" |
+// |                  |               | is called on page load.      |        |
+// +------------------+---------------+------------------------------+--------+
+// | lang=            | language name | Loads the language handler   | Can    |
+// |                  |               | named "lang-<NAME>.js".      | appear |
+// |                  |               | See available handlers at    | many   |
+// |                  |               | https://github.com/google/   | times. |
+// |                  |               | code-prettify/tree/master/   |        |
+// |                  |               | src                          |        |
+// +------------------+---------------+------------------------------+--------+
+// | skin=            | skin name     | Loads the skin stylesheet    | none.  |
+// |                  |               | named "<NAME>.css".          |        |
+// |                  |               | https://cdn.rawgit.com/      |        |
+// |                  |               | google/code-prettify/master/ |        |
+// |                  |               | styles/index.html            |        |
+// +------------------+---------------+------------------------------+--------+
+// | callback=        | JS identifier | When "prettyPrint" finishes  | none   |
+// |                  |               | window.exports[js_ident] is  |        |
+// |                  |               | called.                      |        |
+// |                  |               | The callback must be under   |        |
+// |                  |               | exports to reduce the risk   |        |
+// |                  |               | of XSS via query parameter   |        |
+// |                  |               | injection.                   |        |
+// +------------------+---------------+------------------------------+--------+
 
-/**
-* @typedef {!{
-*   sourceCode: string,
-*   spans: !(Array.<number|Node>)
-* }}
-* <dl>
-*  <dt>sourceCode<dd>source as plain text
-*  <dt>spans<dd> alternating span start indices into source
-*     and the text node or element (e.g. {@code <BR>}) corresponding to that
-*     span.
-* </dl>
-*/
-var SourceSpansT;
+// Exmaples
+// .../prettify.js?lang=css&skin=sunburst
+//   1. Loads the CSS language handler which can be used to prettify CSS
+//      stylesheets, HTML <style> element bodies and style="..." attributes
+//      values.
+//   2. Loads the sunburst.css stylesheet instead of the default prettify.css
+//      stylesheet.
+//      A gallery of stylesheets is available at
+//      https://cdn.rawgit.com/google/code-prettify/master/styles/index.html
+//   3. Since autorun=false is not specified, calls prettyPrint() on page load.
+
 
 /** @define {boolean} */
 var IN_GLOBAL_SCOPE = false;
@@ -116,6 +62,7 @@ var IN_GLOBAL_SCOPE = false;
   "use strict";
 
   var win = window;
+  var setTimeout = win.setTimeout;
   var doc = document;
   var root = doc.documentElement;
   var head = doc['head'] || doc.getElementsByTagName("head")[0] || root;
@@ -145,7 +92,7 @@ var IN_GLOBAL_SCOPE = false;
           try {
             root.doScroll('left');
           } catch(e) {
-            win.setTimeout(poll, 50);
+            setTimeout(poll, 50);
             return;
           }
           init('poll');
@@ -186,6 +133,13 @@ var IN_GLOBAL_SCOPE = false;
     load(0);
   }
 
+  // Use https to avoid mixed content warnings in client pages and to
+  // prevent a MITM from rewrite prettify mid-flight.
+  // This only works if this script is loaded via https : something
+  // over which we exercise no control.
+  var LOADER_BASE_URL =
+     'https://cdn.rawgit.com/google/code-prettify/master/loader';
+
   var scriptQuery = '';
   // Look for the <script> node that loads this script to get its parameters.
   // This starts looking at the end instead of just considering the last
@@ -195,12 +149,13 @@ var IN_GLOBAL_SCOPE = false;
   for (var i = scripts.length; --i >= 0;) {
     var script = scripts[i];
     var match = script.src.match(
-        /^[^?#]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);
+        /^([^?#]*)\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);
     if (match) {
-      scriptQuery = match[1] || '';
+      scriptQuery = match[2] || '';
       // Remove the script from the DOM so that multiple runs at least run
       // multiple times even if parameter sets are interpreted in reverse
       // order.
+      LOADER_BASE_URL = match[1];
       script.parentNode.removeChild(script);
       break;
     }
@@ -221,13 +176,6 @@ var IN_GLOBAL_SCOPE = false;
         if (name == 'skin')      { skins.push(value);                } else
         if (name == 'callback')  { callbacks.push(value);            }
       });
-
-  // Use https to avoid mixed content warnings in client pages and to
-  // prevent a MITM from rewrite prettify mid-flight.
-  // This only works if this script is loaded via https : something
-  // over which we exercise no control.
-  var LOADER_BASE_URL =
-     'https://cdn.rawgit.com/google/code-prettify/master/loader';
 
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
@@ -264,7 +212,7 @@ var IN_GLOBAL_SCOPE = false;
   var pendingLanguages = langs.length;
   function checkPendingLanguages() {
     if (!pendingLanguages) {
-      win.setTimeout(onLangsLoaded, 0);
+      setTimeout(onLangsLoaded, 0);
     }
   }
 
@@ -277,22 +225,20 @@ var IN_GLOBAL_SCOPE = false;
   loadStylesheetsFallingBack(skinUrls);
 
   var prettyPrint = (function () {
-    /**
-     * @license
-     * Copyright (C) 2006 Google Inc.
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     *
-     *      http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+    // Copyright (C) 2006 Google Inc.
+    //
+    // Licensed under the Apache License, Version 2.0 (the "License");
+    // you may not use this file except in compliance with the License.
+    // You may obtain a copy of the License at
+    //
+    //      http://www.apache.org/licenses/LICENSE-2.0
+    //
+    // Unless required by applicable law or agreed to in writing, software
+    // distributed under the License is distributed on an "AS IS" BASIS,
+    // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    // See the License for the specific language governing permissions and
+    // limitations under the License.
+    
     
     /**
      * @fileoverview
@@ -336,32 +282,6 @@ var IN_GLOBAL_SCOPE = false;
     // JSLint declarations
     /*global console, document, navigator, setTimeout, window, define */
     
-    
-    /**
-     * {@type !{
-     *   'createSimpleLexer': function (Array, Array): (function (JobT)),
-     *   'registerLangHandler': function (function (JobT), Array.<string>),
-     *   'PR_ATTRIB_NAME': string,
-     *   'PR_ATTRIB_NAME': string,
-     *   'PR_ATTRIB_VALUE': string,
-     *   'PR_COMMENT': string,
-     *   'PR_DECLARATION': string,
-     *   'PR_KEYWORD': string,
-     *   'PR_LITERAL': string,
-     *   'PR_NOCODE': string,
-     *   'PR_PLAIN': string,
-     *   'PR_PUNCTUATION': string,
-     *   'PR_SOURCE': string,
-     *   'PR_STRING': string,
-     *   'PR_TAG': string,
-     *   'PR_TYPE': string,
-     *   'prettyPrintOne': function (string, string, number|boolean),
-     *   'prettyPrint': function (?function, ?(HTMLElement|HTMLDocument))
-     * }}
-     * @const
-     */
-    var PR;
-    
     /**
      * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
      * UI events.
@@ -397,7 +317,7 @@ var IN_GLOBAL_SCOPE = false;
       // We use things that coerce to strings to make them compact when minified
       // and to defeat aggressive optimizers that fold large string constants.
       var FLOW_CONTROL_KEYWORDS = ["break,continue,do,else,for,if,return,while"];
-      var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," +
+      var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," + 
           "double,enum,extern,float,goto,inline,int,long,register,short,signed," +
           "sizeof,static,struct,switch,typedef,union,unsigned,void,volatile"];
       var COMMON_KEYWORDS = [C_KEYWORDS,"catch,class,delete,false,import," +
@@ -408,11 +328,11 @@ var IN_GLOBAL_SCOPE = false;
           "mutable,namespace,nullptr,property,reinterpret_cast,static_assert," +
           "static_cast,template,typeid,typename,using,virtual,where"];
       var JAVA_KEYWORDS = [COMMON_KEYWORDS,
-          "abstract,assert,boolean,byte,extends,finally,final,implements,import," +
+          "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
           "instanceof,interface,null,native,package,strictfp,super,synchronized," +
           "throws,transient"];
       var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
-          "abstract,as,async,await,base,bool,by,byte,checked,decimal,delegate,descending," +
+          "abstract,as,base,bool,by,byte,checked,decimal,delegate,descending," +
           "dynamic,event,finally,fixed,foreach,from,group,implicit,in,interface," +
           "internal,into,is,let,lock,null,object,out,override,orderby,params," +
           "partial,readonly,ref,sbyte,sealed,stackalloc,string,select,uint,ulong," +
@@ -421,8 +341,8 @@ var IN_GLOBAL_SCOPE = false;
           "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
           "throw,true,try,unless,until,when,while,yes";
       var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
-          "debugger,eval,export,function,get,instanceof,null,set,undefined," +
-          "var,with,Infinity,NaN"];
+          "debugger,eval,export,function,get,null,set,undefined,var,with," +
+          "Infinity,NaN"];
       var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
           "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
           "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
@@ -434,11 +354,14 @@ var IN_GLOBAL_SCOPE = false;
           "def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo," +
           "rescue,retry,self,super,then,true,undef,unless,until,when,yield," +
           "BEGIN,END"];
+       var RUST_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "as,assert,const,copy,drop," +
+          "enum,extern,fail,false,fn,impl,let,log,loop,match,mod,move,mut,priv," +
+          "pub,pure,ref,self,static,struct,true,trait,type,unsafe,use"];
       var SH_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "case,done,elif,esac,eval,fi," +
           "function,in,local,set,then,until"];
       var ALL_KEYWORDS = [
-          CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS, JSCRIPT_KEYWORDS,
-          PERL_KEYWORDS, PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
+          CPP_KEYWORDS, CSHARP_KEYWORDS, JSCRIPT_KEYWORDS, PERL_KEYWORDS,
+          PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
       var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
     
       // token style names.  correspond to css classes
@@ -822,9 +745,9 @@ var IN_GLOBAL_SCOPE = false;
        * </p>
        *
        * @param {Node} node an HTML DOM subtree containing source-code.
-       * @param {boolean|number} isPreformatted truthy if white-space in
-       *    text nodes should be considered significant.
-       * @return {SourceSpansT} source code and the nodes in which they occur.
+       * @param {boolean} isPreformatted true if white-space in text nodes should
+       *    be considered significant.
+       * @return {Object} source code and the text nodes in which they occur.
        */
       function extractSourceSpans(node, isPreformatted) {
         var nocode = /(?:^|\s)nocode(?:\s|$)/;
@@ -875,26 +798,14 @@ var IN_GLOBAL_SCOPE = false;
       /**
        * Apply the given language handler to sourceCode and add the resulting
        * decorations to out.
-       * @param {!Element} sourceNode
        * @param {number} basePos the index of sourceCode within the chunk of source
        *    whose decorations are already present on out.
-       * @param {string} sourceCode
-       * @param {function(JobT)} langHandler
-       * @param {DecorationsT} out
        */
-      function appendDecorations(
-          sourceNode, basePos, sourceCode, langHandler, out) {
+      function appendDecorations(basePos, sourceCode, langHandler, out) {
         if (!sourceCode) { return; }
-        /** @type {JobT} */
         var job = {
-          sourceNode: sourceNode,
-          pre: 1,
-          langExtension: null,
-          numberLines: null,
           sourceCode: sourceCode,
-          spans: null,
-          basePos: basePos,
-          decorations: null
+          basePos: basePos
         };
         langHandler(job);
         out.push.apply(out, job.decorations);
@@ -969,8 +880,8 @@ var IN_GLOBAL_SCOPE = false;
         * @param {Array} fallthroughStylePatterns patterns that will be tried in
         *   order if the shortcut ones fail.  May have shortcuts.
         *
-        * @return {function (JobT)} a function that takes an undecorated job and
-        *   attaches a list of decorations.
+        * @return {function (Object)} a
+        *   function that takes source code and returns a list of decorations.
         */
       function createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns) {
         var shortcuts = {};
@@ -1001,19 +912,22 @@ var IN_GLOBAL_SCOPE = false;
         var nPatterns = fallthroughStylePatterns.length;
     
         /**
-         * Lexes job.sourceCode and attaches an output array job.decorations of
+         * Lexes job.sourceCode and produces an output array job.decorations of
          * style classes preceded by the position at which they start in
          * job.sourceCode in order.
          *
-         * @type{function (JobT)}
+         * @param {Object} job an object like <pre>{
+         *    sourceCode: {string} sourceText plain text,
+         *    basePos: {int} position of job.sourceCode in the larger chunk of
+         *        sourceCode.
+         * }</pre>
          */
         var decorate = function (job) {
           var sourceCode = job.sourceCode, basePos = job.basePos;
-          var sourceNode = job.sourceNode;
           /** Even entries are positions in source in ascending order.  Odd enties
             * are style markers (e.g., PR_COMMENT) that run from that position until
             * the end.
-            * @type {DecorationsT}
+            * @type {Array.<number|string>}
             */
           var decorations = [basePos, PR_PLAIN];
           var pos = 0;  // index into sourceCode
@@ -1076,20 +990,17 @@ var IN_GLOBAL_SCOPE = false;
               var lang = style.substring(5);
               // Decorate the left of the embedded source
               appendDecorations(
-                  sourceNode,
                   basePos + tokenStart,
                   token.substring(0, embeddedSourceStart),
                   decorate, decorations);
               // Decorate the embedded source
               appendDecorations(
-                  sourceNode,
                   basePos + tokenStart + embeddedSourceStart,
                   embeddedSource,
                   langHandlerForExtension(lang, embeddedSource),
                   decorations);
               // Decorate the right of the embedded section
               appendDecorations(
-                  sourceNode,
                   basePos + tokenStart + embeddedSourceEnd,
                   token.substring(embeddedSourceEnd),
                   decorate, decorations);
@@ -1112,9 +1023,8 @@ var IN_GLOBAL_SCOPE = false;
         * It recognizes C, C++, and shell style comments.
         *
         * @param {Object} options a set of optional parameters.
-        * @return {function (JobT)} a function that examines the source code
-        *     in the input job and builds a decoration list which it attaches to
-        *     the job.
+        * @return {function (Object)} a function that examines the source code
+        *     in the input job and builds the decoration list.
         */
       function sourceDecorator(options) {
         var shortcutStylePatterns = [], fallthroughStylePatterns = [];
@@ -1224,7 +1134,7 @@ var IN_GLOBAL_SCOPE = false;
           // which are the following plus space, tab, and newline: { }
           // | & $ ; < >
           // ...
-    
+          
           // A word beginning with # causes that word and all remaining
           // characters on that line to be ignored.
     
@@ -1299,14 +1209,10 @@ var IN_GLOBAL_SCOPE = false;
        *     HTMLOListElement, and each line is moved into a separate list item.
        *     This requires cloning elements, so the input might not have unique
        *     IDs after numbering.
-       * @param {number|null|boolean} startLineNum
-       *     If truthy, coerced to an integer which is the 1-indexed line number
-       *     of the first line of code.  The number of the first line will be
-       *     attached to the list.
        * @param {boolean} isPreformatted true iff white-space in text nodes should
        *     be treated as significant.
        */
-      function numberLines(node, startLineNum, isPreformatted) {
+      function numberLines(node, opt_startLineNum, isPreformatted) {
         var nocode = /(?:^|\s)nocode(?:\s|$)/;
         var lineBreak = /\r\n?|\n/;
       
@@ -1407,13 +1313,13 @@ var IN_GLOBAL_SCOPE = false;
         }
       
         // Make sure numeric indices show correctly.
-        if (startLineNum === (startLineNum|0)) {
-          listItems[0].setAttribute('value', startLineNum);
+        if (opt_startLineNum === (opt_startLineNum|0)) {
+          listItems[0].setAttribute('value', opt_startLineNum);
         }
       
         var ol = document.createElement('ol');
         ol.className = 'linenums';
-        var offset = Math.max(0, ((startLineNum - 1 /* zero index */)) | 0) || 0;
+        var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
         for (var i = 0, n = listItems.length; i < n; ++i) {
           li = listItems[i];
           // Stick a class on the LIs so that stylesheets can
@@ -1427,12 +1333,19 @@ var IN_GLOBAL_SCOPE = false;
         }
       
         node.appendChild(ol);
-      }
-    
+      }    
       /**
        * Breaks {@code job.sourceCode} around style boundaries in
        * {@code job.decorations} and modifies {@code job.sourceNode} in place.
-       * @param {JobT} job
+       * @param {Object} job like <pre>{
+       *    sourceCode: {string} source as plain text,
+       *    sourceNode: {HTMLElement} the element containing the source,
+       *    spans: {Array.<number|Node>} alternating span start indices into source
+       *       and the text node or element (e.g. {@code <BR>}) corresponding to that
+       *       span.
+       *    decorations: {Array.<number|string} an array of style classes preceded
+       *       by the position at which they start in job.sourceCode in order
+       * }</pre>
        * @private
        */
       function recombineTagsAndDecorations(job) {
@@ -1486,7 +1399,7 @@ var IN_GLOBAL_SCOPE = false;
         nDecorations = decorations.length = decPos;
       
         var sourceNode = job.sourceNode;
-        var oldDisplay = "";
+        var oldDisplay;
         if (sourceNode) {
           oldDisplay = sourceNode.style.display;
           sourceNode.style.display = 'none';
@@ -1495,14 +1408,13 @@ var IN_GLOBAL_SCOPE = false;
           var decoration = null;
           while (spanIndex < nSpans) {
             var spanStart = spans[spanIndex];
-            var spanEnd = /** @type{number} */ (spans[spanIndex + 2])
-                || sourceLength;
+            var spanEnd = spans[spanIndex + 2] || sourceLength;
       
             var decEnd = decorations[decorationIndex + 2] || sourceLength;
       
             var end = Math.min(spanEnd, decEnd);
       
-            var textNode = /** @type{Node} */ (spans[spanIndex + 1]);
+            var textNode = spans[spanIndex + 1];
             var styledText;
             if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
                 // Don't introduce spans around empty text nodes.
@@ -1549,9 +1461,19 @@ var IN_GLOBAL_SCOPE = false;
       /** Maps language-specific file extensions to handlers. */
       var langHandlerRegistry = {};
       /** Register a language handler for the given file extensions.
-        * @param {function (JobT)} handler a function from source code to a list
+        * @param {function (Object)} handler a function from source code to a list
         *      of decorations.  Takes a single argument job which describes the
-        *      state of the computation and attaches the decorations to it.
+        *      state of the computation.   The single parameter has the form
+        *      {@code {
+        *        sourceCode: {string} as plain text.
+        *        decorations: {Array.<number|string>} an array of style classes
+        *                     preceded by the position at which they start in
+        *                     job.sourceCode in order.
+        *                     The language handler should assigned this field.
+        *        basePos: {int} the position of source in the larger source chunk.
+        *                 All positions in the output decorations array are relative
+        *                 to the larger source chunk.
+        *      } }
         * @param {Array.<string>} fileExtensions
         */
       function registerLangHandler(handler, fileExtensions) {
@@ -1671,10 +1593,14 @@ var IN_GLOBAL_SCOPE = false;
               'tripleQuotedStrings': true,
               'regexLiterals': true
             }), ['coffee']);
+      registerLangHandler(sourceDecorator({
+              'keywords': RUST_KEYWORDS,
+              'cStyleComments': true,
+              'multilineStrings': true
+            }), ['rc', 'rs', 'rust']);
       registerLangHandler(
           createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
     
-      /** @param {JobT} job */
       function applyDecorator(job) {
         var opt_langExtension = job.langExtension;
     
@@ -1709,11 +1635,6 @@ var IN_GLOBAL_SCOPE = false;
        *     or the 1-indexed number of the first line in sourceCodeHtml.
        */
       function $prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
-        /** @type{number|boolean} */
-        var nl = opt_numberLines || false;
-        /** @type{string|null} */
-        var langExtension = opt_langExtension || null;
-        /** @type{!Element} */
         var container = document.createElement('div');
         // This could cause images to load and onload listeners to fire.
         // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
@@ -1723,21 +1644,16 @@ var IN_GLOBAL_SCOPE = false;
         // http://stackoverflow.com/questions/451486/pre-tag-loses-line-breaks-when-setting-innerhtml-in-ie
         // http://stackoverflow.com/questions/195363/inserting-a-newline-into-a-pre-tag-ie-javascript
         container.innerHTML = '<pre>' + sourceCodeHtml + '</pre>';
-        container = /** @type{!Element} */(container.firstChild);
-        if (nl) {
-          numberLines(container, nl, true);
+        container = container.firstChild;
+        if (opt_numberLines) {
+          numberLines(container, opt_numberLines, true);
         }
     
-        /** @type{JobT} */
         var job = {
-          langExtension: langExtension,
-          numberLines: nl,
+          langExtension: opt_langExtension,
+          numberLines: opt_numberLines,
           sourceNode: container,
-          pre: 1,
-          sourceCode: null,
-          basePos: null,
-          spans: null,
-          decorations: null
+          pre: 1
         };
         applyDecorator(job);
         return container.innerHTML;
@@ -1774,6 +1690,7 @@ var IN_GLOBAL_SCOPE = false;
         // The loop is broken into a series of continuations to make sure that we
         // don't make the browser unresponsive when rewriting a large page.
         var k = 0;
+        var prettyPrintingJob;
     
         var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
         var prettyPrintRe = /\bprettyprint\b/;
@@ -1890,15 +1807,11 @@ var IN_GLOBAL_SCOPE = false;
                 if (lineNums) { numberLines(cs, lineNums, preformatted); }
     
                 // do the pretty printing
-                var prettyPrintingJob = {
+                prettyPrintingJob = {
                   langExtension: langExtension,
                   sourceNode: cs,
                   numberLines: lineNums,
-                  pre: preformatted,
-                  sourceCode: null,
-                  basePos: null,
-                  spans: null,
-                  decorations: null
+                  pre: preformatted
                 };
                 applyDecorator(prettyPrintingJob);
               }
@@ -1906,7 +1819,7 @@ var IN_GLOBAL_SCOPE = false;
           }
           if (k < elements.length) {
             // finish up in a continuation
-            win.setTimeout(doWork, 250);
+            setTimeout(doWork, 250);
           } else if ('function' === typeof opt_whenDone) {
             opt_whenDone();
           }
@@ -1958,10 +1871,9 @@ var IN_GLOBAL_SCOPE = false;
       // whose value is an object. This helps avoid conflict with any
       // other existing JavaScript code that could have defined a define()
       // function that does not conform to the AMD API.
-      var define = win['define'];
       if (typeof define === "function" && define['amd']) {
         define("google-code-prettify", [], function () {
-          return PR;
+          return PR; 
         });
       }
     })();
@@ -1979,7 +1891,7 @@ var IN_GLOBAL_SCOPE = false;
           var callback = n ? function () {
             for (var i = 0; i < n; ++i) {
               (function (i) {
-                win.setTimeout(
+                 setTimeout(
                    function () {
                      win['exports'][callbacks[i]].apply(win, arguments);
                    }, 0);

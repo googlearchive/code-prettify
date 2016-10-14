@@ -10,7 +10,7 @@ CLOSURE_COMPILER=java -jar tools/closure-compiler/compiler.jar \
 # to UTF-8 sequences instead of being emitted as ASCII.
 # This makes the resulting JavaScript less portable.
 
-YUI_COMPRESSOR=java -jar tools/yui-compressor/yuicompressor-2.4.8.jar \
+YUI_COMPRESSOR=java -jar tools/yui-compressor/yuicompressor-2.4.4.jar \
 	      --charset UTF-8
 
 TAR_ROOT=distrib/google-code-prettify
@@ -44,6 +44,7 @@ distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 	      | grep -v total; \
 	done
 	@$(CLOSURE_COMPILER) --js src/prettify.js \
+	    --externs tools/closure-compiler/console-externs.js \
 	    --externs tools/closure-compiler/amd-externs.js \
 	    --define IN_GLOBAL_SCOPE=true \
 	    --output_wrapper='!function(){%output%}()' \
@@ -51,6 +52,7 @@ distrib.tstamp: src/prettify.js src/run_prettify.js src/*.js src/*.css
 	@wc -c src/prettify.js $(TAR_ROOT)/prettify.js \
 	    | grep -v total
 	@$(CLOSURE_COMPILER) --js src/run_prettify.js \
+	    --externs tools/closure-compiler/console-externs.js \
 	    --externs tools/closure-compiler/amd-externs.js \
 	    --define IN_GLOBAL_SCOPE=false \
 	    --output_wrapper='!function(){%output%}()' \

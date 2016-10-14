@@ -824,7 +824,7 @@ by putting #testcopypaste on the end of the URL and reloading the
 page, then copy and paste the above into Notepad.</p>
 
 <h1>Bug 22 - Line numbers and other non-code spans in code</h1>
-<pre class="prettyprint lang-java" id="issue22"
+<pre class="prettyprint" id="issue22"
 ><span class=nocode>01: </span>// This is a line of code
 <span class=nocode>02: </span>/* Multiline comments can
 <span class=nocode>03: </span> * span over and around
@@ -1650,8 +1650,8 @@ var goldens = {
       '  T nth`END`PUN(`END`KWDint`END`PLN n`END`PUN,`END`PLN `END' +
           '`TYPIterable`END`PUN&lt;`END`PLNT`END`PUN&gt;`END' +
           '`PLN iterable`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
-      '    `END`TYPIterator`END`PUN&lt;?`END`PLN ' +
-          '`END`KWDextends`END`PLN T`END`PUN&gt;`END`PLN it `END`PUN=`END' +
+      '    `END`TYPIterator`END`PUN&lt;?`END`PLN `END' +
+          '`KWDextends`END`PLN T`END`PUN&gt;`END`PLN it `END`PUN=`END' +
           '`PLN iterable`END`PUN.`END`PLNiterator`END`PUN();`END`PLN\n' +
       '    `END`KWDwhile`END`PLN `END`PUN(--`END`PLNn `END' +
           '`PUN&gt;`END`PLN `END`LIT0`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
@@ -2432,7 +2432,7 @@ var goldens = {
           '`TYPString`END`PUN...`END`PLN argv`END`PUN)`END`PLN `END`PUN{`END' +
           '`PLN\n' +
       '`END<span class="nocode">08: `END`PLN    `END`TYPSystem`END' +
-          '`PUN.`END`PLNout`END`PUN.`END`PLNprint`END`PUN(`END' +
+          '`PUN.`END`KWDout`END`PUN.`END`KWDprint`END`PUN(`END' +
           '`STR"Hello World"`END`PUN);`END`PLN\n' +
       '`END<span class="nocode">09: `END`PLN  `END`PUN}`END`PLN\n' +
       '`END<span class="nocode">10: `END`PUN}`END'
@@ -3099,7 +3099,7 @@ var goldens = {
       '`END`COM/* Multi-line (nesting not highlighted properly, sorry)\n' +
       'comment */`END`PLN\n' +
       '\n' +
-      '`END`ATV#![feature(code_prettification)]`END`PLN\n' +
+      '`END`ATN#![feature(code_prettification)]`END`PLN\n' +
       '\n' +
       '`END`KWDuse`END`PLN std`END`PUN::`END`PLNio`END`PUN::{`END`LITself`END`PUN,`END`PLN Write`END`PUN};`END`PLN\n' +
       '\n' +
@@ -3108,9 +3108,9 @@ var goldens = {
       '    `END`KWDfn`END`PLN something`END`PUN(&amp;`END`KWDmut`END`PLN `END`LITself`END`PUN)`END`PLN `END`PUN-&gt;`END`PLN `END`TYPu32`END`PLN `END`PUN{`END`PLN\n' +
       '        `END`KWDif`END`PLN `END`KWDlet`END`PLN `END`TYPSome`END`PUN(`END`KWDref`END`PLN x`END`PUN)`END`PLN `END`PUN=`END`PLN `END`LITself`END`PUN.`END`PLNfoo`END`PUN(`END`STR"multi li\\ne\n' +
       's\\tring"`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
-      '            `END`ATNpanic!`END`PUN(`END`STRr"\\things is going wrong!"`END`PUN);`END`PLN\n' +
-      '            `END`ATNpanic!`END`PUN(`END`STRr#"Things is "really" goig\\n wront!"#`END`PUN);`END`PLN\n' +
-      '            `END`ATNpanic!`END`PUN(`END`STRr##"Raw strings are #"#fancy#"#"##`END`PUN);`END`PLN\n' +
+      '            panic`END`PUN!(`END`STRr"\\things is going wrong!"`END`PUN);`END`PLN\n' +
+      '            panic`END`PUN!(`END`STRr#"Things is "really" goig\\n wront!"#`END`PUN);`END`PLN\n' +
+      '            panic`END`PUN!(`END`STRr##"Raw strings are #"#fancy#"#"##`END`PUN);`END`PLN\n' +
       '        `END`PUN}`END`PLN\n' +
       '    `END`PUN}`END`PLN\n' +
       '`END`PUN}`END`PLN\n' +
