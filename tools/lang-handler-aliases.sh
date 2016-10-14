@@ -20,10 +20,7 @@ if [ -n "$*" ] || [ -z "$LANG_DIR" ] || ! (( $HAS_LANG_FILES )); then
 fi
 
 if [ -z "$JS_INTERPRETER" ]; then
-  JS_INTERPRETER="$(which v8)"
-  if ! [ -x "$JS_INTERPRETER" ]; then
-    JS_INTERPRETER="js17"
-  fi
+  JS_INTERPRETER="js17"
 fi
 
 if ! which "$JS_INTERPRETER" >& /dev/null; then

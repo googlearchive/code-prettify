@@ -1,19 +1,17 @@
-/**
- * @license
- * Copyright (C) 2006 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright (C) 2006 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 
 /**
  * @fileoverview
@@ -57,32 +55,8 @@
 // JSLint declarations
 /*global console, document, navigator, setTimeout, window, define */
 
-include("defs.js");
-
-/**
- * {@type !{
- *   'createSimpleLexer': function (Array, Array): (function (JobT)),
- *   'registerLangHandler': function (function (JobT), Array.<string>),
- *   'PR_ATTRIB_NAME': string,
- *   'PR_ATTRIB_NAME': string,
- *   'PR_ATTRIB_VALUE': string,
- *   'PR_COMMENT': string,
- *   'PR_DECLARATION': string,
- *   'PR_KEYWORD': string,
- *   'PR_LITERAL': string,
- *   'PR_NOCODE': string,
- *   'PR_PLAIN': string,
- *   'PR_PUNCTUATION': string,
- *   'PR_SOURCE': string,
- *   'PR_STRING': string,
- *   'PR_TAG': string,
- *   'PR_TYPE': string,
- *   'prettyPrintOne': function (string, string, number|boolean),
- *   'prettyPrint': function (?function, ?(HTMLElement|HTMLDocument))
- * }}
- * @const
- */
-var PR;
+/** @define {boolean} */
+var IN_GLOBAL_SCOPE = true;
 
 /**
  * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
@@ -119,7 +93,7 @@ var prettyPrint;
   // We use things that coerce to strings to make them compact when minified
   // and to defeat aggressive optimizers that fold large string constants.
   var FLOW_CONTROL_KEYWORDS = ["break,continue,do,else,for,if,return,while"];
-  var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," +
+  var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," + 
       "double,enum,extern,float,goto,inline,int,long,register,short,signed," +
       "sizeof,static,struct,switch,typedef,union,unsigned,void,volatile"];
   var COMMON_KEYWORDS = [C_KEYWORDS,"catch,class,delete,false,import," +
@@ -130,7 +104,7 @@ var prettyPrint;
       "mutable,namespace,nullptr,property,reinterpret_cast,static_assert," +
       "static_cast,template,typeid,typename,using,virtual,where"];
   var JAVA_KEYWORDS = [COMMON_KEYWORDS,
-      "abstract,assert,boolean,byte,extends,finally,final,implements,import," +
+      "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
       "instanceof,interface,null,native,package,strictfp,super,synchronized," +
       "throws,transient"];
   var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
@@ -143,8 +117,8 @@ var prettyPrint;
       "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
       "throw,true,try,unless,until,when,while,yes";
   var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
-      "debugger,eval,export,function,get,instanceof,null,set,undefined," +
-      "var,with,Infinity,NaN"];
+      "debugger,eval,export,function,get,null,set,undefined,var,with," +
+      "Infinity,NaN"];
   var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
       "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
       "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
@@ -156,11 +130,14 @@ var prettyPrint;
       "def,defined,elsif,end,ensure,false,in,module,next,nil,not,or,redo," +
       "rescue,retry,self,super,then,true,undef,unless,until,when,yield," +
       "BEGIN,END"];
+   var RUST_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "as,assert,const,copy,drop," +
+      "enum,extern,fail,false,fn,impl,let,log,loop,match,mod,move,mut,priv," +
+      "pub,pure,ref,self,static,struct,true,trait,type,unsafe,use"];
   var SH_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "case,done,elif,esac,eval,fi," +
       "function,in,local,set,then,until"];
   var ALL_KEYWORDS = [
-      CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS, JSCRIPT_KEYWORDS,
-      PERL_KEYWORDS, PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
+      CPP_KEYWORDS, CSHARP_KEYWORDS, JSCRIPT_KEYWORDS, PERL_KEYWORDS,
+      PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
   var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
 
   // token style names.  correspond to css classes
@@ -242,26 +219,14 @@ var prettyPrint;
   /**
    * Apply the given language handler to sourceCode and add the resulting
    * decorations to out.
-   * @param {!Element} sourceNode
    * @param {number} basePos the index of sourceCode within the chunk of source
    *    whose decorations are already present on out.
-   * @param {string} sourceCode
-   * @param {function(JobT)} langHandler
-   * @param {DecorationsT} out
    */
-  function appendDecorations(
-      sourceNode, basePos, sourceCode, langHandler, out) {
+  function appendDecorations(basePos, sourceCode, langHandler, out) {
     if (!sourceCode) { return; }
-    /** @type {JobT} */
     var job = {
-      sourceNode: sourceNode,
-      pre: 1,
-      langExtension: null,
-      numberLines: null,
       sourceCode: sourceCode,
-      spans: null,
-      basePos: basePos,
-      decorations: null
+      basePos: basePos
     };
     langHandler(job);
     out.push.apply(out, job.decorations);
@@ -336,8 +301,8 @@ var prettyPrint;
     * @param {Array} fallthroughStylePatterns patterns that will be tried in
     *   order if the shortcut ones fail.  May have shortcuts.
     *
-    * @return {function (JobT)} a function that takes an undecorated job and
-    *   attaches a list of decorations.
+    * @return {function (Object)} a
+    *   function that takes source code and returns a list of decorations.
     */
   function createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns) {
     var shortcuts = {};
@@ -368,19 +333,22 @@ var prettyPrint;
     var nPatterns = fallthroughStylePatterns.length;
 
     /**
-     * Lexes job.sourceCode and attaches an output array job.decorations of
+     * Lexes job.sourceCode and produces an output array job.decorations of
      * style classes preceded by the position at which they start in
      * job.sourceCode in order.
      *
-     * @type{function (JobT)}
+     * @param {Object} job an object like <pre>{
+     *    sourceCode: {string} sourceText plain text,
+     *    basePos: {int} position of job.sourceCode in the larger chunk of
+     *        sourceCode.
+     * }</pre>
      */
     var decorate = function (job) {
       var sourceCode = job.sourceCode, basePos = job.basePos;
-      var sourceNode = job.sourceNode;
       /** Even entries are positions in source in ascending order.  Odd enties
         * are style markers (e.g., PR_COMMENT) that run from that position until
         * the end.
-        * @type {DecorationsT}
+        * @type {Array.<number|string>}
         */
       var decorations = [basePos, PR_PLAIN];
       var pos = 0;  // index into sourceCode
@@ -443,20 +411,17 @@ var prettyPrint;
           var lang = style.substring(5);
           // Decorate the left of the embedded source
           appendDecorations(
-              sourceNode,
               basePos + tokenStart,
               token.substring(0, embeddedSourceStart),
               decorate, decorations);
           // Decorate the embedded source
           appendDecorations(
-              sourceNode,
               basePos + tokenStart + embeddedSourceStart,
               embeddedSource,
               langHandlerForExtension(lang, embeddedSource),
               decorations);
           // Decorate the right of the embedded section
           appendDecorations(
-              sourceNode,
               basePos + tokenStart + embeddedSourceEnd,
               token.substring(embeddedSourceEnd),
               decorate, decorations);
@@ -479,9 +444,8 @@ var prettyPrint;
     * It recognizes C, C++, and shell style comments.
     *
     * @param {Object} options a set of optional parameters.
-    * @return {function (JobT)} a function that examines the source code
-    *     in the input job and builds a decoration list which it attaches to
-    *     the job.
+    * @return {function (Object)} a function that examines the source code
+    *     in the input job and builds the decoration list.
     */
   function sourceDecorator(options) {
     var shortcutStylePatterns = [], fallthroughStylePatterns = [];
@@ -591,7 +555,7 @@ var prettyPrint;
       // which are the following plus space, tab, and newline: { }
       // | & $ ; < >
       // ...
-
+      
       // A word beginning with # causes that word and all remaining
       // characters on that line to be ignored.
 
@@ -665,9 +629,19 @@ var prettyPrint;
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
   /** Register a language handler for the given file extensions.
-    * @param {function (JobT)} handler a function from source code to a list
+    * @param {function (Object)} handler a function from source code to a list
     *      of decorations.  Takes a single argument job which describes the
-    *      state of the computation and attaches the decorations to it.
+    *      state of the computation.   The single parameter has the form
+    *      {@code {
+    *        sourceCode: {string} as plain text.
+    *        decorations: {Array.<number|string>} an array of style classes
+    *                     preceded by the position at which they start in
+    *                     job.sourceCode in order.
+    *                     The language handler should assigned this field.
+    *        basePos: {int} the position of source in the larger source chunk.
+    *                 All positions in the output decorations array are relative
+    *                 to the larger source chunk.
+    *      } }
     * @param {Array.<string>} fileExtensions
     */
   function registerLangHandler(handler, fileExtensions) {
@@ -787,10 +761,14 @@ var prettyPrint;
           'tripleQuotedStrings': true,
           'regexLiterals': true
         }), ['coffee']);
+  registerLangHandler(sourceDecorator({
+          'keywords': RUST_KEYWORDS,
+          'cStyleComments': true,
+          'multilineStrings': true
+        }), ['rc', 'rs', 'rust']);
   registerLangHandler(
       createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
 
-  /** @param {JobT} job */
   function applyDecorator(job) {
     var opt_langExtension = job.langExtension;
 
@@ -825,11 +803,6 @@ var prettyPrint;
    *     or the 1-indexed number of the first line in sourceCodeHtml.
    */
   function $prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
-    /** @type{number|boolean} */
-    var nl = opt_numberLines || false;
-    /** @type{string|null} */
-    var langExtension = opt_langExtension || null;
-    /** @type{!Element} */
     var container = document.createElement('div');
     // This could cause images to load and onload listeners to fire.
     // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
@@ -839,21 +812,16 @@ var prettyPrint;
     // http://stackoverflow.com/questions/451486/pre-tag-loses-line-breaks-when-setting-innerhtml-in-ie
     // http://stackoverflow.com/questions/195363/inserting-a-newline-into-a-pre-tag-ie-javascript
     container.innerHTML = '<pre>' + sourceCodeHtml + '</pre>';
-    container = /** @type{!Element} */(container.firstChild);
-    if (nl) {
-      numberLines(container, nl, true);
+    container = container.firstChild;
+    if (opt_numberLines) {
+      numberLines(container, opt_numberLines, true);
     }
 
-    /** @type{JobT} */
     var job = {
-      langExtension: langExtension,
-      numberLines: nl,
+      langExtension: opt_langExtension,
+      numberLines: opt_numberLines,
       sourceNode: container,
-      pre: 1,
-      sourceCode: null,
-      basePos: null,
-      spans: null,
-      decorations: null
+      pre: 1
     };
     applyDecorator(job);
     return container.innerHTML;
@@ -890,6 +858,7 @@ var prettyPrint;
     // The loop is broken into a series of continuations to make sure that we
     // don't make the browser unresponsive when rewriting a large page.
     var k = 0;
+    var prettyPrintingJob;
 
     var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
     var prettyPrintRe = /\bprettyprint\b/;
@@ -1006,15 +975,11 @@ var prettyPrint;
             if (lineNums) { numberLines(cs, lineNums, preformatted); }
 
             // do the pretty printing
-            var prettyPrintingJob = {
+            prettyPrintingJob = {
               langExtension: langExtension,
               sourceNode: cs,
               numberLines: lineNums,
-              pre: preformatted,
-              sourceCode: null,
-              basePos: null,
-              spans: null,
-              decorations: null
+              pre: preformatted
             };
             applyDecorator(prettyPrintingJob);
           }
@@ -1022,7 +987,7 @@ var prettyPrint;
       }
       if (k < elements.length) {
         // finish up in a continuation
-        win.setTimeout(doWork, 250);
+        setTimeout(doWork, 250);
       } else if ('function' === typeof opt_whenDone) {
         opt_whenDone();
       }
@@ -1074,10 +1039,9 @@ var prettyPrint;
   // whose value is an object. This helps avoid conflict with any
   // other existing JavaScript code that could have defined a define()
   // function that does not conform to the AMD API.
-  var define = win['define'];
   if (typeof define === "function" && define['amd']) {
     define("google-code-prettify", [], function () {
-      return PR;
+      return PR; 
     });
   }
 })();
