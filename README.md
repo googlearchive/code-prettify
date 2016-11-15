@@ -162,7 +162,7 @@ You can use the `nocode` class to identify a span of markup
 that is not code.
 
 ```HTML
-<pre class=prettyprint>
+<pre class="prettyprint">
 int x = foo();  /* This is a comment  <span class="nocode">This is not code</span>
   Continuation of comment */
 int y = bar();
