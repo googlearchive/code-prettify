@@ -32,9 +32,9 @@ PR['registerLangHandler'](
           // whitespace
           [PR['PR_PLAIN'],        /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
           // single quote strings
-          [PR['PR_STRING'],       /^\'(?:[^\'\\]|\\[\s\S])*(?:\'|$)/, null, "'"],
+          [PR['PR_STRING'],       /^\'[^\'\\]*(?:\\[\s\S][^\'\\]*)*(?:\'|$)/, null, "'"],
           // double quote strings
-          [PR['PR_STRING'],       /^\"(?:[^\"\\]|\\[\s\S])*(?:\"|$)/, null, '"'],
+          [PR['PR_STRING'],       /^\"[^\"\\]*(?:\\[\s\S][^\"\\]*)*(?:\"|$)/, null, '"'],
           // ticked strings
           [PR['PR_STRING'],       /^\`[^\`]*(?:\`|$)/, null, '`'],
           // numeral as integer or hexidecimal
