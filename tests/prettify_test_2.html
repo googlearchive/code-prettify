@@ -467,7 +467,7 @@ echo
  (:gen-class))
 
 (def foo "bar")
-(defn bar [arg1 arg2 & args]
+(defn bar [arg1 arg2 &amp; args]
   "sample function"
   (for [arg args]
     (prn arg)))
@@ -625,7 +625,7 @@ multiline string!""";
 proc fib {n} {
     set a 0
     set b 1
-    while {$n > 0} {
+    while {$n &gt; 0} {
         set tmp $a
         set a [expr $a + $b]
         set b $tmp
@@ -642,14 +642,14 @@ proc fib {n} {
 # This is a comment
 
 ## Valid names
-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a <- NULL
-.foo_ <- NULL
-._foo <- NULL
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789._a &lt;- NULL
+.foo_ &lt;- NULL
+._foo &lt;- NULL
 
 ## Invalid names
-0abc <- NULL
-.0abc <- NULL
-abc+cde <- NULL
+0abc &lt;- NULL
+.0abc &lt;- NULL
+abc+cde &lt;- NULL
 
 ## Reserved Words
 NA
@@ -661,10 +661,10 @@ NULL
 NaN
 Inf
 ## Not reserved
-NULLa <- NULL
-NULL1 <- NULL
-NULL. <- NULL
-NA_foo_ <- NULL
+NULLa &lt;- NULL
+NULL1 &lt;- NULL
+NULL. &lt;- NULL
+NA_foo_ &lt;- NULL
 
 ## Numbers
 12345678901
@@ -697,7 +697,7 @@ diag(2) %*% diag(2)
 1 %in% 1:10
 diag(2) %o% diag(2)
 diag(2) %x% diag(2)
-`%foo bar%` <- function(x, y) x + y
+`%foo bar%` &lt;- function(x, y) x + y
 1 %foo bar% 2
 
 ## Control Structures (3.2) and Function
@@ -708,40 +708,40 @@ for(i in 1:5) {
     print(i)
 }
 ## While, break
-i <- 1
+i &lt;- 1
 while (TRUE) {
-    i <- i + 1
-    if (i > 3) break
+    i &lt;- i + 1
+    if (i &gt; 3) break
 }
 ## Repeat
 repeat {1+1}
 ## Switch
-x <- 3
+x &lt;- 3
 switch(x, 2+2, mean(1:10), rnorm(5))
 ## Function, dot-dot-dot, return
-foo <- function(...) {
+foo &lt;- function(...) {
     return(sum(...))
 }
 # Not keywords
-functiona <- 2 + 2
-function. <- 2 + 2
-function1 <- 2 + 2
+functiona &lt;- 2 + 2
+function. &lt;- 2 + 2
+function1 &lt;- 2 + 2
 
 
 ## Grouping Tokens 10.3.7
 ## Parentheses
 1 + (2 + 3)
 ## brackets
-foo <- function(a) {
+foo &lt;- function(a) {
     a + 1
 }
 
 ## Indexing 10.3.8
 ## []
-bar <- 1:10
+bar &lt;- 1:10
 bar[3]
 ## [[]]
-foo <- list(a=1, b=2, c=3)
+foo &lt;- list(a=1, b=2, c=3)
 foo[["a"]]
 ## $
 foo$a
@@ -757,38 +757,38 @@ foo$"a"
 2 * 2
 2 / 2
 2^2
-2 < 2
-2 > 2
+2 &lt; 2
+2 &gt; 2
 2 == 2
-2 >= 2
-2 <= 2
+2 &gt;= 2
+2 &lt;= 2
 2 != 2
-TRUE & FALSE
-TRUE && FALSE
+TRUE &amp; FALSE
+TRUE &amp;&amp; FALSE
 TRUE | FALSE
 TRUE || FALSE
-foo <- 2 + 2
+foo &lt;- 2 + 2
 foo = 2 + 2
-2 + 2 -> foo
-foo <<- 2 + 2
-2 + 2 ->> foo
+2 + 2 -&gt; foo
+foo &lt;&lt;- 2 + 2
+2 + 2 -&gt;&gt; foo
 base:::sum
 base::sum
 
 ## Strings
-foo <- "hello, world!"
-foo <- 'hello, world!'
-foo <- "Hello, 'world!"
-foo <- 'Hello, "world!'
-foo <- 'Hello, \'world!\''
-foo <- "Hello, \"world!\""
-foo <- "Hello,
+foo &lt;- "hello, world!"
+foo &lt;- 'hello, world!'
+foo &lt;- "Hello, 'world!"
+foo &lt;- 'Hello, "world!'
+foo &lt;- 'Hello, \'world!\''
+foo &lt;- "Hello, \"world!\""
+foo &lt;- "Hello,
 world!"
-foo <- 'Hello,
+foo &lt;- 'Hello,
 world!'
 
 ## Backtick strings
-`foo123 +!"bar'baz` <- 2 + 2
+`foo123 +!"bar'baz` &lt;- 2 + 2
 </pre>
 
 <h1>MUMPS</h1>
@@ -806,7 +806,7 @@ HDR ; -- prt/display header
  I $E(IOST,1,2)="C-" W $C(13) D IOXY^VALM4(30,0)  ; -- position cursor
  W $J("",((VALMWD-80)/2)),$$HTE^XLFDT($H,1),$J("",10+((VALMWD-80)/2)),"Page: ",$J(VALMPGE,4)," of ",$J($$PAGE^VALM4(VALMCNT,VALM("LINES")),4)_$S($D(VALMORE):"+",1:" ") ; -- prt rest of hdr
  W:VALMCC IOUOFF I $E(IOST,1,2)="C-" D IOXY^VALM4(0,0) ; -- turn off undln
- F I=1:1:VALM("TM")-3 W !,$S('$D(VALMHDR(I)):"",$L(VALMHDR(I))>(VALMWD-1):$$EXTRACT^VALM4($G(VALMHDR(I))),1:VALMHDR(I)) ; -- prt hdr
+ F I=1:1:VALM("TM")-3 W !,$S('$D(VALMHDR(I)):"",$L(VALMHDR(I))&gt;(VALMWD-1):$$EXTRACT^VALM4($G(VALMHDR(I))),1:VALMHDR(I)) ; -- prt hdr
  Q
 </pre>
 

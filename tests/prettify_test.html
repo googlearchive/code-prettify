@@ -118,7 +118,7 @@ local $x = ${#x[@]}  # Previous is not a comment
 unsigned int fib(unsigned int n) {
   unsigned int a = 1, b = 1;
   unsigned int tmp;
-  while (--n >= 0) {
+  while (--n &gt;= 0) {
     tmp = a;
     a += b;
     b = tmp;
@@ -140,7 +140,7 @@ main() {
 uint32 fib(unsigned int n) {
   uint32 a = 1, b = 1;
   uint32 tmp;
-  while (--n >= 0) {
+  while (--n &gt;= 0) {
     tmp = a;
     a += b;
     b = tmp;
@@ -167,7 +167,7 @@ using namespace std;
 //! \param n an index into the fibonacci series
 //! \param fib0 element 0 of the series
 //! \return the nth element of the fibonacci series
-template &lt;class T>
+template &lt;class T&gt;
 T fib(unsigned int n, const T&amp; fib0) {
   T a(fib0), b(fib0);
   for (; n; --n) {
@@ -193,10 +193,10 @@ using namespace std;
 //! \param n an index into the fibonacci series
 //! \param fib0 element 0 of the series
 //! \return the nth element of the fibonacci series
-template &lt;class T>
+template &lt;class T&gt;
 T fib(int n, const T&amp; fib0) {
   T a(fib0), b(fib0);
-  while (--n >= 0) {
+  while (--n &gt;= 0) {
     T tmp(a);
     a += b;
     b = tmp;
@@ -218,13 +218,13 @@ import java.util.Iterator;
 /**
  * the fibonacci series implemented as an Iterable.
  */
-public final class Fibonacci implements Iterable&lt;Integer> {
+public final class Fibonacci implements Iterable&lt;Integer&gt; {
   /** the next and previous members of the series. */
   private int a = 1, b = 1;
 
   @Override
-  public Iterator&lt;Integer> iterator() {
-    return new Iterator&lt;Integer>() {
+  public Iterator&lt;Integer&gt; iterator() {
+    return new Iterator&lt;Integer&gt;() {
       /** the series is infinite. */
       public boolean hasNext() { return true; }
       public Integer next() {
@@ -238,14 +238,14 @@ public final class Fibonacci implements Iterable&lt;Integer> {
   }
 
   /**
-   * the n&lt;sup>th&lt;/sup> element of the given series.
+   * the n&lt;sup&gt;th&lt;/sup&gt; element of the given series.
    * @throws NoSuchElementException if there are less than n elements in the
    *   given Iterable's {@link Iterable#iterator iterator}.
    */
-  public static &lt;T>
-  T nth(int n, Iterable&lt;T> iterable) {
-    Iterator&lt;? extends T> it = iterable.iterator();
-    while (--n > 0) {
+  public static &lt;T&gt;
+  T nth(int n, Iterable&lt;T&gt; iterable) {
+    Iterator&lt;? extends T&gt; it = iterable.iterator();
+    while (--n &gt; 0) {
       it.next();
     }
     return it.next();
@@ -266,13 +266,13 @@ import java.util.Iterator;
 /**
  * the fibonacci series implemented as an Iterable.
  */
-public final class Fibonacci implements Iterable&lt;Integer> {
+public final class Fibonacci implements Iterable&lt;Integer&gt; {
   /** the next and previous members of the series. */
   private int a = 1, b = 1;
 
   @Override
-  public Iterator&lt;Integer> iterator() {
-    return new Iterator&lt;Integer>() {
+  public Iterator&lt;Integer&gt; iterator() {
+    return new Iterator&lt;Integer&gt;() {
       /** the series is infinite. */
       public boolean hasNext() { return true; }
       public Integer next() {
@@ -286,14 +286,14 @@ public final class Fibonacci implements Iterable&lt;Integer> {
   }
 
   /**
-   * the n&lt;sup>th&lt;/sup> element of the given series.
+   * the n&lt;sup&gt;th&lt;/sup&gt; element of the given series.
    * @throws NoSuchElementException if there are less than n elements in the
    *   given Iterable's {@link Iterable#iterator iterator}.
    */
-  public static &lt;T>
-  T nth(int n, Iterable&lt;T> iterable) {
-    Iterator&lt;? extends T> in = iterable.iterator();
-    while (--n > 0) {
+  public static &lt;T&gt;
+  T nth(int n, Iterable&lt;T&gt; iterable) {
+    Iterator&lt;? extends T&gt; in = iterable.iterator();
+    while (--n &gt; 0) {
       in.next();
     }
     return in.next();
@@ -312,13 +312,13 @@ public final class Fibonacci implements Iterable&lt;Integer> {
 <pre class="prettyprint" id="javascript">
 /**
  * nth element in the fibonacci series.
- * @param n >= 0
- * @return the nth element, >= 0.
+ * @param n &gt;= 0
+ * @return the nth element, &gt;= 0.
  */
 function fib(n) {
   var a = 1, b = 1;
   var tmp;
-  while (--n >= 0) {
+  while (--n &gt;= 0) {
     tmp = a;
     a += b;
     b = tmp;
@@ -367,8 +367,8 @@ log('matches = ' + /foo/.test(foo));
 return /a regexp/;
 division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
 
-// & not used as prefix operator in javascript but this should still work
-&/foo/;
+// &amp; not used as prefix operator in javascript but this should still work
+&amp;/foo/;
 
 extends = /extends/;
 </pre>
@@ -411,8 +411,8 @@ log('matches = ' + /foo/.test(foo));
 return /a regexp/;
 division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
 
-// & not used as prefix operator in javascript but this should still work
-&/foo/;
+// &amp; not used as prefix operator in javascript but this should still work
+&amp;/foo/;
 
 extends = /extends/;
 </pre>
@@ -420,10 +420,10 @@ extends = /extends/;
 <h1>Coffee</h1>
 <pre class="prettyprint lang-coffee" id="coffee">
 class Animal
-  constructor: (@name) ->
-  move: (meters, loc) ->
+  constructor: (@name) -&gt;
+  move: (meters, loc) -&gt;
     alert @name + " moved " + meters + "m."
-  travel: (path...) ->
+  travel: (path...) -&gt;
     for place in path
       @move place.distance, place.location
 
@@ -432,17 +432,17 @@ class Horse extends Animal
   @param name Horse name
   @param jumper Jumping ability
   ###
-  constructor: (name, jumper) ->
+  constructor: (name, jumper) -&gt;
     super name
     @capable = jumper
-  step: ->
+  step: -&gt;
     alert '''
           Step,
           step...
           '''
-  jump: ->
+  jump: -&gt;
     @capable
-  move: (meters, where) ->
+  move: (meters, where) -&gt;
     switch where
       when "ground"
         @step()
@@ -476,11 +476,11 @@ use strict;
 use integer;
 
 # the nth element of the fibonacci series
-# param n - an int >= 0
-# return an int >= 0
+# param n - an int &gt;= 0
+# return an int &gt;= 0
 sub fib($) {
   my $n = shift, $a = 1, $b = 1;
-  ($a, $b) = ($a + $b, $a) until (--$n < 0);
+  ($a, $b) = ($a + $b, $a) until (--$n &lt; 0);
   return $a;
 }
 
@@ -510,7 +510,7 @@ def nth(series, n):
 
   for x in series:
     n = n - 1
-    if n <= 0: return x
+    if n &lt;= 0: return x
 
 print nth(fib(), 10)
 </pre>
@@ -538,7 +538,7 @@ def nth(series, n):
 
   for x in series:
     n -= 1
-    if n <= 0: return x
+    if n &lt;= 0: return x
 
 print nth(fib(), 10)
 
@@ -562,7 +562,7 @@ select * from user-table where id in (x, y, z);
 <pre class="prettyprint" id="xml">
 &lt;!DOCTYPE series PUBLIC "fibonacci numbers"&gt;
 
-&lt;series.root base="1" step="s(n-2) + s(n-1)">
+&lt;series.root base="1" step="s(n-2) + s(n-1)"&gt;
   &lt;element i="0"&gt;1&lt;/element&gt;
   &lt;element i="1"&gt;1&lt;/element&gt;
   &lt;element i="2"&gt;2&lt;/element&gt;
@@ -576,13 +576,13 @@ select * from user-table where id in (x, y, z);
 <h1>HTML</h1>
 <pre class="prettyprint" id="html">
 &lt;html&gt;
-  &lt;head>
+  &lt;head&gt;
     &lt;title&gt;Fibonacci number&lt;/title&gt;
     &lt;style&gt;&lt;!-- BODY { text-decoration: blink } --&gt;&lt;/style&gt;
     &lt;script src="foo.js"&gt;&lt;/script&gt;
     &lt;script src="bar.js"&gt;&lt;/script&gt;
   &lt;/head&gt;
-  &lt;body>
+  &lt;body&gt;
     &lt;noscript&gt;
       &lt;dl&gt;
         &lt;dt&gt;Fibonacci numbers&lt;/dt&gt;
@@ -596,11 +596,11 @@ select * from user-table where id in (x, y, z);
       &lt;/dl&gt;
     &lt;/noscript&gt;
 
-    &lt;script type="text/javascript">&lt;!--
+    &lt;script type="text/javascript"&gt;&lt;!--
 function fib(n) {
   var a = 1, b = 1;
   var tmp;
-  while (--n >= 0) {
+  while (--n &gt;= 0) {
     tmp = a;
     a += b;
     b = tmp;
@@ -610,7 +610,7 @@ function fib(n) {
 
 document.writeln(fib(10));
 // --&gt;
-    &lt;/script>
+    &lt;/script&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
@@ -632,11 +632,11 @@ Fibonacci Numbers
   &lt;/dl&gt;
 &lt;/noscript&gt;
 
-&lt;script type="text/javascript">&lt;!--
+&lt;script type="text/javascript"&gt;&lt;!--
 function fib(n) {
   var a = 1, b = 1;
   var tmp;
-  while (--n >= 0) {
+  while (--n &gt;= 0) {
     tmp = a;
     a += b;
     b = tmp;
@@ -646,7 +646,7 @@ function fib(n) {
 
 document.writeln(fib(10));
 // --&gt;
-&lt;/script>
+&lt;/script&gt;
 </pre>
 
 
@@ -695,7 +695,7 @@ document.writeln(fib(10));
   &lt;head&gt;
     &lt;title&gt;Fibonacci number&lt;/title&gt;
   &lt;/head&gt;
-  &lt;body onload="alert(fib(10))">
+  &lt;body onload="alert(fib(10))"&gt;
     &lt;script type="text/javascript"&gt;&lt;![CDATA[
 function fib(n) {
   var a = 1, b = 1;
@@ -715,9 +715,9 @@ function fib(n) {
 
 <h1>PHP</h1>
 <pre class="prettyprint" id="PHP">
-&lt;html>
-  &lt;head>
-    &lt;title>&lt;?= 'Fibonacci numbers' ?>&lt;/title>
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;&lt;?= 'Fibonacci numbers' ?&gt;&lt;/title&gt;
 
     &lt;?php
       // PHP has a plethora of comment types
@@ -727,19 +727,19 @@ function fib(n) {
         # I don't know.
         $a = 1;
         $b = 1;
-        while (--$n >= 0) {
+        while (--$n &gt;= 0) {
           echo "$a\n";
           $tmp = $a;
           $a += $b;
           $b = $tmp;
         }
       }
-    ?>
-  &lt;/head>
-  &lt;body>
-    &lt;?= fib(10) ?>
-  &lt;/body>
-&lt;/html>
+    ?&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;?= fib(10) ?&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
 </pre>
 
 <h1>XSL (Issue 19)</h1>
@@ -884,8 +884,8 @@ do
 
   function shellsort(t, before, n)
     n = n or #t
-    if not before or before == "<" then return ssup(t, n)
-    elseif before == ">" then return ssdown(t, n)
+    if not before or before == "&lt;" then return ssup(t, n)
+    elseif before == "&gt;" then return ssdown(t, n)
     else return ssgeneral(t, n, before)
     end
   end
@@ -962,9 +962,9 @@ import Monads(Exception(..), FIO(..),unFIO,handle,runFIO,fixFIO,fio,
 instance Thingy Foo where
   a = b
 
-data Foo :: (* -> * -> *) -&gt; * > * -> * where
+data Foo :: (* -&gt; * -&gt; *) -&gt; * &gt; * -&gt; * where
   Nil :: Foo a b c
-  Cons :: a b c -> Foo abc -> Foo a b c
+  Cons :: a b c -&gt; Foo abc -&gt; Foo a b c
 
 str = &quot;Foo\\Bar"
 char = 'x'
@@ -987,8 +987,8 @@ Not.A.Char = 'too long'  -- Don't barf.  Show that 't is a lexical error.
 
 #if fibby
   let
-    rec fib = function (0, a, _) -> a
-                     | (n, a, b) -> fib(n - 1, a + b, a)
+    rec fib = function (0, a, _) -&gt; a
+                     | (n, a, b) -&gt; fib(n - 1, a + b, a)
   in
     print_int(fib(10, 1, 1));;
 #endif
@@ -1122,7 +1122,7 @@ p#featured{background:#fea}
 
 <h1>Issue 79 CSS highlighting</h1>
 <pre class="prettyprint" id="issue79">
-&lt;style type='text/css'>
+&lt;style type='text/css'&gt;
 /* desert scheme ported from vim to google prettify */
 code.prettyprint { display: block; padding: 2px; border: 1px solid #888;
 background-color: #333; }
@@ -1137,7 +1137,7 @@ background-color: #333; }
 .atn { color: #bdb76b; font-weight: bold; } /* attribute name  - khaki*/
 .atv { color: #ffa0a0; } /* attribute value - pink */
 .dec { color: #98fb98; } /* decimal         - lightgreen */
-&lt;/style>
+&lt;/style&gt;
 </pre>
 
 <h1>Issue 84 NBSPs</h1>
@@ -1211,7 +1211,7 @@ begin
   dummy_p : process (clk_i)
   begin
     if b_i = 1 then
-      c_o &lt;= (others => '0');
+      c_o &lt;= (others =&gt; '0');
     elsif rising_edge(clk_i) then
       c_o &lt;= "1011" &amp; bar_s(1 downto 0);
     end if;
@@ -1310,12 +1310,12 @@ def act() {
   var pongCount = 0
   loop {
     react {
-      case Ping =>
+      case Ping =&gt;
         if (pongCount % 1000 == 0)
           Console.println("Pong: ping "+pongCount)
         sender ! Pong
         pongCount = pongCount + 1
-      case Stop =>
+      case Stop =&gt;
         Console.println("Pong: stop")
         exit()
     }
@@ -1352,17 +1352,17 @@ func main() {
 -define(my_macro, Variable).
 
 %% @doc My function
-test(Variables, MoreVariables) ->
+test(Variables, MoreVariables) -&gt;
     % Inline comment
     {ok,Scanned,_} = my_lib:do_stuff(),
 
-    Variable = fun(V) -> {ok, V} end,
+    Variable = fun(V) -&gt; {ok, V} end,
 
     try ?my_macro({value, test}) of
-        {value, Result, _} ->
+        {value, Result, _} -&gt;
             {ok, Result}
     catch
-        Type:Error ->
+        Type:Error -&gt;
             {'error', Type, Error}
     end.
 </pre>
