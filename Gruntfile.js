@@ -37,12 +37,29 @@ module.exports = function (grunt) {
         src: 'js-modules/run_prettify.js',
         dest: 'src/run_prettify.js'
       }
+    },
+
+    // grunt-contrib-copy
+    copy: {
+      prettify: {
+        options: {
+          process: function (content) {
+            // trim trailing whitespaces in blank lines added by preprocess
+            return content.replace(/[ \f\t\v]+$/gm, '');
+          }
+        },
+        files: [
+          {src: 'src/prettify.js', dest: 'src/prettify.js'},
+          {src: 'src/run_prettify.js', dest: 'src/run_prettify.js'}
+        ]
+      }
     }
   });
 
   // load plugins that provide tasks
   grunt.loadNpmTasks('grunt-preprocess');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // register task aliases
-  grunt.registerTask('default', ['preprocess']);
+  grunt.registerTask('default', ['preprocess', 'copy']);
 };

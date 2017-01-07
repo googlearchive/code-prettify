@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "grunt": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
     "grunt-preprocess": "^5.1.0"
   }
 }
