@@ -47,4 +47,9 @@ var JobT;
 var SourceSpansT;
 
 /** @define {boolean} */
+/* @ifndef RUN_PRETTIFY */
 var IN_GLOBAL_SCOPE = true;
+/* @endif */
+/* @ifdef RUN_PRETTIFY */
+var IN_GLOBAL_SCOPE = false;
+/* @endif */
