@@ -141,6 +141,23 @@ module.exports = function (grunt) {
           ext: '.css'
         }]
       }
+    },
+
+    // grunt-contrib-compress
+    compress: {
+      zip: {
+        options: {
+          archive: 'distrib/prettify-small.zip',
+          mode: 'zip',
+          level: 9
+        },
+        files: [{
+          expand: true,
+          cwd: 'loader/',
+          src: ['*.js', '*.css', 'skins/*.css'],
+          dest: 'google-code-prettify/'
+        }]
+      }
     }
   });
 
@@ -149,6 +166,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-compress');
 
   // register task aliases
   grunt.registerTask('default', [
@@ -156,6 +174,7 @@ module.exports = function (grunt) {
     'copy:prettify',
     'uglify',
     'copy:langs',
-    'cssmin'
+    'cssmin',
+    'compress'
   ]);
 };
