@@ -161,6 +161,17 @@ module.exports = function (grunt) {
       }
     },
 
+    // ./tasks/gcc.js
+    gcc: {
+      // same as 'closure-compiler:langs'
+      langs: {
+        options: {
+          externs: 'js-modules/externs.js'
+        },
+        files: '<%= uglify.langs.files %>'
+      }
+    },
+
     // grunt-contrib-cssmin
     cssmin: {
       // https://github.com/jakubpawlowicz/clean-css#how-to-use-clean-css-api
@@ -209,6 +220,7 @@ module.exports = function (grunt) {
 
   // load plugins that provide tasks
   require('google-closure-compiler').grunt(grunt);
+  grunt.loadTasks('./tasks');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -221,7 +233,7 @@ module.exports = function (grunt) {
     //'clean',
     'preprocess',
     'copy:prettify',
-    'closure-compiler',
+    'gcc',
     'copy:langs',
     'cssmin',
     'compress'

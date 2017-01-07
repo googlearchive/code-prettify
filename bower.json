@@ -33,6 +33,7 @@
     "bower_components",
     "distrib",
     "js-modules",
+    "tasks",
     "tests",
     "tools"
   ]
