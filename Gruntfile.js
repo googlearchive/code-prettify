@@ -93,6 +93,27 @@ module.exports = function (grunt) {
           ext: '.js'
         }]
       }
+    },
+
+    // grunt-contrib-cssmin
+    cssmin: {
+      // https://github.com/jakubpawlowicz/clean-css#how-to-use-clean-css-api
+      options: {
+        report: 'gzip'
+      },
+      prettify: {
+        src: 'src/prettify.css',
+        dest: 'loader/prettify.css'
+      },
+      skins: {
+        files: [{
+          expand: true,
+          cwd: 'styles/',
+          src: ['*.css'],
+          dest: 'loader/skins/',
+          ext: '.css'
+        }]
+      }
     }
   });
 
@@ -100,7 +121,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   // register task aliases
-  grunt.registerTask('default', ['preprocess', 'copy', 'uglify']);
+  grunt.registerTask('default', ['preprocess', 'copy', 'uglify', 'cssmin']);
 };
