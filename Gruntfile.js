@@ -82,6 +82,17 @@ module.exports = function (grunt) {
       }
     },
 
+    // ./tasks/aliases.js
+    aliases: {
+      langs: {
+        src: 'loader/lang-*.js',
+        filter: function (src) {
+          // skip files that are themselves aliases created in previous runs
+          return grunt.file.exists(src.replace(/^loader/, 'src'));
+        }
+      }
+    },
+
     // grunt-contrib-uglify
     uglify: {
       // https://github.com/mishoo/UglifyJS2#usage
@@ -235,6 +246,7 @@ module.exports = function (grunt) {
     'copy:prettify',
     'gcc',
     'copy:langs',
+    'aliases',
     'cssmin',
     'compress'
   ]);
