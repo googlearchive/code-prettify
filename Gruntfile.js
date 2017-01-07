@@ -52,6 +52,33 @@ module.exports = function (grunt) {
           {src: 'src/prettify.js', dest: 'src/prettify.js'},
           {src: 'src/run_prettify.js', dest: 'src/run_prettify.js'}
         ]
+      },
+      langs: {
+        options: {
+          process: function (content) {
+            // replace PR.PR_* token names with inlined strings
+            return content
+              .replace(/\bPR\.PR_ATTRIB_NAME\b/g,  '"atn"')
+              .replace(/\bPR\.PR_ATTRIB_VALUE\b/g, '"atv"')
+              .replace(/\bPR\.PR_COMMENT\b/g,      '"com"')
+              .replace(/\bPR\.PR_DECLARATION\b/g,  '"dec"')
+              .replace(/\bPR\.PR_KEYWORD\b/g,      '"kwd"')
+              .replace(/\bPR\.PR_LITERAL\b/g,      '"lit"')
+              .replace(/\bPR\.PR_NOCODE\b/g,       '"nocode"')
+              .replace(/\bPR\.PR_PLAIN\b/g,        '"pln"')
+              .replace(/\bPR\.PR_PUNCTUATION\b/g,  '"pun"')
+              .replace(/\bPR\.PR_SOURCE\b/g,       '"src"')
+              .replace(/\bPR\.PR_STRING\b/g,       '"str"')
+              .replace(/\bPR\.PR_TAG\b/g,          '"tag"')
+              .replace(/\bPR\.PR_TYPE\b/g,         '"typ"');
+          }
+        },
+        files: [{
+          expand: true,
+          cwd: 'loader/',
+          src: ['lang-*.js'],
+          dest: 'loader/'
+        }]
       }
     },
 
@@ -124,5 +151,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   // register task aliases
-  grunt.registerTask('default', ['preprocess', 'copy', 'uglify', 'cssmin']);
+  grunt.registerTask('default', [
+    'preprocess',
+    'copy:prettify',
+    'uglify',
+    'copy:langs',
+    'cssmin'
+  ]);
 };
