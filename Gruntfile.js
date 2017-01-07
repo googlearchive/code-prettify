@@ -158,6 +158,13 @@ module.exports = function (grunt) {
           dest: 'google-code-prettify/'
         }]
       }
+    },
+
+    // grunt-contrib-clean
+    clean: {
+      js: ['src/prettify.js', 'src/run_prettify.js', 'loader/*.js'],
+      css: ['loader/*.css', 'loader/skins/*.css'],
+      zip: ['distrib/*.zip']
     }
   });
 
@@ -167,9 +174,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   // register task aliases
   grunt.registerTask('default', [
+    //'clean',
     'preprocess',
     'copy:prettify',
     'uglify',
