@@ -53,13 +53,54 @@ module.exports = function (grunt) {
           {src: 'src/run_prettify.js', dest: 'src/run_prettify.js'}
         ]
       }
+    },
+
+    // grunt-contrib-uglify
+    uglify: {
+      // https://github.com/mishoo/UglifyJS2#usage
+      options: {
+        report: 'gzip',
+        ASCIIOnly: true,
+        maxLineLen: 500,
+        screwIE8: false
+      },
+      prettify: {
+        options: {
+          compress: {
+            global_defs: {'IN_GLOBAL_SCOPE': true}
+          },
+          wrap: true
+        },
+        src: 'src/prettify.js',
+        dest: 'loader/prettify.js'
+      },
+      runprettify: {
+        options: {
+          compress: {
+            global_defs: {'IN_GLOBAL_SCOPE': false}
+          },
+          wrap: true
+        },
+        src: 'src/run_prettify.js',
+        dest: 'loader/run_prettify.js'
+      },
+      langs: {
+        files: [{
+          expand: true,
+          cwd: 'src/',
+          src: ['lang-*.js'],
+          dest: 'loader/',
+          ext: '.js'
+        }]
+      }
     }
   });
 
   // load plugins that provide tasks
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // register task aliases
-  grunt.registerTask('default', ['preprocess', 'copy']);
+  grunt.registerTask('default', ['preprocess', 'copy', 'uglify']);
 };
