@@ -122,6 +122,45 @@ module.exports = function (grunt) {
       }
     },
 
+    // google-closure-compiler
+    'closure-compiler': {
+      // https://github.com/google/closure-compiler/wiki
+      options: {
+        // Don't specify --charset=UTF-8.  If we do, then non-ascii
+        // codepoints that do not correspond to line terminators are
+        // converted to UTF-8 sequences instead of being emitted as
+        // ASCII. This makes the resulting JavaScript less portable.
+        warning_level: 'VERBOSE',
+        language_in: 'ECMASCRIPT5',
+        compilation_level: 'ADVANCED',
+        charset: 'US-ASCII',
+      },
+      prettify: {
+        options: {
+          externs: 'tools/closure-compiler/amd-externs.js',
+          define: 'IN_GLOBAL_SCOPE=true',
+          output_wrapper: '!function(){%output%}()'
+        },
+        src: '<%= uglify.prettify.src %>',
+        dest: '<%= uglify.prettify.dest %>'
+      },
+      runprettify: {
+        options: {
+          externs: 'tools/closure-compiler/amd-externs.js',
+          define: 'IN_GLOBAL_SCOPE=false',
+          output_wrapper: '!function(){%output%}()'
+        },
+        src: '<%= uglify.runprettify.src %>',
+        dest: '<%= uglify.runprettify.dest %>'
+      },
+      langs: {
+        options: {
+          externs: 'js-modules/externs.js'
+        },
+        files: '<%= uglify.langs.files %>'
+      }
+    },
+
     // grunt-contrib-cssmin
     cssmin: {
       // https://github.com/jakubpawlowicz/clean-css#how-to-use-clean-css-api
@@ -169,6 +208,7 @@ module.exports = function (grunt) {
   });
 
   // load plugins that provide tasks
+  require('google-closure-compiler').grunt(grunt);
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -181,7 +221,7 @@ module.exports = function (grunt) {
     //'clean',
     'preprocess',
     'copy:prettify',
-    'uglify',
+    'closure-compiler',
     'copy:langs',
     'cssmin',
     'compress'
