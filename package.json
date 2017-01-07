@@ -1,0 +1,46 @@
+{
+  "name": "code-prettify",
+  "version": "1.0.0",
+  "description": "Google Code Prettify",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/google/code-prettify",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/code-prettify.git"
+  },
+  "bugs": {
+    "url": "https://github.com/google/code-prettify/issues"
+  },
+  "keywords": [
+    "syntax",
+    "highlight",
+    "highlighting",
+    "source",
+    "code",
+    "prettify",
+    "google"
+  ],
+  "author": "Google",
+  "maintainers": [
+    "Mike Samuel <mikesamuel@gmail.com>"
+  ],
+  "contributors": [
+    "Amro <amroamroamro@gmail.com>"
+  ],
+  "main": "src/prettify.js",
+  "directories": {
+    "lib": "src",
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "files": [
+    "loader/",
+    "src/",
+    "styles/*.css",
+    "COPYING"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
