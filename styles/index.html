@@ -4,6 +4,7 @@
 <title>Prettify Themes Gallery</title>
 <style type="text/css">
 iframe { width: 100%; border-style: none; margin: 0; padding: 0; }
+.attribution { padding-left: 1em; }
 </style>
 <script type="text/javascript">
 /**
@@ -42,6 +43,7 @@ function appendThemeIFrame(theme) {
       return letter.toUpperCase();
     })));
   var header = document.createElement('h2');
+  header.className = 'title';
   header.appendChild(link);
 
   // attribution
@@ -49,7 +51,7 @@ function appendThemeIFrame(theme) {
   if (theme.author) {
     attribution = document.createElement('span');
     attribution.className = 'attribution';
-    attribution.innerHTML = 'by ' + theme.author;
+    attribution.innerHTML = 'by <em>' + theme.author + '<\/em>';
   }
 
   // iframe
@@ -60,6 +62,7 @@ function appendThemeIFrame(theme) {
 
   // insert into page
   var container = document.createElement('div');
+  container.className = 'container';
   container.appendChild(header);
   if (theme.author) { container.appendChild(attribution); }
   container.appendChild(iframe);
