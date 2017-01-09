@@ -18,11 +18,11 @@ function adjustChildIframeSize(themeName, width, height) {
       // Don't bother logging log failure.
     }
   }
-  var container = document.getElementById(themeName).parentNode;
+  var iframe = document.getElementById(themeName);
+  iframe.style.height = (+height + 16) + 'px';
+  var container = iframe.parentNode;
   container.style.width = (+width + 16) + 'px';
   container.style.display = 'inline-block';
-  var iframe = container.getElementsByTagName('iframe')[0];
-  iframe.style.height = (+height + 16) + 'px';
 }
 
 /**
@@ -42,7 +42,6 @@ function appendThemeIFrame(theme) {
       return letter.toUpperCase();
     })));
   var header = document.createElement('h2');
-  header.id = theme.name;
   header.appendChild(link);
 
   // attribution
@@ -55,6 +54,7 @@ function appendThemeIFrame(theme) {
 
   // iframe
   var iframe = document.createElement('iframe');
+  iframe.id = theme.name;
   iframe.name = theme.name;
   iframe.src = 'demo.html?' + encodeURIComponent(theme.name);
 
