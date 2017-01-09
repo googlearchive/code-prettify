@@ -57,8 +57,9 @@ function appendThemeIFrame(theme) {
   // iframe
   var iframe = document.createElement('iframe');
   iframe.id = theme.name;
-  iframe.name = theme.name;
-  iframe.src = 'demo.html?' + encodeURIComponent(theme.name);
+  iframe.name = theme.name;  // theme name retrieved in demo.html
+  iframe.src = 'demo.html';
+  //iframe.src = 'demo.html?' + encodeURIComponent(theme.name);
 
   // insert into page
   var container = document.createElement('div');
