@@ -27,12 +27,16 @@ function adjustHeightInParent(theme) {
 }
 
 /**
- * Get specified theme
+ * Theme name is specified by iframe in which the page is loaded
  * @return {string}
  */
 function getThemeName() {
   // theme is named in the query part of the URL
-  var theme = decodeURIComponent(document.location.search.replace(/^\?/, ''));
+  //var theme = decodeURIComponent(document.location.search.substring(1));
+
+  // theme is named in the "name" property of the embedded iframe
+  var theme = window.frameElement && window.frameElement.getAttribute("name");
+
   return theme ? theme : 'default';
 }
 
