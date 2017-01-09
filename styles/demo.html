@@ -23,6 +23,9 @@ function adjustHeightInParent(theme) {
     } catch (ex) {
       // Can happen when this page is opened in its own tab.
     }
+  } else {
+    // redirect to main page if this page is loaded directly
+    window.location = "./index.html";
   }
 }
 
