@@ -10,7 +10,9 @@
 </head>
 
 <body>
+<h1>Benchmarks</h1>
 <div id="log"></div>
+<h2>Results</h2>
 <div id="report"></div>
 
 <script type="text/javascript">
@@ -31,71 +33,96 @@ function logger(msg) {
 // run times.
 (function () {
   var tasks = [];
-  var jsonTimes = [];
-  var xmlTimes = [];
+  var jsonTimes = [], htmlTimes = [], cppTimes = [];
 
   function makeTargets(lang, item, sep, preText, postText, timesList) {
-   var buffer = [];
+    // create large text by repeating input
+    var buffer = [];
     for (var i = 512; --i >= 0;) { buffer.push(item); }
+    // loop and create prettify tasks, each time with double the input size
+    // (i.e: count * 2.^(0:5))
     var count = 512;
     for (var i = 6; --i >= 0;) {
-     var src = buffer.join(sep);
+      var src = buffer.join(sep);
       tasks.push((function (n, source) {
         return function () {
+          // time it
           logger('starting ' + lang + ' ' + n);
           var t0 = now();
           var result = PR.prettyPrintOne(source, lang, false);
           var t1 = now();
           logger('finishing ' + lang + ' ' + n);
+          // record time
           if (result === source) {
             logger('Failed to prettify ' + lang + ' ' + n);
           } else {
-            timesList.push([n, t1 - t0, source.length]);
+            timesList.push({
+              count: n,
+              time: t1 - t0,
+              length: source.length
+            });
           }
         };
       })(count, preText + src + postText));
-
+      // double size for next iteration
       buffer = [src, src];
       count *= 2;
     }
   }
 
   function emitBenchmarkTable(title, times) {
-    var html = [
-        '<h2>', title, '<\/h2>',
-        '<table class="benchmark"><tr><th>Count<th>Length<th>Time<th>Items Per Second'];
+    // build table of results
+    var html = [];
+    html.push('<h3>' + title + '<\/h3>',
+      '<table class="benchmark">', '<thead>', '<tr>',
+      '<th>Count<\/th>', '<th>Length<\/th>', '<th>Time (ms)<\/th>',
+      '<th>Items Per Second<\/th>', '<\/tr>', '<\/thead>', '<tbody>');
     for (var i = 0; i < times.length; ++i) {
-      var time = times[i];
-      var count = time[0], deltaMs = time[1], length = time[2];
-      html.push('<tr><td>', count, '<td>', length, '<td>', deltaMs,
-                '<td>', (count * 1000 / deltaMs).toFixed(1));
+      var t = times[i];
+      html.push('<tr>', '<td>' + t.count + '<\/td>',
+        '<td>' + t.length + '<\/td>', '<td>' + t.time + '<\/td>',
+        '<td>' + (t.count * 1000 / t.time).toFixed(1) + '<\/td>', '<\/tr>');
     }
-    html.push('<\/table>');
+    html.push('<\/tbody>', '<\/table>');
 
+    // append to page
     var div = document.createElement('DIV');
-    div.innerHTML = html.join('');
+    div.innerHTML = html.join('\n');
     document.getElementById('report').appendChild(div);
   }
 
   function doOne() {
+    // run a task
     var task = tasks.shift();
     task();
+
+    // launch next task if any
     if (tasks.length) {
       setTimeout(doOne, 250);
     }
   }
 
-  var listItem = (
-      '&lt;li class="friendly" style="blink: like-its-going-out-of-style"&gt;'
-      + '&lt;b&gt;Howdy&lt;/b&gt; Neighbor&lt;/li&gt;');
-  makeTargets('xml', listItem, '\n', '<ul>', '<\/ul>', xmlTimes);
-  tasks.push(function () { emitBenchmarkTable('XML', xmlTimes); });
+  // create prettify tasks of large texts (JSON, HTML, and C++ languages)
+  // in addition to reporting tasks
+
+  var htmlItem = (
+      '&lt;li class="friendly" style="blink: like-its-going-out-of-style"&gt;' +
+      '&lt;b&gt;Howdy&lt;/b&gt; Neighbor&lt;/li&gt;');
+  makeTargets('html', htmlItem, '\n', '&lt;ul&gt;', '&lt;/ul&gt;', htmlTimes);
+  tasks.push(function () { emitBenchmarkTable('HTML', htmlTimes); });
 
   var jsonItem = (
       '{ "friendly": true, "blinking": "hell-yes", "greeting": "Howdy!" }');
-  makeTargets('json', jsonItem, ', ', '[', ']', jsonTimes);
+  makeTargets('json', jsonItem, ',\n', '[', ']', jsonTimes);
   tasks.push(function () { emitBenchmarkTable('JSON', jsonTimes); });
 
+  var cppItem = ['#include &lt;stdio.h&gt',
+    'int main(int argc, char *argv[])',
+    '{ printf("hello world\\n"); return 0; }'].join('\n');
+  makeTargets('cpp', cppItem, '\n', '', '', cppTimes);
+  tasks.push(function () { emitBenchmarkTable('C++', cppTimes); });
+
+  // run all tasks one-by-one (with small delay inbetween to stay responsive)
   setTimeout(doOne, 250);
 })();
 </script>
