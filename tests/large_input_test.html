@@ -5,12 +5,26 @@
 <title>Tests of Prettifier w/ large data files</title>
 <script type="text/javascript" src="../src/prettify.js"></script>
 <style type="text/css">
+#progress {
+  background-color: lightgray;
+  border-radius: 20px;
+  border: 2px solid gray;
+  padding: 3px;
+  width: 450px;
+}
+#progress > div {
+  background-color: skyblue;
+  border-radius: 20px;
+  height: 10px;
+  width: 0%;
+}
 #log {
   border: solid 1px #eee;
   color: #666;
   width: 400px;
   margin: 20px;
   padding: 5px;
+  font-family: monospace;
   white-space: pre;
 }
 #report { margin-left: 1em; }
@@ -22,6 +36,7 @@ th { background-color: #FFD; }
 
 <body>
 <h1>Benchmarks</h1>
+<div id="progress"><div></div></div>
 <div id="log"></div>
 <h2>Results</h2>
 <div id="report"></div>
@@ -36,10 +51,10 @@ function logger(msg) {
     console.log(msg);
   }
   // log message with a timestamp
-  var pre = document.createElement('PRE');
-  pre.appendChild(document.createTextNode(
+  var div = document.createElement('DIV');
+  div.appendChild(document.createTextNode(
     '[' + (new Date()).toLocaleTimeString() + ']: ' + msg));
-  document.getElementById('log').appendChild(pre);
+  document.getElementById('log').appendChild(div);
 }
 
 // Generate inputs of various sizes so that we can try fitting a curve to the
@@ -47,15 +62,19 @@ function logger(msg) {
 (function () {
   var tasks = [];
   var jsonTimes = [], htmlTimes = [], cppTimes = [];
+  var progress = document.getElementById('progress').firstChild;
+  var pos = 0, len = 0;
+  var msDelay = 250;
+  var nRepeat = 512, nMult = 6;
 
   function makeTargets(lang, item, sep, preText, postText, timesList) {
     // create large text by repeating input
     var buffer = [];
-    for (var i = 512; --i >= 0;) { buffer.push(item); }
+    for (var i = nRepeat; --i >= 0;) { buffer.push(item); }
     // loop and create prettify tasks, each time with double the input size
     // (i.e: count * 2.^(0:5))
-    var count = 512;
-    for (var i = 6; --i >= 0;) {
+    var count = nRepeat;
+    for (var i = nMult; --i >= 0;) {
       var src = buffer.join(sep);
       tasks.push((function (n, source) {
         return function () {
@@ -105,13 +124,17 @@ function logger(msg) {
   }
 
   function doOne() {
+    // update progress bar
+    pos++;
+    progress.style.width = Math.round(pos / len * 100) + '%';
+
     // run a task
     var task = tasks.shift();
     task();
 
     // launch next task if any
     if (tasks.length) {
-      setTimeout(doOne, 250);
+      setTimeout(doOne, msDelay);
     }
   }
 
@@ -136,7 +159,8 @@ function logger(msg) {
   tasks.push(function () { emitBenchmarkTable('C++', cppTimes); });
 
   // run all tasks one-by-one (with small delay inbetween to stay responsive)
-  setTimeout(doOne, 250);
+  len = tasks.length;
+  setTimeout(doOne, msDelay);
 })();
 </script>
 
