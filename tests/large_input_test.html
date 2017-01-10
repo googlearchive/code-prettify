@@ -5,7 +5,18 @@
 <title>Tests of Prettifier w/ large data files</title>
 <script type="text/javascript" src="../src/prettify.js"></script>
 <style type="text/css">
-#log { white-space: pre; }
+#log {
+  border: solid 1px #eee;
+  color: #666;
+  width: 400px;
+  margin: 20px;
+  padding: 5px;
+  white-space: pre;
+}
+#report { margin-left: 1em; }
+table { border-collapse: collapse; border-spacing: 0; }
+th, td { border: 1px solid black; }
+th { background-color: #FFD; }
 </style>
 </head>
 
@@ -24,8 +35,10 @@ function logger(msg) {
   if (typeof console !== 'undefined' && console.log) {
     console.log(msg);
   }
+  // log message with a timestamp
   var pre = document.createElement('PRE');
-  pre.appendChild(document.createTextNode(msg));
+  pre.appendChild(document.createTextNode(
+    '[' + (new Date()).toLocaleTimeString() + ']: ' + msg));
   document.getElementById('log').appendChild(pre);
 }
 
