@@ -1,40 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
 <title>IE Newline Copy/Paste Info Gathering</title>
+<style type="text/css">
+textarea { font-size: 50%; }
+</style>
+</head>
 
 <body>
+
+<h1>IE newline copy/paste</h1>
+
 <p>
-I'm trying to squash, <a href="https://github.com/google/code-prettify/issues/20">once</a> and <a href="https://github.com/google/code-prettify/issues/104">for</a> <a href="https://github.com/google/code-prettify/issues/128">all</a>, the problems with newlines in
-<tt>&lt;PRE&gt;</tt>s in IE.  I can't run 3 versions of IE, so I'd
+I'm trying to squash, once and for all, the problems with newlines in
+<code>&lt;PRE&gt;</code>s in IE.  I can't run all versions of IE, so I'd
 really appreciate any help from people who have IE open and running.
+See bugs <a href="https://github.com/google/code-prettify/issues/20">#20</a>,
+<a href="https://github.com/google/code-prettify/issues/104">#104</a>, and
+<a href="https://github.com/google/code-prettify/issues/128">#128</a> for
+reference.
 </p>
 
 <p>
-Please copy from START through END below and paste it into the
-textarea below.
-Then hit Ctrl-A, Ctrl-C to copy the textarea contents, and paste that
-into an email.
-Please also copy and paste the RESULTS section below and include it in
-the email response as well and send it
-to <a href="mailto:mikesamuel@gmail.com">me</a> or respond to the
-discussion list.
+Please copy from <strong>START</strong> through <strong>END</strong> below
+and paste it into the <strong>TEXTAREA</strong> below.  Then hit
+<kbd>Ctrl-A</kbd>, <kbd>Ctrl-C</kbd> to copy the textarea contents, and paste
+that into an email.  Please also copy and paste the <strong>RESULTS</strong>
+section below and include it in the email response as well and send it to
+<a href="mailto:mikesamuel@gmail.com">me</a> or respond to the discussion
+list.
 </p>
 
 <p>
-In case you're interested, there are two problems: choosing a way to
-split lines that doesn't introduce too few or extra newlines, and a
-way to make sure that the resulting code can be copy-pasted into a
-plain text editors such as the textarea below.  This is my attempt to
-gather information on both issues by IE version.
+In case you're interested, there are two problems: choosing a way to split
+lines that doesn't introduce too few or extra newlines, and a way to make sure
+that the resulting code can be copy-pasted into a plain text editors such as
+the textarea below.  This is my attempt to gather information on both issues
+by IE version.
 </p>
 
-cheers.
-</body>
+<p>Cheers.</p>
+
+<hr>
 
 <script>
 function makeCodeJoiningOn(text, htmlNewline, start, end) {
   start = start || '';
   end = end || '';
   var code = document.createElement('PRE');
-  code.innerHTML = start + ['before', '[' + text + ']', 'after'].join(htmlNewline) + end;
+  code.innerHTML = start +
+    ['before', '[' + text + ']', 'after'].join(htmlNewline) + end;
   code.id = text.replace('+', 'plus').replace(/[^\w\-_]/g, '_');
   document.body.appendChild(code);
 }
@@ -92,28 +108,29 @@ function makeCodeJoiningOn(text, htmlNewline, start, end) {
 
 <script>makeCodeJoiningOn('ul', '<li>', '<ul style=list-style:none;padding:0;margin:0><li>', '<\/ul>');</script>
 
-<pre id=notgen-cr>before
+<pre id="notgen-cr">before
 [Not generated via innerHTML CR]
 after</pre>
 
-<pre id=notgen-br>before<br>[Not generated via innerHTML BR]<br>after</pre>
+<pre id="notgen-br">before<br>[Not generated via innerHTML BR]<br>after</pre>
 
-<pre id=notgen-brcr>before<br>
+<pre id="notgen-brcr">before<br>
 [Not generated via innerHTML CR + BR]<br>
 after</pre>
 
-<pre id=notgen-crbr>before
+<pre id="notgen-crbr">before
 <br>[Not generated via innerHTML BR + CR]
 <br>after</pre>
 
 <h2>END</h2>
 
-<pre id=threelines>one
+<pre id="threelines">one
 two
 three</pre>
 
 <h2>RESULTS</h2>
-<script>(function () {
+<script>
+(function () {
   var threelines = document.getElementById('threelines');
   var codeElements = document.getElementsByTagName('PRE');
   var threelinesHeight = threelines.offsetHeight;
@@ -124,21 +141,25 @@ three</pre>
     var codeElement = codeElements[i];
     if (codeElement !== threelines) {
       var codeElementHeight = codeElement.offsetHeight;
-      (Math.abs(threelinesHeight - codeElementHeight) < 3
-       ? ok : bad).push(codeElement.id + ':' + codeElementHeight);
+      (Math.abs(threelinesHeight - codeElementHeight) < 3 ? ok : bad).push(
+        codeElement.id + ':' + codeElementHeight);
     }
   }
 
-  function emit(text) {
+  function logger(text) {
     var p = document.createElement('P');
     p.appendChild(document.createTextNode(text));
     document.body.appendChild(p);
   }
 
-  emit(navigator.userAgent);
-  emit('Ok: ' + ok);
-  emit('Bad: ' + bad);
-})();</script>
+  logger('User Agent = ' + navigator.userAgent);
+  logger('Ok = ' + ok);
+  logger('Bad = ' + bad);
+})();
+</script>
 
 <h2>TEXTAREA</h2>
-<textarea style="font-size: 50%" cols=40 rows=50></textarea>
+<textarea cols="40" rows="50"></textarea>
+
+</body>
+</html>
