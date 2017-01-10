@@ -32,6 +32,11 @@ table { border-collapse: collapse; border-spacing: 0; }
 th, td { border: 1px solid black; }
 th { background-color: #FFD; }
 </style>
+<!--
+<link rel="stylesheet" type="text/css" href="../bower_components/c3/c3.min.css">
+<script type="text/javascript" src="../bower_components/d3/d3.min.js"></script>
+<script type="text/javascript" src="../bower_components/c3/c3.min.js"></script>
+-->
 </head>
 
 <body>
@@ -157,6 +162,36 @@ function logger(msg) {
     '{ printf("hello world\\n"); return 0; }'].join('\n');
   makeTargets('cpp', cppItem, '\n', '', '', cppTimes);
   tasks.push(function () { emitBenchmarkTable('C++', cppTimes); });
+
+  /*
+  // plot results using c3.js (built on d3.js)
+  tasks.push(function () {
+    // container where SVG will be added
+    var div = document.createElement('DIV');
+    document.body.appendChild(div);
+
+    // prepare data
+    var x = jsonTimes.map(function (t) { return t.count; }); x.unshift('x');
+    var y1 = htmlTimes.map(function (t) { return t.time; }); y1.unshift('HTML');
+    var y2 = jsonTimes.map(function (t) { return t.time; }); y2.unshift('JSON');
+    var y3 = cppTimes.map(function (t) { return t.time; }); y3.unshift('C++');
+
+    // create simple line chart
+    var chart = c3.generate({
+        bindto: div,
+        size: { width: 640 },
+        padding: { top: 20, right: 20 },
+        data: {
+          x: 'x',
+          columns: [x,y1,y2,y3],
+        },
+        axis: {
+          x: { label: 'Count' },
+          y: { label: 'Time (ms)' }
+        }
+    });
+  });
+  */
 
   // run all tasks one-by-one (with small delay inbetween to stay responsive)
   len = tasks.length;
