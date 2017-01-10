@@ -38,16 +38,22 @@
     dump_globals: dumpGlobals
   };
 })();
-</script>
-<script type="text/javascript">
+
+// load run_prettify
 (function () {
+  function injectJS(url) {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
   var srcDir = /[&?]loader\b/.test(location.search) ? '../loader/' : '../src/';
-  document.write(
-      '<script src="' + srcDir + 'run_prettify.js'
-      + '?lang=css'
-      + '&callback=print_done'
-      + '&skin=sunburst'
-      + '&callback=dump_globals"><\/script>');
+  injectJS(srcDir + 'run_prettify.js' +
+    '?lang=css' +
+    '&callback=print_done' +
+    '&skin=sunburst' +
+    '&callback=dump_globals');
 })();
 </script>
 </head>
