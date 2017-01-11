@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,27 @@
  * limitations under the License.
  */
 
-/* Used by error reporting code in test_base.js */
-.mismatch { background: #fee; font-weight: bold }
-span.annot { margin:2px 2px 2px 3em; border:1px dotted #88f; background:#eef;
-             padding: 0 2px 0 2px }
-.nocode { background: #f8f8f8 }
+/* used by test_base.js */
+#report {
+  margin-left: 1em;
+}
+.pass {
+  color: green;
+}
+.fail {
+  color: red;
+}
+.mismatch {
+  background-color: #faa;
+  font-weight: bold;
+}
+/* used in prettify_test.html issue 22 */
+.annot {
+  background-color: #eef;
+  border: 1px dotted #88f;
+  margin: 2px 2px 2px 3em;
+  padding: 0 2px 0 2px;
+}
+.nocode {
+  background-color: #f8f8f8;
+}
