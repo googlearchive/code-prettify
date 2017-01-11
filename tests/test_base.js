@@ -254,6 +254,26 @@ function runTests(goldens) {
   }
 
   /**
+   * Replace whitespace characters with printable graphical representations.
+   *
+   * @param {string} txt
+   * @return {string}
+   */
+  function showAllCharacters(txt) {
+    // space   = \xb7, \u02f0, \u2219, \u2423, \u2420
+    // htab    = \xbb, \u21e5, \u25b8, \u2409
+    // newline = \xac, \xb6, \u21b5, \u2424
+    // vtab    = \u240B
+    // ffeed   = \u240C
+    return txt
+      .replace(/ /g, '\xb7')
+      .replace(/(\r?\n)/g, '\u21b5$1')
+      .replace(/\t/g, '\u25b8')
+      .replace(/\v/g, '\u240B')
+      .replace(/\f/g, '\u240C');
+  }
+
+  /**
    * Find differences between two texts, and return an HTML report.
    *
    * @param {string} golden text
@@ -261,6 +281,10 @@ function runTests(goldens) {
    * @return {string} HTML representation
    */
   function diffTexts(golden, actual) {
+    if (true) {
+      golden = showAllCharacters(golden);
+      actual = showAllCharacters(actual);
+    }
     var npre = commonPrefix(golden, actual);
     var npost = commonSuffix(golden, actual, npre);
     return (
