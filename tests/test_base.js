@@ -264,17 +264,19 @@ function runTests(goldens) {
     var npre = commonPrefix(golden, actual);
     var npost = commonSuffix(golden, actual, npre);
     return (
-      '<tt>' + htmlEscape(golden.substring(0, npre)) +
+      '<table class="diff"><tr><th>Golden<\/th><td><code>' +
+      htmlEscape(golden.substring(0, npre)) +
       '&raquo;<span class="mismatch">' +
       htmlEscape(golden.substring(npre, golden.length - npost)) +
       '<\/span>&laquo;' +
       htmlEscape(golden.substring(golden.length - npost)) +
-      '<br>!==<br>' +
+      '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
       htmlEscape(actual.substring(0, npre)) +
       '&raquo;<span class="mismatch">' +
       htmlEscape(actual.substring(npre, actual.length - npost)) +
       '<\/span>&laquo;' +
-      htmlEscape(actual.substring(actual.length - npost)) + '<\/tt>'
+      htmlEscape(actual.substring(actual.length - npost)) +
+      '<\/code><\/td><\/tr><\/table>'
     );
   }
 

@@ -29,6 +29,26 @@
   background-color: #faa;
   font-weight: bold;
 }
+
+/* diff tables */
+table.diff {
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: 100%;
+}
+.diff th, .diff td {
+  border: 1px solid black;
+}
+.diff th {
+  background-color: #FFD;
+  width: 50px;
+}
+.diff td {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 /* used in prettify_test.html issue 22 */
 .annot {
   background-color: #eef;
