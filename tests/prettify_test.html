@@ -1,51 +1,46 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>Code Prettifier</title>
-<script>(function () {
-  var sourceBaseUrl = /[&?]loader\b/.test(location.search)
-      ? "../loader/" : "../src/";
+<script type="text/javascript">
+(function () {
+  var base = /[&?]loader\b/.test(location.search) ? '../loader/' : '../src/';
   var sources = [
-      "prettify.js",
-      "lang-css.js",
-      "lang-erlang.js",
-      "lang-go.js",
-      "lang-hs.js",
-      "lang-lisp.js",
-      "lang-lua.js",
-      "lang-ml.js",
-      "lang-proto.js",
-      "lang-rust.js",
-      "lang-scala.js",
-      "lang-sql.js",
-      "lang-wiki.js",
-      "lang-vhdl.js",
-      "lang-vb.js",
-      "lang-yaml.js",
+      'prettify.js',
+      'lang-css.js',
+      'lang-erlang.js',
+      'lang-go.js',
+      'lang-hs.js',
+      'lang-lisp.js',
+      'lang-lua.js',
+      'lang-ml.js',
+      'lang-proto.js',
+      'lang-rust.js',
+      'lang-scala.js',
+      'lang-sql.js',
+      'lang-wiki.js',
+      'lang-vhdl.js',
+      'lang-vb.js',
+      'lang-yaml.js',
   ];
   var styles = [
-      "prettify.css"
+      'prettify.css'
   ];
-  if (window.console) {
-    console.log("sourceBaseUrl=" + sourceBaseUrl);
-  }
   for (var i = 0; i < sources.length; ++i) {
-    document.write(
-        "<script src=\"" + sourceBaseUrl + sources[i] + "\"><\/script>");
+    document.write('<script src="' + base + sources[i] + '"><\/script>');
   }
-  document.write(
-       "<script src=\"test_base.js\" type=\"text/javascript\"><\/script>");
+  document.write('<script src="test_base.js"><\/script>');
   for (var i = 0; i < styles.length; ++i) {
-    document.write(
-        "<link rel=\"stylesheet\" href=\"" + sourceBaseUrl + styles[i] + "\">");
+    document.write('<link rel="stylesheet" href="' + base + styles[i] + '">');
   }
 })();
 
 window.onload = (function() {
   var attempt = function() {
-    var go = window["go"];
-    var prettyPrint = window["prettyPrint"];
-    var goldens = window["goldens"];
+    var go = window['go'];
+    var prettyPrint = window['prettyPrint'];
+    var goldens = window['goldens'];
     if(go && prettyPrint && goldens) {
       go(goldens);
     } else {
@@ -55,11 +50,10 @@ window.onload = (function() {
   return attempt;
 })();
 </script>
-
-<link rel="stylesheet" type="text/css" href="test_styles.css" />
+<link rel="stylesheet" type="text/css" href="test_styles.css">
 </head>
 
-<body bgcolor="white">
+<body>
 <div id="timing"></div>
 <div id="errorReport" style="white-space: pre"></div>
 
@@ -1399,15 +1393,11 @@ fn main() {
 }
 </pre>
 
-Test IE by copy/pasting content here.
-<textarea cols="80" rows="40"></textarea>
-</body>
-
 <script type="text/javascript">
 /**
  * maps ids of rewritten code to the expected output.
- * For brevity, <span class="foo"> has been changed to `FOO and </span>
- * has been changed to `END.
+ * For brevity, <span class="foo"> has been changed to `FOO
+ * and < /span> has been changed to `END.
  */
 var goldens = {
   bash: (
@@ -3126,4 +3116,5 @@ var goldens = {
 };
 </script>
 
+</body>
 </html>
