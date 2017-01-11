@@ -43,7 +43,7 @@ window.onload = (function() {
     var prettyPrint = window['prettyPrint'];
     var goldens = window['goldens'];
     if(prettyPrint && goldens) {
-      go(goldens);
+      runTests(goldens);
     } else {
       setTimeout(attempt, 20);
     }
@@ -54,8 +54,10 @@ window.onload = (function() {
 </head>
 
 <body>
-<div id="timing"></div>
-<div id="errorReport" style="white-space: pre"></div>
+<h1>Test Results</h1>
+<div id="report"></div>
+
+<hr>
 
 <h1>Bash</h1>
 <pre class="prettyprint" id="bash">#!/bin/bash

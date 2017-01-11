@@ -22,7 +22,7 @@
  *   chunks to an abbreviated form of the expected output.  See "var goldens"
  *   in prettify_test.html and prettify_test_2.html for examples.
  */
-function go(goldens) {
+function runTests(goldens) {
   // Regexp literals defined here so that the interpreter doesn't have to
   // compile them each time the function containing them is called.
   /** @const {RegExp} */
@@ -299,36 +299,38 @@ function go(goldens) {
    * Compare tests results against expected outcomes.
    *
    * @param {Object<string,string>} goldens
+   * @return {{html: Array<string>, pass: integer, fail: integer}} HTML report
    */
-  function runTests(goldens) {
+  function runComparison(goldens) {
     var out = [];
-    var failures = 0;
-    document.getElementById('errorReport').innerHTML =
-        '<h1>Running tests&hellip;<\/h1>';
-    out.push('<h1>Test results<\/h1>');
+    var npass = 0;
+    var nfail = 0;
     for (var id in goldens) {
       // compare actual against expexted
       var golden = expandGolden(goldens[id]);
       var actual = normalizedInnerHtml(document.getElementById(id));
-      if (golden === actual) {
-        out.push('<h2><a href="#' + id + '">' + id + '<\/a> OK<\/h2>');
-      } else {
-        ++failures;
-        out.push('<h2><a href="#' + id + '">' + id + '<\/a> Failed<\/h2>');
+      var diff = golden !== actual;
+      out.push('<div class="test">' + (diff ? 'FAIL' : 'PASS') +
+        ': <a href="#' + id + '">' + id + '<\/a><\/div>');
+      if (diff) {
+        ++nfail;
         // write out difference
-        out.push(diffTexts(golden, actual));
+        out.push(
+          diffTexts(golden, actual).replace(/&lt;br&gt;/g, '&lt;br&gt;\n'));
+      } else {
+        ++npass;
       }
     }
-    var summary = (
-        failures
-        ? (failures + ' test' + (failures === 1 ? '' : 's') + ' failed')
-        : 'Tests Passed');
-    var summaryStr = '<h2>' + summary + '<\/h2>';
-    out.push(summaryStr);
-    out.splice(0, 0, summaryStr);
-    document.title += ' \u2014 ' + summary;
-    document.getElementById('errorReport').innerHTML =
-        out.join('').replace(/&lt;br&gt;/g, '&lt;br&gt;\n');
+    out.unshift(
+      '<p class="pass">\u2714 ' + npass + ' passing<\/p>',
+      '<p class="fail">\u2718 ' + nfail + ' failing<\/p>');
+    out.push('<h3 id="summary">Tests ' +
+      (nfail ? 'failed' : 'passed') + '<\/h3>');
+    return {
+      html: out,
+      pass: npass,
+      fail: nfail
+    };
   }
 
   // for more accurate timing, no continuation.
@@ -339,8 +341,11 @@ function go(goldens) {
   var t = now();    // tic
   PR.prettyPrint(function () {
     t = now() - t;  // toc
-    document.getElementById('timing').innerHTML = 'Took ' + t + ' ms';
 
-    runTests(goldens);
+    // verify results against golden and write HTML report
+    var report = runComparison(goldens);
+    document.title += (' \u2014 ' + (report.fail ? 'FAIL' : 'PASS'));
+    report.html.unshift('<p id="timing">Took ' + t + ' ms<\/p>');
+    document.getElementById('report').innerHTML = report.html.join('\n');
   });
 }
