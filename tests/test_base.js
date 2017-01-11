@@ -35,7 +35,14 @@ function go(goldens) {
 
   var PR_innerHtmlWorks = null;
 
-  var startTime = null;
+  /**
+   * Get timestamp in milliseconds unit.
+   *
+   * @return {number}
+   */
+  function now() {
+    return (Date.now ? Date.now() : (new Date()).getTime());
+  }
 
   /** is the given node's innerHTML normally unescaped? */
   function isRawContent(node) {
@@ -188,16 +195,6 @@ function go(goldens) {
     return out.replace(/\r\n?/g, '\n');
   }
 
-  function startClock() {
-    startTime = (new Date).getTime();
-  }
-
-  function stopClock() {
-    var delta = (new Date).getTime() - startTime;
-    startTime = null;
-    document.getElementById('timing').innerHTML = 'Took ' + delta + ' ms';
-  }
-
   function runTests(goldens) {
     var htmlOut = [];
     var failures = 0;
@@ -260,6 +257,12 @@ function go(goldens) {
   // This file must be loaded after prettify.js for this to work.
   window.PR_SHOULD_USE_CONTINUATION = false;
 
-  startClock();
-  PR.prettyPrint(function () { stopClock(); runTests(goldens); });
+  // time syntax highlighting
+  var t = now();    // tic
+  PR.prettyPrint(function () {
+    t = now() - t;  // toc
+    document.getElementById('timing').innerHTML = 'Took ' + t + ' ms';
+
+    runTests(goldens);
+  });
 }
