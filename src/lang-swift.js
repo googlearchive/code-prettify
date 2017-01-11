@@ -27,6 +27,9 @@
  * I used https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AboutTheLanguageReference.html
  * as the source of truth for this. The revision from 2015-10-21 (Swift 2.1) was used in most recent update.
  *
+ * Keyword list updated for Swift 3.0.1 on 2017-01-11
+ * Source: https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/LexicalStructure.html
+ *
  * @author cerech@google.com
  */
 
@@ -44,9 +47,9 @@ PR['registerLangHandler'](
           //integer literals
           [PR['PR_LITERAL'],              /^-?(?:(?:0(?:(?:b[01][01_]*)|(?:o[0-7][0-7_]*)|(?:x[\da-fA-F][\da-fA-F_]*)))|(?:\d[\d_]*))/, null],
           //some other literals
-          [PR['PR_LITERAL'],              /^(?:true|false|nil)\b/, null],
+          [PR['PR_LITERAL'],              /^(?:true|false|nil|_)\b/, null],
           //keywords
-          [PR['PR_KEYWORD'],              /^\b(?:__COLUMN__|__FILE__|__FUNCTION__|__LINE__|#available|#else|#elseif|#endif|#if|#line|arch|arm|arm64|associativity|as|break|case|catch|class|continue|convenience|default|defer|deinit|didSet|do|dynamic|dynamicType|else|enum|extension|fallthrough|final|for|func|get|guard|import|indirect|infix|init|inout|internal|i386|if|in|iOS|iOSApplicationExtension|is|lazy|left|let|mutating|none|nonmutating|operator|optional|OSX|OSXApplicationExtension|override|postfix|precedence|prefix|private|protocol|Protocol|public|required|rethrows|return|right|safe|self|set|static|struct|subscript|super|switch|throw|try|Type|typealias|unowned|unsafe|var|weak|watchOS|while|willSet|x86_64)\b/, null],
+          [PR['PR_KEYWORD'],              /^\b(?:__COLUMN__|__FILE__|__FUNCTION__|__LINE__|#available|#colorLiteral|#else|#elseif|#endif|#file|#fileLiteral|#function|#if|#imageLiteral|#line|#selector|#sourceLocation|Any|arch|arm|arm64|associatedtype|associativity|as|break|case|catch|class|continue|convenience|default|defer|deinit|didSet|do|dynamic|dynamicType|else|enum|extension|fallthrough|fileprivate|final|for|func|get|guard|i386|if|import|in|indirect|infix|init|inout|internal|iOS|iOSApplicationExtension|is|lazy|left|let|mutating|none|nonmutating|open|operator|optional|OSX|OSXApplicationExtension|override|postfix|precedence|prefix|private|protocol|Protocol|public|repeat|required|rethrows|return|right|safe|self|Self|set|static|struct|subscript|super|switch|throw|throws|try|Type|typealias|unowned|unsafe|var|weak|watchOS|where|while|willSet|x86_64)\b/, null],
           //double slash comments
           [PR['PR_COMMENT'],              /^\/\/.*?[\n\r]/, null],
           //slash star comments
