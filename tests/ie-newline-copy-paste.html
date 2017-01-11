@@ -114,9 +114,9 @@ makeCodeJoiningOn('BR+LF', '&#160;<br>\n');
 makeCodeJoiningOn('BR+VTAB', '&#160;<br>\u000b');
 makeCodeJoiningOn('BR+x2028', '&#160;<br>\u2028');
 makeCodeJoiningOn('BR+x2029', '&#160;<br>\u2029');
-makeCodeJoiningOn('divs', '</div><div>', '<div>', '<\/div>');
-makeCodeJoiningOn('ul', '<li>',
-  '<ul style=list-style:none;padding:0;margin:0><li>', '<\/ul>');
+makeCodeJoiningOn('DIV', '<\/div><div>', '<div>', '<\/div>');
+makeCodeJoiningOn('UL', '<\/li><li>',
+  '<ul style="list-style:none;padding:0;margin:0;"><li>', '<\/li><\/ul>');
 
 (function () {
   var threelines = document.getElementById('threelines');
