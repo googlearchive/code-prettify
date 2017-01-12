@@ -2,9 +2,6 @@
 
 var Path = require("path");
 var Url = require("url");
-
-var proc = Path.basename(process.argv[1]);
-
 var Browser = require('zombie');
 var htmlToText = require('html-to-text');
 
@@ -22,44 +19,52 @@ var showSection = function(sectionName, sectionHtml) {
   console.log(plainText);
 }
 
+var proc = Path.basename(process.argv[1]);
 var jobs = process.argv.slice(2);
-
 var return_code = 0;
 var browser = null;
 var check_cb = null;
 var problem_cb = null;
 
-var startBrowser = function() {
-  if(browser) {
+var startBrowser = function () {
+  // close any previous browser sessions
+  if (browser) {
     //browser.window.close();
     browser.destroy();
   }
+
+  // next URL
   var url = jobs.shift();
-  if(url === undefined) {
+  if (url === undefined) {
     console.log("%s: complete", proc);
     process.exit(return_code);
     return;
   }
   var url_obj = Url.parse(url);
-  if(!url_obj.protocol) {
+  if (!url_obj.protocol) {
     url_obj.protocol = "file";
     url = Url.format(url_obj);
   }
+
+  // load page
   console.log("%s: Loading %s ...", proc, url);
   browser = new Browser(optsZombie);
-  if (optsZombie.debug) browser.debug();
+  if (optsZombie.debug) { browser.debug(); }
   browser.visit(url).then(check_cb).catch(problem_cb);
 };
 
-problem_cb = function(error) {
-  return_code = 1;
+problem_cb = function (error) {
+  // log error, and process next page
   console.warn("Test failed: ", error);
+  return_code = 1;
   startBrowser();
-}
+};
 
 check_cb = function() {
   var done = false;
-  var one_prob = function(err_obj) {
+
+  // check for errors
+  var one_prob = function (err_obj) {
     console.warn("%s: %s, %s; %s", proc, err_obj.type,
       err_obj.message, err_obj.data.error);
     return_code = 1;
@@ -67,20 +72,25 @@ check_cb = function() {
   };
   (browser.errors || []).forEach(one_prob);
   (browser.document.errors || []).forEach(one_prob);
+
+  // retrieve and log results
   var report = browser.html("#errorReport");
-  if(report.match(/Test results/i)) {
+  if (report.match(/Test results/i)) {
     done = true;
     showSection("TEST RESULTS", report);
   }
   var timing = browser.html("#timing");
-  if(timing) {
+  if (timing) {
     showSection("TIMING", timing);
   }
-  if(done) {
+
+  // process next page if done, otherwise wait for page to complete loading
+  if (done) {
     startBrowser();
   } else {
     browser.wait().then(check_cb).catch(problem_cb);
   }
-}
+};
 
+// start processing pages
 startBrowser();
