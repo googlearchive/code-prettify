@@ -8,7 +8,12 @@ var proc = Path.basename(process.argv[1]);
 var Browser = require('zombie');
 var htmlToText = require('html-to-text');
 
-var zombie_opts = { debug: false };
+var optsZombie = {
+  debug: false,
+  silent: false,
+  waitDuration: '10s',
+  runScripts: true
+};
 var htt_opts = { wordwrap: (process.stdout.columns || 120) };
 
 var showSection = function(sectionName, sectionHtml) {
@@ -26,7 +31,8 @@ var problem_cb = null;
 
 var startBrowser = function() {
   if(browser) {
-    browser.close();
+    //browser.window.close();
+    browser.destroy();
   }
   var url = jobs.shift();
   if(url === undefined) {
@@ -40,8 +46,9 @@ var startBrowser = function() {
     url = Url.format(url_obj);
   }
   console.log("%s: Loading %s ...", proc, url);
-  browser = new Browser();
-  browser.visit(url, zombie_opts, null).then(check_cb).fail(problem_cb);
+  browser = new Browser(optsZombie);
+  if (optsZombie.debug) browser.debug();
+  browser.visit(url).then(check_cb).catch(problem_cb);
 };
 
 problem_cb = function(error) {
@@ -72,7 +79,7 @@ check_cb = function() {
   if(done) {
     startBrowser();
   } else {
-    browser.wait().then(check_cb).fail(problem_cb);
+    browser.wait().then(check_cb).catch(problem_cb);
   }
 }
 
