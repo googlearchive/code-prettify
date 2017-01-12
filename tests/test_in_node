@@ -21,12 +21,13 @@ var optsHTT = {
 
 var proc = Path.basename(process.argv[1]);
 var jobs = process.argv.slice(2);
-var return_code = 0;
+var returnCode = 0;
 var browser = null;
-var check_cb = null;
-var problem_cb = null;
 
-var startBrowser = function () {
+// start processing pages
+startBrowser();
+
+function startBrowser() {
   // close any previous browser sessions
   if (browser) {
     //browser.window.close();
@@ -37,7 +38,7 @@ var startBrowser = function () {
   var url = jobs.shift();
   if (url === undefined) {
     console.log("%s: complete", proc);
-    process.exit(return_code);
+    process.exit(returnCode);
     return;
   }
   var url_obj = Url.parse(url);
@@ -50,28 +51,28 @@ var startBrowser = function () {
   console.log("%s: Loading %s ...", proc, url);
   browser = new Browser(optsZombie);
   if (optsZombie.debug) { browser.debug(); }
-  browser.visit(url).then(check_cb).catch(problem_cb);
-};
+  browser.visit(url).then(checkCb).catch(problemCb);
+}
 
-problem_cb = function (error) {
+function problemCb(error) {
   // log error, and process next page
   console.warn("Test failed: ", error);
-  return_code = 1;
+  returnCode = 1;
   startBrowser();
-};
+}
 
-check_cb = function() {
+function checkCb() {
   var done = false;
 
   // check for errors
-  var one_prob = function (err_obj) {
+  function onProb(err_obj) {
     console.warn("%s: %s, %s; %s", proc, err_obj.type,
       err_obj.message, err_obj.data.error);
-    return_code = 1;
+    returnCode = 1;
     done = true;
-  };
-  (browser.errors || []).forEach(one_prob);
-  (browser.document.errors || []).forEach(one_prob);
+  }
+  (browser.errors || []).forEach(onProb);
+  (browser.document.errors || []).forEach(onProb);
 
   // retrieve and log results
   var report = browser.html('#report');
@@ -88,9 +89,6 @@ check_cb = function() {
   if (done) {
     startBrowser();
   } else {
-    browser.wait().then(check_cb).catch(problem_cb);
+    browser.wait().then(checkCb).catch(problemCb);
   }
-};
-
-// start processing pages
-startBrowser();
+}
