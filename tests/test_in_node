@@ -11,13 +11,13 @@ var optsZombie = {
   waitDuration: '10s',
   runScripts: true
 };
-var htt_opts = { wordwrap: (process.stdout.columns || 120) };
-
-var showSection = function(sectionName, sectionHtml) {
-  console.log("%s: ######## %s ########", proc, sectionName);
-  var plainText = htmlToText.fromString(sectionHtml, htt_opts);
-  console.log(plainText);
-}
+var optsHTT = {
+  wordwrap: 80, // process.stdout.columns
+  tables: true,
+  ignoreHref: true,
+  preserveNewlines: true,
+  singleNewLineParagraphs: true
+};
 
 var proc = Path.basename(process.argv[1]);
 var jobs = process.argv.slice(2);
@@ -74,14 +74,14 @@ check_cb = function() {
   (browser.document.errors || []).forEach(one_prob);
 
   // retrieve and log results
-  var report = browser.html("#errorReport");
-  if (report.match(/Test results/i)) {
+  var report = browser.html('#report');
+  if (report && report.length) {
     done = true;
-    showSection("TEST RESULTS", report);
-  }
-  var timing = browser.html("#timing");
-  if (timing) {
-    showSection("TIMING", timing);
+    //console.log(browser.text('#report'));
+    console.log(htmlToText.fromString(
+      // HACK: replace <div> tags with <p>
+      // https://github.com/werk85/node-html-to-text/issues/71
+      report.replace(/(<\/?)div/ig, '$1p'), optsHTT));
   }
 
   // process next page if done, otherwise wait for page to complete loading
