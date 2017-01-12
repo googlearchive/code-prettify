@@ -1451,6 +1451,16 @@ var goldens = {
         '`END`KWDdone`END`PUN;`END`PLN\n' +
         'echo`END'
         ),
+  issue145: (
+    '`TAG&lt;script`END`PLN `END`ATNtype`END`PUN=`END`ATV"text/javascript"`END`TAG&gt;`END`PLN\n' +
+    '`END`PUN&lt;!--`END`PLN\n' +
+    '        `END`KWDvar`END`PLN target `END`PUN=`END`PLN $$`END`PUN.`END`PLNcss`END`PUN(`END`STR\'backgroundImage\'`END`PUN).`END`PLNreplace`END`PUN(`END`STR/^url[\\(\\)\'"]/`END`PLNg`END`PUN,`END`PLN `END`STR\'\'`END`PUN);`END`PLN\n' +
+    '\n' +
+    '        `END`COM// nice long chain: wrap img element in span`END`PLN\n' +
+    '        $$`END`PUN.`END`PLNwrap`END`PUN(`END`STR\'&lt;span style="position: relative;"&gt;&lt;/span&gt;\'`END`PUN)`END`PLN\n' +
+    '`END`PUN--&gt;`END`PLN\n' +
+    '`END`TAG&lt;/script&gt;`END'
+  ),
   clojure: '`COM; Clojure test comment`END`PLN\n' +
         '`END`OPN(`END`KWDns`END`PLN test\n' +
         ' `END`OPN(`END`TYP:gen-class`END`CLO))`END`PLN\n' +
