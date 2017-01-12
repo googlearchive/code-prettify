@@ -97,14 +97,14 @@ function fib() {
 fib | /usr/bin/*head -10 | tail -1
 </pre>
 
-<h1>Issue 165</h1>
+<h1>Bash special characters</h1>
+<p><a href="https://github.com/google/code-prettify/issues/165">Issue #165</a></p>
 <pre class="prettyprint lang-sh" id="issue_165"># Comment
 local $x = ${#x[@]}  # Previous is not a comment
 # A comment</pre>
 
 <h1>C</h1>
-
-<pre class="prettyprint" id="C">
+<pre class="prettyprint" id="c">
 #include &lt;stdio.h&gt;
 
 /* the n-th fibonacci number.
@@ -126,8 +126,7 @@ main() {
 </pre>
 
 <h1>C w/ language specified</h1>
-
-<pre class="prettyprint lang-c" id="C_lang">
+<pre class="prettyprint lang-c" id="c_lang">
 #include &lt;stdio.h&gt;
 
 /* the n<sup>th</sup> fibonacci number. */
@@ -151,8 +150,9 @@ void main() {
 #define ZERO 0 /* a
   multiline comment */
 </pre>
+
 <h1>C++</h1>
-<pre class="prettyprint" id="Cpp">
+<pre class="prettyprint" id="cpp">
 #include &lt;iostream&gt;
 
 using namespace std;
@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
 </pre>
 
 <h1>C++ w/ language specified</h1>
-<pre class="prettyprint lang-cc" id="Cpp_lang">
+<pre class="prettyprint lang-cc" id="cpp_lang">
 #include &lt;iostream&gt;
 
 using namespace std;
@@ -251,7 +251,8 @@ public final class Fibonacci implements Iterable&lt;Integer&gt; {
 }
 </pre>
 
-<h1>Java w/ language specified<small>(first line shown is line 12)</small></h1>
+<h1>Java w/ language specified</h1>
+<p>(first line shown is line 12)</p>
 <pre class="prettyprint lang-java linenums:12" id="java_lang">
 package foo;
 
@@ -302,7 +303,7 @@ public final class Fibonacci implements Iterable&lt;Integer&gt; {
 # not keywords: static_cast and namespace
 </pre>
 
-<h1>Javascript</h1>
+<h1>JavaScript</h1>
 <pre class="prettyprint" id="javascript">
 /**
  * nth element in the fibonacci series.
@@ -323,8 +324,9 @@ function fib(n) {
 document.write(fib(10));
 </pre>
 
-<h1>Issue 12 - Javascript Regular Expressions</h1>
-<pre class="prettyprint" id="issue12">
+<h1>JavaScript Regular Expressions</h1>
+<p><a href="https://github.com/google/code-prettify/issues/12">Issue #12</a></p>
+<pre class="prettyprint" id="js_regexp">
 /foo/;  // a slash starting a line treated as a regexp beginning
 "foo".match(/fo+$/);
 // this line comment not treated as a regular expressions
@@ -367,8 +369,9 @@ division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
 extends = /extends/;
 </pre>
 
-<h1>Issue 12 - Javascript Regular Expressions w/ language specified</h1>
-<pre class="prettyprint lang-js" id="issue12_lang">
+<h1>JavaScript Regular Expressions w/ language specified</h1>
+<p><a href="https://github.com/google/code-prettify/issues/12">Issue #12</a></p>
+<pre class="prettyprint lang-js" id="js_regexp_lang">
 /foo/;  // a slash starting a line treated as a regexp beginning
 "foo".match(/fo+$/);
 // this line comment not treated as a regular expressions
@@ -411,7 +414,7 @@ division = notreturn / not_a_regexp / 2;  // keyword suffix does not match
 extends = /extends/;
 </pre>
 
-<h1>Coffee</h1>
+<h1>CoffeeScript</h1>
 <pre class="prettyprint lang-coffee" id="coffee">
 class Animal
   constructor: (@name) -&gt;
@@ -539,7 +542,7 @@ print nth(fib(), 10)
 /* not a comment and not keywords: null char true */
 </pre>
 
-<h1>SQL w/ language specified</h1>
+<h1>SQL</h1>
 <pre class="prettyprint lang-sql" id="sql_lang">
 /* A multi-line
  * comment */
@@ -643,9 +646,8 @@ document.writeln(fib(10));
 &lt;/script&gt;
 </pre>
 
-
-<h1>HTML using XMP</h1>
-<xmp class="prettyprint" id="htmlXmp"
+<h1>HTML using &lt;XMP&gt;</h1>
+<xmp class="prettyprint" id="html_xmp"
 ><html>
   <head>
     <title>Fibonacci number</title>
@@ -708,7 +710,7 @@ function fib(n) {
 </pre>
 
 <h1>PHP</h1>
-<pre class="prettyprint" id="PHP">
+<pre class="prettyprint" id="php">
 &lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;&lt;?= 'Fibonacci numbers' ?&gt;&lt;/title&gt;
@@ -736,7 +738,8 @@ function fib(n) {
 &lt;/html&gt;
 </pre>
 
-<h1>XSL (Issue 19)</h1>
+<h1>XSL</h1>
+<p><a href="https://github.com/google/code-prettify/issues/19">Issue #19</a></p>
 <pre class="prettyprint" id="xsl">
 &lt;!-- Test elements and attributes with namespaces --&gt;
 
@@ -748,17 +751,20 @@ function fib(n) {
 </pre>
 
 <h1>Whitespace</h1>
-<pre class=prettyprint id="whitespace"></pre>
+<pre class="prettyprint" id="whitespace"></pre>
 
 <h1>Misc</h1>
-<pre class=prettyprint id="misc1">// ends with line comment token
+<pre class="prettyprint" id="misc1">// ends with line comment token
 //</pre>
 
-<h1>User submitted testcase for Bug 4</h1>
+<h1>JavaScript inside HTML &lt;SCRIPT&gt;</h1>
 <p>
-Javascript Snippets wrapped in HTML SCRIPT tags hides/destroys inner content
+<a href="https://github.com/google/code-prettify/issues/4">Issue #4</a>:
+JavaScript Snippets wrapped in HTML SCRIPT tags hides/destroys inner content
 </p>
-<pre class=prettyprint id="issue4">
+<p>The fact that the script tag was not closed properly was causing
+<em>PR_splitSourceNodes</em> to end without emitting the script contents.</p>
+<pre class="prettyprint" id="js_script">
 &lt;script type="text/javascript"&gt;
    var savedTarget=null;                           // The target layer (effectively vidPane)
    var orgCursor=null;                             // The original mouse style so we can restore it
@@ -770,70 +776,72 @@ Javascript Snippets wrapped in HTML SCRIPT tags hides/destroys inner content
    vidPaneID.style.left='75px';                    // Starting location verticle
 &lt;script&gt;
 </pre>
-<p>The fact that the script tag was not closed properly was causing
-PR_splitSourceNodes to end without emitting the script contents.</p>
 
-<h1>Bug 8 - tabs mangled</h1>
-<p>If tabs are used to indent code inside &lt;pre> IE6 and 7 won't honor them
-after the script runs.
-
-Code indented with tabs will be shown aligned to the left margin instead of
-the proper indenting shown in Firefox.
-
-I'm using Revision 20 of prettify.js, IE 6.0.29.00 in English and IE
-7.0.5730.11 in Spanish.
-</p>
-<pre class=prettyprint id="issue8">
+<h1>Tabs mangled</h1>
+<p><a href="https://github.com/google/code-prettify/issues/8">Issue #8</a>:
+If tabs are used to indent code inside &lt;pre&gt;, IE6 and 7 won't honor them
+after the script runs.</p>
+<p>Code indented with tabs will be shown aligned to the left margin instead of
+the proper indenting shown in Firefox.</p>
+<p>I'm using Revision 20 of prettify.js, IE 6.0.29.00 in English and IE
+7.0.5730.11 in Spanish.</p>
+<pre class="prettyprint" id="issue8">
 <b>one</b>&#9;<b>Two</b>&#9;<b>three</b>&#9;Four&#9;<b>five</b>&#9;|
 Six&#9;<b>seven</b>&#9;Eight&#9;nine&#9;Ten&#9;|
 <b>eleven</b>&#9;Twelve&#9;<b>thirteen</b>&#9;Fourteen&#9;fifteen&#9;|
 </pre>
 
-<h1>Bug 14a - does not recognize <code>&lt;br&gt;</code> as newline</h1>
+<h1>Does not recognize <code>&lt;br&gt;</code> as newline</h1>
+<p><a href="https://github.com/google/code-prettify/issues/14">Issue #14</a></p>
 <pre class="prettyprint" id="issue14a"
 >//comment<br />int main(int argc, char **argv)
 {}</pre>
 
-<h1>Bug 14b - comments not ignored</h1>
+<h1>Comments not ignored</h1>
+<p><a href="https://github.com/google/code-prettify/issues/14">Issue #14</a></p>
 <pre class="prettyprint" id="issue14b"
 >&lt;!-- There's an <!-- BOO!! --><acronym title="tag soup">HTML</acronym> comment in my comment --&gt;
 &lt;p&gt;And another one inside the end tag&lt;/p<!-- GOTCHA!! -->&gt;
 </pre>
 
-<h1>Bug 20 - missing blank lines</h1>
+<h1>Missing blank lines</h1>
+<p><a href="https://github.com/google/code-prettify/issues/20">Issue #20</a></p>
 <pre class="prettyprint" id="issue20"
 >&lt;html&gt;
 
 &lt;head&gt;</pre>
 
-<h1>Bug 21 - code doesn't copy and paste well in IE</h1>
+<h1>Code doesn't copy and paste well in IE</h1>
+<p><a href="https://github.com/google/code-prettify/issues/21">Issue #21</a>:
+To test this bug, disable overriding of <em>_pr_isIE6</em> in test_base.js
+by putting <em>#testcopypaste</em> on the end of the URL and reloading the
+page, then copy and paste the above into Notepad.</p>
 <pre class="prettyprint" id="issue21"
 >&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;Test&lt;/title&gt;
   &lt;/head&gt;
 &lt;/html&gt;</pre>
-<p>To test this bug, disable overriding of _pr_isIE6 in test_base.js
-by putting #testcopypaste on the end of the URL and reloading the
-page, then copy and paste the above into Notepad.</p>
 
-<h1>Bug 22 - Line numbers and other non-code spans in code</h1>
+<h1>Line numbers and other non-code spans in code</h1>
+<p><a href="https://github.com/google/code-prettify/issues/22">Issue #22</a></p>
 <pre class="prettyprint lang-java" id="issue22"
-><span class=nocode>01: </span>// This is a line of code
-<span class=nocode>02: </span>/* Multiline comments can
-<span class=nocode>03: </span> * span over and around
-<span class=nocode>04: </span> * line markers
+><span class="nocode">01: </span>// This is a line of code
+<span class="nocode">02: </span>/* Multiline comments can
+<span class="nocode">03: </span> * span over and around
+<span class="nocode">04: </span> * line markers
 <span class="nocode annot">And can even be interrupted</span>
 <span class="nocode annot">by inline code annotations</span>
-<span class=nocode>05: </span> */
-<span class=nocode>06: </span>class MyClass extends Foo {
-<span class=nocode>07: </span>  public static void main(String... argv) {
-<span class=nocode>08: </span>    System.out.print("Hello World");
-<span class=nocode>09: </span>  }
-<span class=nocode>10: </span>}</pre>
+<span class="nocode">05: </span> */
+<span class="nocode">06: </span>class MyClass extends Foo {
+<span class="nocode">07: </span>  public static void main(String... argv) {
+<span class="nocode">08: </span>    System.out.print("Hello World");
+<span class="nocode">09: </span>  }
+<span class="nocode">10: </span>}</pre>
 
-<h1>Bug 24 - Lua Syntax Highlighting</h1>
-<pre class="prettyprint lang-lua" id="issue24">
+<h1>Lua</h1>
+<p><a href="https://github.com/google/code-prettify/issues/24">Issue #24</a></p>
+<pre class="prettyprint lang-lua" id="lua">
 os=require("os")
 math=require("math")
 
@@ -886,8 +894,9 @@ do
   return shellsort
 end</pre>
 
-<h1>Bug 27 - VBScript w/ language specified</h1>
-<pre class="prettyprint lang-vb" id="issue27">
+<h1>VBScript</h1>
+<p><a href="https://github.com/google/code-prettify/issues/27">Issue #27</a></p>
+<pre class="prettyprint lang-vb" id="vbs">
 Imports System
 
 Class [class]
@@ -939,8 +948,9 @@ Dim i As Integer
 i = (0, 123, 45L, &amp;HA0I, &amp;O177S)
 </pre>
 
-<h1>Bug 30 - Haskell w/ language specified</h1>
-<pre class="prettyprint lang-hs" id="issue30">
+<h1>Haskell</h1>
+<p><a href="https://github.com/google/code-prettify/issues/30">Issue #30</a></p>
+<pre class="prettyprint lang-hs" id="haskell">
 -- A comment
 Not(--"a comment&quot;)
 Also.not(--(A.comment))
@@ -969,8 +979,10 @@ Not.A.Char = 'too long'  -- Don't barf.  Show that 't is a lexical error.
 (0, 12, 0x45, 0xA7, 0o177, 0O377, 0.1, 1.0, 1e3, 0.5E-3, 1.0E+45)
 </pre>
 
-<h1>Bug 33 - OCaml and F#</h1>
-<pre class="prettyprint lang-ml" id="issue33">
+<h1>OCaml and F#</h1>
+<p><a href="https://github.com/google/code-prettify/issues/33">Issue #33</a></p>
+<p>TODO: handle nested <code>(* (* comments *) *)</code> properly.</p>
+<pre class="prettyprint lang-ml" id="ml">
 (*
  * Print the 10th fibonacci number
  *)
@@ -991,10 +1003,10 @@ let zed = 'z'
 
 let f' x' = x' + 1
 </pre>
-<p>Still TODO: handle nested <code>(* (* comments *) *)</code> properly.</p>
 
-<h1>Bug 42 - Lisp Syntax Highlighting</h1>
-<pre class="prettyprint lang-el" id="issue42"
+<h1>Lisp</h1>
+<p><a href="https://github.com/google/code-prettify/issues/42">Issue #42</a></p>
+<pre class="prettyprint lang-el" id="lisp"
 >; -*- mode: lisp -*-
 
 (defun back-six-lines () (interactive) (forward-line -6))
@@ -1036,7 +1048,8 @@ let f' x' = x' + 1
 (define (sqt x) (sqrt-iter 1.0 2.0 x))
 </pre>
 
-<h1>Bug 45 - Square brackets in strings</h1>
+<h1>Square brackets in strings</h1>
+<p><a href="https://github.com/google/code-prettify/issues/45">Issue #45</a></p>
 <pre class="prettyprint" id="issue45">
 throw new RuntimeException("Element [" + element.getName() + 
   "] missing attribute.");
@@ -1061,7 +1074,7 @@ variable++;
   optional Corpus corpus = 4 [default = UNIVERSAL];
 }</pre>
 
-<h1>Wiki syntax w/ language specified</h1>
+<h1>Wiki Syntax</h1>
 <pre class="prettyprint lang-wiki" id="wiki">
 #summary hello world
 #labels HelloWorld WikiWord Hiya
@@ -1114,8 +1127,9 @@ p#featured{background:#fea}
 --&gt;
 </pre>
 
-<h1>Issue 79 CSS highlighting</h1>
-<pre class="prettyprint" id="issue79">
+<h1>CSS inside HTML &lt;STYLE&gt;</h1>
+<p><a href="https://github.com/google/code-prettify/issues/79">Issue #79</a></p>
+<pre class="prettyprint" id="css_style">
 &lt;style type='text/css'&gt;
 /* desert scheme ported from vim to google prettify */
 code.prettyprint { display: block; padding: 2px; border: 1px solid #888;
@@ -1134,24 +1148,33 @@ background-color: #333; }
 &lt;/style&gt;
 </pre>
 
-<h1>Issue 84 NBSPs</h1>
+<h1>NBSPs</h1>
+<p><a href="https://github.com/google/code-prettify/issues/84">Issue #84</a></p>
 <pre class="prettyprint lang-java" id="issue84">super("&amp;nbsp;");</pre>
 
-<h1>Issue 86</h1>
+<h1>Line breaks and preformatted style</h1>
+<p><a href="https://github.com/google/code-prettify/issues/86">Issue #86</a></p>
+<p>CODE tag</p>
 <p><code class="prettyprint" id="issue86_0">#One
 Two words</code></p>
+<p>CODE tag with preformatted style</p>
 <p><code class="prettyprint known_ie6_failure" id="issue86_1" style="white-space: pre">#One
 Two lines</code></p>
+<p>PRE tag</p>
 <pre class="prettyprint" id="issue86_2">#One
 Two lines</pre>
+<p>PRE+CODE tag</p>
 <pre><code class="prettyprint known_ie6_failure" id="issue86_3">#One
 Two lines</code></pre>
+<p>XMP tag</p>
 <xmp class="prettyprint" id="issue86_4">#One
 Two lines</xmp>
+<p>CODE tag with BR line break</p>
 <p><code class="prettyprint" id="issue86_5">#One<br>
 Two lines</code></p>
 
-<h1>Issue 92 -- capital letters in tag names</h1>
+<h1>Capital letters in tag names</h1>
+<p><a href="https://github.com/google/code-prettify/issues/92">Issue #92</a></p>
 <pre class="prettyprint" id="issue92">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;kml xmlns="http://www.opengis.net/kml/2.2"&gt;
@@ -1166,15 +1189,16 @@ Two lines</code></p>
 &lt;/kml&gt;
 </pre>
 
-<h1>Issue 93 -- C# verbatim strings</h1>
-<pre class="prettyprint lang-cs" id="issue93">
+<h1>C# verbatim strings</h1>
+<p><a href="https://github.com/google/code-prettify/issues/93">Issue #93</a></p>
+<pre class="prettyprint lang-cs" id="cs_verbatim">
 // The normal string syntax
 string a = "C:\\";
 // is equivalent to a verbatim string
 string b = @"C:\";
 </pre>
 
-<h1>VHDL mode</h1>
+<h1>VHDL</h1>
 <pre class="prettyprint lang-vhdl" id="vhdl">
 library ieee;
 use ieee.std_logic_1164.all;
@@ -1214,7 +1238,7 @@ begin
 end architecture foo_architecture;
 </pre>
 
-<h1>YAML mode</h1>
+<h1>YAML</h1>
 <pre class="prettyprint lang-yaml" id="yaml1">
 application: mirah-lang
 version: 1
@@ -1240,6 +1264,8 @@ handlers:
      init_params:
        logType: special
   </pre>
+
+<h1>YAML</h1>
 <pre class="prettyprint lang-yaml" id="yaml2">
 %YAML 1.1
 ---
@@ -1258,7 +1284,7 @@ handlers:
   : !!str "value"
 }</pre>
 
-<h1>Scala mode</h1>
+<h1>Scala</h1>
 <pre class="prettyprint lang-scala" id="scala">
 /* comment 1 */
 /*
@@ -1317,7 +1343,7 @@ def act() {
 }
 </pre>
 
-<h1>Go mode</h1>
+<h1>Go</h1>
 <pre class="prettyprint lang-go" id="go">
 package main  /* Package of which this program is part. */
 
@@ -1332,7 +1358,7 @@ func main() {
 /* ` */  `foo /* `  /*/  */
 </pre>
 
-<h1>Erlang mode</h1>
+<h1>Erlang</h1>
 <pre class="prettyprint lang-erlang" id="erlang">
 % Sample comment
 
@@ -1361,7 +1387,7 @@ test(Variables, MoreVariables) -&gt;
     end.
 </pre>
 
-<h1>Rust mode</h1>
+<h1>Rust</h1>
 <pre class="prettyprint lang-rust" id="rust">
 // Single line comment
 /* Multi-line (nesting not highlighted properly, sorry)
@@ -1446,10 +1472,10 @@ var goldens = {
           '`PLN tail `END`PUN-`END`LIT1`END</li></ol>'),
   issue_165: (
       '`COM# Comment`END`PLN\n' +
-      '`END`KWDlocal`END`PLN $x `END`PUN=`END`PLN $`END`PUN{#`END`PLNx`END`PUN[@]}`END`PLN  `END'
-          + '`COM# Previous is not a comment`END`PLN\n' +
+      '`END`KWDlocal`END`PLN $x `END`PUN=`END`PLN $`END`PUN{#`END`PLNx`END`PUN[@]}`END`PLN  `END' +
+          '`COM# Previous is not a comment`END`PLN\n' +
       '`END`COM# A comment`END'),
- C: (
+  c: (
       '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN\n' +
       '\n' +
       '`END`COM/* the n-th fibonacci number.\n' +
@@ -1475,7 +1501,7 @@ var goldens = {
       '  printf`END`PUN(`END`STR"%u"`END`PUN,`END`PLN fib`END`PUN(`END' +
           '`LIT10`END`PUN));`END`PLN\n' +
       '`END`PUN}`END'),
-  C_lang: (
+  c_lang: (
       '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN\n' +
       '\n' +
       '`END`COM/* the n`END<sup>`COMth`END<\/sup>`COM fibonacci number. *\/`END`PLN\n' +
@@ -1505,7 +1531,7 @@ var goldens = {
       '\n' +
       '`END`COM#define`END`PLN ZERO `END`LIT0`END`PLN `END`COM/* a\n' +
       '  multiline comment *\/`END'),
-  Cpp: (
+  cpp: (
       '`COM#include`END`PLN `END`STR&lt;iostream&gt;`END`PLN\n' +
       '\n' +
       '`END`KWDusing`END`PLN `END`KWDnamespace`END`PLN std`END`PUN;`END' +
@@ -1539,8 +1565,7 @@ var goldens = {
       '  cout `END`PUN&lt;&lt;`END`PLN fib`END`PUN(`END`LIT10`END' +
           '`PUN,`END`PLN `END`LIT1U`END`PUN);`END`PLN\n' +
       '`END`PUN}`END'),
-
-  Cpp_lang: (
+  cpp_lang: (
       '`COM#include`END`PLN `END`STR&lt;iostream&gt;`END`PLN\n' +
       '\n' +
       '`END`KWDusing`END`PLN `END`KWDnamespace`END`PLN std`END`PUN;`END' +
@@ -1574,7 +1599,6 @@ var goldens = {
       '  cout `END`PUN&lt;&lt;`END`PLN fib`END`PUN(`END`LIT10`END' +
           '`PUN,`END`PLN `END`LIT1U`END`PUN);`END`PLN\n' +
       '`END`PUN}`END'),
-
   java: (
       '`KWDpackage`END`PLN foo`END`PUN;`END`PLN\n' +
       '\n' +
@@ -2016,7 +2040,7 @@ var goldens = {
           '`LIT10`END`PUN));`END`PLN\n' +
       '`END`COM// --&gt;`END`PLN\n' +
       '`END`TAG&lt;/script&gt;`END'),
-  htmlXmp: (
+  html_xmp: (
       '`TAG&lt;html&gt;`END`PLN\n' +
       '  `END`TAG&lt;head&gt;`END`PLN\n' +
       '    `END`TAG&lt;title&gt;`END`PLNFibonacci number`END' +
@@ -2095,7 +2119,7 @@ var goldens = {
       '    `END`TAG&lt;/script&gt;`END`PLN\n' +
       '  `END`TAG&lt;/body&gt;`END`PLN\n' +
       '`END`TAG&lt;/xhtml&gt;`END'),
-  PHP: (
+  php: (
       '`TAG&lt;html&gt;`END`PLN\n' +
       '  `END`TAG&lt;head&gt;`END`PLN\n' +
       '    `END`TAG&lt;title&gt;`END`PUN&lt;?=`END' +
@@ -2153,7 +2177,7 @@ var goldens = {
   whitespace: '',
   misc1: '`COM// ends with line comment token`END`PLN\n' +
       '`END`COM//`END',
-  issue4: (
+  js_script: (
       '`TAG&lt;script`END`PLN `END' +
           '`ATNtype`END`PUN=`END`ATV"text/javascript"`END' +
           '`TAG&gt;`END`PLN\n' +
@@ -2192,8 +2216,7 @@ var goldens = {
           '             // ' +
           'Starting location verticle\n' +
       '`END`TAG&lt;script&gt;`END'),
-  issue8:
-      (
+  issue8: (
       '<b>`PLNone`END</b>`PLN\t`END<b>`TYPTwo`END</b>`PLN' +
           '\t`END<b>`PLNthree`END</b>`PLN\t`END`TYPFour' +
           '`END`PLN\t`END<b>`PLNfive`END</b>`PLN\t' +
@@ -2205,7 +2228,7 @@ var goldens = {
           '<b>`PLNthirteen`END</b>`PLN\t`END' +
           '`TYPFourteen`END`PLN\tfifteen\t`END`' +
           'PUN|`END'),
-  issue12: (
+  js_regexp: (
       '`STR/foo/`END`PUN;`END`PLN  `END`COM// a slash starting a line ' +
           'treated as a regexp beginning`END`PLN\n' +
       '`END`STR"foo"`END`PUN.`END`PLNmatch`END`PUN(`END`STR/fo+$/`END' +
@@ -2270,7 +2293,7 @@ var goldens = {
       '\n' +
       '`END`KWDextends`END`PLN `END`PUN=`END`PLN `END`STR/extends/`END' +
           '`PUN;`END'),
-  issue12_lang: (
+  js_regexp_lang: (
       '`STR/foo/`END`PUN;`END`PLN  `END`COM// a slash starting a line ' +
           'treated as a regexp beginning`END`PLN\n' +
       '`END`STR"foo"`END`PUN.`END`PLNmatch`END`PUN(`END`STR/fo+$/`END' +
@@ -2427,7 +2450,7 @@ var goldens = {
       '`END<span class="nocode">09: `END`PLN  `END`PUN}`END`PLN\n' +
       '`END<span class="nocode">10: `END`PUN}`END'
       ),
-  issue24: (
+  lua: (
       '`PLNos`END`PUN=`END`PLNrequire`END`PUN(`END`STR"os"`END`PUN)`END`PLN\n' +
       'math`END`PUN=`END`PLNrequire`END`PUN(`END`STR"math"`END`PUN)`END`PLN\n' +
       '\n' +
@@ -2510,7 +2533,7 @@ var goldens = {
       '  `END`KWDend`END`PLN\n' +
       '  `END`KWDreturn`END`PLN shellsort\n' +
       '`END`KWDend`END'),
-  issue27: (
+  vbs: (
       '`KWDImports`END`PLN System\n' +
       '\n' +
       '`END`KWDClass`END`PLN [class]\n' +
@@ -2580,7 +2603,7 @@ var goldens = {
       'i `END`PUN=`END`PLN `END`PUN(`END`LIT0`END`PUN,`END`PLN `END' +
           '`LIT123`END`PUN,`END`PLN `END`LIT45L`END`PUN,`END`PLN `END' +
           '`LIT&amp;HA0I`END`PUN,`END`PLN `END`LIT&amp;O177S`END`PUN)`END'),
-  issue30: (
+  haskell: (
       '`COM-- A comment`END`PLN\n' +
       'Not`END`PUN(--`END`STR"a comment"`END`PUN)`END`PLN\n' +
       'Also.not`END`PUN(--(`END`PLNA.comment`END`PUN))`END`PLN\n' +
@@ -2628,7 +2651,7 @@ var goldens = {
           '`LIT1e3`END`PUN,`END`PLN `END`LIT0.5E-3`END`PUN,`END`PLN `END' +
           '`LIT1.0E+45`END`PUN)`END'
        ),
-  issue33: (
+  ml: (
       '`COM(*\n' +
       ' * Print the 10th fibonacci number\n' +
       ' *)`END`PLN\n' +
@@ -2660,7 +2683,7 @@ var goldens = {
       '`END`KWDlet`END`PLN zed `END`PUN=`END`PLN `END`STR\'z\'`END`PLN\n' +
       '\n' +
       '`END`KWDlet`END`PLN f\' x\' `END`PUN=`END`PLN x\' `END`PUN+`END`PLN `END`LIT1`END'),
-  issue42: (
+  lisp: (
       '`COM; -*- mode: lisp -*-`END`PLN\n' +
       '\n' +
       '`END`OPN(`END`KWDdefun`END`PLN back-six-lines `END`OPN(`END`CLO)`END' +
@@ -2835,7 +2858,7 @@ var goldens = {
       'p`END`PUN#`END`PLNfeatured`END`PUN{`END`KWDbackground`END`PUN:`END`LIT#fea`END`PUN}`END`PLN\n' +
       '`END`COM--&gt;`END'
       ),
-  issue79: (
+  css_style: (
       '`TAG&lt;style`END`PLN `END`ATNtype`END`PUN=`END`ATV\'text/css\'`END' +
           '`TAG&gt;`END`PLN\n' +
       '`END`COM/* desert scheme ported from vim to google prettify */`END' +
@@ -2912,7 +2935,7 @@ var goldens = {
       '    `END`TAG&lt;/Point&gt;`END`PLN\n' +
       '  `END`TAG&lt;/Placemark&gt;`END`PLN\n' +
       '`END`TAG&lt;/kml&gt;`END',
-  issue93: '`COM// The normal string syntax`END`PLN\n' +
+  cs_verbatim: '`COM// The normal string syntax`END`PLN\n' +
       '`END`KWDstring`END`PLN a `END`PUN=`END`PLN `END`STR"C:\\\\"`END`PUN;`END`PLN\n' +
       '`END`COM// is equivalent to a verbatim string`END`PLN\n' +
       '`END`KWDstring`END`PLN b `END`PUN=`END`PLN `END`STR@"C:\\"`END`PUN;`END',
@@ -3060,30 +3083,30 @@ var goldens = {
       '\n' +
       '`END`COM/* " *\/`END`PLN  "foo /* "  `END`COM/*\/  *\/`END`PLN\n' +
       '`END`COM/* ` *\/`END`PLN  `foo /* `  `END`COM/*\/  *\/`END',
-  erlang: '`COM% Sample comment`END`PLN\n' + 
-      '\n' + 
-      '`END`KWD-module`END`PLN(my_test)`END`PUN.`END`PLN\n' + 
-      '`END`KWD-include_lib`END`PLN(`END`STR"my_sample_lib.hrl"`END`PLN)`END`PUN.`END`PLN\n' + 
-      '`END`KWD-export`END`PLN([\n' + 
-      '    test/`END`LIT2`END`PLN\n' + 
-      '])`END`PUN.`END`PLN\n' + 
-      '\n' + 
-      '`END`COM%% @doc Define a macro`END`PLN\n' + 
-      '`END`KWD-define`END`PLN(my_macro`END`PUN,`END`PLN `END`TYPVariable`END`PLN)`END`PUN.`END`PLN\n' + 
-      '\n' + 
-      '`END`COM%% @doc My function`END`PLN\n' + 
-      'test(`END`TYPVariables`END`PUN,`END`PLN `END`TYPMoreVariables`END`PLN) -&gt;\n' + 
-      '    `END`COM% Inline comment`END`PLN\n' + 
-      '    {ok`END`PUN,`END`TYPScanned`END`PUN,`END`TYP_`END`PLN} = my_lib:do_stuff()`END`PUN,`END`PLN\n' + 
-      '\n' + 
-      '    `END`TYPVariable`END`PLN = `END`KWDfun`END`PLN(`END`TYPV`END`PLN) -&gt; {ok`END`PUN,`END`PLN `END`TYPV`END`PLN} `END`KWDend`END`PUN,`END`PLN\n' + 
-      '\n' + 
-      '    `END`KWDtry`END`PLN `END`LIT?my_macro`END`PLN({value`END`PUN,`END`PLN test}) `END`KWDof`END`PLN\n' + 
-      '        {value`END`PUN,`END`PLN `END`TYPResult`END`PUN,`END`PLN `END`TYP_`END`PLN} -&gt;\n' + 
-      '            {ok`END`PUN,`END`PLN `END`TYPResult`END`PLN}\n' + 
-      '    `END`KWDcatch`END`PLN\n' + 
-      '        `END`TYPType`END`PLN:`END`TYPError`END`PLN -&gt;\n' + 
-      '            {`END`LIT\'error\'`END`PUN,`END`PLN `END`TYPType`END`PUN,`END`PLN `END`TYPError`END`PLN}\n' + 
+  erlang: '`COM% Sample comment`END`PLN\n' +
+      '\n' +
+      '`END`KWD-module`END`PLN(my_test)`END`PUN.`END`PLN\n' +
+      '`END`KWD-include_lib`END`PLN(`END`STR"my_sample_lib.hrl"`END`PLN)`END`PUN.`END`PLN\n' +
+      '`END`KWD-export`END`PLN([\n' +
+      '    test/`END`LIT2`END`PLN\n' +
+      '])`END`PUN.`END`PLN\n' +
+      '\n' +
+      '`END`COM%% @doc Define a macro`END`PLN\n' +
+      '`END`KWD-define`END`PLN(my_macro`END`PUN,`END`PLN `END`TYPVariable`END`PLN)`END`PUN.`END`PLN\n' +
+      '\n' +
+      '`END`COM%% @doc My function`END`PLN\n' +
+      'test(`END`TYPVariables`END`PUN,`END`PLN `END`TYPMoreVariables`END`PLN) -&gt;\n' +
+      '    `END`COM% Inline comment`END`PLN\n' +
+      '    {ok`END`PUN,`END`TYPScanned`END`PUN,`END`TYP_`END`PLN} = my_lib:do_stuff()`END`PUN,`END`PLN\n' +
+      '\n' +
+      '    `END`TYPVariable`END`PLN = `END`KWDfun`END`PLN(`END`TYPV`END`PLN) -&gt; {ok`END`PUN,`END`PLN `END`TYPV`END`PLN} `END`KWDend`END`PUN,`END`PLN\n' +
+      '\n' +
+      '    `END`KWDtry`END`PLN `END`LIT?my_macro`END`PLN({value`END`PUN,`END`PLN test}) `END`KWDof`END`PLN\n' +
+      '        {value`END`PUN,`END`PLN `END`TYPResult`END`PUN,`END`PLN `END`TYP_`END`PLN} -&gt;\n' +
+      '            {ok`END`PUN,`END`PLN `END`TYPResult`END`PLN}\n' +
+      '    `END`KWDcatch`END`PLN\n' +
+      '        `END`TYPType`END`PLN:`END`TYPError`END`PLN -&gt;\n' +
+      '            {`END`LIT\'error\'`END`PUN,`END`PLN `END`TYPType`END`PUN,`END`PLN `END`TYPError`END`PLN}\n' +
       '    `END`KWDend`END`PUN.`END',
   rust: '`COM// Single line comment`END`PLN\n' +
       '`END`COM/* Multi-line (nesting not highlighted properly, sorry)\n' +

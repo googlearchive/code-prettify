@@ -56,8 +56,8 @@ window.onload = (function() {
 <div id="timing"></div>
 <div id="errorReport" style="white-space: pre"></div>
 
-<h1>XQuery mode</h1>
-From <code>http://www.patrick-wied.at/static/xquery/prettify/</code>
+<h1>XQuery</h1>
+<p>From <code>http://www.patrick-wied.at/static/xquery/prettify/</code></p>
 <pre class="prettyprint lang-xq" id="xquery">
 (: 
 	Took some of Mike Brevoort's xquery code samples because they are nice and show common xquery syntax 
@@ -392,8 +392,8 @@ local:depth(fn:doc("partlist.xml"))
 (: -------- :)
 </pre>
 
-<h1>Nemerle code</h1>
-<pre id="nemerle" class="prettyprint lang-nemerle">
+<h1>Nemerle</h1>
+<pre class="prettyprint lang-nemerle" id="nemerle">
 class Set ['a]
 {
   mutable storage : list ['a] = [];
@@ -418,8 +418,8 @@ s2.Add ("foo");
 assert (s2.Contains ("foo"));
 </pre>
 
-<h1>Tex support</h1>
-<pre id="latex" class="prettyprint lang-tex">% resume.tex
+<h1>LaTeX</h1>
+<pre class="prettyprint lang-tex" id="latex">% resume.tex
 % vim:set ft=tex spell:
 \documentclass[10pt,letterpaper]{article}
 \usepackage[letterpaper,margin=0.8in]{geometry}
@@ -430,9 +430,9 @@ assert (s2.Contains ("foo"));
 \setlength{\tabcolsep}{0em}
 </pre>
 
-<h1>Issue 144</h1>
-Escaped quotes in bash.
-<pre id="issue144" class="prettyprint">
+<h1>Escaped quotes in Bash</h1>
+<p><a href="https://github.com/google/code-prettify/issues/144">Issue #144</a></p>
+<pre class="prettyprint" id="issue144">
 #! /bin/bash
 # toascii.sh
 for i in $(echo $* | fold -w 1);do
@@ -441,8 +441,9 @@ done;
 echo
 </pre>
 
-<h1>Issue 145</h1>
-<pre id="issue145" class="prettyprint">
+<h1>Regular expression in &lt;SCRIPT&gt; body</h1>
+<p><a href="https://github.com/google/code-prettify/issues/145">Issue #145</a></p>
+<pre class="prettyprint" id="issue145">
 &lt;script type="text/javascript"&gt;
 &lt;!--
         var target = $$.css('backgroundImage').replace(/^url[\(\)'"]/g, '');
@@ -453,7 +454,7 @@ echo
 &lt;/script&gt;
 </pre>
 
-<h1>Clojure Syntax Highlighting</h1>
+<h1>Clojure</h1>
 <pre class="prettyprint lang-clj" id="clojure">
 ; Clojure test comment
 (ns test
@@ -468,20 +469,19 @@ echo
 (bar "foo" "bar" "blah" :baz)
 </pre>
 
-<h1>HTML 5 language on code</h1>
-<p>
-The text is specified to be lisp by the class attribute.
+<h1>HTML5 language on CODE</h1>
+<p>The text is specified to be <em>lisp</em> by the class attribute.
 Semicolon is normally a valid punctuation character but
 in lisp it is a comment so should be colored as a comment
 if the className is being properly parsed.</p>
 <code class="prettyprint language-lisp" id="html5conv1">; foo</code>
 
-<h1>HTML 5 language on nested code element</h1>
+<h1>HTML5 language on nested CODE element</h1>
 <p>The language is attached to a CODE element inside a PRE.</p>
 <pre class="prettyprint" id="html5conv2"
 ><code class="language-lisp">; foo</code></pre>
 
-<h1>HTML 5 language on nested code element not foiled by space</h1>
+<h1>HTML5 language on nested CODE element not foiled by space</h1>
 <p>The language is attached to a CODE element inside a PRE and there
 is space between the PRE element's tags and CODE element's tags.</p>
 <pre class="prettyprint" id="html5conv3">
@@ -490,7 +490,7 @@ is space between the PRE element's tags and CODE element's tags.</p>
 </code>
 </pre>
 
-<h1>HTML 5 nested code element language ignored if not only content</h1>
+<h1>HTML5 nested CODE element language ignored if not only content</h1>
 <p>The below is not treated as lisp despite there being a lisp
 language specifier on the contained CODE element, the CODE element
 does not wrap all non-space content.</p>
@@ -499,38 +499,45 @@ before CODE
 <code class="language-lisp">; foo</code>
 </pre>
 
+<h1>Language using XML processing instrution</h1>
 <p>The language is attached to an HTML5 comment that looks like an XML
 processing instruction.</p>
 <?prettify lang=lisp?>
 <pre class="prettyprint" id="procinstr1">; foo</pre>
 
+<h1>Language and line numbers using HTML comment</h1>
 <p>The language is attached to a regular HTML5 comment that looks like an XML
 processing instruction.</p>
 <!--prettify linenums=4 lang=lisp-->
 <pre class="prettyprint" id="procinstr2">; foo</pre>
 
+<h1>Language and line numbers using HTML comment</h1>
 <p>The language is attached to a regular HTML5 comment that looks like an XML
 processing instruction.</p>
 <!--prettify linenums=true lang=lisp-->
 <pre class="prettyprint" id="procinstr3">; foo</pre>
 
+<h1>Language and line numbers using HTML comment</h1>
 <p>The language is attached to a regular HTML5 comment that looks like an XML
 processing instruction.</p>
 <!--prettify linenums=false lang=lisp-->
 <pre id="procinstr4">; foo</pre>
 
-<h1>Issues 185 and 261: Don't reprettify prettified content</h1>
+<h1>Don't reprettify prettified content</h1>
+<p><a href="https://github.com/google/code-prettify/issues/185">Issue #185</a></p>
 <code class="prettyprint prettyprinted" id="issue185"
 ><span class="str">"No tag backs."</span></code>
 
+<p><a href="https://github.com/google/code-prettify/issues/261">Issue #261</a></p>
 <pre class="prettyprint prettyprinted linenums" id="issue261"
 ><ol class="linenums"><li class="L0"><span class="str">"No tag backs."</span></li></ol></pre>
 
-<h1>Issue 201: C type not full word</h1>
+<h1>C type not full word</h1>
+<p><a href="https://github.com/google/code-prettify/issues/201">Issue #201</a></p>
 <code class="prettyprint lang-c" id="issue201"
 >static Persistent&lt;String&gt; listeners_symbol;</code>
 
-<h1>Pascal w/ language specified</h1>
+<h1>Pascal</h1>
 <pre class="prettyprint lang-pascal" id="pascal_lang">
 (* some comment here *)
 PROCEDURE TestCase.AssertEquals(msg:String; expect, act:Longint);
@@ -555,7 +562,7 @@ BEGIN
 END;
 </pre>
 
-<h1>BASIC w/ language specified</h1>
+<h1>BASIC</h1>
 <pre class="prettyprint lang-basic" id="basic_lang">
 200 REM ----- method teardown
 210 PRINT "green"
@@ -568,7 +575,7 @@ END;
 1000 DATA "one", 1, 0
 </pre>
 
-<h1>Dart language handler</h1>
+<h1>Dart</h1>
 <pre class="prettyprint lang-dart" id="dart">
 part of myLib;
 
@@ -613,7 +620,7 @@ multiline string!""";
 }
 </pre>
 
-<h1>TCL_lang</h1>
+<h1>TCL</h1>
 <pre class="prettyprint lang-tcl" id="tcl_lang">#!/bin/tclsh
 proc fib {n} {
     set a 0
@@ -628,7 +635,7 @@ proc fib {n} {
 }
 </pre>
 
-<h1>R, S language support</h1>
+<h1>R, S</h1>
 <pre class="prettyprint lang-r" id="r_lang">
 ### Example R script for syntax highlighting
 
@@ -804,7 +811,7 @@ HDR ; -- prt/display header
 </pre>
 
 <h1>LLVM</h1>
-<a href="http://llvm.org/docs/LangRef.html">Hello world module</a>
+<p><a href="http://llvm.org/docs/LangRef.html">Hello world module</a></p>
 <pre class="prettyprint lang-llvm" id="llvm">
 ; Declare the string constant as a global constant.
 @.str = private unnamed_addr constant [13 x i8] c"hello world\0A\00"
@@ -827,15 +834,17 @@ define i32 @main() {   ; i32()*
 !foo = !{!1, null}
 </pre>
 
-<h1>Issue 217 : Regex following '!'</h1>
-<pre id="issue217" class="prettyprint lang-js">
+<h1>Regex following '!'</h1>
+<p><a href="https://github.com/google/code-prettify/issues/217">Issue #217</a></p>
+<pre class="prettyprint lang-js" id="issue217">
 if(!/^https?:\/\//i.test(val) &amp;&amp; foo == 'bar') {
     val = 'http://' + val;
 }
 </pre>
 
-<h1>Issue 32 : Matlab</h1>
-<pre id="matlab" class="prettyprint lang-matlab">
+<h1>MATLAB</h1>
+<p><a href="https://github.com/google/code-prettify/issues/32">Issue #32</a></p>
+<pre class="prettyprint lang-matlab" id="matlab">
 %%%%%%%%%%%%%%%%%% DATA TYPES %%%%%%%%%%%%%%%%%%
 
 v = [1,2,3;4,5,6];
