@@ -7,10 +7,19 @@
 <link rel="stylesheet" type="text/css" href="test_styles.css">
 <script type="text/javascript">
 (function () {
+  // keep track of when window.onload fires, this is to make sure that we dont
+  // miss it as it might occur before or after dynamic scripts are loaded
+  var isReady = false;
+  window.onload = function () { isReady = true; };
+
+  // run tests when page is fully loaded
+  function onReady() {
+    runTests(goldens);
+  }
+
   // JS & CSS prettify files to load
   var base = /[&?]loader\b/.test(location.search) ? '../loader/' : '../src/';
   var sources = [
-    'prettify.js',
     'lang-css.js',
     'lang-erlang.js',
     'lang-go.js',
@@ -30,25 +39,28 @@
   var styles = [
     'prettify.css'
   ];
-  for (var i = 0; i < sources.length; ++i) {
-    document.write('<script src="' + base + sources[i] + '"><\/script>');
-  }
-  for (var i = 0; i < styles.length; ++i) {
-    document.write('<link rel="stylesheet" href="' + base + styles[i] + '">');
-  }
-})();
 
-window.onload = (function() {
-  var attempt = function() {
-    var prettyPrint = window['prettyPrint'];
-    var goldens = window['goldens'];
-    if(prettyPrint && goldens) {
-      runTests(goldens);
-    } else {
-      setTimeout(attempt, 20);
+  // load skin(s)
+  while (styles.length) {
+    injectCSS(base + styles.shift());
+  }
+
+  // first load prettify.js
+  injectJS(base + 'prettify.js', function () {
+    // then load all lang-*.js concurrently
+    while (sources.length) {
+      injectJS(base + sources.shift(),
+        (sources.length) ? undefined : function () {
+          // then after last one is loaded, run tests when page is ready
+          // (piggyback on window.onload if it hasn't already fired)
+          if (isReady) {
+            onReady();
+          } else {
+            window.onload = onReady;
+          }
+        });
     }
-  };
-  return attempt;
+  });
 })();
 </script>
 </head>
