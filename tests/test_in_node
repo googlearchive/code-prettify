@@ -19,7 +19,6 @@ var optsHTT = {
   singleNewLineParagraphs: true
 };
 
-var proc = Path.basename(process.argv[1]);
 var jobs = process.argv.slice(2);
 var returnCode = 0;
 var browser = null;
@@ -37,7 +36,7 @@ function startBrowser() {
   // next URL
   var url = jobs.shift();
   if (url === undefined) {
-    console.log("%s: complete", proc);
+    console.log('>> Complete');
     process.exit(returnCode);
     return;
   }
@@ -48,15 +47,15 @@ function startBrowser() {
   }
 
   // load page
-  console.log("%s: Loading %s ...", proc, url);
+  console.log('>> Loading %s ...', url);
   browser = new Browser(optsZombie);
   if (optsZombie.debug) { browser.debug(); }
   browser.visit(url).then(checkCb).catch(problemCb);
 }
 
-function problemCb(error) {
+function problemCb(err) {
   // log error, and process next page
-  console.warn("Test failed: ", error);
+  console.warn('>> ' + err);
   returnCode = 1;
   startBrowser();
 }
@@ -65,9 +64,8 @@ function checkCb() {
   var done = false;
 
   // check for errors
-  function onProb(err_obj) {
-    console.warn("%s: %s, %s; %s", proc, err_obj.type,
-      err_obj.message, err_obj.data.error);
+  function onProb(err) {
+    console.warn('>> ' + err);
     returnCode = 1;
     done = true;
   }
