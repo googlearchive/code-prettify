@@ -32,9 +32,9 @@ var zombie_opts = { debug: false };
 var htt_opts = { wordwrap: (process.stdout.columns || 120) };
 
 var showSection = function(sectionName, sectionHtml) {
-    console.log("%s: ######## %s ########", proc, sectionName);
-    var plainText = htmlToText.fromString(sectionHtml, htt_opts);
-    console.log(plainText);
+  console.log("%s: ######## %s ########", proc, sectionName);
+  var plainText = htmlToText.fromString(sectionHtml, htt_opts);
+  console.log(plainText);
 }
 
 var jobs = process.argv.slice(2);
@@ -45,55 +45,55 @@ var check_cb = null;
 var problem_cb = null;
 
 var startBrowser = function() {
-    if(browser) {
-        browser.close();
-    }
-    var url = jobs.shift();
-    if(url === undefined) {
-        console.log("%s: complete", proc);
-        process.exit(return_code);
-        return;
-    }
-    var url_obj = Url.parse(url);
-    if(!url_obj.protocol) {
-        url_obj.protocol = "file";
-        url = Url.format(url_obj);
-    }
-    console.log("%s: Loading %s ...", proc, url);
-    browser = new Browser();
-    browser.visit(url, zombie_opts, null).then(check_cb).fail(problem_cb);
+  if(browser) {
+    browser.close();
+  }
+  var url = jobs.shift();
+  if(url === undefined) {
+    console.log("%s: complete", proc);
+    process.exit(return_code);
+    return;
+  }
+  var url_obj = Url.parse(url);
+  if(!url_obj.protocol) {
+    url_obj.protocol = "file";
+    url = Url.format(url_obj);
+  }
+  console.log("%s: Loading %s ...", proc, url);
+  browser = new Browser();
+  browser.visit(url, zombie_opts, null).then(check_cb).fail(problem_cb);
 };
 
 problem_cb = function(error) {
-    return_code = 1;
-    console.warn("Test failed: ", error);
-    startBrowser();
+  return_code = 1;
+  console.warn("Test failed: ", error);
+  startBrowser();
 }
 
 check_cb = function() {
-    var done = false;
-    var one_prob = function(err_obj) {
-        console.warn("%s: %s, %s; %s", proc, err_obj.type,
-                     err_obj.message, err_obj.data.error);
-        return_code = 1;
-        done = true;
-    };
-    (browser.errors || []).forEach(one_prob);
-    (browser.document.errors || []).forEach(one_prob);
-    var report = browser.html("#errorReport");
-    if(report.match(/Test results/i)) {
-        done = true;
-        showSection("TEST RESULTS", report);
-    }
-    var timing = browser.html("#timing");
-    if(timing) {
-        showSection("TIMING", timing);
-    }
-    if(done) {
-        startBrowser();
-    } else {
-        browser.wait().then(check_cb).fail(problem_cb);
-    }
+  var done = false;
+  var one_prob = function(err_obj) {
+    console.warn("%s: %s, %s; %s", proc, err_obj.type,
+      err_obj.message, err_obj.data.error);
+    return_code = 1;
+    done = true;
+  };
+  (browser.errors || []).forEach(one_prob);
+  (browser.document.errors || []).forEach(one_prob);
+  var report = browser.html("#errorReport");
+  if(report.match(/Test results/i)) {
+    done = true;
+    showSection("TEST RESULTS", report);
+  }
+  var timing = browser.html("#timing");
+  if(timing) {
+    showSection("TIMING", timing);
+  }
+  if(done) {
+    startBrowser();
+  } else {
+    browser.wait().then(check_cb).fail(problem_cb);
+  }
 }
 
 startBrowser();
