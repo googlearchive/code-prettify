@@ -16,6 +16,41 @@
  */
 
 /**
+ * Dynamically load script
+ *
+ * @param {string} url JavaScript file
+ * @param {Function=} opt_func onload callback
+ */
+function injectJS(url, opt_func) {
+  var el = document.createElement('script');
+  if (typeof opt_func === 'function') {
+    el.onload = el.onerror = el.onreadystatechange = function () {
+      if (el && (!el.readyState || /loaded|complete/.test(el.readyState))) {
+        el.onerror = el.onload = el.onreadystatechange = null;
+        el = null;
+        opt_func();
+      }
+    };
+  }
+  el.type = 'text/javascript';
+  el.src = url;
+  document.getElementsByTagName('head')[0].appendChild(el);
+}
+
+/**
+ * Dynamically load stylesheet
+ *
+ * @param {string} url CSS file
+ */
+function injectCSS(url) {
+  var el = document.createElement('link');
+  el.rel = 'stylesheet';
+  el.type = 'text/css';
+  el.href = url;
+  document.getElementsByTagName('head')[0].appendChild(el);
+}
+
+/**
  * Perform syntax highlighting and execute tests to verify results.
  *
  * @param {Object<string,string>} goldens a mapping from IDs of prettyprinted
