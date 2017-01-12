@@ -3,34 +3,36 @@
 <head>
 <meta charset="utf-8">
 <title>Code Prettifier</title>
+<script type="text/javascript" src="test_base.js"></script>
+<link rel="stylesheet" type="text/css" href="test_styles.css">
 <script type="text/javascript">
 (function () {
+  // JS & CSS prettify files to load
   var base = /[&?]loader\b/.test(location.search) ? '../loader/' : '../src/';
   var sources = [
-      'prettify.js',
-      'lang-css.js',
-      'lang-erlang.js',
-      'lang-go.js',
-      'lang-hs.js',
-      'lang-lisp.js',
-      'lang-lua.js',
-      'lang-ml.js',
-      'lang-proto.js',
-      'lang-rust.js',
-      'lang-scala.js',
-      'lang-sql.js',
-      'lang-wiki.js',
-      'lang-vhdl.js',
-      'lang-vb.js',
-      'lang-yaml.js',
+    'prettify.js',
+    'lang-css.js',
+    'lang-erlang.js',
+    'lang-go.js',
+    'lang-hs.js',
+    'lang-lisp.js',
+    'lang-lua.js',
+    'lang-ml.js',
+    'lang-proto.js',
+    'lang-rust.js',
+    'lang-scala.js',
+    'lang-sql.js',
+    'lang-vb.js',
+    'lang-vhdl.js',
+    'lang-wiki.js',
+    'lang-yaml.js'
   ];
   var styles = [
-      'prettify.css'
+    'prettify.css'
   ];
   for (var i = 0; i < sources.length; ++i) {
     document.write('<script src="' + base + sources[i] + '"><\/script>');
   }
-  document.write('<script src="test_base.js"><\/script>');
   for (var i = 0; i < styles.length; ++i) {
     document.write('<link rel="stylesheet" href="' + base + styles[i] + '">');
   }
@@ -38,10 +40,9 @@
 
 window.onload = (function() {
   var attempt = function() {
-    var go = window['go'];
     var prettyPrint = window['prettyPrint'];
     var goldens = window['goldens'];
-    if(go && prettyPrint && goldens) {
+    if(prettyPrint && goldens) {
       go(goldens);
     } else {
       setTimeout(attempt, 20);
@@ -50,7 +51,6 @@ window.onload = (function() {
   return attempt;
 })();
 </script>
-<link rel="stylesheet" type="text/css" href="test_styles.css">
 </head>
 
 <body>
