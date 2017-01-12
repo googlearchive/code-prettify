@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-var Path = require("path");
-var Url = require("url");
+var path = require('path');
 var Browser = require('zombie');
 var htmlToText = require('html-to-text');
 
@@ -39,11 +38,9 @@ function startBrowser() {
     console.log('>> Complete');
     process.exit(returnCode);
     return;
-  }
-  var url_obj = Url.parse(url);
-  if (!url_obj.protocol) {
-    url_obj.protocol = "file";
-    url = Url.format(url_obj);
+  } else if (!/^(?:https?|ftp):/.test(url)) {
+    // rewrite local path as a file:// URL
+    url = encodeURI('file://' + path.resolve(url).replace(/\\/g, '/'));
   }
 
   // load page
