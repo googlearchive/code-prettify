@@ -64,7 +64,10 @@ setTimeout(function () {
     return JSON.stringify(s)
       .replace(/\r/g, '\\r')
       .replace(/\n/g, '\\n')
-      .replace(/\t/g, '\\t');
+      .replace(/\t/g, '\\t')
+      .replace(/\\u000d/g, '\\r')
+      .replace(/\\u000a/g, '\\n')
+      .replace(/\\u0009/g, '\\t');
   }
 
   function htmlEscape(s) {

@@ -89,16 +89,19 @@ setTimeout(function () {
       };
       recombineTagsAndDecorations(job);
       // compare result against expected
-      var passed = testResult.innerHTML === actual.innerHTML;
+      var goldenNormalized = testResult.innerHTML;
+      var actualNormalized = actual.innerHTML.replace(
+        /\s*(?:class|style)=""/i, '');  // remove some empty attribs
+      var passed = goldenNormalized === actualNormalized;
       // report test result
       actual.className += passed ? ' ok' : ' failure';
       out.push((passed ? '\u2713 PASS' : '\u2717 FAIL'), '<\/div>');
       if (!passed) {
         out.push(
           '<table class="diff"><tr><th>Golden<\/th><td><code>' +
-          htmlEscape(testResult.innerHTML) +
+          htmlEscape(goldenNormalized) +
           '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
-          htmlEscape(actual.innerHTML) +
+          htmlEscape(actualNormalized) +
           '<\/code><\/td><\/tr><\/table>'
         );
       }
