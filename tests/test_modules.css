@@ -64,3 +64,27 @@ td {
   background-color: #ddd;
   border-color: #000;
 }
+
+/* log */
+#report {
+  margin-left: 1em;
+}
+.pass {
+  color: green;
+}
+.fail, .err {
+  color: red;
+}
+
+/* diff tables */
+table.diff {
+  table-layout: fixed;
+  max-width: 100%;
+}
+.diff th {
+  width: 50px;
+}
+.diff td {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

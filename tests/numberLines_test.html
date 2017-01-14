@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <title>numberLines</title>
 <script src="../js-modules/numberLines.js"></script>
-<script src="https://cdn.rawgit.com/douglascrockford/JSON-js/master/json2.js"></script>
 <script src="shims.js"></script>
 <link rel="stylesheet" type="text/css" href="test_modules.css">
 </head>
@@ -63,6 +62,10 @@
   </tr>
 </table>
 
+<hr>
+<h2>Log</h2>
+<div id="report"></div>
+
 <script type="text/javascript">
 setTimeout(function () {
   function normListItems(html) {
@@ -70,6 +73,14 @@ setTimeout(function () {
     return html.replace(/<\/li>(<li\b)/gi, '$1');
   }
 
+  function htmlEscape(s) {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  var out = [];
   var testInputs = Array.prototype.slice.call(
     document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
@@ -81,6 +92,8 @@ setTimeout(function () {
     // td.actual
     var actual = testResult.nextSibling;
     while (actual.nodeType !== 1) { actual = actual.nextSibling; }
+    // report
+    out.push('<div class="test">Test ' + (i+1) + ': ');
     try {
       // make a copy of input node (modified in-place)
       var clone = testInput.cloneNode(true);
@@ -95,17 +108,25 @@ setTimeout(function () {
       var goldenNormalized = normListItems(testResult.innerHTML);
       var actualNormalized = normListItems(actual.innerHTML);
       var passed = goldenNormalized === actualNormalized;
-      if (!passed) {
-        console.log(JSON.stringify(goldenNormalized) + '\n!==\n' +
-          JSON.stringify(actualNormalized));
-      }
+      // report test result
       actual.className += passed ? ' ok' : ' failure';
+      out.push((passed ? '\u2713 PASS' : '\u2717 FAIL'), '<\/div>');
+      if (!passed) {
+        out.push(
+          '<table class="diff"><tr><th>Golden<\/th><td><code>' +
+          htmlEscape(goldenNormalized) +
+          '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
+          htmlEscape(actualNormalized) +
+          '<\/code><\/td><\/tr><\/table>'
+        );
+      }
     } catch (ex) {
       actual.className += ' error';
-      actual.appendChild(document.createTextNode(
-        'Error: ' + (ex.message || ex) + '\n' + ex.stack));
+      out.push('\u274C ERROR', '<\/div>');
+      out.push('<pre class="err">', (ex.message || ex), ex.stack, '<\/pre>');
     }
   }
+  document.getElementById('report').innerHTML = out.join('\n');
 }, 0);
 </script>
 
