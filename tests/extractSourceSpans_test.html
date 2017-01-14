@@ -1,6 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html> <head>
-<title>Extract Source Spans Test</title>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>extractSourceSpans</title>
 <script src="../js-modules/extractSourceSpans.js"></script>
 <script src="https://cdn.rawgit.com/douglascrockford/JSON-js/master/json2.js"></script>
 <script src="shims.js"></script>
@@ -20,51 +22,53 @@ tr { vertical-align: top }
 <body>
 <h1>Extract Source Spans Test</h1>
 
-<table border=1 cellpadding=2 cellspacing=0>
-  <tr><th colspan=3>Test space preserved in PRE</th></tr>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr><th colspan="3">Test space preserved in PRE</th></tr>
   <tr>
     <td><pre class="testinput"><b>print </b>'Hello '<br>  + '&lt;World&gt;';</pre></td>
     <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
   </tr>
-  <tr><th colspan=3>Test class="nocode"</th></tr>
+  <tr><th colspan="3">Test class="nocode"</th></tr>
   <tr>
-    <td><pre class="testinput"><span class=nocode>1. </span><b>print </b>'Hello '<br><span class=nocode>2. </span>  + '&lt;World&gt;';</pre></td>
+    <td><pre class="testinput"><span class="nocode">1. </span><b>print </b>'Hello '<br><span class="nocode">2. </span>  + '&lt;World&gt;';</pre></td>
     <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
   </tr>
-  <tr><th colspan=3>Test whitespace normalized in code</th></tr>
+  <tr><th colspan="3">Test whitespace normalized in code</th></tr>
   <tr>
     <td><code class="testinput"><b>print </b>'Hello '
   + '&lt;World&gt;';</pre></td>
     <td class="golden"><pre>^print ^'Hello ' + '&lt;World&gt;';^</pre></td>
   </tr>
-  <tr><th colspan=3>Test XMP</th></tr>
+  <tr><th colspan="3">Test XMP</th></tr>
   <tr>
     <td><xmp class="testinput">print 'Hello '
   + '<World>';</xmp></td>
     <td class="golden"><pre>^print 'Hello '\n  + '&lt;World&gt;';^</pre></td>
   </tr>
-  <tr><th colspan=3>Test tabs</th></tr>
+  <tr><th colspan="3">Test tabs</th></tr>
   <tr>
     <td><pre class="testinput">print 'Hello '
 &#9;+ '&lt;World&gt;';</pre></td>
     <td class="golden"><pre>^print 'Hello '\n\t+ '&lt;World&gt;';^</pre></td>
   </tr>
-  <tr><th colspan=3>Test number lines output</th></tr>
+  <tr><th colspan="3">Test number lines output</th></tr>
   <tr>
     <td><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</pre></li></ul></td>
     <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^^</pre></td>
   </tr>
 </table>
 
-<script>
+<script type="text/javascript">
 setTimeout(function () {
   function stringify(s) {
-    return JSON.stringify(s).replace(/\r/g, '\\r').replace(/\n/g, '\\n')
-        .replace(/\t/g, '\\t');
+    return JSON.stringify(s)
+      .replace(/\r/g, '\\r')
+      .replace(/\n/g, '\\n')
+      .replace(/\t/g, '\\t');
   }
 
   var testInputs = Array.prototype.slice.call(
-     document.getElementsByClassName('testinput'), 0);
+    document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
     var testInput = testInputs[i];
     var testResult = testInput.parentNode.nextSibling;
@@ -87,8 +91,8 @@ setTimeout(function () {
         if (spans[j + 1].nodeName === 'BR') {
           spanClass += ' break';
         }
-        actualHtml += '<span class="' + spanClass+ '">'
-            + span.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '<\/span>';
+        actualHtml += '<span class="' + spanClass+ '">' +
+          span.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '<\/span>';
       }
       actual.innerHTML = '<pre>' + actualHtml + '<\/pre>';
       var goldenText = testResult.innerText || testResult.textContent;
@@ -96,17 +100,17 @@ setTimeout(function () {
       var actualNormalized = stringify(actualText);
       var passed = actualNormalized === goldenNormalized;
       if (!passed) {
-        console.log(goldenNormalized + ' !==\n' + actualNormalized);
+        console.log(goldenNormalized + '\n!==\n' + actualNormalized);
       }
       actual.className += passed ? ' ok' : ' failure';
     } catch (ex) {
       actual.className += ' error';
-      actual.appendChild(document.createTextNode('Error: ' + (ex.message || ex)));
+      actual.appendChild(document.createTextNode(
+        'Error: ' + (ex.message || ex) + '\n' + ex.stack));
     }
   }
-}, 0)</script>
+}, 0);
+</script>
 
-<hr>
-<address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 16:38:23 PDT 2011 <!-- hhmts end -->
-</body> </html>
+</body>
+</html>

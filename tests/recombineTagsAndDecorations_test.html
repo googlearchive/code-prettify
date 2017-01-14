@@ -1,11 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html> <head>
-<title>Recombine Tags And Decorations</title>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>recombineTagsAndDecorations</title>
 <script src="../js-modules/extractSourceSpans.js"></script>
 <script src="../js-modules/recombineTagsAndDecorations.js"></script>
 <script src="https://cdn.rawgit.com/douglascrockford/JSON-js/master/json2.js"></script>
 <script src="shims.js"></script>
-<link rel="stylesheet" href="../src/prettify.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="../src/prettify.css">
 <style>
 .ok { background: #dfd }
 .error, .failure { background: #fdd }
@@ -16,7 +18,7 @@ tr { vertical-align: top }
 </head>
 
 <body>
-<h1>Recombine Tags And Decorations</h1>
+<h1>Recombine Tags And Decorations Test</h1>
 
 <table border="1" cellpadding="2" cellspacing="0">
   <tr><th colspan="4">Test Single Decoration</th></tr>
@@ -39,10 +41,10 @@ tr { vertical-align: top }
   </tr>
 </table>
 
-<script>
+<script type="text/javascript">
 setTimeout(function () {
   var testInputs = Array.prototype.slice.call(
-     document.getElementsByClassName('testinput'), 0);
+    document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
     var testInput = testInputs[i];
     var decorationsNode = testInput.parentNode.nextSibling;
@@ -62,19 +64,19 @@ setTimeout(function () {
       recombineTagsAndDecorations(job);
       var passed = testResult.innerHTML === actual.innerHTML;
       if (!passed) {
-        console.log(JSON.stringify(testResult.innerHTML) + ' !==\n' + JSON.stringify(actual.innerHTML));
+        console.log(JSON.stringify(testResult.innerHTML) + '\n!==\n' +
+          JSON.stringify(actual.innerHTML));
       }
       actual.className = passed ? 'ok' : 'failure';
     } catch (ex) {
       actual.className = 'error';
       actual.appendChild(document.createTextNode(
-          'Error: ' + (ex.message || ex)  + '\n' + ex.stack));
+        'Error: ' + (ex.message || ex)  + '\n' + ex.stack));
     }
     actual.className += ' actual';
   }
-}, 0)</script>
+}, 0);
+</script>
 
-<hr>
-<address></address>
-<!-- hhmts start --> Last modified: Tue Mar 29 10:41:34 PDT 2011 <!-- hhmts end -->
-</body> </html>
+</body>
+</html>
