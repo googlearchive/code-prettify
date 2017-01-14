@@ -54,16 +54,26 @@ setTimeout(function () {
     // td.actual
     var actual = testResult.nextSibling;
     while (actual.nodeType !== 1) { actual = actual.nextSibling; }
-    // make a copy of input node (modified in-place)
-    var clone = testInput.cloneNode(true);
-    clone.className = '';  // IE
-    clone.removeAttribute('class');  // Not IE.
-    actual.appendChild(clone);
-    // run function
-    var isPreformatted = /pre|xmp/i.test(clone.tagName);
-    var job = extractSourceSpans(clone, isPreformatted);
-    job.decorations = eval(decorationsNode.innerText || decorationsNode.textContent);
     try {
+      // make a copy of input node (modified in-place)
+      var clone = testInput.cloneNode(true);
+      clone.className = '';  // IE
+      clone.removeAttribute('class');  // Not IE.
+      actual.appendChild(clone);
+      // run function
+      var isPreformatted = /pre|xmp/i.test(clone.tagName);
+      var sourceAndSpans = extractSourceSpans(clone, isPreformatted);
+      var job = {
+        sourceCode: sourceAndSpans.sourceCode,
+        spans: sourceAndSpans.spans,
+        sourceNode: clone, // null
+        pre: isPreformatted,
+        langExtension: null,
+        numberLines: null,
+        basePos: 0,
+        decorations: eval(
+          decorationsNode.innerText || decorationsNode.textContent)
+      };
       recombineTagsAndDecorations(job);
       // compare result against expected
       var passed = testResult.innerHTML === actual.innerHTML;
