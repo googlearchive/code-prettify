@@ -26,7 +26,7 @@
   <tr><th colspan="3">Test whitespace normalized in code</th></tr>
   <tr>
     <td><code class="testinput"><b>print </b>'Hello '
-  + '&lt;World&gt;';</pre></td>
+  + '&lt;World&gt;';</code></td>
     <td class="golden"><pre>^print ^'Hello ' + '&lt;World&gt;';^</pre></td>
   </tr>
   <tr><th colspan="3">Test XMP</th></tr>
@@ -43,7 +43,7 @@
   </tr>
   <tr><th colspan="3">Test number lines output</th></tr>
   <tr>
-    <td><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</pre></li></ul></td>
+    <td><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</li></ul></pre></td>
     <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^^</pre></td>
   </tr>
 </table>
