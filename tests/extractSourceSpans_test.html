@@ -15,36 +15,42 @@
 <table>
   <tr><th colspan="3">Test space preserved in PRE</th></tr>
   <tr>
-    <td><pre class="testinput"><b>print </b>'Hello '<br>  + '&lt;World&gt;';</pre></td>
+    <td class="input"><pre class="testinput"><b>print </b>'Hello '<br>  + '&lt;World&gt;';</pre></td>
     <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test class="nocode"</th></tr>
   <tr>
-    <td><pre class="testinput"><span class="nocode">1. </span><b>print </b>'Hello '<br><span class="nocode">2. </span>  + '&lt;World&gt;';</pre></td>
+    <td class="input"><pre class="testinput"><span class="nocode">1. </span><b>print </b>'Hello '<br><span class="nocode">2. </span>  + '&lt;World&gt;';</pre></td>
     <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test whitespace normalized in code</th></tr>
   <tr>
-    <td><code class="testinput"><b>print </b>'Hello '
+    <td class="input"><code class="testinput"><b>print </b>'Hello '
   + '&lt;World&gt;';</code></td>
     <td class="golden"><pre>^print ^'Hello ' + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test XMP</th></tr>
   <tr>
-    <td><xmp class="testinput">print 'Hello '
+    <td class="input"><xmp class="testinput">print 'Hello '
   + '<World>';</xmp></td>
     <td class="golden"><pre>^print 'Hello '\n  + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test tabs</th></tr>
   <tr>
-    <td><pre class="testinput">print 'Hello '
+    <td class="input"><pre class="testinput">print 'Hello '
 &#9;+ '&lt;World&gt;';</pre></td>
     <td class="golden"><pre>^print 'Hello '\n\t+ '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test number lines output</th></tr>
   <tr>
-    <td><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</li></ul></pre></td>
+    <td class="input"><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</li></ul></pre></td>
     <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^^</pre></td>
+    <td class="actual"></td>
   </tr>
 </table>
 
@@ -66,9 +72,8 @@ setTimeout(function () {
     var testResult = testInput.parentNode.nextSibling;
     while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
     // td.actual
-    var actual = document.createElement('TD');
-    actual.className = 'actual';
-    testResult.parentNode.appendChild(actual);
+    var actual = testResult.nextSibling;
+    while (actual.nodeType !== 1) { actual = actual.nextSibling; }
     try {
       // run function
       var isPreformatted = /pre|xmp/i.test(testInput.tagName);

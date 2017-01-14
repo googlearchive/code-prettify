@@ -15,43 +15,51 @@
 <table>
   <tr><th colspan="3">Test Nothing to Split</th></tr>
   <tr>
-    <td><code class="testinput">Hello, World!</code></td>
-    <td><code><ol class="linenums"><li class="L0">Hello, World!</li></ol></code></td>
+    <td class="input"><code class="testinput">Hello, World!</code></td>
+    <td class="golden"><code><ol class="linenums"><li class="L0">Hello, World!</li></ol></code></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test Normalized Spaces</th></tr>
   <tr>
-    <td><code class="testinput">Hello,&#10;World!</code></td>
-    <td><code><ol class="linenums"><li class="L0">Hello,&#10;World!</li></ol></code></td>
+    <td class="input"><code class="testinput">Hello,&#10;World!</code></td>
+    <td class="golden"><code><ol class="linenums"><li class="L0">Hello,&#10;World!</li></ol></code></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test BR</th></tr>
   <tr>
-    <td><pre class="testinput">Hello,<br>World!</pre></td>
-    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">World!</li></ol></pre></td>
+    <td class="input"><pre class="testinput">Hello,<br>World!</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">World!</li></ol></pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test line breaks</th></tr>
   <tr>
-    <td><pre class="testinput">Hello,&#10;there&#10;World!</pre></td>
-    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">there</li><li class="L2">World!</li></ol></pre></td>
+    <td class="input"><pre class="testinput">Hello,&#10;there&#10;World!</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">there</li><li class="L2">World!</li></ol></pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test line breaks with followers</th></tr>
   <tr>
-    <td><pre class="testinput"><b>Hello,&#10;there&#10;World!&#10;</b><button>OK</button></pre></td>
-    <td><pre><ol class="linenums"><li class="L0"><b>Hello,</b></li><li class="L1"><b>there</b></li><li class="L2"><b>World!</b></li><li class="L3"><button>OK</button></li></ol></pre></td>
+    <td class="input"><pre class="testinput"><b>Hello,&#10;there&#10;World!&#10;</b><button>OK</button></pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0"><b>Hello,</b></li><li class="L1"><b>there</b></li><li class="L2"><b>World!</b></li><li class="L3"><button>OK</button></li></ol></pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test nocode</th></tr>
   <tr>
-    <td><pre class="testinput">Hello,&#10;the<span class="nocode">re&#10;World!</span></pre></td>
-    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<span class="nocode">re&#10;World!</span></li></ol></pre></td>
+    <td class="input"><pre class="testinput">Hello,&#10;the<span class="nocode">re&#10;World!</span></pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<span class="nocode">re&#10;World!</span></li></ol></pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test link</th></tr>
   <tr>
-    <td><pre class="testinput">Hello,&#10;the<a href="#" style="font-weight: bold">re&#10;Wor</a>ld!</pre></td>
-    <td><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<a href="#" style="font-weight: bold">re</a></li><li class="L2"><a href="#" style="font-weight: bold">Wor</a>ld!</li></ol></pre></td>
+    <td class="input"><pre class="testinput">Hello,&#10;the<a href="#" style="font-weight: bold">re&#10;Wor</a>ld!</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<a href="#" style="font-weight: bold">re</a></li><li class="L2"><a href="#" style="font-weight: bold">Wor</a>ld!</li></ol></pre></td>
+    <td class="actual"></td>
   </tr>
   <tr><th colspan="3">Test blank lines</th></tr>
   <tr>
-    <td><pre class="testinput">One&#10;&#10;Three</pre></td>
-    <td><pre><ol class="linenums"><li class="L0">One</li><li class="L1">&nbsp;</li><li class="L2">Three</li></ol></pre></td>
+    <td class="input"><pre class="testinput">One&#10;&#10;Three</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">One</li><li class="L1">&nbsp;</li><li class="L2">Three</li></ol></pre></td>
+    <td class="actual"></td>
   </tr>
 </table>
 
@@ -71,8 +79,8 @@ setTimeout(function () {
     var testResult = testInput.parentNode.nextSibling;
     while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
     // td.actual
-    var actual = document.createElement('TD');
-    testResult.parentNode.appendChild(actual);
+    var actual = testResult.nextSibling;
+    while (actual.nodeType !== 1) { actual = actual.nextSibling; }
     try {
       // make a copy of input node (modified in-place)
       var clone = testInput.cloneNode(true);
@@ -91,13 +99,12 @@ setTimeout(function () {
         console.log(JSON.stringify(goldenNormalized) + '\n!==\n' +
           JSON.stringify(actualNormalized));
       }
-      actual.className = passed ? 'ok' : 'failure';
+      actual.className += passed ? ' ok' : ' failure';
     } catch (ex) {
-      actual.className = 'error';
+      actual.className += ' error';
       actual.appendChild(document.createTextNode(
         'Error: ' + (ex.message || ex) + '\n' + ex.stack));
     }
-    actual.className += ' actual';
   }
 }, 0);
 </script>
