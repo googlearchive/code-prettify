@@ -40,22 +40,29 @@ setTimeout(function () {
   var testInputs = Array.prototype.slice.call(
     document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
+    // td.input > .testinput
     var testInput = testInputs[i];
+    // td.decorations (result of language handler function)
     var decorationsNode = testInput.parentNode.nextSibling;
     while (decorationsNode.nodeType !== 1) { decorationsNode = decorationsNode.nextSibling; }
+    // td.golden
     var testResult = decorationsNode.nextSibling;
     while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
+    // td.actual
     var actual = document.createElement('TD');
     testResult.parentNode.appendChild(actual);
+    // make a copy of input node (modified in-place)
     var clone = testInput.cloneNode(true);
     clone.className = '';  // IE
     clone.removeAttribute('class');  // Not IE.
     actual.appendChild(clone);
+    // run function
     var isPreformatted = /pre|xmp/i.test(clone.tagName);
     var job = extractSourceSpans(clone, isPreformatted);
     job.decorations = eval(decorationsNode.innerText || decorationsNode.textContent);
     try {
       recombineTagsAndDecorations(job);
+      // compare result against expected
       var passed = testResult.innerHTML === actual.innerHTML;
       if (!passed) {
         console.log(JSON.stringify(testResult.innerHTML) + '\n!==\n' +

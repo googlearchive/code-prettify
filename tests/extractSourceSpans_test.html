@@ -60,31 +60,40 @@ setTimeout(function () {
   var testInputs = Array.prototype.slice.call(
     document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
+    // td.input > .testinput
     var testInput = testInputs[i];
+    // td.golden
     var testResult = testInput.parentNode.nextSibling;
     while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
+    // td.actual
     var actual = document.createElement('TD');
     actual.className = 'actual';
     testResult.parentNode.appendChild(actual);
     try {
+      // run function
       var isPreformatted = /pre|xmp/i.test(testInput.tagName);
       var sourceAndSpans = extractSourceSpans(testInput, isPreformatted);
+      // build result
       var source = sourceAndSpans.sourceCode;
       var spans = sourceAndSpans.spans;
       var actualText = '^';
       var actualHtml = '';
       for (var j = 0, m = spans.length; j < m; j += 2) {
+        // extract span text
         var start = spans[j], end = spans[j + 2] || source.length;
         var span = source.substring(start, end);
         actualText += span + '^';
+        // determine span class name
         var spanClass = ((j & 2) ? 'odd' : 'even');
         if (spans[j + 1].nodeName === 'BR') {
           spanClass += ' break';
         }
+        // html formatted
         actualHtml += '<span class="' + spanClass+ '">' +
           span.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '<\/span>';
       }
       actual.innerHTML = '<pre>' + actualHtml + '<\/pre>';
+      // compare result against expected
       var goldenText = testResult.innerText || testResult.textContent;
       var goldenNormalized = '"' + goldenText.replace(/(?:\r\n?|\n)$/, '') + '"';
       var actualNormalized = stringify(actualText);
