@@ -64,7 +64,7 @@ fs.readdirSync(srcDir).filter(function (f) {
     });
 
     // collect extensions list
-    var langExtensions = sandbox.langExtensions;
+    var langExtensions = sandbox.langExtensions.sort();
     console.log(f + ' => ' + langExtensions);
 
     // for each unique alias, copy file if not already exist
