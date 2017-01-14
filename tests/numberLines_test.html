@@ -106,7 +106,8 @@ setTimeout(function () {
       numberLines(clone, startLineNum, isPreformatted);
       // compare result again expected
       var goldenNormalized = normListItems(testResult.innerHTML);
-      var actualNormalized = normListItems(actual.innerHTML);
+      var actualNormalized = normListItems(actual.innerHTML).replace(
+        /\s*(?:class|style)=""/i, '');  // remove some empty attribs
       var passed = goldenNormalized === actualNormalized;
       // report test result
       actual.className += passed ? ' ok' : ' failure';
