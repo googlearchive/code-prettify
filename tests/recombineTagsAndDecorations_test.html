@@ -5,7 +5,6 @@
 <title>recombineTagsAndDecorations</title>
 <script src="../js-modules/extractSourceSpans.js"></script>
 <script src="../js-modules/recombineTagsAndDecorations.js"></script>
-<script src="https://cdn.rawgit.com/douglascrockford/JSON-js/master/json2.js"></script>
 <script src="shims.js"></script>
 <link rel="stylesheet" type="text/css" href="../src/prettify.css">
 <link rel="stylesheet" type="text/css" href="test_modules.css">
@@ -38,8 +37,20 @@
   </tr>
 </table>
 
+<hr>
+<h2>Log</h2>
+<div id="report"></div>
+
 <script type="text/javascript">
 setTimeout(function () {
+  function htmlEscape(s) {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  var out = [];
   var testInputs = Array.prototype.slice.call(
     document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
@@ -54,6 +65,8 @@ setTimeout(function () {
     // td.actual
     var actual = testResult.nextSibling;
     while (actual.nodeType !== 1) { actual = actual.nextSibling; }
+    // report
+    out.push('<div class="test">Test ' + (i+1) + ': ');
     try {
       // make a copy of input node (modified in-place)
       var clone = testInput.cloneNode(true);
@@ -77,17 +90,25 @@ setTimeout(function () {
       recombineTagsAndDecorations(job);
       // compare result against expected
       var passed = testResult.innerHTML === actual.innerHTML;
-      if (!passed) {
-        console.log(JSON.stringify(testResult.innerHTML) + '\n!==\n' +
-          JSON.stringify(actual.innerHTML));
-      }
+      // report test result
       actual.className += passed ? ' ok' : ' failure';
+      out.push((passed ? '\u2713 PASS' : '\u2717 FAIL'), '<\/div>');
+      if (!passed) {
+        out.push(
+          '<table class="diff"><tr><th>Golden<\/th><td><code>' +
+          htmlEscape(testResult.innerHTML) +
+          '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
+          htmlEscape(actual.innerHTML) +
+          '<\/code><\/td><\/tr><\/table>'
+        );
+      }
     } catch (ex) {
       actual.className += ' error';
-      actual.appendChild(document.createTextNode(
-        'Error: ' + (ex.message || ex)  + '\n' + ex.stack));
+      out.push('\u274C ERROR', '<\/div>');
+      out.push('<pre class="err">', (ex.message || ex), ex.stack, '<\/pre>');
     }
   }
+  document.getElementById('report').innerHTML = out.join('\n');
 }, 0);
 </script>
 

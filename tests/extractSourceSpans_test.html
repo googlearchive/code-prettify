@@ -54,6 +54,10 @@
   </tr>
 </table>
 
+<hr>
+<h2>Log</h2>
+<div id="report"></div>
+
 <script type="text/javascript">
 setTimeout(function () {
   function stringify(s) {
@@ -63,6 +67,14 @@ setTimeout(function () {
       .replace(/\t/g, '\\t');
   }
 
+  function htmlEscape(s) {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  var out = [];
   var testInputs = Array.prototype.slice.call(
     document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
@@ -74,6 +86,8 @@ setTimeout(function () {
     // td.actual
     var actual = testResult.nextSibling;
     while (actual.nodeType !== 1) { actual = actual.nextSibling; }
+    // report
+    out.push('<div class="test">Test ' + (i+1) + ': ');
     try {
       // run function
       var isPreformatted = /pre|xmp/i.test(testInput.tagName);
@@ -94,8 +108,8 @@ setTimeout(function () {
           spanClass += ' break';
         }
         // html formatted
-        actualHtml += '<span class="' + spanClass+ '">' +
-          span.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '<\/span>';
+        actualHtml += '<span class="' + spanClass+ '">' + htmlEscape(span) +
+          '<\/span>';
       }
       actual.innerHTML = '<pre>' + actualHtml + '<\/pre>';
       // compare result against expected
@@ -103,16 +117,25 @@ setTimeout(function () {
       var goldenNormalized = '"' + goldenText.replace(/(?:\r\n?|\n)$/, '') + '"';
       var actualNormalized = stringify(actualText);
       var passed = actualNormalized === goldenNormalized;
-      if (!passed) {
-        console.log(goldenNormalized + '\n!==\n' + actualNormalized);
-      }
+      // report test result
       actual.className += passed ? ' ok' : ' failure';
+      out.push((passed ? '\u2713 PASS' : '\u2717 FAIL'), '<\/div>');
+      if (!passed) {
+        out.push(
+          '<table class="diff"><tr><th>Golden<\/th><td><code>' +
+          htmlEscape(goldenNormalized) +
+          '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
+          htmlEscape(actualNormalized) +
+          '<\/code><\/td><\/tr><\/table>'
+        );
+      }
     } catch (ex) {
       actual.className += ' error';
-      actual.appendChild(document.createTextNode(
-        'Error: ' + (ex.message || ex) + '\n' + ex.stack));
+      out.push('\u274C ERROR', '<\/div>');
+      out.push('<pre class="err">', (ex.message || ex), ex.stack, '<\/pre>');
     }
   }
+  document.getElementById('report').innerHTML = out.join('\n');
 }, 0);
 </script>
 
