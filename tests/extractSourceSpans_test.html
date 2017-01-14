@@ -91,11 +91,12 @@ setTimeout(function () {
     actual.className = 'actual';
     testResult.parentNode.appendChild(actual);
     try {
-      var sourceAndSpans = extractSourceSpans(testInput);
-      var source = sourceAndSpans.source;
+      var isPreformatted = /pre|xmp/i.test(testInput.tagName);
+      var sourceAndSpans = extractSourceSpans(testInput, isPreformatted);
+      var source = sourceAndSpans.sourceCode;
+      var spans = sourceAndSpans.spans;
       var actualText = '^';
       var actualHtml = '';
-      var spans = sourceAndSpans.spans;
       for (var j = 0, m = spans.length; j < m; j += 2) {
         var start = spans[j], end = spans[j + 2] || source.length;
         var span = source.substring(start, end);

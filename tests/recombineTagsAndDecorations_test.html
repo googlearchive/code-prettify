@@ -73,7 +73,8 @@ setTimeout(function () {
     clone.className = '';  // IE
     clone.removeAttribute('class');  // Not IE.
     actual.appendChild(clone);
-    var job = extractSourceSpans(clone);
+    var isPreformatted = /pre|xmp/i.test(clone.tagName);
+    var job = extractSourceSpans(clone, isPreformatted);
     job.decorations = eval(decorationsNode.innerText || decorationsNode.textContent);
     try {
       recombineTagsAndDecorations(job);
