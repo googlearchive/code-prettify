@@ -3,6 +3,7 @@
 <title>Number Lines Test</title>
 <script src="../js-modules/numberLines.js"></script>
 <script src="https://cdn.rawgit.com/douglascrockford/JSON-js/master/json2.js"></script>
+<script src="shims.js"></script>
 <style>
 .ok { background: #dfd }
 .error, .failure { background: #fdd }
@@ -58,25 +59,6 @@ tr { vertical-align: top }
 </table>
 
 <script>
-if (!document.body.getElementsByClassName) {
-  document.body.getElementsByClassName = function (className) {
-    className = className.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, ' ');
-    var results = [];
-    function walk(node) {
-      if (node.nodeType !== 1) { return; }
-      // This test should be order-insensitive.
-      if ((' ' + node.className + ' ').indexOf(className) >= 0) {
-        results[results.length] = node;
-      }
-      for (var child = node.firstChild; child; child = child.nextSibling) {
-        walk(child);
-      }
-    }
-    walk(document.body);
-    return results;
-  };
-}
-
 setTimeout(function () {
   function normListItems(html) {
     // IE likes to leave out </li>s before <li>s.
@@ -84,7 +66,7 @@ setTimeout(function () {
   }
 
   var testInputs = Array.prototype.slice.call(
-     document.body.getElementsByClassName('testinput'), 0);
+     document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
     var testInput = testInputs[i];
     var testResult = testInput.parentNode.nextSibling;

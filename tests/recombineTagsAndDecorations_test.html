@@ -4,6 +4,7 @@
 <script src="../js-modules/extractSourceSpans.js"></script>
 <script src="../js-modules/recombineTagsAndDecorations.js"></script>
 <script src="https://cdn.rawgit.com/douglascrockford/JSON-js/master/json2.js"></script>
+<script src="shims.js"></script>
 <link rel="stylesheet" href="../src/prettify.css" type="text/css" />
 <style>
 .ok { background: #dfd }
@@ -39,28 +40,9 @@ tr { vertical-align: top }
 </table>
 
 <script>
-if (!document.body.getElementsByClassName) {
-  document.body.getElementsByClassName = function (className) {
-    className = className.replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, ' ');
-    var results = [];
-    function walk(node) {
-      if (node.nodeType !== 1) { return; }
-      // This test should be order-insensitive.
-      if ((' ' + node.className + ' ').indexOf(className) >= 0) {
-        results[results.length] = node;
-      }
-      for (var child = node.firstChild; child; child = child.nextSibling) {
-        walk(child);
-      }
-    }
-    walk(document.body);
-    return results;
-  };
-}
-
 setTimeout(function () {
   var testInputs = Array.prototype.slice.call(
-     document.body.getElementsByClassName('testinput'), 0);
+     document.getElementsByClassName('testinput'), 0);
   for (var i = 0, n = testInputs.length; i < n; ++i) {
     var testInput = testInputs[i];
     var decorationsNode = testInput.parentNode.nextSibling;
