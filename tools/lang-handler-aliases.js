@@ -14,14 +14,6 @@ var fs = require('fs');
 var path = require('path');
 var vm = require('vm');
 
-function fileExists(filePath) {
-    try {
-        return fs.statSync(filePath).isFile();
-    } catch (err) {
-        return false;
-    }
-}
-
 function getSandbox() {
     // collect registered language extensions
     var sandbox = {};
@@ -80,7 +72,7 @@ fs.readdirSync(srcDir).filter(function (f) {
         return langExtensions.indexOf(ext) == pos;
     }).forEach(function (ext) {
         var targetFile = path.join(srcDir, 'lang-' + ext + '.js');
-        if (!fileExists(targetFile)) {
+        if (!fs.existsSync(targetFile)) {
             fs.writeFileSync(targetFile, code);
         }
     });
