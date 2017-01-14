@@ -96,7 +96,9 @@ setTimeout(function () {
       testInputClone.className = '';  // IE
       testInputClone.removeAttribute('class');  // Not IE.
       actual.appendChild(testInputClone);
-      numberLines(testInputClone);
+      var startLineNum = true;
+      var isPreformatted = /pre|xmp/i.test(testInputClone.tagName);
+      numberLines(testInputClone, startLineNum, isPreformatted);
       var goldenNorm = normListItems(testResult.innerHTML);
       var actualNorm = normListItems(actual.innerHTML);
       var passed = goldenNorm === actualNorm;
