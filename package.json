@@ -1,0 +1,21 @@
+{
+  "name": "code-prettify",
+  "version": "1.0.0",
+  "description": "An embeddable script that makes source-code snippets in HTML prettier.",
+  "main": "src/prettify.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/code-prettify.git"
+  },
+  "author": "google",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/google/code-prettify/issues"
+  },
+  "homepage": "https://github.com/google/code-prettify#readme"
+}
