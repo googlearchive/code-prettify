@@ -1,0 +1,46 @@
+/* based on Google Developers' ( https://developers.google.com ) syntax highlighter */
+
+pre.prettyprint {
+	font-family: 'Roboto Mono', monospace;
+	font-size: 14px;
+	line-height: 20px;
+	color: #455A64;
+	background-color: #F7F7F7;
+	border: 1px solid #EBEBEB;
+}
+
+/* string content; a markup attribute value */
+.prettyprinted .str,
+.prettyprinted .atv { color: #689F38; }
+
+ /* a keyword; a markup tag name */
+.prettyprinted .kwd,
+.prettyprinted .tag { color: #0097A7; }
+
+/* a comment */
+.prettyprinted .com { color: #D81B60; }
+
+/* a type name; a markup attribute name */
+.prettyprinted .typ,
+.prettyprinted .atn { color: #9C27B0; }
+
+/* a literal value; a declaration */
+.prettyprinted .lit,
+.prettyprinted .dec { color: #EF6C00; }
+
+.prettyprinted .linenums {
+	margin-top: 0;
+	margin-bottom: 0;
+	list-style-type: decimal-leading-zero;
+}
+
+.prettyprinted li {
+	padding-left: 10px;
+	border-left: 1px solid #EBEBEB;
+}
+
+@media print {
+	pre.prettyprint {
+		background-color: transparent;
+	}
+}
