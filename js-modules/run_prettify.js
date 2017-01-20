@@ -61,6 +61,10 @@
  * </div>
  */
 
+/* @ifdef RUN_PRETTIFY */
+/* @include defs.js */
+/* @endif */
+
 (function () {
   "use strict";
 
@@ -226,7 +230,7 @@
   loadStylesheetsFallingBack(skinUrls);
 
   var prettyPrint = (function () {
-    include("prettify.js");
+    /* @include prettify.js */
     return prettyPrint;
   })();
 

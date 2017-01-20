@@ -57,9 +57,9 @@
 // JSLint declarations
 /*global console, document, navigator, setTimeout, window, define */
 
-include("defs.js");
-
-var HACK_TO_FIX_JS_INCLUDE_PL;
+/* @ifndef RUN_PRETTIFY */
+/* @include defs.js */
+/* @endif */
 
 /**
  * {@type !{
@@ -236,11 +236,11 @@ var prettyPrint;
    */
   var PR_NOCODE = 'nocode';
 
-  include("regexpPrecederPatterns.pl");
+  /* @include regexpPrecederPatterns.js */
 
-  include("combinePrefixPatterns.js");
+  /* @include combinePrefixPatterns.js */
 
-  include("extractSourceSpans.js");
+  /* @include extractSourceSpans.js */
 
   /**
    * Apply the given language handler to sourceCode and add the resulting
@@ -661,9 +661,9 @@ var prettyPrint;
         'regexLiterals': true
       });
 
-  include("numberLines.js");
+  /* @include numberLines.js */
 
-  include("recombineTagsAndDecorations.js");
+  /* @include recombineTagsAndDecorations.js */
 
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
