@@ -52,6 +52,8 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^1.0.2",
     "grunt-contrib-uglify": "^2.0.0",
-    "grunt-preprocess": "^5.1.0"
+    "grunt-preprocess": "^5.1.0",
+    "html-to-text": "^3.0.0",
+    "zombie": "^5.0.5"
   }
 }
