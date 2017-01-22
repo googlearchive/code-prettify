@@ -85,7 +85,7 @@ after</pre>
 function makeCodeJoiningOn(text, htmlNewline, start, end) {
   start = start || '';
   end = end || '';
-  var code = document.createElement('PRE');
+  var code = document.createElement('pre');
   code.innerHTML = start +
     ['before', '[' + text + ']', 'after'].join(htmlNewline) + end;
   code.id = text.replace('+', 'plus').replace(/[^\w\-_]/g, '_');
@@ -135,7 +135,7 @@ makeCodeJoiningOn('UL', '<\/li><li>',
   }
 
   function logger(text) {
-    var p = document.createElement('P');
+    var p = document.createElement('p');
     p.appendChild(document.createTextNode(text));
     document.getElementById('report').appendChild(p);
   }
