@@ -30,7 +30,7 @@ function numberLines(node, startLineNum, isPreformatted) {
   function walk(node) {
     var type = node.nodeType;
     if (type == 1 && !nocode.test(node.className)) {  // Element
-      if ('br' === node.nodeName) {
+      if ('br' === node.nodeName.toLowerCase()) {
         breakAfter(node);
         // Discard the <BR> since it is now flush against a </LI>.
         if (node.parentNode) {
