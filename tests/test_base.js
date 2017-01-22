@@ -230,7 +230,7 @@ function runTests(goldens) {
     // an HTML description of well formed XML and the containing tag is a PRE
     // tag, so we detect that case and emulate innerHTML.
     if (null === innerHtmlWorks) {
-      var testNode = document.createElement('PRE');
+      var testNode = document.createElement('pre');
       testNode.appendChild(
         document.createTextNode('<!DOCTYPE foo PUBLIC "foo bar">\n<foo />'));
       innerHtmlWorks = !/</.test(testNode.innerHTML);
