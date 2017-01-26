@@ -11,6 +11,7 @@
       "lang-erlang.js",
       "lang-go.js",
       "lang-hs.js",
+      "lang-ini.js",
       "lang-lisp.js",
       "lang-lua.js",
       "lang-ml.js",
@@ -107,6 +108,26 @@ fib | /usr/bin/*head -10 | tail -1
 <pre class="prettyprint lang-sh" id="issue_165"># Comment
 local $x = ${#x[@]}  # Previous is not a comment
 # A comment</pre>
+
+<h1>Ini</h1>
+<pre class="prettyprint lang-ini" id="ini">#Comment one
+; Different comment
+;
+ ; spaces before comment
+
+[section]
+key = value
+  spacekey   =     space space space
+# comment = no key/value
+
+whatever = "test long", with comma
+comment="comments # within quotes"
+quote="single ' tick"
+unix_path=/home/user
+dos_path='C:\DOS'
+; empty value
+key.with.dots =
+key=value # comment after key/value</pre>
 
 <h1>C</h1>
 
@@ -1459,6 +1480,33 @@ var goldens = {
       '`END`KWDlocal`END`PLN $x `END`PUN=`END`PLN $`END`PUN{#`END`PLNx`END`PUN[@]}`END`PLN  `END'
           + '`COM# Previous is not a comment`END`PLN\n' +
       '`END`COM# A comment`END'),
+  ini: (
+      '`COM#Comment one`END`PLN\n' +
+      '`END`COM; Different comment`END`PLN\n' +
+      '`END`COM;`END`PLN\n' +
+      ' `END`COM; spaces before comment`END`PLN\n' +
+      '\n' +
+      '`END`KWD[section]`END' +
+      '`PLN\nkey `END' +
+      '`PUN=`END' +
+      '`PLN value\n' +
+      '  spacekey   `END' +
+      '`PUN=`END' +
+      '`PLN     space space space\n' +
+      '`END`COM# comment = no key/value`END`PLN\n' +
+      '\n'+
+      'whatever `END' +
+      '`PUN=`END' +
+      '`PLN `END`STR"test long"`END`PLN, with comma\n' +
+      'comment`END`PUN=`END`STR"comments # within quotes"`END`PLN\n' +
+      'quote`END`PUN=`END`STR"single \' tick"`END`PLN\n' +
+      'unix_path`END`PUN=`END`PLN/home/user\n' +
+      'dos_path`END`PUN=`END`STR\'C:\\DOS\'`END`PLN\n' +
+      '`END`COM; empty value`END`PLN\n' +
+      'key.with.dots `END' +
+      '`PUN=`END`PLN\n' +
+      'key`END`PUN=`END`PLNvalue `END`COM# comment after key/value`END'
+    ),
  C: (
       '`COM#include`END`PLN `END`STR&lt;stdio.h&gt;`END`PLN\n' +
       '\n' +
