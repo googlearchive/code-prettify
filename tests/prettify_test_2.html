@@ -12,6 +12,7 @@
       // Language extensions tested.
       "lang-clj.js",
       "lang-dart.js",
+      "lang-fortran.js",
       "lang-lisp.js",
       "lang-llvm.js",
       "lang-matlab.js",
@@ -1064,6 +1065,52 @@ x=10;
 %%}
 y=20;
 %}
+</pre>
+
+<h1>Fortran</h1>
+<pre class="prettyprint lang-f90" id="fortran">program foo
+  use, intrinsic :: iso_c_binding
+  implicit none
+  type, bind(C) :: ball
+    integer(kind=c_int) :: x
+    integer(kind=c_int) :: y
+    real(kind=c_float) :: mass
+  end type ball
+
+  integer, parameter :: foo = 12 ! inline comment
+  real bar = 4.0e0
+  complex, dimension(4, 5) :: zing
+  character(len=5), dimension(:), allocatable :: ding
+  ! In this context, 'type()' is a type, not a keyword
+  type(ball) :: football
+
+  football%x = foo
+
+c f77 style comment
+  ! Allocate only if not allocated
+  if (.not. allocated(ding)) then
+    allocate(ding(12))
+  else
+    write(*,'(A)') 'can''t allocate ding: ding already allocated'
+  end if
+  ding(1) = "hello"
+  ding(2) = "world"
+  print*, ding(1), ", ", ding(2)
+contains
+  ! Fortran is not case-sensitive
+  FUNCTION HERP(A, B) RESULT(DERP)
+    INTEGER, INTENT(IN) :: A, B
+    INTEGER :: DERP
+    IF (A > B) THEN
+       DERP = A .MYOP. B
+    ! Some pairs of keywords may omit separating whitespace
+    ELSEIF (A < B) THEN
+      DERP = B .MYOP. A
+    ELSE
+      DERP = 0
+    ENDIF
+  END FUNCTION HERP
+ENDPROGRAM FOO
 </pre>
 
 </body>
