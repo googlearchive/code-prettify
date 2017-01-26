@@ -77,6 +77,7 @@ Other languages are supported via extensions:
 [Pascal](src/lang-pascal.js);
 [Protocol buffers](src/lang-proto.js);
 [R, S](src/lang-r.js);
+[Rebol, Red](src/lang-rebol.js);
 [RD](src/lang-rd.js);
 [Rust](src/lang-rust.js);
 [Scala](src/lang-scala.js);
