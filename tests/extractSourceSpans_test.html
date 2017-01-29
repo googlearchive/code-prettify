@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>extractSourceSpans</title>
+<script src="../js-modules/extractSourceSpans.js"></script>
+<script src="https://cdn.rawgit.com/douglascrockford/JSON-js/master/json2.js"></script>
+<script src="shims.js"></script>
+<link rel="stylesheet" type="text/css" href="test_modules.css">
+</head>
+
+<body>
+<h1>Extract Source Spans Test</h1>
+
+<table>
+  <tr><th colspan="3">Test space preserved in PRE</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput"><b>print </b>'Hello '<br>  + '&lt;World&gt;';</pre></td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test class="nocode"</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput"><span class="nocode">1. </span><b>print </b>'Hello '<br><span class="nocode">2. </span>  + '&lt;World&gt;';</pre></td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test whitespace normalized in code</th></tr>
+  <tr>
+    <td class="input"><code class="testinput"><b>print </b>'Hello '
+  + '&lt;World&gt;';</code></td>
+    <td class="golden"><pre>^print ^'Hello ' + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test XMP</th></tr>
+  <tr>
+    <td class="input"><xmp class="testinput">print 'Hello '
+  + '<World>';</xmp></td>
+    <td class="golden"><pre>^print 'Hello '\n  + '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test tabs</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput">print 'Hello '
+&#9;+ '&lt;World&gt;';</pre></td>
+    <td class="golden"><pre>^print 'Hello '\n\t+ '&lt;World&gt;';^</pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test number lines output</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput"><ul><li><b>print </b>'Hello '</li><li>  + '&lt;World&gt;';</li></ul></pre></td>
+    <td class="golden"><pre>^print ^'Hello '^\n^  + '&lt;World&gt;';^^</pre></td>
+    <td class="actual"></td>
+  </tr>
+</table>
+
+<hr>
+<h2>Log</h2>
+<div id="report"></div>
+
+<script type="text/javascript">
+setTimeout(function () {
+  function stringify(s) {
+    return JSON.stringify(s)
+      .replace(/\r/g, '\\r')
+      .replace(/\n/g, '\\n')
+      .replace(/\t/g, '\\t')
+      .replace(/\\u000d/g, '\\r')
+      .replace(/\\u000a/g, '\\n')
+      .replace(/\\u0009/g, '\\t');
+  }
+
+  function htmlEscape(s) {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  var out = [];
+  var testInputs = Array.prototype.slice.call(
+    document.getElementsByClassName('testinput'), 0);
+  for (var i = 0, n = testInputs.length; i < n; ++i) {
+    // td.input > .testinput
+    var testInput = testInputs[i];
+    // td.golden
+    var testResult = testInput.parentNode.nextSibling;
+    while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
+    // td.actual
+    var actual = testResult.nextSibling;
+    while (actual.nodeType !== 1) { actual = actual.nextSibling; }
+    // report
+    out.push('<div class="test">Test ' + (i+1) + ': ');
+    try {
+      // run function
+      var isPreformatted = /pre|xmp/i.test(testInput.tagName);
+      var sourceAndSpans = extractSourceSpans(testInput, isPreformatted);
+      // build result
+      var source = sourceAndSpans.sourceCode;
+      var spans = sourceAndSpans.spans;
+      var actualText = '^';
+      var actualHtml = '';
+      for (var j = 0, m = spans.length; j < m; j += 2) {
+        // extract span text
+        var start = spans[j], end = spans[j + 2] || source.length;
+        var span = source.substring(start, end);
+        actualText += span + '^';
+        // determine span class name
+        var spanClass = ((j & 2) ? 'odd' : 'even');
+        if (spans[j + 1].nodeName === 'BR') {
+          spanClass += ' break';
+        }
+        // html formatted
+        actualHtml += '<span class="' + spanClass+ '">' + htmlEscape(span) +
+          '<\/span>';
+      }
+      actual.innerHTML = '<pre>' + actualHtml + '<\/pre>';
+      // compare result against expected
+      var goldenText = testResult.innerText || testResult.textContent;
+      var goldenNormalized = '"' + goldenText.replace(/(?:\r\n?|\n)$/, '') + '"';
+      var actualNormalized = stringify(actualText);
+      var passed = actualNormalized === goldenNormalized;
+      // report test result
+      actual.className += passed ? ' ok' : ' failure';
+      out.push((passed ? '\u2713 PASS' : '\u2717 FAIL'), '<\/div>');
+      if (!passed) {
+        out.push(
+          '<table class="diff"><tr><th>Golden<\/th><td><code>' +
+          htmlEscape(goldenNormalized) +
+          '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
+          htmlEscape(actualNormalized) +
+          '<\/code><\/td><\/tr><\/table>'
+        );
+      }
+    } catch (ex) {
+      actual.className += ' error';
+      out.push('\u274C ERROR', '<\/div>');
+      out.push('<pre class="err">', (ex.message || ex), ex.stack, '<\/pre>');
+    }
+  }
+  document.getElementById('report').innerHTML = out.join('\n');
+}, 0);
+</script>
+
+</body>
+</html>

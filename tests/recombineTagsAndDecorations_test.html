@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>recombineTagsAndDecorations</title>
+<script src="../js-modules/extractSourceSpans.js"></script>
+<script src="../js-modules/recombineTagsAndDecorations.js"></script>
+<script src="shims.js"></script>
+<link rel="stylesheet" type="text/css" href="../src/prettify.css">
+<link rel="stylesheet" type="text/css" href="test_modules.css">
+</head>
+
+<body>
+<h1>Recombine Tags And Decorations Test</h1>
+
+<table>
+  <tr><th colspan="4">Test Single Decoration</th></tr>
+  <tr>
+    <td class="input"><code class="testinput">"Hello, World!"</code></td>
+    <td class="decorations">[0, 'str']</td>
+    <td class="golden"><code><span class="str">"Hello, World!"</span></code></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="4">Test Single Span</th></tr>
+  <tr>
+    <td class="input"><code class="testinput">print "Hello, &lt;World&gt;!";</code></td>
+    <td class="decorations">[0, 'kwd', 5, 'pln', 6, 'str', 14, 'tag', 21, 'str', 23, 'pun']</td>
+    <td class="golden"><code><span class="kwd">print</span><span class="pln"> </span><span class="str">"Hello, </span><span class="tag">&lt;World&gt;</span><span class="str">!"</span><span class="pun">;</span></code></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="4">Test Interleaved</th></tr>
+  <tr>
+    <td class="input"><code class="testinput">print "Hello, &lt;<b>World</b>&gt;!";</code></td>
+    <td class="decorations">[0, 'kwd', 5, 'pln', 6, 'str', 14, 'tag', 21, 'str', 23, 'pun']</td>
+    <td class="golden"><code><span class="kwd">print</span><span class="pln"> </span><span class="str">"Hello, </span><span class="tag">&lt;</span><b><span class="tag">World</span></b><span class="tag">&gt;</span><span class="str">!"</span><span class="pun">;</span></code></td>
+    <td class="actual"></td>
+  </tr>
+</table>
+
+<hr>
+<h2>Log</h2>
+<div id="report"></div>
+
+<script type="text/javascript">
+setTimeout(function () {
+  function htmlEscape(s) {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  var out = [];
+  var testInputs = Array.prototype.slice.call(
+    document.getElementsByClassName('testinput'), 0);
+  for (var i = 0, n = testInputs.length; i < n; ++i) {
+    // td.input > .testinput
+    var testInput = testInputs[i];
+    // td.decorations (result of language handler function)
+    var decorationsNode = testInput.parentNode.nextSibling;
+    while (decorationsNode.nodeType !== 1) { decorationsNode = decorationsNode.nextSibling; }
+    // td.golden
+    var testResult = decorationsNode.nextSibling;
+    while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
+    // td.actual
+    var actual = testResult.nextSibling;
+    while (actual.nodeType !== 1) { actual = actual.nextSibling; }
+    // report
+    out.push('<div class="test">Test ' + (i+1) + ': ');
+    try {
+      // make a copy of input node (modified in-place)
+      var clone = testInput.cloneNode(true);
+      clone.className = '';  // IE
+      clone.removeAttribute('class');  // Not IE.
+      actual.appendChild(clone);
+      // run function
+      var isPreformatted = /pre|xmp/i.test(clone.tagName);
+      var sourceAndSpans = extractSourceSpans(clone, isPreformatted);
+      var job = {
+        sourceCode: sourceAndSpans.sourceCode,
+        spans: sourceAndSpans.spans,
+        sourceNode: clone, // null
+        pre: isPreformatted,
+        langExtension: null,
+        numberLines: null,
+        basePos: 0,
+        decorations: eval(
+          decorationsNode.innerText || decorationsNode.textContent)
+      };
+      recombineTagsAndDecorations(job);
+      // compare result against expected
+      var goldenNormalized = testResult.innerHTML;
+      var actualNormalized = actual.innerHTML.replace(
+        /\s*(?:class|style)=""/i, '');  // remove some empty attribs
+      var passed = goldenNormalized === actualNormalized;
+      // report test result
+      actual.className += passed ? ' ok' : ' failure';
+      out.push((passed ? '\u2713 PASS' : '\u2717 FAIL'), '<\/div>');
+      if (!passed) {
+        out.push(
+          '<table class="diff"><tr><th>Golden<\/th><td><code>' +
+          htmlEscape(goldenNormalized) +
+          '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
+          htmlEscape(actualNormalized) +
+          '<\/code><\/td><\/tr><\/table>'
+        );
+      }
+    } catch (ex) {
+      actual.className += ' error';
+      out.push('\u274C ERROR', '<\/div>');
+      out.push('<pre class="err">', (ex.message || ex), ex.stack, '<\/pre>');
+    }
+  }
+  document.getElementById('report').innerHTML = out.join('\n');
+}, 0);
+</script>
+
+</body>
+</html>

@@ -48,8 +48,8 @@
  * |                  |               | injection.                   |        |
  * +------------------+---------------+------------------------------+--------+
  *
- * Exmaples
- * .../prettify.js?lang=css&skin=sunburst
+ * Examples
+ * .../run_prettify.js?lang=css&skin=sunburst
  *   1. Loads the CSS language handler which can be used to prettify CSS
  *      stylesheets, HTML <style> element bodies and style="..." attributes
  *      values.
@@ -60,6 +60,10 @@
  *   3. Since autorun=false is not specified, calls prettyPrint() on page load.
  * </div>
  */
+
+/* @ifdef RUN_PRETTIFY */
+/* @include defs.js */
+/* @endif */
 
 (function () {
   "use strict";
@@ -226,7 +230,7 @@
   loadStylesheetsFallingBack(skinUrls);
 
   var prettyPrint = (function () {
-    include("prettify.js");
+    /* @include prettify.js */
     return prettyPrint;
   })();
 

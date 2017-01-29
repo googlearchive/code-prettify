@@ -1,120 +1,201 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>Tests of Prettifier w/ large data files</title>
-<script src="../src/prettify.js" type="text/javascript"
- onerror="alert('Error: failed to load ' + this.src)"></script>
-<link rel="stylesheet" type="text/css" href="../src/prettify.css" />
-<link rel="stylesheet" type="text/css" href="test_styles.css" />
+<script type="text/javascript" src="../src/prettify.js"></script>
+<style type="text/css">
+#progress {
+  background-color: lightgray;
+  border-radius: 20px;
+  border: 2px solid gray;
+  padding: 3px;
+  width: 450px;
+}
+#progress > div {
+  background-color: skyblue;
+  border-radius: 20px;
+  height: 10px;
+  width: 0%;
+}
+#log {
+  border: solid 1px #eee;
+  color: #666;
+  width: 400px;
+  margin: 20px;
+  padding: 5px;
+  font-family: monospace;
+  white-space: pre;
+}
+#report { margin-left: 1em; }
+table { border-collapse: collapse; border-spacing: 0; }
+th, td { border: 1px solid black; }
+th { background-color: #FFD; }
+</style>
+<!--
+<link rel="stylesheet" type="text/css" href="../bower_components/c3/c3.min.css">
+<script type="text/javascript" src="../bower_components/d3/d3.min.js"></script>
+<script type="text/javascript" src="../bower_components/c3/c3.min.js"></script>
+-->
 </head>
 
-<body bgcolor="white">
-<div id="timing"></div>
-<div id="errorReport" style="white-space: pre"></div>
+<body>
+<h1>Benchmarks</h1>
+<div id="progress"><div></div></div>
+<div id="log"></div>
+<h2>Results</h2>
+<div id="report"></div>
 
-<!--
-  - Generate inputs of various sizes so that we can try fitting a
-  - curve to the run times.
- -->
 <script type="text/javascript">
-if (!Date.now) {
-  Date.now = function () { return (new Date).getTime(); };
+function now() {
+  return (Date.now) ? Date.now() : (new Date()).getTime();
 }
 
-if (typeof console === 'undefined') {
-  console = {
-    log: (function () {
-      var messages = [];
-      var pending = false;
-      function showMessages() {
-        pending = false;
-        if (messages.length) {
-         var text = messages.join('\n');
-          var pre = document.createElement('PRE');
-          pre.appendChild(document.createTextNode(text));
-          document.body.appendChild(pre);
-          messages = [];
-        }
-      }
-
-      return function (msg) {
-        if (!pending) {
-          setTimeout(showMessages, 0);
-          pending = true;
-        }
-        messages.push(msg);
-      };
-    })()
-  };
+function logger(msg) {
+  if (typeof console !== 'undefined' && console.log) {
+    console.log(msg);
+  }
+  // log message with a timestamp
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(
+    '[' + (new Date()).toLocaleTimeString() + ']: ' + msg));
+  document.getElementById('log').appendChild(div);
 }
 
+// Generate inputs of various sizes so that we can try fitting a curve to the
+// run times.
 (function () {
   var tasks = [];
-  var jsonTimes = [];
-  var xmlTimes = [];
+  var jsonTimes = [], htmlTimes = [], cppTimes = [];
+  var progress = document.getElementById('progress').firstChild;
+  var pos = 0, len = 0;
+  var msDelay = 250;
+  var nRepeat = 512, nMult = 6;
 
-  var listItem = (
-      '&lt;li class="friendly" style="blink: like-its-going-out-of-style"&gt;'
-      + '&lt;b&gt;Howdy&lt;/b&gt; Neighbor&lt;/li&gt;');
-  var jsonItem = (
-      '{ "friendly": true, "blinking": "hell-yes", "greeting": "Howdy!" }');
   function makeTargets(lang, item, sep, preText, postText, timesList) {
-   var buffer = [];
-    for (var i = 512; --i >= 0;) { buffer.push(item); }
-    var count = 512;
-    for (var i = 6; --i >= 0;) {
-     var src = buffer.join(sep);
-
-      tasks.push((function (n, toPrettify) {
+    // create large text by repeating input
+    var buffer = [];
+    for (var i = nRepeat; --i >= 0;) { buffer.push(item); }
+    // loop and create prettify tasks, each time with double the input size
+    // (i.e: count * 2.^(0:5))
+    var count = nRepeat;
+    for (var i = nMult; --i >= 0;) {
+      var src = buffer.join(sep);
+      tasks.push((function (n, source) {
         return function () {
-          console.log('starting ' + lang + ' ' + n);
-          var t0 = Date.now();
-          var result = prettyPrintOne(toPrettify, lang);
-          var t1 = Date.now();
-          console.log('finishing ' + lang + ' ' + n);
-          if (result === toPrettify) {
-            console.error('Failed to prettify ' + lang + ' ' + n);
+          // time it
+          logger('starting ' + lang + ' ' + n);
+          var t0 = now();
+          var result = PR.prettyPrintOne(source, lang, false);
+          var t1 = now();
+          logger('finishing ' + lang + ' ' + n);
+          // record time
+          if (result === source) {
+            logger('Failed to prettify ' + lang + ' ' + n);
           } else {
-            timesList.push([n, t1 - t0, toPrettify.length]);
+            timesList.push({
+              count: n,
+              time: t1 - t0,
+              length: source.length
+            });
           }
         };
       })(count, preText + src + postText));
-
+      // double size for next iteration
       buffer = [src, src];
       count *= 2;
     }
   }
 
-  makeTargets('xml', listItem, '\n', '<ul>', '<\/ul>', xmlTimes);
-  makeTargets('json', jsonItem, ', ', '[', ']', jsonTimes);
-
   function emitBenchmarkTable(title, times) {
-    var html = [
-        '<h2>', title, '<h2>',
-        '<table class=="benchmark"><tr><th>Count<th>Length<th>Time<th>Items Per Second'];
+    // build table of results
+    var html = [];
+    html.push('<h3>' + title + '<\/h3>',
+      '<table class="benchmark">', '<thead>', '<tr>',
+      '<th>Count<\/th>', '<th>Length<\/th>', '<th>Time (ms)<\/th>',
+      '<th>Items Per Second<\/th>', '<\/tr>', '<\/thead>', '<tbody>');
     for (var i = 0; i < times.length; ++i) {
-      var time = times[i];
-      var count = time[0], deltaMs = time[1], length = time[2];
-      html.push('<tr><td>', count, '<td>', length, '<td>', deltaMs,
-                '<td>', (count * 1000 / deltaMs).toFixed(1));
+      var t = times[i];
+      html.push('<tr>', '<td>' + t.count + '<\/td>',
+        '<td>' + t.length + '<\/td>', '<td>' + t.time + '<\/td>',
+        '<td>' + (t.count * 1000 / t.time).toFixed(1) + '<\/td>', '<\/tr>');
     }
-    html.push('</table>');
+    html.push('<\/tbody>', '<\/table>');
 
-    var div = document.createElement('DIV');
-    div.innerHTML = html.join('');
-    document.body.appendChild(div);
+    // append to page
+    var div = document.createElement('div');
+    div.innerHTML = html.join('\n');
+    document.getElementById('report').appendChild(div);
   }
-
-  tasks.push(
-      function () { emitBenchmarkTable('XML', xmlTimes); },
-      function () { emitBenchmarkTable('JSON', jsonTimes); });
 
   function doOne() {
+    // update progress bar
+    pos++;
+    progress.style.width = Math.round(pos / len * 100) + '%';
+
+    // run a task
     var task = tasks.shift();
     task();
-    if (tasks.length) { setTimeout(doOne, 250); }
+
+    // launch next task if any
+    if (tasks.length) {
+      setTimeout(doOne, msDelay);
+    }
   }
-  setTimeout(doOne, 250);
+
+  // create prettify tasks of large texts (JSON, HTML, and C++ languages)
+  // in addition to reporting tasks
+
+  var htmlItem = (
+      '&lt;li class="friendly" style="blink: like-its-going-out-of-style"&gt;' +
+      '&lt;b&gt;Howdy&lt;/b&gt; Neighbor&lt;/li&gt;');
+  makeTargets('html', htmlItem, '\n', '&lt;ul&gt;', '&lt;/ul&gt;', htmlTimes);
+  tasks.push(function () { emitBenchmarkTable('HTML', htmlTimes); });
+
+  var jsonItem = (
+      '{ "friendly": true, "blinking": "hell-yes", "greeting": "Howdy!" }');
+  makeTargets('json', jsonItem, ',\n', '[', ']', jsonTimes);
+  tasks.push(function () { emitBenchmarkTable('JSON', jsonTimes); });
+
+  var cppItem = ['#include &lt;stdio.h&gt',
+    'int main(int argc, char *argv[])',
+    '{ printf("hello world\\n"); return 0; }'].join('\n');
+  makeTargets('cpp', cppItem, '\n', '', '', cppTimes);
+  tasks.push(function () { emitBenchmarkTable('C++', cppTimes); });
+
+  /*
+  // plot results using c3.js (built on d3.js)
+  tasks.push(function () {
+    // container where SVG will be added
+    var div = document.createElement('div');
+    document.body.appendChild(div);
+
+    // prepare data
+    var x = jsonTimes.map(function (t) { return t.count; }); x.unshift('x');
+    var y1 = htmlTimes.map(function (t) { return t.time; }); y1.unshift('HTML');
+    var y2 = jsonTimes.map(function (t) { return t.time; }); y2.unshift('JSON');
+    var y3 = cppTimes.map(function (t) { return t.time; }); y3.unshift('C++');
+
+    // create simple line chart
+    var chart = c3.generate({
+        bindto: div,
+        size: { width: 640 },
+        padding: { top: 20, right: 20 },
+        data: {
+          x: 'x',
+          columns: [x,y1,y2,y3],
+        },
+        axis: {
+          x: { label: 'Count' },
+          y: { label: 'Time (ms)' }
+        }
+    });
+  });
+  */
+
+  // run all tasks one-by-one (with small delay inbetween to stay responsive)
+  len = tasks.length;
+  setTimeout(doOne, msDelay);
 })();
 </script>
 

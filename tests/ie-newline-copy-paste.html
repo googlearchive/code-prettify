@@ -1,119 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
 <title>IE Newline Copy/Paste Info Gathering</title>
+<style type="text/css">
+pre { margin: 1em 0; border: 1px dashed #ccc; }
+textarea { font-size: 50%; }
+#report { margin-left: 1em; }
+</style>
+</head>
 
 <body>
+
+<h1>IE newline copy/paste</h1>
+
 <p>
-I'm trying to squash, <a href="https://github.com/google/code-prettify/issues/20">once</a> and <a href="https://github.com/google/code-prettify/issues/104">for</a> <a href="https://github.com/google/code-prettify/issues/128">all</a>, the problems with newlines in
-<tt>&lt;PRE&gt;</tt>s in IE.  I can't run 3 versions of IE, so I'd
+I'm trying to squash, once and for all, the problems with newlines in
+<code>&lt;PRE&gt;</code>s in IE.  I can't run all versions of IE, so I'd
 really appreciate any help from people who have IE open and running.
+See bugs <a href="https://github.com/google/code-prettify/issues/20">#20</a>,
+<a href="https://github.com/google/code-prettify/issues/104">#104</a>, and
+<a href="https://github.com/google/code-prettify/issues/128">#128</a> for
+reference.
 </p>
 
 <p>
-Please copy from START through END below and paste it into the
-textarea below.
-Then hit Ctrl-A, Ctrl-C to copy the textarea contents, and paste that
-into an email.
-Please also copy and paste the RESULTS section below and include it in
-the email response as well and send it
-to <a href="mailto:mikesamuel@gmail.com">me</a> or respond to the
-discussion list.
+Please copy from <strong>START</strong> through <strong>END</strong> below
+and paste it into the <strong>TEXTAREA</strong> below.  Then hit
+<kbd>Ctrl-A</kbd>, <kbd>Ctrl-C</kbd> to copy the textarea contents, and paste
+that into an email.  Please also copy and paste the <strong>RESULTS</strong>
+section below and include it in the email response as well and send it to
+<a href="mailto:mikesamuel@gmail.com">me</a> or respond to the discussion
+list.
 </p>
 
 <p>
-In case you're interested, there are two problems: choosing a way to
-split lines that doesn't introduce too few or extra newlines, and a
-way to make sure that the resulting code can be copy-pasted into a
-plain text editors such as the textarea below.  This is my attempt to
-gather information on both issues by IE version.
+In case you're interested, there are two problems: choosing a way to split
+lines that doesn't introduce too few or extra newlines, and a way to make sure
+that the resulting code can be copy-pasted into a plain text editors such as
+the textarea below.  This is my attempt to gather information on both issues
+by IE version.
 </p>
 
-cheers.
-</body>
+<p>Cheers.</p>
 
-<script>
+<hr>
+
+<h2>== START ==</h2>
+
+<div id="container"></div>
+
+<pre id="notgen-cr">before
+[manual CR]
+after</pre>
+
+<pre id="notgen-br">before<br>[manual BR]<br>after</pre>
+
+<pre id="notgen-brcr">before<br>
+[manual CR+BR]<br>
+after</pre>
+
+<pre id="notgen-crbr">before
+<br>[manual BR+CR]
+<br>after</pre>
+
+<h2>== END ==</h2>
+
+<pre id="threelines">before
+[text]
+after</pre>
+
+<hr>
+
+<h2>RESULTS</h2>
+
+<div id="report"></div>
+
+<hr>
+
+<h2>TEXTAREA</h2>
+<textarea cols="40" rows="50"></textarea>
+
+<script type="text/javascript">
 function makeCodeJoiningOn(text, htmlNewline, start, end) {
   start = start || '';
   end = end || '';
-  var code = document.createElement('PRE');
-  code.innerHTML = start + ['before', '[' + text + ']', 'after'].join(htmlNewline) + end;
+  var code = document.createElement('pre');
+  code.innerHTML = start +
+    ['before', '[' + text + ']', 'after'].join(htmlNewline) + end;
   code.id = text.replace('+', 'plus').replace(/[^\w\-_]/g, '_');
-  document.body.appendChild(code);
+  document.getElementById('container').appendChild(code);
 }
-</script>
 
-<h2>START</h2>
+makeCodeJoiningOn('CR', '&#160;\r');
+makeCodeJoiningOn('CRLF', '&#160;\r\n');
+makeCodeJoiningOn('LFCR', '&#160;\n\r');
+makeCodeJoiningOn('LF', '&#160;\n');
+makeCodeJoiningOn('VTAB', '&#160;\u000b');
+makeCodeJoiningOn('x2028', '&#160;\u2028');
+makeCodeJoiningOn('x2029', '&#160;\u2029');
+makeCodeJoiningOn('BR', '&#160;<br>');
+makeCodeJoiningOn('CR+BR', '&#160;\r<br>');
+makeCodeJoiningOn('CRLF+BR', '&#160;\r\n<br>');
+makeCodeJoiningOn('LFCR+BR', '&#160;\n\r<br>');
+makeCodeJoiningOn('LF+BR', '&#160;\n<br>');
+makeCodeJoiningOn('VTAB+BR', '&#160;\u000b<br>');
+makeCodeJoiningOn('x2028+BR', '&#160;\u2028<br>');
+makeCodeJoiningOn('x2029+BR', '&#160;\u2029<br>');
+makeCodeJoiningOn('BR+CR', '&#160;<br>\r');
+makeCodeJoiningOn('BR+CRLF', '&#160;<br>\r\n');
+makeCodeJoiningOn('BR+LFCR', '&#160;<br>\n\r');
+makeCodeJoiningOn('BR+LF', '&#160;<br>\n');
+makeCodeJoiningOn('BR+VTAB', '&#160;<br>\u000b');
+makeCodeJoiningOn('BR+x2028', '&#160;<br>\u2028');
+makeCodeJoiningOn('BR+x2029', '&#160;<br>\u2029');
+makeCodeJoiningOn('DIV', '<\/div><div>', '<div>', '<\/div>');
+makeCodeJoiningOn('UL', '<\/li><li>',
+  '<ul style="list-style:none;padding:0;margin:0;"><li>', '<\/li><\/ul>');
 
-<script>makeCodeJoiningOn('CR', '&#160;\r');</script>
-
-<script>makeCodeJoiningOn('CRLF', '&#160;\r\n');</script>
-
-<script>makeCodeJoiningOn('LFCR', '&#160;\n \r');</script>
-
-<script>makeCodeJoiningOn('LF', '&#160;\n');</script>
-
-<script>makeCodeJoiningOn('VTAB', '&#160;\u000b');</script>
-
-<script>makeCodeJoiningOn('x2028', '&#160;\u2028');</script>
-
-<script>makeCodeJoiningOn('x2029', '&#160;\u2029');</script>
-
-<script>makeCodeJoiningOn('BR', '&#160;<br>');</script>
-
-<script>makeCodeJoiningOn('CR+BR', '&#160;\r<br>');</script>
-
-<script>makeCodeJoiningOn('CRLF+BR', '&#160;\r\n<br>');</script>
-
-<script>makeCodeJoiningOn('LFCR+BR', '&#160;\n\r<br>');</script>
-
-<script>makeCodeJoiningOn('LF+BR', '&#160;\n<br>');</script>
-
-<script>makeCodeJoiningOn('VTAB+BR', '&#160;\u000b<br>');</script>
-
-<script>makeCodeJoiningOn('x2028+BR', '&#160;\u2028<br>');</script>
-
-<script>makeCodeJoiningOn('x2029+BR', '&#160;\u2029<br>');</script>
-
-<script>makeCodeJoiningOn('BR+CR', '&#160;<br>\r');</script>
-
-<script>makeCodeJoiningOn('BR+CRLF', '&#160;<br>\r\n');</script>
-
-<script>makeCodeJoiningOn('BR+LFCR', '&#160;<br>\n\r');</script>
-
-<script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
-
-<script>makeCodeJoiningOn('BR+LF', '&#160;<br>\n');</script>
-
-<script>makeCodeJoiningOn('BR+VTAB', '&#160;<br>\u000b');</script>
-
-<script>makeCodeJoiningOn('BR+x2028', '&#160;<br>\u2028');</script>
-
-<script>makeCodeJoiningOn('BR+x2029', '&#160;<br>\u2029');</script>
-
-<script>makeCodeJoiningOn('divs', '</div><div>', '<div>', '<\/div>');</script>
-
-<script>makeCodeJoiningOn('ul', '<li>', '<ul style=list-style:none;padding:0;margin:0><li>', '<\/ul>');</script>
-
-<pre id=notgen-cr>before
-[Not generated via innerHTML CR]
-after</pre>
-
-<pre id=notgen-br>before<br>[Not generated via innerHTML BR]<br>after</pre>
-
-<pre id=notgen-brcr>before<br>
-[Not generated via innerHTML CR + BR]<br>
-after</pre>
-
-<pre id=notgen-crbr>before
-<br>[Not generated via innerHTML BR + CR]
-<br>after</pre>
-
-<h2>END</h2>
-
-<pre id=threelines>one
-two
-three</pre>
-
-<h2>RESULTS</h2>
-<script>(function () {
+(function () {
   var threelines = document.getElementById('threelines');
   var codeElements = document.getElementsByTagName('PRE');
   var threelinesHeight = threelines.offsetHeight;
@@ -124,21 +129,22 @@ three</pre>
     var codeElement = codeElements[i];
     if (codeElement !== threelines) {
       var codeElementHeight = codeElement.offsetHeight;
-      (Math.abs(threelinesHeight - codeElementHeight) < 3
-       ? ok : bad).push(codeElement.id + ':' + codeElementHeight);
+      (Math.abs(threelinesHeight - codeElementHeight) < 3 ? ok : bad).push(
+        codeElement.id + ':' + codeElementHeight);
     }
   }
 
-  function emit(text) {
-    var p = document.createElement('P');
+  function logger(text) {
+    var p = document.createElement('p');
     p.appendChild(document.createTextNode(text));
-    document.body.appendChild(p);
+    document.getElementById('report').appendChild(p);
   }
 
-  emit(navigator.userAgent);
-  emit('Ok: ' + ok);
-  emit('Bad: ' + bad);
-})();</script>
+  logger('User Agent = ' + navigator.userAgent);
+  logger('Ok = ' + ok);
+  logger('Bad = ' + bad);
+})();
+</script>
 
-<h2>TEXTAREA</h2>
-<textarea style="font-size: 50%" cols=40 rows=50></textarea>
+</body>
+</html>

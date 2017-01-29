@@ -29,6 +29,7 @@
  * @version 2010-09-28
  */
 
+(function () {
 // Falls back to plain for stylesheets that don't style fun.
 var PR_FUNCTION = 'fun pln';
 // Falls back to plaiin for stylesheets that don't style var.
@@ -67,3 +68,4 @@ PR['registerLangHandler'](
          [PR['PR_PLAIN'], /^[\t\n\r \xA0]+/]
          ]),
     ['xq', 'xquery']);
+})();

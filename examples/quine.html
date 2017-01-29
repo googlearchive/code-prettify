@@ -3,10 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <title>Making Quines Prettier</title>
-<!-- The defer is not necessary for autoloading, but is necessary for the
-     script at the bottom to work as a Quine. -->
-<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css" defer="defer"></script>
-<style>.operative { font-weight: bold; border:1px solid yellow }</style>
+<!-- The defer attribute is not necessary for autoloading, but is necessary
+     for the script at the bottom to work as a Quine. -->
+<script src="https://rawgit.com/google/code-prettify/master/loader/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css" defer></script>
+<style type="text/css">
+.operative { font-weight: bold; border: 1px solid yellow; }
+#quine { border: 4px solid #88c; }
+</style>
 </head>
 
 <body>
@@ -23,33 +26,40 @@ code.
 The line numbers to the left appear because the preceding comment
 <code>&lt;?prettify lang=html linenums=true?&gt;</code> turns on
 line-numbering and the
-<a href="https://cdn.rawgit.com/google/code-prettify/master/styles/index.html">stylesheet</a>
+<a href="https://rawgit.com/google/code-prettify/master/styles/index.html">stylesheet</a>
 (see <code>skin=sunburst</code> in the <code>&lt;script src&gt;</code>)
 specifies that every fifth line should be numbered.
 </p>
 
 <!-- Language hints can be put in XML application directive style comments. -->
 <?prettify lang=html linenums=true?>
-<pre class="prettyprint" id="quine" style="border:4px solid #88c"></pre>
+<pre class="prettyprint" id="quine"></pre>
 
-<script>//<![CDATA[
+<script type="text/javascript">//<![CDATA[
 (function () {
-  function html(s) {
-    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  function htmlEscape(s) {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
-  var quineHtml = html(
-        '<!DOCTYPE html>\n<html>\n'
-      + document.documentElement.innerHTML 
-      + '\n<\/html>\n');
+  // this page's own source code
+  var quineHtml = htmlEscape(
+    '<!DOCTYPE html>\n<html>\n' +
+    document.documentElement.innerHTML +
+    '\n<\/html>\n');
 
   // Highlight the operative parts:
   quineHtml = quineHtml.replace(
     /&lt;script src[\s\S]*?&gt;&lt;\/script&gt;|&lt;!--\?[\s\S]*?--&gt;|&lt;pre\b[\s\S]*?&lt;\/pre&gt;/g,
-    '<span class="operative">$&</span>');
+    '<span class="operative">$&<\/span>');
 
+  // insert into PRE
   document.getElementById("quine").innerHTML = quineHtml;
 })();
 //]]>
-</script></body>
+</script>
+
+</body>
 </html>
