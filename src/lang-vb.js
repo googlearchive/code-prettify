@@ -64,4 +64,4 @@ PR['registerLangHandler'](
          // Square brackets
          [PR['PR_PUNCTUATION'], /^(?:\[|\])/]
         ]),
-    ['vb', 'vbs']);
+    ['vb', 'vbs', 'vba']);
