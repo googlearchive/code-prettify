@@ -22,6 +22,7 @@
   var base = /[&?]loader\b/.test(location.search) ? '../loader/' : '../src/';
   var sources = [
     'lang-css.js',
+    'lang-cql.js',
     'lang-erlang.js',
     'lang-go.js',
     'lang-hs.js',
@@ -216,6 +217,19 @@ T fib(int n, const T&amp; fib0) {
 int main(int argc, char **argv) {
   cout &lt;&lt; fib(10, 1U);
 }
+</pre>
+<h1>CQL</h1>
+<pre class="prettyprint lang-cql" id="cql_lang">
+/* A multi-line
+ * comment */
+'Another string /* Isn\'t a comment',
+"A string */"
+-- A line comment
+USE KEYSPACE killrvideo;
+SELECT * FROM usernames WHERE id IN (1, 2.0, +30e-1);
+-- keywords are case-insensitive.
+-- Note: user-table is a single identifier, not a pair of keywords
+select * from user-table where id in (x, y, z);
 </pre>
 
 <h1>Java</h1>
