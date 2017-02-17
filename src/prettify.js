@@ -1744,5 +1744,10 @@ var prettyPrint;
 // npm require support
 if (module && module.exports) module.exports = {
   prettyPrint,
-  prettyPrintOne
+  prettyPrintOne,
+  // include paths for css preprocessor support
+  includePaths: [
+    __dirname,
+    require('path').resolve(__dirname, '../styles')
+  ]
 };
