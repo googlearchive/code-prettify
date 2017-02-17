@@ -141,7 +141,8 @@ var PR;
  * UI events.
  * If set to {@code false}, {@code prettyPrint()} is synchronous.
  */
-window['PR_SHOULD_USE_CONTINUATION'] = true;
+var PR_SHOULD_USE_CONTINUATION = true;
+if (typeof window !== 'undefined') window.PR_SHOULD_USE_CONTINUATION = PR_SHOULD_USE_CONTINUATION;
 
 /**
  * Pretty print a chunk of code.
@@ -166,7 +167,7 @@ var prettyPrint;
 
 
 (function () {
-  var win = window;
+  var win = (typeof window !== 'undefined') ? window : {};
   // Keyword lists for various languages.
   // We use things that coerce to strings to make them compact when minified
   // and to defeat aggressive optimizers that fold large string constants.
