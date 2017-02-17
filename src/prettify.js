@@ -1740,3 +1740,6 @@ var prettyPrint;
     });
   }
 })();
+
+// npm require support
+if (module && module.exports) module.exports = prettyPrint;
