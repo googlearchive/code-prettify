@@ -40,9 +40,8 @@ PR['registerLangHandler'](
          [PR['PR_PUNCTUATION'], /^[!%&()*+,\-;<=>?\[\\\]^{|}~]+/, null,
           '!%&()*+,-;<=>?[\\]^{|}~'],
          // Borrowed from lang-erlang.js:
-         // TODO: add the mid-number underscores (100_000)
          [PR['PR_LITERAL'],
-          /^(?:0o[0-7]+|0x[\da-f]+|\d+(?:\.\d+)?(?:e[+\-]?\d+)?)/i,
+          /^(?:0o[0-7](?:[0-7]|_[0-7])*|0x[\da-f](?:[\da-f]|_[\da-f])*|\d(?:\d|_\d)*(?:\.\d(?:\d|_\d)*)?(?:e[+\-]?\d(?:\d|_\d)*)?)/i,
           null, '0123456789']
         ],
         [
