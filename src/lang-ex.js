@@ -51,7 +51,7 @@ PR['registerLangHandler'](
          [PR['PR_ATTRIB_NAME'], /^(?:__(?:CALLER|ENV|MODULE|DIR)__)/],
          // keywords
          [PR['PR_KEYWORD'],
-          /^(?:alias|case|catch|def(?:delegate|exception|impl|macrop?|module|overridable|p?|protocol|struct)|do|else|end|for|if|import|raise|require|throw|type|unless|use|yield)\b/],
+          /^(?:alias|case|catch|def(?:delegate|exception|impl|macrop?|module|overridable|p?|protocol|struct)|do|else|end|fn|for|if|import|raise|require|throw|try|type|unless|use|with|yield)\b/],
          [PR['PR_LITERAL'], /^(?:true|false|nil)\b/],
          // atoms as keyword list keys
          // NOTE: this doesn't handle the %{"I'm an atom": :foo} case to make
