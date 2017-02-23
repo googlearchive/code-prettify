@@ -37,8 +37,8 @@ PR['registerLangHandler'](
          [PR['PR_LITERAL'], /^'(?:[^'\\]|\\.)*'?/, null, '\''],
          // @attributes
          [PR['PR_ATTRIB_NAME'], /^@\w+/, null, '@'],
-         [PR['PR_PUNCTUATION'], /^[!%&()*+,\-;<=>?\[\\\]^{|}~]+/, null,
-          '!%&()*+,-;<=>?[\\]^{|}~'],
+         [PR['PR_PUNCTUATION'], /^[!%&()*+,\-;<=>?\[\\\]^{|}]+/, null,
+          '!%&()*+,-;<=>?[\\]^{|}'],
          // Borrowed from lang-erlang.js:
          [PR['PR_LITERAL'],
           /^(?:0o[0-7](?:[0-7]|_[0-7])*|0x[\da-f](?:[\da-f]|_[\da-f])*|\d(?:\d|_\d)*(?:\.\d(?:\d|_\d)*)?(?:e[+\-]?\d(?:\d|_\d)*)?)/i,
@@ -51,7 +51,7 @@ PR['registerLangHandler'](
          [PR['PR_ATTRIB_NAME'], /^(?:__(?:CALLER|ENV|MODULE|DIR)__)/],
          // keywords
          [PR['PR_KEYWORD'],
-          /^(?:alias|case|catch|defp?|defdelegate|defexception|defimpl|defmacrop?|defmodule|defoverridable|defprotocol|defstruct|do|else|end|for|if|import|raise|require|throw|type|unless|use|yield)\b/],
+          /^(?:alias|case|catch|def(?:delegate|exception|impl|macrop?|module|overridable|p?|protocol|struct)|do|else|end|for|if|import|raise|require|throw|type|unless|use|yield)\b/],
          [PR['PR_LITERAL'], /^(?:true|false|nil)\b/],
          // atoms as keyword list keys
          // NOTE: this doesn't handle the %{"I'm an atom": :foo} case to make
@@ -59,11 +59,16 @@ PR['registerLangHandler'](
          [PR['PR_LITERAL'], /^(?:\w+):/],
          // types
          [PR['PR_TYPE'], /^[A-Z]\w*/],
-         // TODO: sigils
          // variables not meant to be used or private functions
          [PR['PR_COMMENT'], /^_\w*/],
          // plain: variables, functions, ...
          [PR['PR_PLAIN'], /^[$a-zA-Z_][\w$]*/],
-         [PR['PR_PUNCTUATION'], /^(?:\.+|\/|:)/]
+         // sigils with the same starting and ending character.
+         // Key part: X(?:[^X\r\n\\]|\\.)+X where X is the sigil character
+         [PR['PR_LITERAL'], /^~[A-Z](?:\/(?:[^\/\r\n\\]|\\.)+\/|\|(?:[^\|\r\n\\]|\\.)+\||"(?:[^"\r\n\\]|\\.)+"|'(?:[^'\r\n\\]|\\.)+')[A-Z]*/i],
+         // sigils with a different starting and ending character.
+         // Key part: X(?:[^Y\r\n\\]|\\.)+Y where X and Y are the starting and ending characters
+         [PR['PR_LITERAL'], /^~[A-Z](?:\((?:[^\)\r\n\\]|\\.)+\)|\[(?:[^\]\r\n\\]|\\.)+\]|\{(?:[^\}\r\n\\]|\\.)+\}|\<(?:[^\>\r\n\\]|\\.)+\>)[A-Z]*/i],
+         [PR['PR_PUNCTUATION'], /^(?:\.+|\/|[:~])/]
         ]),
     ['ex','exs']);
