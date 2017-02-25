@@ -45,6 +45,8 @@ PR['registerLangHandler'](
           null, '0123456789']
         ],
         [
+         // special case for binaries, so that they don't get presented like atoms
+         [PR['PR_PUNCTUATION'], /^::/],
          // atoms - :__a_word or :"colon followed by a string"
          [PR['PR_LITERAL'], /^:(?:\w+[\!\?\@]?|"(?:[^"\\]|\\.)*"?)/],
          // compile-time information
@@ -56,7 +58,9 @@ PR['registerLangHandler'](
          // atoms as keyword list keys
          // NOTE: this doesn't handle the %{"I'm an atom": :foo} case to make
          // the string detection faster. It is rarely ever used too.
-         [PR['PR_LITERAL'], /^(?:\w+[\!\?\@]?):/],
+         //
+         // Contains negative lookahead to handle <<foo::binary>>
+         [PR['PR_LITERAL'], /^(?:\w+[\!\?\@]?):(?!:)/],
          // types
          [PR['PR_TYPE'], /^[A-Z]\w*/],
          // variables not meant to be used or private functions
