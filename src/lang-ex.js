@@ -45,7 +45,7 @@ PR['registerLangHandler'](
           null, '0123456789']
         ],
         [
-         // the iex> header for interactive examples
+         // the iex> prompt for interactive examples
          [PR['PR_ATTRIB_NAME'], /^iex(?:\(\d+\))?> /],
          // special case for binaries, so that they don't get presented like atoms
          [PR['PR_PUNCTUATION'], /^::/],

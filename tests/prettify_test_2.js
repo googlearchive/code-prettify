@@ -956,5 +956,6 @@ var goldens = {
     '%%}`END`PLN\n' +
     '`END<span class="ident">y`END`PUN=`END`LIT20`END`PUN;`END`PLN\n' +
     '`END`COM%}`END'
-  )
+  ),
+  elixir: ('')
 };

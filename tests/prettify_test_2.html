@@ -25,6 +25,7 @@
     'lang-clj.js',
     'lang-css.js',
     'lang-dart.js',
+    'lang-ex.js',
     'lang-lisp.js',
     'lang-llvm.js',
     'lang-matlab.js',
@@ -1081,6 +1082,58 @@ x=10;
 %%}
 y=20;
 %}
+</pre>
+
+<h1>Elixir</h1>
+<pre class="prettyprint lang-ex" id="elixir">
+defmodule Foo.Bar do
+  @moduledoc """
+  Tests syntax highlighting for Elixir
+  """
+
+  use Bitwise
+  require Logger
+  alias __MODULE__, as: This
+
+  @default_token_length 10_000
+
+
+  @spec token(length :: integer) :: String.t
+
+  def token(length \\ @default_token_length), do: String.duplicate("x", length)
+
+
+  defp _not_exported(), do: 0xFF + 0xF_F - 0xff
+
+
+  def other(foo, bar) do
+    fun = fn{_a, b} -&gt; b + 1_3.1_4 end
+    fun.(1.0e+20)
+    _str = "string without #{inspect(42)} interpolation" &lt;&gt; " some more"
+    charlist = 'some\'chars'
+    &lt;&lt;x::utf8, _y::size(8), data::binary&gt;&gt; = "fooo"
+    ls = [1 | [2, 3]]
+    map = %{"baz" =&gt; "ban"}
+    map = %{foo: :bar, "yes, this compiles": :"also an atom"}
+    :erlang.time()
+    case {foo, bar} do
+      {1, 2} -&gt; 3
+      _something_else -&gt; :error
+      _ -&gt; :"this won't match"
+    end
+    r = 2
+    _bitwise_not = ~~~r
+
+    ~r/foo/iu # regex sigils are treated as normal ones
+    ~S|we have "quotes" and 'quotes' and| &lt;&gt; " more string"
+    ~c"custom sigil char \"is\" fine too"
+    ~r'hello'
+    ~w[hell\] #o] #sigil does not expand to the comment
+    ~w{hello}
+    ~C&lt;hello&gt;
+  end
+
+end
 </pre>
 
 </body>
