@@ -957,5 +957,52 @@ var goldens = {
     '`END<span class="ident">y`END`PUN=`END`LIT20`END`PUN;`END`PLN\n' +
     '`END`COM%}`END'
   ),
-  elixir: ('')
+  elixir: ('`KWDdefmodule`END`PLN `END`TYPFoo`END`PUN.`END`TYPBar`END`PLN `END`KWDdo`END`PLN\n' +
+'  `END`ATN@moduledoc`END`PLN `END`STR"""\n' +
+'  Tests syntax highlighting for Elixir\n' +
+'  """`END`PLN\n' +
+'\n' +
+'  `END`KWDuse`END`PLN `END`TYPBitwise`END`PLN\n' +
+'  `END`KWDrequire`END`PLN `END`TYPLogger`END`PLN\n' +
+'  `END`KWDalias`END`PLN `END`ATN__MODULE__`END`PUN,`END`PLN `END`LITas:`END`PLN `END`TYPThis`END`PLN\n' +
+'\n' +
+'  `END`ATN@default_token_length`END`PLN `END`LIT10_000`END`PLN\n' +
+'\n' +
+'\n' +
+'  `END`ATN@spec`END`PLN token`END`PUN(`END`PLNlength `END`PUN::`END`PLN integer`END`PUN)`END`PLN `END`PUN::`END`PLN `END`TYPString`END`PUN.`END`PLNt\n' +
+'\n' +
+'  `END`KWDdef`END`PLN token`END`PUN(`END`PLNlength `END`PUN\\\\`END`PLN `END`ATN@default_token_length`END`PUN),`END`PLN `END`KWDdo`END`PUN:`END`PLN `END`TYPString`END`PUN.`END`PLNduplicate`END`PUN(`END`STR"x"`END`PUN,`END`PLN length`END`PUN)`END`PLN\n' +
+'\n' +
+'\n' +
+'  `END`KWDdefp`END`PLN `END`COM_not_exported`END`PUN(),`END`PLN `END`KWDdo`END`PUN:`END`PLN `END`LIT0xFF`END`PLN `END`PUN+`END`PLN `END`LIT0xF_F`END`PLN `END`PUN-`END`PLN `END`LIT0xff`END`PLN\n' +
+'\n' +
+'\n' +
+'  `END`KWDdef`END`PLN other`END`PUN(`END`PLNfoo`END`PUN,`END`PLN bar`END`PUN)`END`PLN `END`KWDdo`END`PLN\n' +
+'    fun `END`PUN=`END`PLN `END`KWDfn`END`PUN{`END`COM_a`END`PUN,`END`PLN b`END`PUN}`END`PLN `END`PUN-&gt;`END`PLN b `END`PUN+`END`PLN `END`LIT1_3.1_4`END`PLN `END`KWDend`END`PLN\n' +
+'    fun`END`PUN.(`END`LIT1.0e+20`END`PUN)`END`PLN\n' +
+'    `END`COM_str`END`PLN `END`PUN=`END`PLN `END`STR"string without #{inspect(42)} interpolation"`END`PLN `END`PUN&lt;&gt;`END`PLN `END`STR" some more"`END`PLN\n' +
+'    charlist `END`PUN=`END`PLN `END`LIT\'some\\\'chars\'`END`PLN\n' +
+'    `END`PUN&lt;&lt;`END`PLNx`END`PUN::`END`PLNutf8`END`PUN,`END`PLN `END`COM_y`END`PUN::`END`PLNsize`END`PUN(`END`LIT8`END`PUN),`END`PLN data`END`PUN::`END`PLNbinary`END`PUN&gt;&gt;`END`PLN `END`PUN=`END`PLN `END`STR"fooo"`END`PLN\n' +
+'    ls `END`PUN=`END`PLN `END`PUN[`END`LIT1`END`PLN `END`PUN|`END`PLN `END`PUN[`END`LIT2`END`PUN,`END`PLN `END`LIT3`END`PUN]]`END`PLN\n' +
+'    map `END`PUN=`END`PLN `END`PUN%{`END`STR"baz"`END`PLN `END`PUN=&gt;`END`PLN `END`STR"ban"`END`PUN}`END`PLN\n' +
+'    map `END`PUN=`END`PLN `END`PUN%{`END`LITfoo:`END`PLN `END`LIT:bar`END`PUN,`END`PLN `END`STR"yes, this compiles"`END`PUN:`END`PLN `END`LIT:"also an atom"`END`PUN}`END`PLN\n' +
+'    `END`LIT:erlang`END`PUN.`END`PLNtime`END`PUN()`END`PLN\n' +
+'    `END`KWDcase`END`PLN `END`PUN{`END`PLNfoo`END`PUN,`END`PLN bar`END`PUN}`END`PLN `END`KWDdo`END`PLN\n' +
+'      `END`PUN{`END`LIT1`END`PUN,`END`PLN `END`LIT2`END`PUN}`END`PLN `END`PUN-&gt;`END`PLN `END`LIT3`END`PLN\n' +
+'      `END`COM_something_else`END`PLN `END`PUN-&gt;`END`PLN `END`LIT:error`END`PLN\n' +
+'      `END`COM_`END`PLN `END`PUN-&gt;`END`PLN `END`LIT:"this won\'t match"`END`PLN\n' +
+'    `END`KWDend`END`PLN\n' +
+'    r `END`PUN=`END`PLN `END`LIT2`END`PLN\n' +
+'    `END`COM_bitwise_not`END`PLN `END`PUN=`END`PLN `END`PUN~~~`END`PLNr\n' +
+'\n' +
+'    `END`ATV~r/foo/iu`END`PLN `END`COM# regex sigils are treated as normal ones`END`PLN\n' +
+'    `END`ATV~S|we have "quotes" and \'quotes\' and|`END`PLN `END`PUN&lt;&gt;`END`PLN `END`STR" more string"`END`PLN\n' +
+'    `END`ATV~c"custom sigil char \\"is\\" fine too"`END`PLN\n' +
+'    `END`ATV~r\'hello\'`END`PLN\n' +
+'    `END`ATV~w[hell\\] #o]`END`PLN `END`COM#sigil does not expand to the comment`END`PLN\n' +
+'    `END`ATV~w{hello}`END`PLN\n' +
+'    `END`ATV~C&lt;hello&gt;`END`PLN\n' +
+'  `END`KWDend`END`PLN\n' +
+'\n' +
+'`END`KWDend`END')
 };
