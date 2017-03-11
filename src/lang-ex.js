@@ -29,7 +29,7 @@ PR['registerLangHandler'](
          // # comments
          [PR['PR_COMMENT'], /^#.*/, null, '#'],
          // a (possibly multiline) charlist
-         [PR['PR_LITERAL'], /^'(?:[^'\\]|\\.)*'?/, null, '\''],
+         [PR['PR_LITERAL'], /^'(?:[^'\\]|\\.|\\\n)*'?/, null, '\''],
          // @attributes
          [PR['PR_ATTRIB_NAME'], /^@\w+/, null, '@'],
          [PR['PR_PUNCTUATION'], /^[!%&()*+,\-;<=>?\[\\\]^{|}]+/, null,

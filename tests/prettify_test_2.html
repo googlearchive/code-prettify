@@ -1110,7 +1110,9 @@ defmodule Foo.Bar do
     fun = fn{_a, b} -&gt; b + 1_3.1_4 end
     fun.(1.0e+20)
     _str = "string without #{inspect(42)} interpolation" &lt;&gt; " some more"
-    charlist = 'some\'chars'
+    charlist = 'some\'chars
+    with newlines \
+    and newlines'
     &lt;&lt;x::utf8, _y::size(8), data::binary&gt;&gt; = "fooo"
     ls = [1 | [2, 3]]
     map = %{"baz" =&gt; "ban"}
