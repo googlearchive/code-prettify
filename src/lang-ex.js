@@ -57,10 +57,14 @@ PR['registerLangHandler'](
          //
          // Contains negative lookahead to handle <<foo::binary>>
          [PR['PR_LITERAL'], /^(?:\w+[\!\?\@]?|"(?:[^"\\]|\\.)*"):(?!:)/],
-         // A double-quoted multi-line string
-         // or a triple double-quoted multi-line string.
+         // heredoc: triple double-quoted multi-line string.
+         //
+         // NOTE: the opening """ needs to be followed by a newline
          [PR['PR_STRING'],
-          /^(?:"(?:(?:""(?:""?(?!")|[^\\"]|\\(?:.|\n|\r))*"{0,3})|(?:[^"\\]|\\(?:.|\n|\r))*"?))/],
+          /^"""\s*(\r|\n)+(?:""?(?!")|[^\\"]|\\(?:.|\n|\r))*"{0,3}/],
+         // A double-quoted multi-line string
+         [PR['PR_STRING'],
+          /^"(?:[^"\\]|\\(?:.|\n|\r))*"?(?!")/],
          // types
          [PR['PR_TYPE'], /^[A-Z]\w*/],
          // variables not meant to be used or private functions
