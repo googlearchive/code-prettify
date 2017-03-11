@@ -1109,7 +1109,9 @@ defmodule Foo.Bar do
   def other(foo, bar) do
     fun = fn{_a, b} -&gt; b + 1_3.1_4 end
     fun.(1.0e+20)
-    _str = "string without #{inspect(42)} interpolation" &lt;&gt; " some more"
+    _str = "string without #{inspect(42)} interpolation" &lt;&gt; " some more
+    with newlines \
+    and newlines"
     charlist = 'some\'chars
     with newlines \
     and newlines'

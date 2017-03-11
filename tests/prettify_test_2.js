@@ -980,7 +980,9 @@ var goldens = {
 '  `END`KWDdef`END`PLN other`END`PUN(`END`PLNfoo`END`PUN,`END`PLN bar`END`PUN)`END`PLN `END`KWDdo`END`PLN\n' +
 '    fun `END`PUN=`END`PLN `END`KWDfn`END`PUN{`END`COM_a`END`PUN,`END`PLN b`END`PUN}`END`PLN `END`PUN-&gt;`END`PLN b `END`PUN+`END`PLN `END`LIT1_3.1_4`END`PLN `END`KWDend`END`PLN\n' +
 '    fun`END`PUN.(`END`LIT1.0e+20`END`PUN)`END`PLN\n' +
-'    `END`COM_str`END`PLN `END`PUN=`END`PLN `END`STR"string without #{inspect(42)} interpolation"`END`PLN `END`PUN&lt;&gt;`END`PLN `END`STR" some more"`END`PLN\n' +
+'    `END`COM_str`END`PLN `END`PUN=`END`PLN `END`STR"string without #{inspect(42)} interpolation"`END`PLN `END`PUN&lt;&gt;`END`PLN `END`STR" some more\n' +
+'    with newlines \\\n' +
+'    and newlines"`END`PLN\n' +
 '    charlist `END`PUN=`END`PLN `END`LIT\'some\\\'chars\n' +
 '    with newlines \\\n' +
 '    and newlines\'`END`PLN\n' +

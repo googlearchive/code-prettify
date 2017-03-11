@@ -29,7 +29,7 @@ PR['registerLangHandler'](
          // # comments
          [PR['PR_COMMENT'], /^#.*/, null, '#'],
          // a (possibly multiline) charlist
-         [PR['PR_LITERAL'], /^'(?:[^'\\]|\\.|\\\n)*'?/, null, '\''],
+         [PR['PR_LITERAL'], /^'(?:[^'\\]|\\(?:.|\n|\r))*'?/, null, '\''],
          // @attributes
          [PR['PR_ATTRIB_NAME'], /^@\w+/, null, '@'],
          [PR['PR_PUNCTUATION'], /^[!%&()*+,\-;<=>?\[\\\]^{|}]+/, null,
@@ -60,7 +60,7 @@ PR['registerLangHandler'](
          // A double-quoted multi-line string
          // or a triple double-quoted multi-line string.
          [PR['PR_STRING'],
-          /^(?:"(?:(?:""(?:""?(?!")|[^\\"]|\\.)*"{0,3})|(?:[^"\\]|\\.)*"?))/],
+          /^(?:"(?:(?:""(?:""?(?!")|[^\\"]|\\(?:.|\n|\r))*"{0,3})|(?:[^"\\]|\\(?:.|\n|\r))*"?))/],
          // types
          [PR['PR_TYPE'], /^[A-Z]\w*/],
          // variables not meant to be used or private functions
