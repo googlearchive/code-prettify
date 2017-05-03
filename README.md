@@ -87,6 +87,7 @@ Other languages are supported via extensions:
 [Visual Basic](src/lang-vb.js);
 [VHDL](src/lang-vhdl.js);
 [Wiki](src/lang-wiki.js);
+[x86 Assembly](src/lang-x86.js);
 [XQ](src/lang-xq.js);
 [YAML](src/lang-yaml.js)
 
