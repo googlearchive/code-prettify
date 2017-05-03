@@ -1008,5 +1008,139 @@ var goldens = {
 '    `END`ATV~C&lt;hello&gt;`END`PLN\n' +
 '  `END`KWDend`END`PLN\n' +
 '\n' +
-'`END`KWDend`END')
+'`END`KWDend`END'),
+   x86_masm: (
+'`KWDinclude`END`PLN listing.inc\n' +
+'`END`KWD.model	flat`END`PLN\n' +
+'\n' +
+'`END`KWDINCLUDELIB`END`PLN LIBCMT\n' +
+'`END`KWDINCLUDELIB`END`PLN OLDNAMES\n' +
+'\n' +
+'`END`COM; These should not be parsed as labels:`END`PLN\n' +
+'`END`KWDEXTRN`END`PLN	__ftol2_sse:`END`KWDPROC`END`PLN\n' +
+'`END`KWDEXTRN`END`PLN	_printf:`END`KWDPROC`END`PLN\n' +
+'\n' +
+'`END`KWDCONST`END`PLN	`END`KWDSEGMENT`END`PLN\n' +
+'real1        `END`TYPDD`END`PLN `END`LIT04f800000h`END`PLN         `END`COM; 4.29497e+009`END`PLN\n' +
+'       real2 `END`TYPDQ`END`PLN `END`LIT00000000000000000`END`PLN  `END`COM; 0.0`END`PLN\n' +
+'FormatString `END`TYPDB`END`PLN `END`STR\'%s: %s\'`END`PUN,`END`PLN `END`LIT00H`END`PLN      `END`COM; `string\'`END`PLN\n' +
+'strOutput    `END`TYPDB`END`PLN `END`STR"Output is"`END`PUN,`END`PLN `END`LIT0`END`PLN     `END`COM; `string\'`END`PLN\n' +
+'`END`KWDCONST`END`PLN	`END`KWDENDS`END`PLN\n' +
+'\n' +
+'`END`KWD_TEXT	SEGMENT`END`PLN\n' +
+'tempValue = `END`LIT8`END`PLN              `END`COM; size = 4`END`PLN\n' +
+'`END`PUN?`END`PLNDemoFxn@@YGHI@Z `END`KWDPROC`END`PLN      `END`COM; DemoFxn, COMDAT`END`PLN\n' +
+'`END`ATN	push`END`PLN     `END`ATVesi`END`PLN\n' +
+'`END`ATN	fldz`END`PLN\n' +
+'`END`ATN	mov`END`PLN      `END`ATVesi`END`PUN,`END`PLN `END`TYPDWORD PTR`END`PLN `END`PUN[`END`ATVesp`END`PLN `END`PUN+`END`PLN `END`KWDsize`END`PUN]`END`PLN\n' +
+'`END`ATN	mov`END`PLN      `END`ATVeax`END`PUN,`END`PLN `END`ATVesi`END`PLN\n' +
+'`END`ATN	fldpi`END`PLN\n' +
+'`END`ATN	mov`END`PLN      `END`TYPDWORD PTR`END`PLN tempValue`END`PUN[`END`ATVesp`END`PUN],`END`PLN `END`ATVeax`END`PLN\n' +
+'`END`ATN	fild`END`PLN     `END`TYPdword ptr`END`PLN tempValue`END`PUN[`END`ATVesp`END`PUN]`END`PLN\n' +
+'`END`ATN	test`END`PLN     `END`ATVeax`END`PUN,`END`PLN `END`ATVeax`END`PLN\n' +
+'`END`ATN	jns`END`PLN      `END`TYPSHORT`END`PLN $LN12@DemoFxn\n' +
+'`END`ATN	fadd`END`PLN     `END`TYPDWORD PTR`END`PLN realValue2\n' +
+'`END`DEC$LN12@DemoFxn:`END`PLN\n' +
+'`END`ATN	fldlg2`END`PLN\n' +
+'`END`ATN	fxch`END`PLN     `END`ATVST(1)`END`PLN\n' +
+'`END`ATN	fyl2x`END`PLN\n' +
+'`END`ATN	fadd`END`PLN     `END`TYPDWORD PTR`END`PLN `END`PUN[`END`PLNreal1`END`PUN]`END`PLN\n' +
+'`END`ATN	call`END`PLN     __ftol2_sse\n' +
+'`END`ATN	mov`END`PLN      `END`ATVecx`END`PUN,`END`PLN `END`ATVeax`END`PLN\n' +
+'`END`ATN	cmp`END`PLN      `END`ATVesi`END`PUN,`END`PLN `END`LIT100000000`END`PLN\n' +
+'`END`ATN	jb`END`PLN       `END`TYPSHORT`END`PLN $LN4@DemoFxn\n' +
+'`END`ATN	mov`END`PLN      `END`ATVeax`END`PUN,`END`PLN `END`LIT55e63b89H`END`PLN\n' +
+'`END`ATN	mul`END`PLN      `END`ATVesi`END`PLN\n' +
+'`END`ATN	add`END`PLN      `END`ATVecx`END`PUN,`END`PLN `END`LIT-8`END`PLN\n' +
+'`END`ATN	shr`END`PLN      `END`ATVedx`END`PUN,`END`PLN `END`LIT25`END`PLN\n' +
+'`END`ATN	mov`END`PLN      `END`ATVesi`END`PUN,`END`PLN `END`ATVedx`END`PLN\n' +
+'`END`DEC$LN4@DemoFxn:`END`PLN\n' +
+'`END`ATN	lea`END`PLN      `END`ATVeax`END`PUN,`END`PLN `END`TYPDWORD PTR`END`PLN `END`PUN[`END`ATVedi`END`PLN `END`PUN+`END`PLN `END`LIT16`END`PUN]`END`PLN\n' +
+'`END`ATN	lea`END`PLN      `END`ATVedx`END`PUN,`END`PLN `END`TYPDWORD PTR`END`PLN `END`PUN[`END`ATVecx`END`PUN*`END`LIT4`END`PUN]`END`PLN\n' +
+'`END`ATN	cmp`END`PLN      `END`ATVesi`END`PUN,`END`PLN `END`LIT00CC2710h`END`PLN\n' +
+'`END`ATN	jb`END`PLN `END`TYPshort`END`PLN $LN3@DemoFxn\n' +
+'`END`ATN	mov`END`PLN      `END`ATVeax`END`PUN,`END`PLN `END`LIT-776530087`END`PLN\n' +
+'`END`DEC$LN3@DemoFxn:`END`ATN\n' +
+'cmp`END`PLN      `END`ATVesi`END`PUN,`END`PLN `END`LIT100`END`ATN\n' +
+'jb`END`PLN       `END`TYPSHORT`END`PLN $LN2@DemoFxn`END`ATN\n' +
+'mov`END`PLN      `END`ATVeax`END`PUN,`END`PLN `END`LIT1374389535`END`ATN\n' +
+'mul`END`PLN      `END`ATVedi`END`ATN\n' +
+'fld`END`PLN      `END`ATVST(1)`END`ATN\n' +
+'fxch`END`PLN     `END`ATVst(1)`END`ATN\n' +
+'fsubrp`END`PLN   `END`ATVST(2)`END`PUN,`END`PLN `END`ATVST(0)`END`ATN\n' +
+'fld`END`PLN `END`TYPqword ptr`END`PLN `END`PUN[`END`ATVeax`END`PLN `END`PUN-`END`PLN `END`LIT40`END`PUN]`END`ATN\n' +
+'fsubrp`END`PLN   `END`ATVST(3)`END`PUN,`END`PLN `END`ATVST(0)`END`ATN\n' +
+'fld`END`PLN      `END`ATVST\n' +
+'`END`DEC$LN2@DemoFxn:`END`PLN\n' +
+'`END`ATN	cmp`END`PLN      `END`ATVesi`END`PUN,`END`PLN `END`LIT10`END`PLN\n' +
+'`END`ATN	pop`END`PLN      `END`ATVebx`END`PLN\n' +
+'`END`ATN	fstp`END`PLN     `END`ATVst\n' +
+'`END`ATN	dec`END`PLN      `END`ATVeax`END`PLN\n' +
+'`END`ATN	lea`END`PLN      `END`ATVeax`END`PUN,`END`PLN `END`TYPDWORD PTR`END`PLN `END`PUN[`END`ATVecx`END`PLN `END`PUN+`END`PLN `END`LIT1`END`PUN]`END`PLN\n' +
+'`END`ATN	push`END`PLN     `END`KWDOFFSET`END`PLN strOutput\n' +
+'`END`ATN	push`END`PLN     `END`KWDoffset`END`PLN FormatString\n' +
+'`END`ATN	call`END`PLN     _printf\n' +
+'`END`ATN	add`END`PLN      `END`ATVesp`END`PUN,`END`PLN `END`LIT12`END`PLN\n' +
+'`END`ATN	jae`END`PLN      `END`TYPSHORT`END`PLN $LN1@DemoFxn\n' +
+'`END`ATN	mov`END`PLN      `END`ATVeax`END`PUN,`END`PLN `END`ATVecx`END`PLN\n' +
+'`END`DEC$LN1@DemoFxn:`END`PLN   `END`ATN ret`END`PLN `END`LIT4`END`PLN\n' +
+'`END`PUN?`END`PLNDemoFxn@@YGHI@Z `END`KWDENDP`END`COM; DemoFxn`END`PLN\n' +
+'`END`KWD_TEXT	ENDS`END`PLN\n' +
+'\n' +
+'`END`KWDEND`END'),
+   x86_gas: (
+'`DEC.L_2il0floatpacket.0:`END`PLN\n' +
+'       `END`TYP .long`END`PLN   `END`LIT0x3f800000`END`PLN\n' +
+'\n' +
+'`END`DECDemoFxn(unsigned int, char const*):`END`PLN    `END`COM# @DemoFxn(unsigned int, char const*)`END`PLN\n' +
+'       `END`ATN pushq`END`PLN   `END`ATV%r14`END`PLN\n' +
+'       `END`ATN movl`END`PLN    `END`ATV%edi`END`PUN,`END`PLN `END`ATV%ebx`END`PLN\n' +
+'       `END`ATN movl`END`PLN    `END`ATV%ebx`END`PUN,`END`PLN `END`ATV%r14d`END`PLN\n' +
+'       `END`ATN vxorpd`END`PLN  `END`ATV%xmm0`END`PUN,`END`PLN `END`ATV%xmm0`END`PUN,`END`PLN `END`ATV%xmm0`END`PLN\n' +
+'       `END`ATN testq`END`PLN   `END`ATV%rsi`END`PUN,`END`PLN `END`ATV%rsi`END`PLN\n' +
+'       `END`ATN je`END`PLN      ..B1.7\n' +
+'       `END`ATN vcvtsi2ssq`END`PLN      `END`ATV%r14`END`PUN,`END`PLN `END`ATV%xmm0`END`PUN,`END`PLN `END`ATV%xmm0`END`PLN\n' +
+'       `END`ATN callq`END`PLN   std::log10`END`PUN(`END`PLNfloat`END`PUN)`END`PLN\n' +
+'       `END`ATN vaddss`END`PLN  .L_2il0floatpacket.0`END`PUN(`END`ATV%rip`END`PUN),`END`PLN `END`ATV%xmm0`END`PUN,`END`PLN `END`ATV%xmm0`END`PLN\n' +
+'       `END`ATN vcvttss2si`END`PLN      `END`ATV%xmm0`END`PUN,`END`PLN `END`ATV%ecx`END`PLN\n' +
+'       `END`ATN cmpl`END`PLN    $`END`LIT100000000`END`PUN,`END`PLN `END`ATV%ebx`END`PLN\n' +
+'       `END`ATN jb`END`PLN      ..B1.3\n' +
+'       `END`ATN addl`END`PLN    $`END`LIT8`END`PUN,`END`PLN `END`ATV%ecx`END`PLN\n' +
+'       `END`ATN imulq`END`PLN   $`END`LIT1441151881`END`PUN,`END`PLN `END`ATV%r14`END`PUN,`END`PLN `END`ATV%rbx`END`PLN `END`COM# imm = 0x55E63B89`END`PLN\n' +
+'       `END`ATN shrq`END`PLN    $`END`LIT57`END`PUN,`END`PLN `END`ATV%rbx`END`PLN\n' +
+'       `END`ATN jmp`END`PLN     ..B1.7\n' +
+'`END`DEC..B1.3:`END`PLN\n' +
+'       `END`ATN cmpl`END`PLN    $`END`LIT10000`END`PUN,`END`PLN `END`ATV%ebx`END`PLN            `END`COM# imm = 0x2710`END`PLN\n' +
+'       `END`ATN jb`END`PLN      ..B1.5\n' +
+'       `END`ATN addl`END`PLN    $`END`LIT4`END`PUN,`END`PLN `END`ATV%ecx`END`PLN\n' +
+'       `END`ATN movl`END`PLN    $`END`LIT3518437209`END`PUN,`END`PLN `END`ATV%ebx`END`PLN       `END`COM# imm = 0xD1B71759`END`PLN\n' +
+'       `END`ATN imulq`END`PLN   `END`ATV%r14`END`PUN,`END`PLN `END`ATV%rbx`END`PLN\n' +
+'       `END`ATN shrq`END`PLN    $`END`LIT45`END`PUN,`END`PLN `END`ATV%rbx`END`PLN\n' +
+'`END`DEC..B1.5:`END`ATN\n' +
+'vaddpd`END`PLN  `END`PUN(`END`ATV%rdi`END`PUN,`END`ATV%rdx`END`PUN,`END`LIT8`END`PUN),`END`PLN `END`ATV%ymm0`END`PUN,`END`PLN `END`ATV%ymm0`END`ATN\n' +
+'vaddpd`END`PLN  `END`LIT32`END`PUN(`END`ATV%rdi`END`PUN,`END`ATV%rdx`END`PUN,`END`LIT8`END`PUN),`END`PLN `END`ATV%ymm1`END`PUN,`END`PLN `END`ATV%ymm1`END`ATN\n' +
+'vaddpd`END`PLN  `END`LIT64`END`PUN(`END`ATV%rdi`END`PUN,`END`ATV%rdx`END`PUN,`END`LIT8`END`PUN),`END`PLN `END`ATV%ymm2`END`PUN,`END`PLN `END`ATV%ymm2`END`ATN\n' +
+'addq`END`PLN    $`END`LIT32`END`PUN,`END`PLN `END`ATV%rdx`END`ATN\n' +
+'movl`END`PLN    `END`ATV%ebx`END`PUN,`END`PLN `END`ATV%eax`END`ATN\n' +
+'imulq`END`PLN   $`END`LIT0x51EB851F`END`PUN,`END`PLN `END`ATV%rax`END`PUN,`END`PLN `END`ATV%rbx`END`ATN\n' +
+'testq`END`PLN   `END`ATV%r8`END`PUN,`END`PLN `END`ATV%r8`END`ATN\n' +
+'jp`END`PLN      ..B1.7`END`ATN\n' +
+'shrq`END`PLN    $`END`LIT37`END`PUN,`END`PLN `END`ATV%rbx`END`PLN\n' +
+'`END`DEC..B1.7:`END`PLN\n' +
+'       `END`ATN xorl`END`PLN    `END`ATV%eax`END`PUN,`END`PLN `END`ATV%eax`END`PLN\n' +
+'       `END`ATN cmpl`END`PLN    $`END`LIT9`END`PUN,`END`PLN `END`ATV%ebx`END`PLN\n' +
+'       `END`ATN seta`END`PLN    `END`ATV%al`END`PLN\n' +
+'       `END`ATN vextractf128`END`PLN    $`END`LIT1`END`PUN,`END`PLN `END`ATV%ymm0`END`PUN,`END`PLN `END`ATV%xmm1`END`PLN\n' +
+'       `END`ATN vaddpd`END`PLN  `END`ATV%ymm1`END`PUN,`END`PLN `END`ATV%ymm0`END`PUN,`END`PLN `END`ATV%ymm0`END`PLN\n' +
+'       `END`ATN vhaddpd`END`PLN `END`ATV%ymm0`END`PUN,`END`PLN `END`ATV%ymm0`END`PUN,`END`PLN `END`ATV%ymm0`END`PLN\n' +
+'       `END`ATN addl`END`PLN    `END`ATV%ecx`END`PUN,`END`PLN `END`ATV%eax`END`PLN\n' +
+'       `END`ATN addq`END`PLN    $`END`LIT8`END`PUN,`END`PLN `END`ATV%rsp`END`PLN\n' +
+'       `END`ATN popq`END`PLN    `END`ATV%r15`END`PLN\n' +
+'       `END`ATN vzeroupper`END`PLN\n' +
+'       `END`ATN retq`END`PLN\n' +
+'\n' +
+'`END`COM# Unused data:`END`PLN\n' +
+'`END`DECFormatString:`END`PLN\n' +
+'.`END`TYPasciz`END`PLN  `END`STR"%s: %s"`END`PLN\n' +
+'`END`DECstrOutput:`END`PLN .`END`TYPasciz`END`PLN  `END`STR"Output is"`END')
 };
