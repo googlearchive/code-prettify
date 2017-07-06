@@ -729,10 +729,12 @@ var goldens = {
       '`END`LIT314e-2`END`PLN\n' +
       '`END`LIT0.314e1`END`PLN\n' +
       '\n' +
-      '`END`KWDfun`END`PLN ifBoolean`END`PUN(`END`PLNcondition`END`PUN:`END`PLN `END`TYPBoolean`END`PUN?`END`PLN `END`PUN=`END`PLN `END`LITnull`END`PUN)`END' +
+      '`END`KWDprotected`END`PLN `END`KWDoverride`END`PLN `END`KWDfun`END`PLN ifBoolean`END`PUN(`END`PLNcondition`END`PUN:`END`PLN `END`TYPBoolean`END`PUN?`END`PLN `END`PUN=`END`PLN `END`LITnull`END`PUN)`END' +
       '`PLN `END`PUN{}`END`PLN\n' +
       '\n' +
       '`END`PUN::`END`PLNifBoolean\n' +
+      '\n' +
+      '`END`KWDconstructor`END`PUN()`END`PLN `END`PUN:`END`PLN `END`KWDsuper`END`PUN()`END`PLN\n' +
       '\n' +
       '`END`STR"\\\"true\\\""`END`PLN\n' +
       '`END`STR\'a\'`END`PLN\n' +
