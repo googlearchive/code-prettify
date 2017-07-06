@@ -708,6 +708,60 @@ var goldens = {
     '  `END`KWDEND`END`PUN;`END`PLN\n' +
     '`END`KWDEND`END`PUN;`END'
   ),
+  kotlin: (
+      '`KWDpackage`END`PLN test`END`PUN;`END`PLN\n' +
+      '\n' +
+      '`END`KWDimport`END`PLN kotlin`END`PUN.`END`TYPInt`END`PLN\n' +
+      '\n' +
+      '`END`COM// Single line comment`END`PLN\n' +
+      '`END`COM/*\n' +
+      ' * Multiline\n' +
+      ' * comment\n' +
+      ' */`END`PLN\n' +
+      '\n' +
+      '`END`KWDtypealias`END`PLN `END`TYPSomeNumber`END`PLN `END`PUN=`END`PLN `END`TYPInt`END`PLN\n' +
+      '\n' +
+      '`END`KWDval`END`PLN number`END`PUN:`END`PLN `END`TYPLong`END`PLN `END`PUN=`END`PLN `END`LIT1_000L`END`PLN\n' +
+      '`END`KWDvar`END`PLN float`END`PUN:`END`PLN `END`TYPFloat`END`PLN `END`PUN=`END`PLN `END`LIT12.34f`END`PLN\n' +
+      '`END`LIT0xFF_FF`END`PLN\n' +
+      '`END`LIT3.14`END`PLN\n' +
+      '\n' +
+      '`END`LIT314e-2`END`PLN\n' +
+      '`END`LIT0.314e1`END`PLN\n' +
+      '\n' +
+      '`END`KWDfun`END`PLN ifBoolean`END`PUN(`END`PLNcondition`END`PUN:`END`PLN `END`TYPBoolean`END`PUN?`END`PLN `END`PUN=`END`PLN `END`LITnull`END`PUN)`END' +
+      '`PLN `END`PUN{}`END`PLN\n' +
+      '\n' +
+      '`END`PUN::`END`PLNifBoolean\n' +
+      '\n' +
+      '`END`STR"\\\"true\\\""`END`PLN\n' +
+      '`END`STR\'a\'`END`PLN\n' +
+      '\n' +
+      '`END`LITloop@`END`PLN `END`KWDfor`END`PUN()`END`PLN\n' +
+      '\n' +
+      '`END`KWDbreak`END`PLN `END`LIT@loop`END`PLN\n' +
+      '\n' +
+      '`END`KWDenum class`END`PLN `END`TYP\`true\``END`PLN\n' +
+      '\n' +
+      '`END`KWDdata class`END`PLN `END`TYPPerson`END`PUN(`END`KWDval`END`PLN name`END`PUN:`END`PLN `END`TYPString`END`PUN)`END`PLN\n' +
+      '\n' +
+      '`END`KWDenum class`END`PLN `END`TYPSize`END`PLN `END`PUN{`END`PLN\n' +
+      '    BIG`END`PUN,`END`PLN MEDIUM`END`PUN,`END`PLN SMALL\n' +
+      '`END`PUN}`END`PLN\n' +
+      '\n' +
+      '`END`KWDclass`END`PLN `END`TYPBall`END`PUN(`END`KWDval`END`PLN color`END`PUN:`END`PLN `END`TYPString`END`PUN,`END`PLN `END`KWDval`END`PLN size`END`PUN:`END`PLN `END`TYPSize`END`PUN)`END`PLN `END`PUN{`END`PLN\n' +
+      '    `END`KWDcompanion object`END`PLN `END`PUN{}`END`PLN\n' +
+      '\n' +
+      '    `END`KWDfun`END`PLN isBig`END`PUN()`END`PLN `END`PUN=`END`PLN size `END`PUN==`END`PLN `END`TYPSize`END`PUN.`END`PLNBIG\n' +
+      '\n' +
+      '    `END`KWDval`END`PLN isMedium`END`PUN:`END`PLN `END`TYPBoolean`END`PLN\n' +
+      '        `END`KWDget`END`PUN()`END`PLN `END`PUN=`END`PLN size `END`PUN==`END`PLN `END`TYPSize`END`PUN.`END`PLNMEDIUM\n' +
+      '`END`PUN}`END`PLN\n' +
+      '\n' +
+      '`END`KWDfun`END`PLN `END`TYPBoolean`END`PUN?.`END`PLNisNull`END`PUN():`END`PLN `END`TYPBoolean`END`PLN `END`PUN=`END`PLN `END`KWDthis`END`PLN `END`PUN==`END`PLN `END`LITnull`END`PLN\n' +
+      '\n' +
+      '`END`KWDfun`END`PLN `END`TYPBoolean`END`PUN?.`END`PLNgetOrThrow`END`PUN():`END`PLN `END`TYPBoolean`END`PLN `END`PUN=`END`PLN `END`KWDthis`END`PLN `END`PUN?:`END`PLN `END`KWDthrow`END`PLN `END`TYPException`END`PUN()`END'
+  ),
   llvm: (
     '`COM; Declare the string constant as a global constant.`END`PLN\n' +
     '@.str `END`PUN=`END`PLN `END`KWDprivate`END`PLN `END`KWDunnamed_addr`END`PLN `END`KWDconstant`END`PLN `END`PUN[`END`LIT13`END`PLN `END`KWDx`END`PLN `END`KWDi8`END`PUN]`END`PLN `END`KWDc`END`STR"hello world\\0A\\00"`END`PLN\n' +
