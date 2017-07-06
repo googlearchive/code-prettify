@@ -737,6 +737,10 @@ var goldens = {
       '`END`STR"\\\"true\\\""`END`PLN\n' +
       '`END`STR\'a\'`END`PLN\n' +
       '\n' +
+      '`END`STR"""\n' +
+      'aaaaaaaaaaa\n' +
+      '"""`END`PLN\n' +
+      '\n' +
       '`END`LITloop@`END`PLN `END`KWDfor`END`PUN()`END`PLN\n' +
       '\n' +
       '`END`KWDbreak`END`PLN `END`LIT@loop`END`PLN\n' +

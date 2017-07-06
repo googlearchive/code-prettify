@@ -20,9 +20,8 @@
  * Registers a language handler for Kotlin.
  *
  * Limitations:
- * - doesn't support string templates ("$var")
+ * - doesn't support string interpolation ("$var")
  * - doesn't support labels if there is no space between the keyword (break@loop, loop@for)
- * - doesn't support raw strings (""" ones)
  *
  * @author mibac138@gmail.com
  */
@@ -49,6 +48,8 @@ PR['registerLangHandler'](
             [PR['PR_STRING'], /'.'/],
             // string
             [PR['PR_STRING'], /^"([^"\\]|\\[\s\S])*"/],
+            // multiline string
+            [PR['PR_STRING'], /^"{3}[\s\S]*?[^\\]"{3}/],
             // annotation (and label)
             [PR['PR_LITERAL'], /^@([a-zA-Z0-9_$@]*|`.*`)/],
             // label definition
