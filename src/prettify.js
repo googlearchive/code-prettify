@@ -287,8 +287,8 @@ var prettyPrint;
    */
   var PR_NOCODE = 'nocode';
 
-  
-  
+
+
   /**
    * A set of tokens that can precede a regular expression literal in
    * javascript
@@ -309,7 +309,7 @@ var prettyPrint;
    * @const
    */
   var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[+\\-]=|->|\\/=?|::?|<<?=?|>>?>?=?|,|;|\\?|@|\\[|~|{|\\^\\^?=?|\\|\\|?=?|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
-  
+
   // CAVEAT: this does not properly handle the case where a regular
   // expression immediately follows another since a regular expression may
   // have flags for case-sensitivity and the like.  Having regexp tokens
@@ -326,7 +326,7 @@ var prettyPrint;
    */
   function combinePrefixPatterns(regexs) {
     var capturedGroupIndex = 0;
-  
+
     var needToFoldCase = false;
     var ignoreCase = false;
     for (var i = 0, n = regexs.length; i < n; ++i) {
@@ -340,7 +340,7 @@ var prettyPrint;
         break;
       }
     }
-  
+
     var escapeCharToCodeUnit = {
       'b': 8,
       't': 9,
@@ -349,7 +349,7 @@ var prettyPrint;
       'f': 0xc,
       'r': 0xd
     };
-  
+
     function decodeEscape(charsetPart) {
       var cc0 = charsetPart.charCodeAt(0);
       if (cc0 !== 92 /* \\ */) {
@@ -367,7 +367,7 @@ var prettyPrint;
         return charsetPart.charCodeAt(1);
       }
     }
-  
+
     function encodeEscape(charCode) {
       if (charCode < 0x20) {
         return (charCode < 0x10 ? '\\x0' : '\\x') + charCode.toString(16);
@@ -376,7 +376,7 @@ var prettyPrint;
       return (ch === '\\' || ch === '-' || ch === ']' || ch === '^')
           ? "\\" + ch : ch;
     }
-  
+
     function caseFoldCharset(charSet) {
       var charsetParts = charSet.substring(1, charSet.length - 1).match(
           new RegExp(
@@ -390,10 +390,10 @@ var prettyPrint;
               'g'));
       var ranges = [];
       var inverse = charsetParts[0] === '^';
-  
+
       var out = ['['];
       if (inverse) { out.push('^'); }
-  
+
       for (var i = inverse ? 1 : 0, n = charsetParts.length; i < n; ++i) {
         var p = charsetParts[i];
         if (/\\[bdsw]/i.test(p)) {  // Don't muck with named groups.
@@ -422,7 +422,7 @@ var prettyPrint;
           }
         }
       }
-  
+
       // [[1, 10], [3, 4], [8, 12], [14, 14], [16, 16], [17, 17]]
       // -> [[1, 12], [14, 14], [16, 17]]
       ranges.sort(function (a, b) { return (a[0] - b[0]) || (b[1]  - a[1]); });
@@ -436,7 +436,7 @@ var prettyPrint;
           consolidatedRanges.push(lastRange = range);
         }
       }
-  
+
       for (var i = 0; i < consolidatedRanges.length; ++i) {
         var range = consolidatedRanges[i];
         out.push(encodeEscape(range[0]));
@@ -448,7 +448,7 @@ var prettyPrint;
       out.push(']');
       return out.join('');
     }
-  
+
     function allowAnywhereFoldCaseAndRenumberGroups(regex) {
       // Split into character sets, escape sequences, punctuation strings
       // like ('(', '(?:', ')', '^'), and runs of characters that do not
@@ -467,12 +467,12 @@ var prettyPrint;
               + ')',
               'g'));
       var n = parts.length;
-  
+
       // Maps captured group numbers to the number they will occupy in
       // the output or to -1 if that has not been determined, or to
       // undefined if they need not be capturing in the output.
       var capturedGroups = [];
-  
+
       // Walk over and identify back references to build the capturedGroups
       // mapping.
       for (var i = 0, groupIndex = 0; i < n; ++i) {
@@ -494,7 +494,7 @@ var prettyPrint;
           }
         }
       }
-  
+
       // Renumber groups and reduce capturing groups to non-capturing groups
       // where possible.
       for (var i = 1; i < capturedGroups.length; ++i) {
@@ -516,13 +516,13 @@ var prettyPrint;
           }
         }
       }
-  
+
       // Remove any prefix anchors so that the output will match anywhere.
       // ^^ really does mean an anchored match though.
       for (var i = 0; i < n; ++i) {
         if ('^' === parts[i] && '^' !== parts[i + 1]) { parts[i] = ''; }
       }
-  
+
       // Expand letters to groups to handle mixing of case-sensitive and
       // case-insensitive patterns if necessary.
       if (regex.ignoreCase && needToFoldCase) {
@@ -542,10 +542,10 @@ var prettyPrint;
           }
         }
       }
-  
+
       return parts.join('');
     }
-  
+
     var rewritten = [];
     for (var i = 0, n = regexs.length; i < n; ++i) {
       var regex = regexs[i];
@@ -553,7 +553,7 @@ var prettyPrint;
       rewritten.push(
           '(?:' + allowAnywhereFoldCaseAndRenumberGroups(regex) + ')');
     }
-  
+
     return new RegExp(rewritten.join('|'), ignoreCase ? 'gi' : 'g');
   }
 
@@ -604,12 +604,12 @@ var prettyPrint;
    */
   function extractSourceSpans(node, isPreformatted) {
     var nocode = /(?:^|\s)nocode(?:\s|$)/;
-  
+
     var chunks = [];
     var length = 0;
     var spans = [];
     var k = 0;
-  
+
     function walk(node) {
       var type = node.nodeType;
       if (type == 1) {  // Element
@@ -639,9 +639,9 @@ var prettyPrint;
         }
       }
     }
-  
+
     walk(node);
-  
+
     return {
       sourceCode: chunks.join('').replace(/\n$/, ''),
       spans: spans
@@ -1085,9 +1085,9 @@ var prettyPrint;
   function numberLines(node, startLineNum, isPreformatted) {
     var nocode = /(?:^|\s)nocode(?:\s|$)/;
     var lineBreak = /\r\n?|\n/;
-  
+
     var document = node.ownerDocument;
-  
+
     var li = document.createElement('li');
     while (node.firstChild) {
       li.appendChild(node.firstChild);
@@ -1095,7 +1095,7 @@ var prettyPrint;
     // An array of lines.  We split below, so this is initialized to one
     // un-split line.
     var listItems = [li];
-  
+
     function walk(node) {
       var type = node.nodeType;
       if (type == 1 && !nocode.test(node.className)) {  // Element
@@ -1130,7 +1130,7 @@ var prettyPrint;
         }
       }
     }
-  
+
     // Split a line after the given node.
     function breakAfter(lineEndNode) {
       // If there's nothing to the right, then we can skip ending the line
@@ -1140,7 +1140,7 @@ var prettyPrint;
         lineEndNode = lineEndNode.parentNode;
         if (!lineEndNode) { return; }
       }
-  
+
       function breakLeftOf(limit, copy) {
         // Clone shallowly if this node needs to be on both sides of the break.
         var rightSide = copy ? limit.cloneNode(false) : limit;
@@ -1162,9 +1162,9 @@ var prettyPrint;
         }
         return rightSide;
       }
-  
+
       var copiedListItem = breakLeftOf(lineEndNode.nextSibling, 0);
-  
+
       // Walk the parent chain until we reach an unattached LI.
       for (var parent;
            // Check nodeType since IE invents document fragments.
@@ -1174,19 +1174,19 @@ var prettyPrint;
       // Put it on the list of lines for later processing.
       listItems.push(copiedListItem);
     }
-  
+
     // Split lines while there are lines left to split.
     for (var i = 0;  // Number of lines that have been split so far.
          i < listItems.length;  // length updated by breakAfter calls.
          ++i) {
       walk(listItems[i]);
     }
-  
+
     // Make sure numeric indices show correctly.
     if (startLineNum === (startLineNum|0)) {
       listItems[0].setAttribute('value', startLineNum);
     }
-  
+
     var ol = document.createElement('ol');
     ol.className = 'linenums';
     var offset = Math.max(0, ((startLineNum - 1 /* zero index */)) | 0) || 0;
@@ -1201,7 +1201,7 @@ var prettyPrint;
       }
       ol.appendChild(li);
     }
-  
+
     node.appendChild(ol);
   }
 
@@ -1215,23 +1215,23 @@ var prettyPrint;
     var isIE8OrEarlier = /\bMSIE\s(\d+)/.exec(navigator.userAgent);
     isIE8OrEarlier = isIE8OrEarlier && +isIE8OrEarlier[1] <= 8;
     var newlineRe = /\n/g;
-  
+
     var source = job.sourceCode;
     var sourceLength = source.length;
     // Index into source after the last code-unit recombined.
     var sourceIndex = 0;
-  
+
     var spans = job.spans;
     var nSpans = spans.length;
     // Index into spans after the last span which ends at or before sourceIndex.
     var spanIndex = 0;
-  
+
     var decorations = job.decorations;
     var nDecorations = decorations.length;
     // Index into decorations after the last decoration which ends at or before
     // sourceIndex.
     var decorationIndex = 0;
-  
+
     // Remove all zero-length decorations.
     decorations[nDecorations] = sourceLength;
     var decPos, i;
@@ -1244,7 +1244,7 @@ var prettyPrint;
       }
     }
     nDecorations = decPos;
-  
+
     // Simplify decorations.
     for (i = decPos = 0; i < nDecorations;) {
       var startPos = decorations[i];
@@ -1258,9 +1258,9 @@ var prettyPrint;
       decorations[decPos++] = startDec;
       i = end;
     }
-  
+
     nDecorations = decorations.length = decPos;
-  
+
     var sourceNode = job.sourceNode;
     var oldDisplay = "";
     if (sourceNode) {
@@ -1273,11 +1273,11 @@ var prettyPrint;
         var spanStart = spans[spanIndex];
         var spanEnd = /** @type{number} */ (spans[spanIndex + 2])
             || sourceLength;
-  
+
         var decEnd = decorations[decorationIndex + 2] || sourceLength;
-  
+
         var end = Math.min(spanEnd, decEnd);
-  
+
         var textNode = /** @type{Node} */ (spans[spanIndex + 1]);
         var styledText;
         if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
@@ -1305,9 +1305,9 @@ var prettyPrint;
             parentNode.insertBefore(textNode, span.nextSibling);
           }
         }
-  
+
         sourceIndex = end;
-  
+
         if (sourceIndex >= spanEnd) {
           spanIndex += 2;
         }
@@ -1744,8 +1744,8 @@ var prettyPrint;
 
 // npm require support
 if (module && module.exports) module.exports = {
-  prettyPrint,
-  prettyPrintOne,
+  prettyPrint: prettyPrint,
+  prettyPrintOne: prettyPrintOne,
   // include paths for css preprocessor support
   includePaths: [
     __dirname,
