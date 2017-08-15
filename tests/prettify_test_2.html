@@ -26,6 +26,7 @@
     'lang-css.js',
     'lang-dart.js',
     'lang-ex.js',
+    'lang-kotlin.js',
     'lang-lisp.js',
     'lang-llvm.js',
     'lang-matlab.js',
@@ -1140,5 +1141,65 @@ defmodule Foo.Bar do
 end
 </pre>
 
+<h1>Kotlin</h1>
+<pre class="prettyprint lang-kotlin" id="kotlin">
+package test;
+
+import kotlin.Int
+
+// Single line comment
+/*
+ * Multiline
+ * comment
+ */
+
+typealias SomeNumber = Int
+
+val number: Long = 1_000L
+var float: Float = 12.34f
+0xFF_FF
+3.14
+
+314e-2
+0.314e1
+
+protected override fun ifBoolean(condition: Boolean? = null) {}
+
+::ifBoolean
+
+constructor() : super()
+
+"\"true\""
+'a'
+
+"""
+aaaaaaaaaaa
+"""
+
+loop@ for()
+
+break @loop
+
+enum class `true`
+
+data class Person(val name: String)
+
+enum class Size {
+    BIG, MEDIUM, SMALL
+}
+
+class Ball(val color: String, val size: Size) {
+    companion object {}
+
+    fun isBig() = size == Size.BIG
+
+    val isMedium: Boolean
+        get() = size == Size.MEDIUM
+}
+
+fun Boolean?.isNull(): Boolean = this == null
+
+fun Boolean?.getOrThrow(): Boolean = this ?: throw Exception()
+</pre>
 </body>
 </html>
