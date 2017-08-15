@@ -154,8 +154,7 @@ module.exports = function (grunt) {
         warning_level: 'VERBOSE',
         language_in: 'ECMASCRIPT5',
         compilation_level: 'ADVANCED',
-        charset: 'US-ASCII',
-        process_common_js_modules: true
+        charset: 'US-ASCII'
       },
       prettify: {
         options: {
