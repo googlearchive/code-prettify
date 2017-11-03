@@ -64,7 +64,7 @@ skin.
 ## Serving your own JS & CSS
 
 You can
-[download](https://raw.githubusercontent.com/google/code-prettify/master/distrib/prettify-small.tgz)
+[download](https://github.com/google/code-prettify/raw/master/distrib/prettify-small.zip)
 the scripts and styles and serve them yourself.  Make sure to include both the
 script and a stylesheet:
 
