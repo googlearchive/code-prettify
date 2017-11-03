@@ -1675,7 +1675,7 @@ var prettyPrint;
            IN_GLOBAL_SCOPE
              ? (win['prettyPrintOne'] = $prettyPrintOne)
              : (prettyPrintOne = $prettyPrintOne),
-        'prettyPrint': prettyPrint =
+        'prettyPrint':
            IN_GLOBAL_SCOPE
              ? (win['prettyPrint'] = $prettyPrint)
              : (prettyPrint = $prettyPrint)

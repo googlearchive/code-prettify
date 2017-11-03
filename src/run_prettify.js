@@ -1952,7 +1952,7 @@ var IN_GLOBAL_SCOPE = false;
                IN_GLOBAL_SCOPE
                  ? (win['prettyPrintOne'] = $prettyPrintOne)
                  : (prettyPrintOne = $prettyPrintOne),
-            'prettyPrint': prettyPrint =
+            'prettyPrint':
                IN_GLOBAL_SCOPE
                  ? (win['prettyPrint'] = $prettyPrint)
                  : (prettyPrint = $prettyPrint)

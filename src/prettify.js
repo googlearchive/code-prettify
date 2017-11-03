@@ -1723,7 +1723,7 @@ var prettyPrint;
            IN_GLOBAL_SCOPE
              ? (win['prettyPrintOne'] = $prettyPrintOne)
              : (prettyPrintOne = $prettyPrintOne),
-        'prettyPrint': prettyPrint =
+        'prettyPrint':
            IN_GLOBAL_SCOPE
              ? (win['prettyPrint'] = $prettyPrint)
              : (prettyPrint = $prettyPrint)
@@ -1743,7 +1743,7 @@ var prettyPrint;
   // function that does not conform to the AMD API.
   var define = win['define'];
   if (typeof define === "function" && define['amd']) {
-    define([], function () {
+    define("google-code-prettify", [], function () {
       return PR;
     });
   }
