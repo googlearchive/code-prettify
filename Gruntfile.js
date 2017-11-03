@@ -36,6 +36,15 @@ module.exports = function (grunt) {
         },
         src: 'js-modules/run_prettify.js',
         dest: 'src/run_prettify.js'
+      },
+      nodeprettify: {
+        options: {
+          context: {
+            RUN_PRETTIFY: true
+          }
+        },
+        src: 'js-modules/node_prettify.js',
+        dest: 'src/node_prettify.js'
       }
     },
 
@@ -50,7 +59,8 @@ module.exports = function (grunt) {
         },
         files: [
           {src: 'src/prettify.js', dest: 'src/prettify.js'},
-          {src: 'src/run_prettify.js', dest: 'src/run_prettify.js'}
+          {src: 'src/run_prettify.js', dest: 'src/run_prettify.js'},
+          {src: 'src/node_prettify.js', dest: 'src/node_prettify.js'}
         ]
       },
       langs: {
@@ -144,7 +154,7 @@ module.exports = function (grunt) {
         warning_level: 'VERBOSE',
         language_in: 'ECMASCRIPT5',
         compilation_level: 'ADVANCED',
-        charset: 'US-ASCII',
+        charset: 'US-ASCII'
       },
       prettify: {
         options: {

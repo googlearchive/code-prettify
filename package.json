@@ -27,7 +27,7 @@
   "contributors": [
     "Amro <amroamroamro@gmail.com>"
   ],
-  "main": "src/prettify.js",
+  "main": "src/node_prettify.js",
   "directories": {
     "lib": "src",
     "doc": "docs",
