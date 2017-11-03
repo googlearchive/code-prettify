@@ -47,7 +47,7 @@ PR['registerLangHandler'](
 		// Keywords, reserved keywords and primitive types
 		[PR['PR_KEYWORD'], /^(?:match|if|else|as|break|box|continue|extern|fn|for|in|if|impl|let|loop|pub|return|super|unsafe|where|while|use|mod|trait|struct|enum|type|move|mut|ref|static|const|crate)\b/],
 		[PR['PR_KEYWORD'], /^(?:alignof|become|do|offsetof|priv|pure|sizeof|typeof|unsized|yield|abstract|virtual|final|override|macro)\b/],
-		[PR['PR_TYPE'], /^(?:[iu](8|16|32|64|size)|char|bool|f32|f64|str|Self)\b/],
+		[PR['PR_TYPE'], /^(?:[iu](8|16|32|64|128|size)|char|bool|f32|f64|str|Self)\b/],
 
 		// Rust 1.0 prelude items
 		[PR['PR_TYPE'], /^(?:Copy|Send|Sized|Sync|Drop|Fn|FnMut|FnOnce|Box|ToOwned|Clone|PartialEq|PartialOrd|Eq|Ord|AsRef|AsMut|Into|From|Default|Iterator|Extend|IntoIterator|DoubleEndedIterator|ExactSizeIterator|Option|Some|None|Result|Ok|Err|SliceConcatExt|String|ToString|Vec)\b/],
@@ -57,10 +57,10 @@ PR['registerLangHandler'](
 		// A number is a hex integer literal, a decimal real literal, or in
 		// scientific notation.
 		// Integer literals: decimal, hexadecimal, octal, binary.
-		[PR['PR_LITERAL'], /^\d[0-9_]*(?:[iu](?:size|8|16|32|64))?/],
-		[PR['PR_LITERAL'], /^0x[a-fA-F0-9_]+(?:[iu](?:size|8|16|32|64))?/],
-		[PR['PR_LITERAL'], /^0o[0-7_]+(?:[iu](?:size|8|16|32|64))?/],
-		[PR['PR_LITERAL'], /^0b[01_]+(?:[iu](?:size|8|16|32|64))?/],
+		[PR['PR_LITERAL'], /^\d[0-9_]*(?:[iu](?:size|8|16|32|64|128))?/],
+		[PR['PR_LITERAL'], /^0x[a-fA-F0-9_]+(?:[iu](?:size|8|16|32|64|128))?/],
+		[PR['PR_LITERAL'], /^0o[0-7_]+(?:[iu](?:size|8|16|32|64|128))?/],
+		[PR['PR_LITERAL'], /^0b[01_]+(?:[iu](?:size|8|16|32|64|128))?/],
 		// Float literals
 		[PR['PR_LITERAL'], /^\d[0-9_]*\.(?![^\s\d.])/],
 		[PR['PR_LITERAL'], /^\d[0-9_]*(?:\.\d[0-9_]*)(?:[eE][+-]?[0-9_]+)?(?:f32|f64)?/],
