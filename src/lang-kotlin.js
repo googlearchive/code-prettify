@@ -55,4 +55,4 @@ PR['registerLangHandler'](
             // label definition
             [PR['PR_LITERAL'], /^[a-zA-Z0-9_]+@/]
         ]),
-    ['kotlin']);
+    ['kotlin', 'kt']);
