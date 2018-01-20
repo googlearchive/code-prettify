@@ -36,7 +36,7 @@ PR['registerLangHandler'](
 		
         [
          [PR['PR_KEYWORD'],     
-	            /^(?:align|as|atomic|begin|break|by|catch|class|cobegin|coforall|continue|delete|dmapped|do|else|enum|except|export|extern|for|forall|if|index|inline|in|iter|label|lambda|let|local|module|new|noinit|on|only|otherwise|pragma|private|proc|prototype|public|record|reduce|require|return|scan|select|serial|then|throw|throws|try|union|use|var|when|where|while|with|yield|zip|bool|real|int|uint|imag|complex|dmap|domain|string|range|tuple|config|const|param|private|public|sparse|single|type|enum)\b/, null],	 
+	            /^(?:align|as|atomic|begin|break|by|catch|class|cobegin|coforall|continue|delete|dmapped|do|else|enum|except|export|extern|for|forall|if|index|inline|in|iter|label|lambda|let|local|module|new|noinit|on|only|otherwise|pragma|private|proc|prototype|public|record|reduce|require|return|scan|select|serial|then|throw|throws|try|union|use|var|when|where|while|with|yield|zip|bool|real|int|uint|imag|complex|dmap|domain|string|range|sync|tuple|config|const|param|private|public|sparse|single|type|enum)\b/, null],	 
             [PR['PR_LITERAL'], 
 			             /^(?:true|false|null)\b/],
             // literals
