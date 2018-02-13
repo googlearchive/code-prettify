@@ -191,7 +191,7 @@ var prettyPrint;
       "dynamic,event,finally,fixed,foreach,from,get,global,group,implicit,in,interface," +
       "internal,into,is,join,let,lock,null,object,out,override,orderby,params," +
       "partial,readonly,ref,remove,sbyte,sealed,select,set,stackalloc,string,select,uint,ulong," +
-      "unchecked,unsafe,ushort,value,var,virtual,where,yield"];
+      "unchecked,unsafe,ushort,using,value,var,virtual,where,yield"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
       "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
       "throw,true,try,unless,until,when,while,yes";
