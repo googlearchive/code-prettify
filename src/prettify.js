@@ -188,8 +188,8 @@ var prettyPrint;
       "throws,transient"];
   var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
       "abstract,add,alias,as,ascending,async,await,base,bool,by,byte,checked,decimal,delegate,descending," +
-      "dynamic,event,finally,fixed,foreach,from,get,global,group,implicit,in,interface," +
-      "internal,into,is,join,let,lock,null,object,out,override,orderby,params," +
+      "dynamic,event,explicit,finally,fixed,foreach,from,get,global,group,implicit,in,interface," +
+      "internal,into,is,join,let,lock,namespace,null,object,out,override,orderby,params," +
       "partial,readonly,ref,remove,sbyte,sealed,select,set,stackalloc,string,select,uint,ulong," +
       "unchecked,unsafe,ushort,using,value,var,virtual,where,yield"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
