@@ -197,8 +197,8 @@ var prettyPrint;
       "throw,true,try,unless,until,when,while,yes";
   var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
       "abstract,async,await,constructor,debugger,enum,eval,export,function," +
-      "get,implements,instanceof,interface,let,null,set,undefined,var,with," +
-      "yield,Infinity,NaN"];
+      "get,import,implements,instanceof,interface,let,null,of,set,undefined," +
+      "var,with,yield,Infinity,NaN"];
   var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
       "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
       "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
