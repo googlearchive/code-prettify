@@ -1,47 +1,90 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html><head>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Demo</title>
 <script src="../src/prettify.js"></script>
 <script src="../src/lang-css.js"></script>
-<style>
-body { margin: 0; padding: 0 }
-pre { margin: 0 }
+<style type="text/css">
+body { margin: 0; padding: 0; }
+pre { margin: 0; }
+#container { width: 40em; display: inline-block; }
 </style>
-</head>
-<script>
-// This page displays some code styled using a theme named in the
-// query part of the URL.
-var themeName = decodeURIComponent(document.location.search.replace(/^\?/, ''));
-
-// Call out to the parent so that it can resize the iframe once this
-// document's body is loaded.
-function adjustHeightInParent() {
+<script type="text/javascript">
+/**
+ * Call out to the parent so that it can resize the iframe once this
+ * document's body is loaded.
+ * @param {string} theme
+ */
+function adjustHeightInParent(theme) {
   if (parent !== window) {
     try {
-      var div = document.body.getElementsByTagName('div')[0];
-      parent.adjustChildIframeSize(
-          themeName, div.offsetWidth, div.offsetHeight);
+      var div = document.getElementById('container');
+      parent.adjustChildIframeSize(theme, div.offsetWidth, div.offsetHeight);
     } catch (ex) {
       // Can happen when this page is opened in its own tab.
     }
+  } else {
+    // redirect to main page if this page is loaded directly
+    window.location = "./index.html";
   }
 }
 
-// Load the necessary CSS
-(function () {
-  document.title = 'Theme ' + themeName;
-  // Load the stylesheet that we're demoing.
+/**
+ * Theme name is specified by iframe in which the page is loaded
+ * @return {string}
+ */
+function getThemeName() {
+  // theme is named in the query part of the URL
+  //var theme = decodeURIComponent(document.location.search.substring(1));
+
+  // theme is named in the "name" property of the embedded iframe
+  var theme = window.frameElement && window.frameElement.getAttribute("name");
+
+  return theme ? theme : 'default';
+}
+
+/**
+ * Load the necessary CSS
+ * @param {string} theme
+ */
+function loadTheme(theme) {
   var link = document.createElement('link');
   link.rel = 'stylesheet';
   link.type = 'text/css';
-  link.href = themeName === 'default'
-      ? '../src/prettify.css' : themeName + '.css';
+  link.href = theme === 'default' ? '../src/prettify.css' : theme + '.css';
   document.getElementsByTagName('head')[0].appendChild(link);
+}
+
+/**
+ * Called on page load.
+ * This page displays some code styled using theme specified.
+ */
+function onLoadFcn() {
+  // syntax highlight
+  PR.prettyPrint();
+
+  // call to parent we're embedded into
+  var theme = getThemeName();
+  adjustHeightInParent(theme);
+}
+
+(function () {
+  // Load the stylesheet that we're demoing.
+  var themeName = getThemeName();
+  document.title = 'Theme ' + themeName;
+  loadTheme(themeName);
 })();
 </script>
+</head>
 
-<body onload="prettyPrint(); adjustHeightInParent()">
-<div style="width: 40em; display: inline-block">
+<body onload="onLoadFcn();">
+
+<div id="container">
 <pre class="prettyprint lang-html linenums">
+&lt;!doctype html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;HTML Test&lt;/title&gt;
 &lt;script type="text/javascript"&gt;
 // Say hello world until the user starts questioning
 // the meaningfulness of their existence.
@@ -51,11 +94,18 @@ function helloWorld(world) {
   }
 }
 &lt;/script&gt;
-&lt;style&gt;
+&lt;style type="text/css"&gt;
 p { color: pink }
 b { color: blue }
 u { color: "umber" }
 &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Hello world!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 </pre>
 </div>
-</body></html>
+
+</body>
+</html>

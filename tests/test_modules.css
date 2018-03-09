@@ -1,0 +1,90 @@
+/* tests table */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+table, th, td {
+  border: 1px solid black;
+}
+td, th {
+  padding: 2px;
+}
+tr {
+  vertical-align: top;
+}
+th {
+  background-color: #FFD;
+}
+td {
+  font-family: monospace;
+}
+
+/* tests */
+.input, .golden, .actual, .decorations {
+  white-space: pre;
+}
+
+/* results */
+.ok {
+  background-color: #DFD;
+}
+.failure, .error {
+  background-color: #FDD;
+}
+.ok:after {
+  color: green;
+  content: '\a[PASS]';
+  font-weight: bold;
+}
+.failure:after {
+  color: red;
+  content: '\a[FAIL]';
+  font-weight: bold;
+}
+.error:after {
+  color: #AF7817;
+  content: '\a[ERROR]';
+  font-weight: bold;
+}
+
+/* used in extractSourceSpans_test.html */
+.break {
+  padding-left: 2px;
+  border-right-style: dotted !important;
+}
+.odd, .even {
+  border-style: solid;
+  border-width: 1px;
+}
+.even {
+  background-color: #fff;
+  border-color: #888;
+}
+.odd {
+  background-color: #ddd;
+  border-color: #000;
+}
+
+/* log */
+#report {
+  margin-left: 1em;
+}
+.pass {
+  color: green;
+}
+.fail, .err {
+  color: red;
+}
+
+/* diff tables */
+table.diff {
+  table-layout: fixed;
+  max-width: 100%;
+}
+.diff th {
+  width: 50px;
+}
+.diff td {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}

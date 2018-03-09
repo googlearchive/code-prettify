@@ -1,17 +1,19 @@
-// Copyright (C) 2006 Google Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+/**
+ * @license
+ * Copyright (C) 2006 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
  * @fileoverview
@@ -55,15 +57,92 @@
 // JSLint declarations
 /*global console, document, navigator, setTimeout, window, define */
 
+/**
+ * @typedef {!Array.<number|string>}
+ * Alternating indices and the decorations that should be inserted there.
+ * The indices are monotonically increasing.
+ */
+var DecorationsT;
+
+/**
+ * @typedef {!{
+ *   sourceNode: !Element,
+ *   pre: !(number|boolean),
+ *   langExtension: ?string,
+ *   numberLines: ?(number|boolean),
+ *   sourceCode: ?string,
+ *   spans: ?(Array.<number|Node>),
+ *   basePos: ?number,
+ *   decorations: ?DecorationsT
+ * }}
+ * <dl>
+ *  <dt>sourceNode<dd>the element containing the source
+ *  <dt>sourceCode<dd>source as plain text
+ *  <dt>pre<dd>truthy if white-space in text nodes
+ *     should be considered significant.
+ *  <dt>spans<dd> alternating span start indices into source
+ *     and the text node or element (e.g. {@code <BR>}) corresponding to that
+ *     span.
+ *  <dt>decorations<dd>an array of style classes preceded
+ *     by the position at which they start in job.sourceCode in order
+ *  <dt>basePos<dd>integer position of this.sourceCode in the larger chunk of
+ *     source.
+ * </dl>
+ */
+var JobT;
+
+/**
+ * @typedef {!{
+ *   sourceCode: string,
+ *   spans: !(Array.<number|Node>)
+ * }}
+ * <dl>
+ *  <dt>sourceCode<dd>source as plain text
+ *  <dt>spans<dd> alternating span start indices into source
+ *     and the text node or element (e.g. {@code <BR>}) corresponding to that
+ *     span.
+ * </dl>
+ */
+var SourceSpansT;
+
 /** @define {boolean} */
 var IN_GLOBAL_SCOPE = true;
+
+
+/**
+ * {@type !{
+ *   'createSimpleLexer': function (Array, Array): (function (JobT)),
+ *   'registerLangHandler': function (function (JobT), Array.<string>),
+ *   'PR_ATTRIB_NAME': string,
+ *   'PR_ATTRIB_NAME': string,
+ *   'PR_ATTRIB_VALUE': string,
+ *   'PR_COMMENT': string,
+ *   'PR_DECLARATION': string,
+ *   'PR_KEYWORD': string,
+ *   'PR_LITERAL': string,
+ *   'PR_NOCODE': string,
+ *   'PR_PLAIN': string,
+ *   'PR_PUNCTUATION': string,
+ *   'PR_SOURCE': string,
+ *   'PR_STRING': string,
+ *   'PR_TAG': string,
+ *   'PR_TYPE': string,
+ *   'prettyPrintOne': function (string, string, number|boolean),
+ *   'prettyPrint': function (?function, ?(HTMLElement|HTMLDocument))
+ * }}
+ * @const
+ */
+var PR;
 
 /**
  * Split {@code prettyPrint} into multiple timeouts so as not to interfere with
  * UI events.
  * If set to {@code false}, {@code prettyPrint()} is synchronous.
  */
-window['PR_SHOULD_USE_CONTINUATION'] = true;
+var PR_SHOULD_USE_CONTINUATION = true
+if (typeof window !== 'undefined') {
+  window['PR_SHOULD_USE_CONTINUATION'] = PR_SHOULD_USE_CONTINUATION;
+}
 
 /**
  * Pretty print a chunk of code.
@@ -88,38 +167,38 @@ var prettyPrint;
 
 
 (function () {
-  var win = window;
+  var win = (typeof window !== 'undefined') ? window : {};
   // Keyword lists for various languages.
   // We use things that coerce to strings to make them compact when minified
   // and to defeat aggressive optimizers that fold large string constants.
   var FLOW_CONTROL_KEYWORDS = ["break,continue,do,else,for,if,return,while"];
-  var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," + 
-      "double,enum,extern,float,goto,inline,int,long,register,short,signed," +
+  var C_KEYWORDS = [FLOW_CONTROL_KEYWORDS,"auto,case,char,const,default," +
+      "double,enum,extern,float,goto,inline,int,long,register,restrict,short,signed," +
       "sizeof,static,struct,switch,typedef,union,unsigned,void,volatile"];
   var COMMON_KEYWORDS = [C_KEYWORDS,"catch,class,delete,false,import," +
       "new,operator,private,protected,public,this,throw,true,try,typeof"];
-  var CPP_KEYWORDS = [COMMON_KEYWORDS,"alignof,align_union,asm,axiom,bool," +
+  var CPP_KEYWORDS = [COMMON_KEYWORDS,"alignas,alignof,align_union,asm,axiom,bool," +
       "concept,concept_map,const_cast,constexpr,decltype,delegate," +
       "dynamic_cast,explicit,export,friend,generic,late_check," +
-      "mutable,namespace,nullptr,property,reinterpret_cast,static_assert," +
+      "mutable,namespace,noexcept,noreturn,nullptr,property,reinterpret_cast,static_assert," +
       "static_cast,template,typeid,typename,using,virtual,where"];
   var JAVA_KEYWORDS = [COMMON_KEYWORDS,
-      "abstract,assert,boolean,byte,extends,final,finally,implements,import," +
+      "abstract,assert,boolean,byte,extends,finally,final,implements,import," +
       "instanceof,interface,null,native,package,strictfp,super,synchronized," +
       "throws,transient"];
   var CSHARP_KEYWORDS = [COMMON_KEYWORDS,
-      "abstract,add,alias,as,ascending,async,await,base,bool,by,byte,checked," +
-      "decimal,delegate,descending,dynamic,event,finally,fixed,foreach,from," +
-      "get,global,group,implicit,in,interface,internal,into,is,join,let,lock," +
-      "null,object,out,override,orderby,params,partial,readonly,ref,remove," +
-      "sbyte,sealed,select,set,stackalloc,string,uint,ulong,unchecked,unsafe," +
-      "ushort,value,var,virtual,where,yield"];
+      "abstract,add,alias,as,ascending,async,await,base,bool,by,byte,checked,decimal,delegate,descending," +
+      "dynamic,event,finally,fixed,foreach,from,get,global,group,implicit,in,interface," +
+      "internal,into,is,join,let,lock,null,object,out,override,orderby,params," +
+      "partial,readonly,ref,remove,sbyte,sealed,select,set,stackalloc,string,select,uint,ulong," +
+      "unchecked,unsafe,ushort,value,var,virtual,where,yield"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +
       "for,if,in,is,isnt,loop,new,no,not,null,of,off,on,or,return,super,then," +
       "throw,true,try,unless,until,when,while,yes";
   var JSCRIPT_KEYWORDS = [COMMON_KEYWORDS,
-      "debugger,eval,export,function,get,null,set,undefined,var,with," +
-      "Infinity,NaN"];
+      "abstract,async,await,constructor,debugger,enum,eval,export,function," +
+      "get,import,implements,instanceof,interface,let,null,of,set,undefined," +
+      "var,with,yield,Infinity,NaN"];
   var PERL_KEYWORDS = "caller,delete,die,do,dump,elsif,eval,exit,foreach,for," +
       "goto,if,import,last,local,my,next,no,our,print,package,redo,require," +
       "sub,undef,unless,until,use,wantarray,while,BEGIN,END";
@@ -134,9 +213,9 @@ var prettyPrint;
   var SH_KEYWORDS = [FLOW_CONTROL_KEYWORDS, "case,done,elif,esac,eval,fi," +
       "function,in,local,set,then,until"];
   var ALL_KEYWORDS = [
-      CPP_KEYWORDS, CSHARP_KEYWORDS, JSCRIPT_KEYWORDS, PERL_KEYWORDS,
-      PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
-  var C_TYPES = /^(DIR|FILE|vector|(de|priority_)?queue|list|stack|(const_)?iterator|(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
+      CPP_KEYWORDS, CSHARP_KEYWORDS, JAVA_KEYWORDS, JSCRIPT_KEYWORDS,
+      PERL_KEYWORDS, PYTHON_KEYWORDS, RUBY_KEYWORDS, SH_KEYWORDS];
+  var C_TYPES = /^(DIR|FILE|array|vector|(de|priority_)?queue|(forward_)?list|stack|(const_)?(reverse_)?iterator|(unordered_)?(multi)?(set|map)|bitset|u?(int|float)\d*)\b/;
 
   // token style names.  correspond to css classes
   /**
@@ -208,8 +287,16 @@ var prettyPrint;
    */
   var PR_NOCODE = 'nocode';
 
-  
-  
+
+  // Regex pattern below is automatically generated by regexpPrecederPatterns.pl
+  // Do not modify, your changes will be erased.
+
+  // CAVEAT: this does not properly handle the case where a regular
+  // expression immediately follows another since a regular expression may
+  // have flags for case-sensitivity and the like.  Having regexp tokens
+  // adjacent is not valid in any language I'm aware of, so I'm punting.
+  // TODO: maybe style special characters inside a regexp as punctuation.
+
   /**
    * A set of tokens that can precede a regular expression literal in
    * javascript
@@ -217,12 +304,12 @@ var prettyPrint;
    * has the full list, but I've removed ones that might be problematic when
    * seen in languages that don't support regular expression literals.
    *
-   * <p>Specifically, I've removed any keywords that can't precede a regexp
+   * Specifically, I've removed any keywords that can't precede a regexp
    * literal in a syntactically legal javascript program, and I've removed the
    * "in" keyword since it's not a keyword in many languages, and might be used
    * as a count of inches.
    *
-   * <p>The link above does not accurately describe EcmaScript rules since
+   * The link above does not accurately describe EcmaScript rules since
    * it fails to distinguish between (a=++/b/i) and (a++/b/i) but it works
    * very well in practice.
    *
@@ -230,12 +317,7 @@ var prettyPrint;
    * @const
    */
   var REGEXP_PRECEDER_PATTERN = '(?:^^\\.?|[+-]|[!=]=?=?|\\#|%=?|&&?=?|\\(|\\*=?|[+\\-]=|->|\\/=?|::?|<<?=?|>>?>?=?|,|;|\\?|@|\\[|~|{|\\^\\^?=?|\\|\\|?=?|break|case|continue|delete|do|else|finally|instanceof|return|throw|try|typeof)\\s*';
-  
-  // CAVEAT: this does not properly handle the case where a regular
-  // expression immediately follows another since a regular expression may
-  // have flags for case-sensitivity and the like.  Having regexp tokens
-  // adjacent is not valid in any language I'm aware of, so I'm punting.
-  // TODO: maybe style special characters inside a regexp as punctuation.
+
 
   /**
    * Given a group of {@link RegExp}s, returns a {@code RegExp} that globally
@@ -247,7 +329,7 @@ var prettyPrint;
    */
   function combinePrefixPatterns(regexs) {
     var capturedGroupIndex = 0;
-  
+
     var needToFoldCase = false;
     var ignoreCase = false;
     for (var i = 0, n = regexs.length; i < n; ++i) {
@@ -261,7 +343,7 @@ var prettyPrint;
         break;
       }
     }
-  
+
     var escapeCharToCodeUnit = {
       'b': 8,
       't': 9,
@@ -270,7 +352,7 @@ var prettyPrint;
       'f': 0xc,
       'r': 0xd
     };
-  
+
     function decodeEscape(charsetPart) {
       var cc0 = charsetPart.charCodeAt(0);
       if (cc0 !== 92 /* \\ */) {
@@ -288,7 +370,7 @@ var prettyPrint;
         return charsetPart.charCodeAt(1);
       }
     }
-  
+
     function encodeEscape(charCode) {
       if (charCode < 0x20) {
         return (charCode < 0x10 ? '\\x0' : '\\x') + charCode.toString(16);
@@ -297,7 +379,7 @@ var prettyPrint;
       return (ch === '\\' || ch === '-' || ch === ']' || ch === '^')
           ? "\\" + ch : ch;
     }
-  
+
     function caseFoldCharset(charSet) {
       var charsetParts = charSet.substring(1, charSet.length - 1).match(
           new RegExp(
@@ -311,10 +393,10 @@ var prettyPrint;
               'g'));
       var ranges = [];
       var inverse = charsetParts[0] === '^';
-  
+
       var out = ['['];
       if (inverse) { out.push('^'); }
-  
+
       for (var i = inverse ? 1 : 0, n = charsetParts.length; i < n; ++i) {
         var p = charsetParts[i];
         if (/\\[bdsw]/i.test(p)) {  // Don't muck with named groups.
@@ -343,7 +425,7 @@ var prettyPrint;
           }
         }
       }
-  
+
       // [[1, 10], [3, 4], [8, 12], [14, 14], [16, 16], [17, 17]]
       // -> [[1, 12], [14, 14], [16, 17]]
       ranges.sort(function (a, b) { return (a[0] - b[0]) || (b[1]  - a[1]); });
@@ -357,7 +439,7 @@ var prettyPrint;
           consolidatedRanges.push(lastRange = range);
         }
       }
-  
+
       for (var i = 0; i < consolidatedRanges.length; ++i) {
         var range = consolidatedRanges[i];
         out.push(encodeEscape(range[0]));
@@ -369,7 +451,7 @@ var prettyPrint;
       out.push(']');
       return out.join('');
     }
-  
+
     function allowAnywhereFoldCaseAndRenumberGroups(regex) {
       // Split into character sets, escape sequences, punctuation strings
       // like ('(', '(?:', ')', '^'), and runs of characters that do not
@@ -388,12 +470,12 @@ var prettyPrint;
               + ')',
               'g'));
       var n = parts.length;
-  
+
       // Maps captured group numbers to the number they will occupy in
       // the output or to -1 if that has not been determined, or to
       // undefined if they need not be capturing in the output.
       var capturedGroups = [];
-  
+
       // Walk over and identify back references to build the capturedGroups
       // mapping.
       for (var i = 0, groupIndex = 0; i < n; ++i) {
@@ -415,7 +497,7 @@ var prettyPrint;
           }
         }
       }
-  
+
       // Renumber groups and reduce capturing groups to non-capturing groups
       // where possible.
       for (var i = 1; i < capturedGroups.length; ++i) {
@@ -437,13 +519,13 @@ var prettyPrint;
           }
         }
       }
-  
+
       // Remove any prefix anchors so that the output will match anywhere.
       // ^^ really does mean an anchored match though.
       for (var i = 0; i < n; ++i) {
         if ('^' === parts[i] && '^' !== parts[i + 1]) { parts[i] = ''; }
       }
-  
+
       // Expand letters to groups to handle mixing of case-sensitive and
       // case-insensitive patterns if necessary.
       if (regex.ignoreCase && needToFoldCase) {
@@ -463,10 +545,10 @@ var prettyPrint;
           }
         }
       }
-  
+
       return parts.join('');
     }
-  
+
     var rewritten = [];
     for (var i = 0, n = regexs.length; i < n; ++i) {
       var regex = regexs[i];
@@ -474,9 +556,10 @@ var prettyPrint;
       rewritten.push(
           '(?:' + allowAnywhereFoldCaseAndRenumberGroups(regex) + ')');
     }
-  
+
     return new RegExp(rewritten.join('|'), ignoreCase ? 'gi' : 'g');
   }
+
 
   /**
    * Split markup into a string of source code and an array mapping ranges in
@@ -519,18 +602,18 @@ var prettyPrint;
    * </p>
    *
    * @param {Node} node an HTML DOM subtree containing source-code.
-   * @param {boolean} isPreformatted true if white-space in text nodes should
-   *    be considered significant.
-   * @return {Object} source code and the text nodes in which they occur.
+   * @param {boolean|number} isPreformatted truthy if white-space in
+   *    text nodes should be considered significant.
+   * @return {SourceSpansT} source code and the nodes in which they occur.
    */
   function extractSourceSpans(node, isPreformatted) {
     var nocode = /(?:^|\s)nocode(?:\s|$)/;
-  
+
     var chunks = [];
     var length = 0;
     var spans = [];
     var k = 0;
-  
+
     function walk(node) {
       var type = node.nodeType;
       if (type == 1) {  // Element
@@ -560,26 +643,39 @@ var prettyPrint;
         }
       }
     }
-  
+
     walk(node);
-  
+
     return {
       sourceCode: chunks.join('').replace(/\n$/, ''),
       spans: spans
     };
   }
 
+
   /**
    * Apply the given language handler to sourceCode and add the resulting
    * decorations to out.
+   * @param {!Element} sourceNode
    * @param {number} basePos the index of sourceCode within the chunk of source
    *    whose decorations are already present on out.
+   * @param {string} sourceCode
+   * @param {function(JobT)} langHandler
+   * @param {DecorationsT} out
    */
-  function appendDecorations(basePos, sourceCode, langHandler, out) {
+  function appendDecorations(
+      sourceNode, basePos, sourceCode, langHandler, out) {
     if (!sourceCode) { return; }
+    /** @type {JobT} */
     var job = {
+      sourceNode: sourceNode,
+      pre: 1,
+      langExtension: null,
+      numberLines: null,
       sourceCode: sourceCode,
-      basePos: basePos
+      spans: null,
+      basePos: basePos,
+      decorations: null
     };
     langHandler(job);
     out.push.apply(out, job.decorations);
@@ -654,8 +750,8 @@ var prettyPrint;
     * @param {Array} fallthroughStylePatterns patterns that will be tried in
     *   order if the shortcut ones fail.  May have shortcuts.
     *
-    * @return {function (Object)} a
-    *   function that takes source code and returns a list of decorations.
+    * @return {function (JobT)} a function that takes an undecorated job and
+    *   attaches a list of decorations.
     */
   function createSimpleLexer(shortcutStylePatterns, fallthroughStylePatterns) {
     var shortcuts = {};
@@ -686,22 +782,19 @@ var prettyPrint;
     var nPatterns = fallthroughStylePatterns.length;
 
     /**
-     * Lexes job.sourceCode and produces an output array job.decorations of
+     * Lexes job.sourceCode and attaches an output array job.decorations of
      * style classes preceded by the position at which they start in
      * job.sourceCode in order.
      *
-     * @param {Object} job an object like <pre>{
-     *    sourceCode: {string} sourceText plain text,
-     *    basePos: {int} position of job.sourceCode in the larger chunk of
-     *        sourceCode.
-     * }</pre>
+     * @type{function (JobT)}
      */
     var decorate = function (job) {
       var sourceCode = job.sourceCode, basePos = job.basePos;
+      var sourceNode = job.sourceNode;
       /** Even entries are positions in source in ascending order.  Odd enties
         * are style markers (e.g., PR_COMMENT) that run from that position until
         * the end.
-        * @type {Array.<number|string>}
+        * @type {DecorationsT}
         */
       var decorations = [basePos, PR_PLAIN];
       var pos = 0;  // index into sourceCode
@@ -764,17 +857,20 @@ var prettyPrint;
           var lang = style.substring(5);
           // Decorate the left of the embedded source
           appendDecorations(
+              sourceNode,
               basePos + tokenStart,
               token.substring(0, embeddedSourceStart),
               decorate, decorations);
           // Decorate the embedded source
           appendDecorations(
+              sourceNode,
               basePos + tokenStart + embeddedSourceStart,
               embeddedSource,
               langHandlerForExtension(lang, embeddedSource),
               decorations);
           // Decorate the right of the embedded section
           appendDecorations(
+              sourceNode,
               basePos + tokenStart + embeddedSourceEnd,
               token.substring(embeddedSourceEnd),
               decorate, decorations);
@@ -797,8 +893,9 @@ var prettyPrint;
     * It recognizes C, C++, and shell style comments.
     *
     * @param {Object} options a set of optional parameters.
-    * @return {function (Object)} a function that examines the source code
-    *     in the input job and builds the decoration list.
+    * @return {function (JobT)} a function that examines the source code
+    *     in the input job and builds a decoration list which it attaches to
+    *     the job.
     */
   function sourceDecorator(options) {
     var shortcutStylePatterns = [], fallthroughStylePatterns = [];
@@ -908,7 +1005,7 @@ var prettyPrint;
       // which are the following plus space, tab, and newline: { }
       // | & $ ; < >
       // ...
-      
+
       // A word beginning with # causes that word and all remaining
       // characters on that line to be ignored.
 
@@ -983,15 +1080,19 @@ var prettyPrint;
    *     HTMLOListElement, and each line is moved into a separate list item.
    *     This requires cloning elements, so the input might not have unique
    *     IDs after numbering.
+   * @param {number|null|boolean} startLineNum
+   *     If truthy, coerced to an integer which is the 1-indexed line number
+   *     of the first line of code.  The number of the first line will be
+   *     attached to the list.
    * @param {boolean} isPreformatted true iff white-space in text nodes should
    *     be treated as significant.
    */
-  function numberLines(node, opt_startLineNum, isPreformatted) {
+  function numberLines(node, startLineNum, isPreformatted) {
     var nocode = /(?:^|\s)nocode(?:\s|$)/;
     var lineBreak = /\r\n?|\n/;
-  
+
     var document = node.ownerDocument;
-  
+
     var li = document.createElement('li');
     while (node.firstChild) {
       li.appendChild(node.firstChild);
@@ -999,11 +1100,11 @@ var prettyPrint;
     // An array of lines.  We split below, so this is initialized to one
     // un-split line.
     var listItems = [li];
-  
+
     function walk(node) {
       var type = node.nodeType;
       if (type == 1 && !nocode.test(node.className)) {  // Element
-        if ('br' === node.nodeName) {
+        if ('br' === node.nodeName.toLowerCase()) {
           breakAfter(node);
           // Discard the <BR> since it is now flush against a </LI>.
           if (node.parentNode) {
@@ -1034,7 +1135,7 @@ var prettyPrint;
         }
       }
     }
-  
+
     // Split a line after the given node.
     function breakAfter(lineEndNode) {
       // If there's nothing to the right, then we can skip ending the line
@@ -1044,7 +1145,7 @@ var prettyPrint;
         lineEndNode = lineEndNode.parentNode;
         if (!lineEndNode) { return; }
       }
-  
+
       function breakLeftOf(limit, copy) {
         // Clone shallowly if this node needs to be on both sides of the break.
         var rightSide = copy ? limit.cloneNode(false) : limit;
@@ -1066,9 +1167,9 @@ var prettyPrint;
         }
         return rightSide;
       }
-  
+
       var copiedListItem = breakLeftOf(lineEndNode.nextSibling, 0);
-  
+
       // Walk the parent chain until we reach an unattached LI.
       for (var parent;
            // Check nodeType since IE invents document fragments.
@@ -1078,22 +1179,22 @@ var prettyPrint;
       // Put it on the list of lines for later processing.
       listItems.push(copiedListItem);
     }
-  
+
     // Split lines while there are lines left to split.
     for (var i = 0;  // Number of lines that have been split so far.
          i < listItems.length;  // length updated by breakAfter calls.
          ++i) {
       walk(listItems[i]);
     }
-  
+
     // Make sure numeric indices show correctly.
-    if (opt_startLineNum === (opt_startLineNum|0)) {
-      listItems[0].setAttribute('value', opt_startLineNum);
+    if (startLineNum === (startLineNum|0)) {
+      listItems[0].setAttribute('value', startLineNum);
     }
-  
+
     var ol = document.createElement('ol');
     ol.className = 'linenums';
-    var offset = Math.max(0, ((opt_startLineNum - 1 /* zero index */)) | 0) || 0;
+    var offset = Math.max(0, ((startLineNum - 1 /* zero index */)) | 0) || 0;
     for (var i = 0, n = listItems.length; i < n; ++i) {
       li = listItems[i];
       // Stick a class on the LIs so that stylesheets can
@@ -1105,44 +1206,38 @@ var prettyPrint;
       }
       ol.appendChild(li);
     }
-  
+
     node.appendChild(ol);
   }
+
+
   /**
    * Breaks {@code job.sourceCode} around style boundaries in
    * {@code job.decorations} and modifies {@code job.sourceNode} in place.
-   * @param {Object} job like <pre>{
-   *    sourceCode: {string} source as plain text,
-   *    sourceNode: {HTMLElement} the element containing the source,
-   *    spans: {Array.<number|Node>} alternating span start indices into source
-   *       and the text node or element (e.g. {@code <BR>}) corresponding to that
-   *       span.
-   *    decorations: {Array.<number|string} an array of style classes preceded
-   *       by the position at which they start in job.sourceCode in order
-   * }</pre>
+   * @param {JobT} job
    * @private
    */
   function recombineTagsAndDecorations(job) {
     var isIE8OrEarlier = /\bMSIE\s(\d+)/.exec(navigator.userAgent);
     isIE8OrEarlier = isIE8OrEarlier && +isIE8OrEarlier[1] <= 8;
     var newlineRe = /\n/g;
-  
+
     var source = job.sourceCode;
     var sourceLength = source.length;
     // Index into source after the last code-unit recombined.
     var sourceIndex = 0;
-  
+
     var spans = job.spans;
     var nSpans = spans.length;
     // Index into spans after the last span which ends at or before sourceIndex.
     var spanIndex = 0;
-  
+
     var decorations = job.decorations;
     var nDecorations = decorations.length;
     // Index into decorations after the last decoration which ends at or before
     // sourceIndex.
     var decorationIndex = 0;
-  
+
     // Remove all zero-length decorations.
     decorations[nDecorations] = sourceLength;
     var decPos, i;
@@ -1155,7 +1250,7 @@ var prettyPrint;
       }
     }
     nDecorations = decPos;
-  
+
     // Simplify decorations.
     for (i = decPos = 0; i < nDecorations;) {
       var startPos = decorations[i];
@@ -1169,11 +1264,11 @@ var prettyPrint;
       decorations[decPos++] = startDec;
       i = end;
     }
-  
+
     nDecorations = decorations.length = decPos;
-  
+
     var sourceNode = job.sourceNode;
-    var oldDisplay;
+    var oldDisplay = "";
     if (sourceNode) {
       oldDisplay = sourceNode.style.display;
       sourceNode.style.display = 'none';
@@ -1182,13 +1277,14 @@ var prettyPrint;
       var decoration = null;
       while (spanIndex < nSpans) {
         var spanStart = spans[spanIndex];
-        var spanEnd = spans[spanIndex + 2] || sourceLength;
-  
+        var spanEnd = /** @type{number} */ (spans[spanIndex + 2])
+            || sourceLength;
+
         var decEnd = decorations[decorationIndex + 2] || sourceLength;
-  
+
         var end = Math.min(spanEnd, decEnd);
-  
-        var textNode = spans[spanIndex + 1];
+
+        var textNode = /** @type{Node} */ (spans[spanIndex + 1]);
         var styledText;
         if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
             // Don't introduce spans around empty text nodes.
@@ -1215,9 +1311,9 @@ var prettyPrint;
             parentNode.insertBefore(textNode, span.nextSibling);
           }
         }
-  
+
         sourceIndex = end;
-  
+
         if (sourceIndex >= spanEnd) {
           spanIndex += 2;
         }
@@ -1232,22 +1328,13 @@ var prettyPrint;
     }
   }
 
+
   /** Maps language-specific file extensions to handlers. */
   var langHandlerRegistry = {};
   /** Register a language handler for the given file extensions.
-    * @param {function (Object)} handler a function from source code to a list
+    * @param {function (JobT)} handler a function from source code to a list
     *      of decorations.  Takes a single argument job which describes the
-    *      state of the computation.   The single parameter has the form
-    *      {@code {
-    *        sourceCode: {string} as plain text.
-    *        decorations: {Array.<number|string>} an array of style classes
-    *                     preceded by the position at which they start in
-    *                     job.sourceCode in order.
-    *                     The language handler should assigned this field.
-    *        basePos: {int} the position of source in the larger source chunk.
-    *                 All positions in the output decorations array are relative
-    *                 to the larger source chunk.
-    *      } }
+    *      state of the computation and attaches the decorations to it.
     * @param {Array.<string>} fileExtensions
     */
   function registerLangHandler(handler, fileExtensions) {
@@ -1358,7 +1445,7 @@ var prettyPrint;
           'keywords': JSCRIPT_KEYWORDS,
           'cStyleComments': true,
           'regexLiterals': true
-        }), ['javascript', 'js']);
+        }), ['javascript', 'js', 'ts', 'typescript']);
   registerLangHandler(sourceDecorator({
           'keywords': COFFEE_KEYWORDS,
           'hashComments': 3,  // ### style block comments
@@ -1370,6 +1457,7 @@ var prettyPrint;
   registerLangHandler(
       createSimpleLexer([], [[PR_STRING, /^[\s\S]+/]]), ['regex']);
 
+  /** @param {JobT} job */
   function applyDecorator(job) {
     var opt_langExtension = job.langExtension;
 
@@ -1404,6 +1492,11 @@ var prettyPrint;
    *     or the 1-indexed number of the first line in sourceCodeHtml.
    */
   function $prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {
+    /** @type{number|boolean} */
+    var nl = opt_numberLines || false;
+    /** @type{string|null} */
+    var langExtension = opt_langExtension || null;
+    /** @type{!Element} */
     var container = document.createElement('div');
     // This could cause images to load and onload listeners to fire.
     // E.g. <img onerror="alert(1337)" src="nosuchimage.png">.
@@ -1413,16 +1506,21 @@ var prettyPrint;
     // http://stackoverflow.com/questions/451486/pre-tag-loses-line-breaks-when-setting-innerhtml-in-ie
     // http://stackoverflow.com/questions/195363/inserting-a-newline-into-a-pre-tag-ie-javascript
     container.innerHTML = '<pre>' + sourceCodeHtml + '</pre>';
-    container = container.firstChild;
-    if (opt_numberLines) {
-      numberLines(container, opt_numberLines, true);
+    container = /** @type{!Element} */(container.firstChild);
+    if (nl) {
+      numberLines(container, nl, true);
     }
 
+    /** @type{JobT} */
     var job = {
-      langExtension: opt_langExtension,
-      numberLines: opt_numberLines,
+      langExtension: langExtension,
+      numberLines: nl,
       sourceNode: container,
-      pre: 1
+      pre: 1,
+      sourceCode: null,
+      basePos: null,
+      spans: null,
+      decorations: null
     };
     applyDecorator(job);
     return container.innerHTML;
@@ -1459,7 +1557,6 @@ var prettyPrint;
     // The loop is broken into a series of continuations to make sure that we
     // don't make the browser unresponsive when rewriting a large page.
     var k = 0;
-    var prettyPrintingJob;
 
     var langExtensionRe = /\blang(?:uage)?-([\w.]+)(?!\S)/;
     var prettyPrintRe = /\bprettyprint\b/;
@@ -1576,11 +1673,15 @@ var prettyPrint;
             if (lineNums) { numberLines(cs, lineNums, preformatted); }
 
             // do the pretty printing
-            prettyPrintingJob = {
+            var prettyPrintingJob = {
               langExtension: langExtension,
               sourceNode: cs,
               numberLines: lineNums,
-              pre: preformatted
+              pre: preformatted,
+              sourceCode: null,
+              basePos: null,
+              spans: null,
+              decorations: null
             };
             applyDecorator(prettyPrintingJob);
           }
@@ -1588,7 +1689,7 @@ var prettyPrint;
       }
       if (k < elements.length) {
         // finish up in a continuation
-        setTimeout(doWork, 250);
+        win.setTimeout(doWork, 250);
       } else if ('function' === typeof opt_whenDone) {
         opt_whenDone();
       }
@@ -1622,7 +1723,7 @@ var prettyPrint;
            IN_GLOBAL_SCOPE
              ? (win['prettyPrintOne'] = $prettyPrintOne)
              : (prettyPrintOne = $prettyPrintOne),
-        'prettyPrint': prettyPrint =
+        'prettyPrint':
            IN_GLOBAL_SCOPE
              ? (win['prettyPrint'] = $prettyPrint)
              : (prettyPrint = $prettyPrint)
@@ -1640,9 +1741,10 @@ var prettyPrint;
   // whose value is an object. This helps avoid conflict with any
   // other existing JavaScript code that could have defined a define()
   // function that does not conform to the AMD API.
+  var define = win['define'];
   if (typeof define === "function" && define['amd']) {
     define("google-code-prettify", [], function () {
-      return PR; 
+      return PR;
     });
   }
 })();

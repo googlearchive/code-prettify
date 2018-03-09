@@ -1,5 +1,61 @@
-/* Used by error reporting code in test_base.js */
-.mismatch { background: #fee; font-weight: bold }
-span.annot { margin:2px 2px 2px 3em; border:1px dotted #88f; background:#eef;
-             padding: 0 2px 0 2px }
-.nocode { background: #f8f8f8 }
+/**
+ * @license
+ * Copyright (C) 2015 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* used by test_base.js */
+#report {
+  margin-left: 1em;
+}
+.pass {
+  color: green;
+}
+.fail {
+  color: red;
+}
+.mismatch {
+  background-color: #faa;
+  font-weight: bold;
+}
+
+/* diff tables */
+table.diff {
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  width: 100%;
+}
+.diff th, .diff td {
+  border: 1px solid black;
+}
+.diff th {
+  background-color: #FFD;
+  width: 50px;
+}
+.diff td {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* used in prettify_test.html issue 22 */
+.annot {
+  background-color: #eef;
+  border: 1px dotted #88f;
+  margin: 2px 2px 2px 3em;
+  padding: 0 2px 0 2px;
+}
+.nocode {
+  background-color: #f8f8f8;
+}

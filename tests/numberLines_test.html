@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>numberLines</title>
+<script src="../js-modules/numberLines.js"></script>
+<script src="shims.js"></script>
+<link rel="stylesheet" type="text/css" href="test_modules.css">
+</head>
+
+<body>
+<h1>Number Lines Test</h1>
+
+<table>
+  <tr><th colspan="3">Test Nothing to Split</th></tr>
+  <tr>
+    <td class="input"><code class="testinput">Hello, World!</code></td>
+    <td class="golden"><code><ol class="linenums"><li class="L0">Hello, World!</li></ol></code></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test Normalized Spaces</th></tr>
+  <tr>
+    <td class="input"><code class="testinput">Hello,&#10;World!</code></td>
+    <td class="golden"><code><ol class="linenums"><li class="L0">Hello,&#10;World!</li></ol></code></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test BR</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput">Hello,<br>World!</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">World!</li></ol></pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test line breaks</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput">Hello,&#10;there&#10;World!</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">there</li><li class="L2">World!</li></ol></pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test line breaks with followers</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput"><b>Hello,&#10;there&#10;World!&#10;</b><button>OK</button></pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0"><b>Hello,</b></li><li class="L1"><b>there</b></li><li class="L2"><b>World!</b></li><li class="L3"><button>OK</button></li></ol></pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test nocode</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput">Hello,&#10;the<span class="nocode">re&#10;World!</span></pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<span class="nocode">re&#10;World!</span></li></ol></pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test link</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput">Hello,&#10;the<a href="#" style="font-weight: bold">re&#10;Wor</a>ld!</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">Hello,</li><li class="L1">the<a href="#" style="font-weight: bold">re</a></li><li class="L2"><a href="#" style="font-weight: bold">Wor</a>ld!</li></ol></pre></td>
+    <td class="actual"></td>
+  </tr>
+  <tr><th colspan="3">Test blank lines</th></tr>
+  <tr>
+    <td class="input"><pre class="testinput">One&#10;&#10;Three</pre></td>
+    <td class="golden"><pre><ol class="linenums"><li class="L0">One</li><li class="L1">&nbsp;</li><li class="L2">Three</li></ol></pre></td>
+    <td class="actual"></td>
+  </tr>
+</table>
+
+<hr>
+<h2>Log</h2>
+<div id="report"></div>
+
+<script type="text/javascript">
+setTimeout(function () {
+  function normListItems(html) {
+    // IE likes to leave out </li>s before <li>s.
+    return html.replace(/<\/li>(<li\b)/gi, '$1');
+  }
+
+  function htmlEscape(s) {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  var out = [];
+  var testInputs = Array.prototype.slice.call(
+    document.getElementsByClassName('testinput'), 0);
+  for (var i = 0, n = testInputs.length; i < n; ++i) {
+    // td.input > .testinput
+    var testInput = testInputs[i];
+    // td.golden
+    var testResult = testInput.parentNode.nextSibling;
+    while (testResult.nodeType !== 1) { testResult = testResult.nextSibling; }
+    // td.actual
+    var actual = testResult.nextSibling;
+    while (actual.nodeType !== 1) { actual = actual.nextSibling; }
+    // report
+    out.push('<div class="test">Test ' + (i+1) + ': ');
+    try {
+      // make a copy of input node (modified in-place)
+      var clone = testInput.cloneNode(true);
+      clone.className = '';  // IE
+      clone.removeAttribute('class');  // Not IE.
+      actual.appendChild(clone);
+      // run function
+      var startLineNum = true;
+      var isPreformatted = /pre|xmp/i.test(clone.tagName);
+      numberLines(clone, startLineNum, isPreformatted);
+      // compare result again expected
+      var goldenNormalized = normListItems(testResult.innerHTML);
+      var actualNormalized = normListItems(actual.innerHTML).replace(
+        /\s*(?:class|style)=""/i, '');  // remove some empty attribs
+      var passed = goldenNormalized === actualNormalized;
+      // report test result
+      actual.className += passed ? ' ok' : ' failure';
+      out.push((passed ? '\u2713 PASS' : '\u2717 FAIL'), '<\/div>');
+      if (!passed) {
+        out.push(
+          '<table class="diff"><tr><th>Golden<\/th><td><code>' +
+          htmlEscape(goldenNormalized) +
+          '<\/code><\/td><\/tr><tr><th>Actual<\/th><td><code>' +
+          htmlEscape(actualNormalized) +
+          '<\/code><\/td><\/tr><\/table>'
+        );
+      }
+    } catch (ex) {
+      actual.className += ' error';
+      out.push('\u274C ERROR', '<\/div>');
+      out.push('<pre class="err">', (ex.message || ex), ex.stack, '<\/pre>');
+    }
+  }
+  document.getElementById('report').innerHTML = out.join('\n');
+}, 0);
+</script>
+
+</body>
+</html>

@@ -1,39 +1,73 @@
 <!DOCTYPE html>
-<html><head>
+<html>
+<head>
 <title>Prettify Themes Gallery</title>
 <style type="text/css">
-iframe { width: 100%; border-style: none; margin: 0; padding: 0 }
+iframe { width: 100%; border-style: none; margin: 0; padding: 0; }
+.attribution { padding-left: 1em; }
 </style>
-<script>
-var allThemes = [
-  { name: 'default' },
-  { name: 'desert',
-    authorHtml: '<a href="http://code.google.com/u/@VhJeSlJYBhVMWgF7/">'
-        + 'techto&hellip;@<\/a>' },
-  { name: 'sunburst', authorHtml: 'David Leibovic' },
-  { name: 'sons-of-obsidian',
-    authorHtml: '<a href="http://CodeTunnel.com/blog/post/71'
-        + '/google-code-prettify-obsidian-theme">Alex Ford<\/a>' },
-  { name: 'doxy', authorHtml: 'Robert Sperberg' },
-];
-
-// Called by the demo.html frames loaded per theme to
-// size the iframes properly and to allow them to tile
-// the page nicely.
+<script type="text/javascript">
+/**
+ * Called by the demo.html frames loaded per theme to size the iframes
+ * properly and to allow them to tile the page nicely.
+ */
 function adjustChildIframeSize(themeName, width, height) {
-  if (typeof console != 'undefined') {
+  if (typeof console !== 'undefined' && console.log) {
     try {
       console.log('adjusting ' + themeName + ' to ' + width + 'x' + height);
     } catch (ex) {
       // Don't bother logging log failure.
     }
   }
-
-  var container = document.getElementById(themeName).parentNode;
+  var iframe = document.getElementById(themeName);
+  iframe.style.height = (+height + 16) + 'px';
+  var container = iframe.parentNode;
   container.style.width = (+width + 16) + 'px';
   container.style.display = 'inline-block';
-  var iframe = container.getElementsByTagName('iframe')[0];
-  iframe.style.height = (+height + 16) + 'px';
+}
+
+/**
+ * Create an iframe to showcase theme.
+ * We pass the theme name to the iframe via its URI query, and it loads
+ * prettify and the theme CSS, and calls back to this page to resize iframe.
+ */
+function appendThemeIFrame(theme) {
+  // title
+  var link = document.createElement('a');
+  link.href = 'https://github.com/google/code-prettify/blob/master/' +
+    (theme.name === 'default' ? 'src/prettify.css' :
+    ('styles/' + encodeURIComponent(theme.name) + '.css'));
+  link.appendChild(document.createTextNode(
+    theme.name.replace(/\b[a-z]/g, function (letter) {
+      // Capitalize first letter of each word
+      return letter.toUpperCase();
+    })));
+  var header = document.createElement('h2');
+  header.className = 'title';
+  header.appendChild(link);
+
+  // attribution
+  var attribution;
+  if (theme.author) {
+    attribution = document.createElement('span');
+    attribution.className = 'attribution';
+    attribution.innerHTML = 'by <em>' + theme.author + '<\/em>';
+  }
+
+  // iframe
+  var iframe = document.createElement('iframe');
+  iframe.id = theme.name;
+  iframe.name = theme.name;  // theme name retrieved in demo.html
+  iframe.src = 'demo.html';
+  //iframe.src = 'demo.html?' + encodeURIComponent(theme.name);
+
+  // insert into page
+  var container = document.createElement('div');
+  container.className = 'container';
+  container.appendChild(header);
+  if (theme.author) { container.appendChild(attribution); }
+  container.appendChild(iframe);
+  document.body.appendChild(container);
 }
 </script>
 </head>
@@ -47,43 +81,23 @@ function adjustChildIframeSize(themeName, width, height) {
 Click on a theme name for a link to the file in revision control.
 Print preview this page to see how the themes work on the printed page.
 </p>
-<script>(function () {
+
+<script type="text/javascript">
+var allThemes = [
+  { name: 'default' },
+  { name: 'desert', author: '<a href="https://code.google.com/u/techtonik@gmail.com/">anatoly techtonik<\/a>' },
+  { name: 'sunburst', author: 'David Leibovic' },
+  { name: 'sons-of-obsidian', author: '<a href="http://CodeTunnel.com/blog/post/71/google-code-prettify-obsidian-theme">Alex Ford<\/a>' },
+  { name: 'doxy', author: 'Robert Sperberg' }
+];
+
+(function () {
   // Produce an iframe per theme.
-  // We pass the threme name to the iframe via its URI query, and
-  // it loads prettify and the theme CSS, and calls back to this page
-  // to resize the iframe.
   for (var i = 0, n = allThemes.length; i < n; ++i) {
-    var theme = allThemes[i];
-    if (!theme) { continue; }
-    var iframe = document.createElement('iframe');
-    iframe.name = theme.name;
-    iframe.src = 'demo.html?' + encodeURIComponent(theme.name);
-    var header = document.createElement('h2');
-    header.id = theme.name;
-    var linkToThemeSrc = document.createElement('a');
-    linkToThemeSrc.href = (
-        'https://cdn.rawgit.com/google/code-prettify/master/' +
-        (theme.name === 'default'
-         ? 'src/prettify.css'
-         : 'styles/' + encodeURIComponent(theme.name) + '.css'));
-    linkToThemeSrc.appendChild(document.createTextNode(
-       theme.name.replace(/\b[a-z]/g,  // Capitalize first letter of each word
-       function (letter) { return letter.toUpperCase(); })));
-    header.appendChild(linkToThemeSrc);
-
-    var attribution;
-    if (theme.authorHtml) {
-      attribution = document.createElement('span');
-      attribution.className = 'attribution';
-      attribution.innerHTML = 'by ' + theme.authorHtml;
-    }
-
-    var div = document.createElement('div');
-    div.appendChild(header);
-    if (attribution) { div.appendChild(attribution); }
-    div.appendChild(iframe);
-    document.body.appendChild(div);
+    appendThemeIFrame(allThemes[i]);
   }
-})()</script>
+})();
+</script>
 
-</body></html>
+</body>
+</html>
