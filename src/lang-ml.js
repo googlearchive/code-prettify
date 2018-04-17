@@ -44,7 +44,7 @@ PR['registerLangHandler'](
          // nested. Single-line comments begin with // and extend to
          // the end of a line.
          // TODO: (*...*) comments can be nested.  This does not handle that.
-         [PR['PR_COMMENT'],     /^(?:\/\/[^\r\n]*|\(\*[\s\S]*?\*\))/],
+         [PR['PR_COMMENT'],     /^(?:\(\*(?:[^(]|\([^*])*?\(?\*\)|\(\*[\s\S]*?\(\*[\s\S]*?\*\)[\s\S]*?\*\))/],
          [PR['PR_KEYWORD'],     /^(?:abstract|and|as|assert|begin|class|default|delegate|do|done|downcast|downto|elif|else|end|exception|extern|false|finally|for|fun|function|if|in|inherit|inline|interface|internal|lazy|let|match|member|module|mutable|namespace|new|null|of|open|or|override|private|public|rec|return|static|struct|then|to|true|try|type|upcast|use|val|void|when|while|with|yield|asr|land|lor|lsl|lsr|lxor|mod|sig|atomic|break|checked|component|const|constraint|constructor|continue|eager|event|external|fixed|functor|global|include|method|mixin|object|parallel|process|protected|pure|sealed|trait|virtual|volatile)\b/],
          // A number is a hex integer literal, a decimal real literal, or in
          // scientific notation.
