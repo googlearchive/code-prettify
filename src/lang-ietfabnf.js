@@ -29,7 +29,7 @@ PR['registerLangHandler'](
         ],
         [
          // string, binary, decimal and hex literals
-         [PR['PR_LITERAL'], /((\%s|\%i)?"[^"]*"|(\%x[A-Za-z0-9]+(-[A-Za-z0-9]+|[\.[A-Za-z0-9]+]*))|(\%d[0-9]+(-[0-9]+|[\.[0-9]+]*))|(\%b[01]+(-[01]+|[\.[01]+]*)))/, null],
+         [PR['PR_LITERAL'], /((\%s|\%i)?"[^"]*"|(\%x[A-Za-z0-9]+((-[A-Za-z0-9]+)|(\.[A-Za-z0-9]+)*))|(\%d[0-9]+((-[0-9]+)|(\.[0-9]+)*))|(\%b[01]+((-[01]+)|(\.[01]+)*)))/, null],
          // prose rule
          [PR['PR_PLAIN'], /<[^<>]*>/, null],
          // rule name
