@@ -18,7 +18,7 @@
 /**
  * @fileoverview
  * Registers a language handler for IETF ABNF, as specified in RFC 5234,
- * and extended in RFCs 7230 and 7405.
+ * and extended in RFCs 7230 (list production) and 7405 (%s and %i).
  */
 
 PR['registerLangHandler'](
@@ -29,11 +29,11 @@ PR['registerLangHandler'](
         ],
         [
          // string, binary, decimal and hex literals
-         [PR['PR_LITERAL'], /((\%s)?"[^"]*"|(\%x[A-Za-z0-9]+(-[A-Za-z0-9]+|[\.[A-Za-z0-9]+]*))|(\%d[0-9]+(-[0-9]+|[\.[0-9]+]*))|(\%b[01]+(-[01]+|[\.[01]+]*)))/, null],
+         [PR['PR_LITERAL'], /((\%s|\%i)?"[^"]*"|(\%x[A-Za-z0-9]+(-[A-Za-z0-9]+|[\.[A-Za-z0-9]+]*))|(\%d[0-9]+(-[0-9]+|[\.[0-9]+]*))|(\%b[01]+(-[01]+|[\.[01]+]*)))/, null],
          // prose rule
          [PR['PR_PLAIN'], /<[^<>]*>/, null],
          // rule name
          [PR['PR_KEYWORD'], /([A-Za-z][A-Za-z0-9-]*)/, null],
          [PR['PR_PUNCTUATION'], /[=\(\)\*\/\[\]#]/, null],
         ]),
-    ['ietfabnf']);
+    ['ietf_abnf']);
