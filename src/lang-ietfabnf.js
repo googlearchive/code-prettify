@@ -25,15 +25,21 @@ PR['registerLangHandler'](
     PR['createSimpleLexer'](
         [
          // comment
-         [PR['PR_COMMENT'], /;[^\r\n]*/, null, ";"],
+         [PR['PR_COMMENT'], /^;[^\x00-\x1f]*/, null, ";"],
         ],
         [
-         // string, binary, decimal and hex literals
-         [PR['PR_LITERAL'], /((\%s|\%i)?"[^"]*"|(\%x[A-Za-z0-9]+((-[A-Za-z0-9]+)|(\.[A-Za-z0-9]+)*))|(\%d[0-9]+((-[0-9]+)|(\.[0-9]+)*))|(\%b[01]+((-[01]+)|(\.[01]+)*)))/, null],
+         // string literals
+         [PR['PR_STRING'], /^(\%s|\%i)?"[^"\x00-\x1f]*"/, null],
+         // binary literals
+         [PR['PR_LITERAL'], /^\%b[01]+((-[01]+)|(\.[01]+)*)/, null],
+         // decimal literals
+         [PR['PR_LITERAL'], /^\%d[0-9]+((-[0-9]+)|(\.[0-9]+)*)/, null],
+         // hex literals
+         [PR['PR_LITERAL'], /^(\%x[A-Za-z0-9]+((-[A-Za-z0-9]+)|(\.[A-Za-z0-9]+)*))/, null],
          // prose rule
-         [PR['PR_PLAIN'], /<[^<>]*>/, null],
+         [PR['PR_NOCODE'], /^<[^>\x00-\x1f]*>/, null],
          // rule name
-         [PR['PR_KEYWORD'], /([A-Za-z][A-Za-z0-9-]*)/, null],
-         [PR['PR_PUNCTUATION'], /[=\(\)\*\/\[\]#]/, null],
+         [PR['PR_TYPE'], /^([A-Za-z][A-Za-z0-9-]*)/, null],
+         [PR['PR_PUNCTUATION'], /^[=\(\)\*\/\[\]#]/, null],
         ]),
     ['ietf_abnf']);
