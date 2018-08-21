@@ -17,7 +17,9 @@
 
 /**
  * @fileoverview
- * Registers a language handler for SuperCollider.
+ * Registers a language handler for SuperCollider. 
+ * Based on the syntax highlighter in the SC help browser:
+ * https://github.com/supercollider/supercollider/blob/develop/HelpSource/editor.js
  * See https://supercollider.github.io for more info on the language.
  *
  * @author herman.torjussen@gmail.com
@@ -27,34 +29,42 @@ PR.registerLangHandler(
     PR.createSimpleLexer(
         [
             /* whitespace */
-            [PR.PR_PLAIN,       /^[\t\n\r \xA0]+/, null, '\t\n\r \xA0'],
-            /* strings */
-            [PR.PR_STRING,      /^"(?:[^\\"]|\\.)*(?:"|$)/, null, '"'],
-        ],
-        [
-            /* symbols, char literals, env vars */
-            [PR.PR_ATTRIB_NAME, /^\\\w+/],
-            [PR.PR_ATTRIB_NAME, /^'[^']+'/],
-            [PR.PR_ATTRIB_NAME, /^\w+\:/],
-            [PR.PR_ATTRIB_NAME, /^\$(\\)?./],
-            [PR.PR_ATTRIB_VALUE, /^~\w+/],
-            /* special variables */
-            [PR.PR_TAG,         /^(?:super|thisFunctionDef|thisFunction|thisMethod|thisProcess|thisThread|this)\b/],
-            /* special values */
-            [PR.PR_KEYWORD,     /^(?:true|false|nil|inf)\b/],
-            /* variable declarations */
-            [PR.PR_DECLARATION, /^(?:var|classvar|const|arg)\b/],
-            //        [PR.PR_DECLARATION, /^\|/],
-            /* class names */
-            [PR.PR_TYPE,        /^\b([A-Z][A-Za-z_0-9]+)\b/],
-            [PR.PR_COMMENT,     /^\/(?:\/.*|\*(?:\/|\**[^*/])*(?:\*+\/?)?)/], //fixme: nested comments
-        /* numbers */
-        [PR.PR_LITERAL,     /^-?\d+r[\da-zA-Z]+(\.[\da-zA-Z]+)?/],
-        //        [PR.PR_LITERAL,     /^-?(?:(?:\d+(?:\.\d*)?)(?:e[+\-]?\d+)?)(pi)?|pi/],
-        [PR.PR_LITERAL,     /^-?(?:(?:\d+(\.\d+)?)(?:e[+\-]?\d+)?(pi)?)|(?:pi\b)/],
-        /* other stuff */
-        [PR.PR_PLAIN, /^[a-z_]\w*/i],
-        //        [PR.PR_PUNCTUATION, /^[-.,;!?#$%&\|/+*<>=@()\[\]{}]/]
-        [PR.PR_PUNCTUATION, /^[-.,;#()\[\]{}]/]
-    ]),
+            [PR.PR_PLAIN, /^\s+/],
+            /* keyword */
+            [PR.PR_KEYWORD, /^(?:arg|classvar|const|super|this|var)\b/],
+            /* built-in */
+            [PR.PR_TAG, /^(?:false|inf|nil|true|thisFunction|thisFunctionDef|thisMethod|thisProcess|thisThread|currentEnvironment|topEnvironment)\b/],
+            /* number, radix-float */
+            [PR.PR_LITERAL, /^\b\d+r[0-9a-zA-Z]*(\.[0-9A-Z]*)?/],
+            /* number, float  */
+            [PR.PR_LITERAL, /^\b((\d+(\.\d+)?([eE][-+]?\d+)?(pi)?)|pi)\b/],
+            /* number, hex-int */
+            [PR.PR_LITERAL, /^\b0(x|X)(\d|[a-f]|[A-F])+/],
+            /* symbol, symbol-arg */
+            [PR.PR_ATTRIB_NAME, /^\b[A-Za-z_]\w*\:/],
+            /* text, name */
+            [PR.PR_PLAIN, /^[a-z]\w*/],
+            /* class */
+            [PR.PR_TYPE, /^\b[A-Z]\w*/],
+            /* primitive */
+            [PR.PR_DECLARATION, /^\b_\w+/],
+            /* symbol */
+            [PR.PR_ATTRIB_NAME, /^\\\w*/],
+            /* symbol */
+            [PR.PR_ATTRIB_NAME, /'(?:[^\\]|\\.)*?(?:'|$)/],
+            /* char */
+            [PR.PR_ATTRIB_NAME, /^\$\\?./],
+            /* env-var */
+            [PR.PR_ATTRIB_NAME, /^~\w+/],
+            /* comment, single-line-comment */
+            [PR.PR_COMMENT, /^\/\/[^\r\n]*/],
+            /* string */
+            [PR.PR_STRING, /"(?:[^\\]|\\.)*?(?:"|$)/],
+            /* text, punctuation */
+            [PR.PR_PUNCTUATION, /^[-.,;#()\[\]{}]/]
+            /* comment, multi-line-comment (FIXME: support nested comments) */
+            [PR.PR_COMMENT, /^\/(?:\*(?:\/|\**[^*/])*(?:\*+\/?)?)/],
+            /* text, operator */
+            [PR.PR_PUNCTUATION, /^[+\-*/&\|\^%<>=!?]+/]
+        ]),
     ['sc']);
