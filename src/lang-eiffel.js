@@ -42,7 +42,7 @@ PR.registerLangHandler(
                 // A line comment
             [PR['PR_COMMENT'],     /^--[^\r\n]*/],
                 // Keyword
-            [PR['PR_KEYWORD'],     /^\b(?:across|agent|alias|all|and|as|assign|attached|attribute|check|class|convert|create|debug|deferred|detachable|do|else|elseif|end|ensure|expanded|export|external|feature|from|frozen|if|implies|inherit|inspect|invariant|like|local|loop|not|note|obsolete|old|once|only|or|redefine|rename|require|rescue|retry|select|separate|then|undefine|until|variant|when|xor)\b/i],
+            [PR['PR_KEYWORD'],     /^\b(?:across|agent|alias|all|and|as|assign|attached|attribute|check|class|convert|create|debug|deferred|detachable|do|else|elseif|end|ensure|expanded|export|external|feature|from|frozen|if|implies|inherit|inspect|invariant|like|local|loop|not|note|obsolete|old|once|only|or|redefine|rename|require|rescue|retry|select|separate|some|then|undefine|until|variant|when|xor)\b/i],
                 // A reserved word: entity
             [PR['PR_KEYWORD'],     /^\b(?:Current|Precursor|Result)\b/i],
                 // A reserved word: value
