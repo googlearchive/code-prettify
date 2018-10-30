@@ -25,6 +25,7 @@
     'lang-clj.js',
     'lang-css.js',
     'lang-dart.js',
+    'lang-eiffel.js',
     'lang-ex.js',
     'lang-kotlin.js',
     'lang-lisp.js',
@@ -1201,5 +1202,63 @@ fun Boolean?.isNull(): Boolean = this == null
 
 fun Boolean?.getOrThrow(): Boolean = this ?: throw Exception()
 </pre>
+
+<h1>Eiffel</h1>
+<pre class="prettyprint lang-eiffel" id="eiffel">
+note
+	description: "[
+		A test class with "string" literals, numbers, etc.
+	]"
+	usage: "[testing %"quotes%"]"
+
+class POLYGON
+
+inherit
+	ANY
+		rename
+			default_create as make
+		redefine
+			make,
+			out
+		end
+
+feature {NONE} -- Creation
+
+	make
+			-- Set coordinates to (0, 0).
+		do
+			x_offset := 0
+			y_offset := 123 - 0c124 + 0b001 + 1.0 + 1. - .0 + .1e3 - 1.e03 + (1_234.567_8 - 12_345.678e-1)
+		end
+
+feature -- Access
+
+	x_offset, y_offset: INTEGER_64
+			-- Offset of the polygon.
+
+	mask: NATURAL_8 = 0xA5
+			-- A color mask.
+
+feature -- Output
+
+	out: STRING
+			-- &lt;Precursor&gt;
+		do
+			Result :=
+				"An old-style %
+				%multi-line string with " +
+				"%
+				%%"quotes%"%
+				%" +
+				"{
+					and a "new"-style one.
+				}"
+		ensure then
+			result_attached: Result /= Void
+		end
+
+end
+</pre>
+
 </body>
 </html>

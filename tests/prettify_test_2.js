@@ -1068,5 +1068,60 @@ var goldens = {
 '    `END`ATV~C&lt;hello&gt;`END`PLN\n' +
 '  `END`KWDend`END`PLN\n' +
 '\n' +
-'`END`KWDend`END')
+'`END`KWDend`END'),
+  eiffel: (
+    '`KWDnote`END`PLN\n' +
+    '	description`END`PUN:`END`PLN `END`STR"[\n' +
+    '		A test class with "string" literals, numbers, etc.\n' +
+    '	]"`END`PLN\n' +
+    '	usage`END`PUN:`END`PLN `END`STR"[testing %"quotes%"]"`END`PLN\n' +
+    '\n' +
+    '`END`KWDclass`END`PLN `END`TYPPOLYGON`END`PLN\n' +
+    '\n' +
+    '`END`KWDinherit`END`PLN\n' +
+    '	`END`TYPANY`END`PLN\n' +
+    '		`END`KWDrename`END`PLN\n' +
+    '			default_create `END`KWDas`END`PLN make\n' +
+    '		`END`KWDredefine`END`PLN\n' +
+    '			make`END`PUN,`END`PLN\n' +
+    '			out\n' +
+    '		`END`KWDend`END`PLN\n' +
+    '\n' +
+    '`END`KWDfeature`END`PLN `END`PUN{`END`TYPNONE`END`PUN}`END`PLN `END`COM-- Creation`END`PLN\n' +
+    '\n' +
+    '	make\n' +
+    '			`END`COM-- Set coordinates to (0, 0).`END`PLN\n' +
+    '		`END`KWDdo`END`PLN\n' +
+    '			x_offset `END`PUN:=`END`PLN `END`LIT0`END`PLN\n' +
+    '			y_offset `END`PUN:=`END`PLN `END`LIT123`END`PLN `END`PUN-`END`PLN `END`LIT0c124`END`PLN `END`PUN+`END`PLN `END`LIT0b001`END`PLN `END`PUN+`END`PLN `END`LIT1.0`END`PLN `END`PUN+`END`PLN `END`LIT1.`END`PLN `END`PUN-`END`PLN `END`LIT.0`END`PLN `END`PUN+`END`PLN `END`LIT.1e3`END`PLN `END`PUN-`END`PLN `END`LIT1.e03`END`PLN `END`PUN+`END`PLN `END`PUN(`END`LIT1_234.567_8`END`PLN `END`PUN-`END`PLN `END`LIT12_345.678e-1`END`PUN)`END`PLN\n' +
+    '		`END`KWDend`END`PLN\n' +
+    '\n' +
+    '`END`KWDfeature`END`PLN `END`COM-- Access`END`PLN\n' +
+    '\n' +
+    '	x_offset`END`PUN,`END`PLN y_offset`END`PUN:`END`PLN `END`TYPINTEGER_64`END`PLN\n' +
+    '			`END`COM-- Offset of the polygon.`END`PLN\n' +
+    '\n' +
+    '	mask`END`PUN:`END`PLN `END`TYPNATURAL_8`END`PLN `END`PUN=`END`PLN `END`LIT0xA5`END`PLN\n' +
+    '			`END`COM-- A color mask.`END`PLN\n' +
+    '\n' +
+    '`END`KWDfeature`END`PLN `END`COM-- Output`END`PLN\n' +
+    '\n' +
+    '	out`END`PUN:`END`PLN `END`TYPSTRING`END`PLN\n' +
+    '			`END`COM-- &lt;Precursor&gt;`END`PLN\n' +
+    '		`END`KWDdo`END`PLN\n' +
+    '			`END`KWDResult`END`PLN `END`PUN:=`END`PLN\n' +
+    '				`END`STR"An old-style %\n' +
+    '				%multi-line string with "`END`PLN `END`PUN+`END`PLN\n' +
+    '				`END`STR"%\n' +
+    '				%%"quotes%"%\n' +
+    '				%"`END`PLN `END`PUN+`END`PLN\n' +
+    '				`END`STR"{\n' +
+    '					and a "new"-style one.\n' +
+    '				}"`END`PLN\n' +
+    '		`END`KWDensure`END`PLN `END`KWDthen`END`PLN\n' +
+    '			result_attached`END`PUN:`END`PLN `END`KWDResult`END`PLN `END`PUN/=`END`PLN `END`LITVoid`END`PLN\n' +
+    '		`END`KWDend`END`PLN\n' +
+    '\n' +
+    '`END`KWDend`END'
+  )
 };
