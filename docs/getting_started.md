@@ -29,14 +29,14 @@ code here
 </pre>
 ```
 
-[Larger example](https://rawgit.com/google/code-prettify/master/examples/quine.html)
+[Larger example](https://raw.githack.com/google/code-prettify/master/examples/quine.html)
 
 ## Auto-Loader
 
 You can load the JavaScript and CSS for prettify via one URL:
 
 ```HTML
-<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 ```
 
 This will load the entire system and schedule the prettifier to run on page
@@ -47,18 +47,18 @@ arguments) to configure the runner.
 | --------------------- | ------- | ------------------------------ |
 | autorun=(true, false) | true    | run automatically on page load |
 | lang=...              | none    | Loads the language handler for the given language which is usually the file extension for source files for that language.  See the [index of language handlers](../src).  If specified multiple times (`?lang=css&lang=ml`) then all are loaded. |
-| skin=...              | none    | See the [skin gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html).  If specified multiple times, the first one to successfully load is used. |
+| skin=...              | none    | See the [skin gallery](https://raw.githack.com/google/code-prettify/master/styles/index.html).  If specified multiple times, the first one to successfully load is used. |
 | callback=js_ident     |         | `window.exports["js_ident"]` will be called when prettyprinting finishes.  If specified multiple times, all are called. |
 
 For example:
 
 ```HTML
-<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=css&amp;skin=sunburst"></script>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?lang=css&amp;skin=sunburst"></script>
 ```
 
 The above specifies the `lang` parameter to also load the CSS language
 extension and the `skin` parameter to load the
-[*sunburst*](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html#sunburst)
+[*sunburst*](https://raw.githack.com/google/code-prettify/master/styles/index.html#sunburst)
 skin.
 
 ## Serving your own JS & CSS
@@ -87,7 +87,7 @@ so you can swap in a different stylesheet to change the way code is
 prettified.
 
 The easiest way to create your own stylesheet is by starting with one from the
-[style gallery](https://cdn.rawgit.com/google/code-prettify/master/styles/index.html)
+[style gallery](https://raw.githack.com/google/code-prettify/master/styles/index.html)
 and tweaking it.
 
 You can use CSS `@media` rules to specify styles that work well with printers
