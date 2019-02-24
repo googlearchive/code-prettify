@@ -34,13 +34,13 @@ Put code snippets in `<pre class="prettyprint">...</pre>` or
 pretty-printed.
 
 ```HTML
-<pre class="prettyprint">class Voila {
+<pre class="prettyprint">
+class Voila {
 public:
-  // Voila
   static const string VOILA = "Voila";
-
   // will not interfere with embedded <a href="#voila2">tags</a>.
-}</pre>
+}
+</pre>
 ```
 
 ## FAQ
