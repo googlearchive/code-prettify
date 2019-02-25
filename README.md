@@ -1,5 +1,7 @@
 # JavaScript code prettifier
 
+Announcement: [**Action required** *rawgit.com* is going away](https://groups.google.com/forum/#!topic/js-code-prettifier/IFHev_kLm30).
+
 An embeddable script that makes source-code snippets in HTML prettier.
 
 * Works on HTML pages.
@@ -21,7 +23,7 @@ An embeddable script that makes source-code snippets in HTML prettier.
 
  * Include the script tag below in your document:
 ```HTML
-<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 ```
  * See [Getting Started](docs/getting_started.md) to configure that URL with
    options you need.
@@ -229,10 +231,10 @@ general feedback.
 [Apache License 2.0](COPYING)
 
 
-[1]: https://rawgit.com/google/code-prettify/master/styles/index.html
-[2]: https://rawgit.com/google/code-prettify/master/examples/quine.html
+[1]: https://raw.githack.com/google/code-prettify/master/styles/index.html
+[2]: https://raw.githack.com/google/code-prettify/master/examples/quine.html
 [3]: http://dev.w3.org/html5/spec-author-view/the-code-element.html#the-code-element
-[4]: https://rawgit.com/google/code-prettify/master/tests/prettify_test.html
+[4]: https://raw.githack.com/google/code-prettify/master/tests/prettify_test.html
 [5]: http://wordpress.org/support/topic/125038
-[6]: https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue22
+[6]: https://raw.githack.com/google/code-prettify/master/tests/prettify_test.html#issue22
 [7]: http://groups.google.com/group/js-code-prettifier
