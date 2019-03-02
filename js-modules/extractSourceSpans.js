@@ -39,9 +39,9 @@
  * </p>
  *
  * @param {Node} node an HTML DOM subtree containing source-code.
- * @param {boolean} isPreformatted true if white-space in text nodes should
- *    be considered significant.
- * @return {Object} source code and the text nodes in which they occur.
+ * @param {boolean|number} isPreformatted truthy if white-space in
+ *    text nodes should be considered significant.
+ * @return {SourceSpansT} source code and the nodes in which they occur.
  */
 function extractSourceSpans(node, isPreformatted) {
   var nocode = /(?:^|\s)nocode(?:\s|$)/;

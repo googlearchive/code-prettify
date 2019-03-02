@@ -1,4 +1,18 @@
-*.tstamp
+# temporary files
 *~
-distrib/google-code-prettify
-distrib/prettify-small.tar
+*.swp
+.DS_Store
+
+# package managers
+/node_modules/
+/bower_components/
+npm-debug.log
+.bower.json
+
+# generated files
+#/src/prettify.js
+#/src/run_prettify.js
+#/loader/*.js
+#/loader/*.css
+#/loader/skins/*.css
+#/distrib/*.zip

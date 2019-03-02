@@ -1,15 +1,7 @@
 /**
  * Breaks {@code job.sourceCode} around style boundaries in
  * {@code job.decorations} and modifies {@code job.sourceNode} in place.
- * @param {Object} job like <pre>{
- *    sourceCode: {string} source as plain text,
- *    sourceNode: {HTMLElement} the element containing the source,
- *    spans: {Array.<number|Node>} alternating span start indices into source
- *       and the text node or element (e.g. {@code <BR>}) corresponding to that
- *       span.
- *    decorations: {Array.<number|string} an array of style classes preceded
- *       by the position at which they start in job.sourceCode in order
- * }</pre>
+ * @param {JobT} job
  * @private
  */
 function recombineTagsAndDecorations(job) {
@@ -63,7 +55,7 @@ function recombineTagsAndDecorations(job) {
   nDecorations = decorations.length = decPos;
 
   var sourceNode = job.sourceNode;
-  var oldDisplay;
+  var oldDisplay = "";
   if (sourceNode) {
     oldDisplay = sourceNode.style.display;
     sourceNode.style.display = 'none';
@@ -72,13 +64,14 @@ function recombineTagsAndDecorations(job) {
     var decoration = null;
     while (spanIndex < nSpans) {
       var spanStart = spans[spanIndex];
-      var spanEnd = spans[spanIndex + 2] || sourceLength;
+      var spanEnd = /** @type{number} */ (spans[spanIndex + 2])
+          || sourceLength;
 
       var decEnd = decorations[decorationIndex + 2] || sourceLength;
 
       var end = Math.min(spanEnd, decEnd);
 
-      var textNode = spans[spanIndex + 1];
+      var textNode = /** @type{Node} */ (spans[spanIndex + 1]);
       var styledText;
       if (textNode.nodeType !== 1  // Don't muck with <BR>s or <LI>s
           // Don't introduce spans around empty text nodes.

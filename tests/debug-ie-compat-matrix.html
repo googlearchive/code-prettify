@@ -1,8 +1,20 @@
-<style>
-code {
-  white-space: pre; padding: 0; margin: 0; display: block
-}
+<!DOCTYPE html>
+<!-- try removing above doctype to force IE into quirks mode -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>IE quirk/standard modes</title>
+<style type="text/css">
+code { white-space: pre; padding: 0; margin: 0; display: block; }
+#log { white-space: pre; }
+.pass { color: green; }
+.fail { color: red; }
 </style>
+</head>
+
+<body>
+
+<h1>IE Standard/Quirks Modes Test</h1>
 
 <code id="one-line"
 >one short line,</code>
@@ -22,89 +34,100 @@ zero fencepost errors</code>
 
 <hr>
 
-<p id="error" style="white-space: pre"></p>
+<h2>Results</h2>
+<div id="report">
+<p id="result"></p>
+<p id="log"></p>
+</div>
 
-<script>
+<script type="text/javascript">
 // Function under test
-var matrix;
-
-(function () {
+function matrix(quirksMode, ieVersion) {
   var table = {
-    quirks: { "6": "\r", "7": "\r", "8": "\r", "9": "\r", "10": "\n" },
-    standards: { "6": "\r", "7": "\r", "8": "\r", "9": "\n", "10": "\n" }
-  };
-
-  matrix = function (quirksMode, ieMajorVersionNumber) {
-    if ("boolean" !== typeof quirksMode) {
-      throw new Error(quirksMode);
-    } else if ("number" !== typeof ieMajorVersionNumber
-        || !table.quirks.hasOwnProperty(+ieMajorVersionNumber)) {
-      throw new Error(ieMajorVersionNumber);
+    quirks: {
+      '6': '\r',
+      '7': '\r',
+      '8': '\r',
+      '9': '\r',
+      '10': '\n'
+    },
+    standards: {
+      '6': '\r',
+      '7': '\r',
+      '8': '\r',
+      '9': '\n',
+      '10': '\n'
     }
-    return table[quirksMode ? "quirks" : "standards"][ieMajorVersionNumber];
   };
-})();
-</script>
+  if ('boolean' !== typeof quirksMode) {
+    throw new Error(quirksMode);
+  } else if ('number' !== typeof ieVersion ||
+      !table.quirks.hasOwnProperty(+ieVersion)) {
+    throw new Error(ieVersion);
+  }
+  return table[quirksMode ? 'quirks' : 'standards'][ieVersion];
+}
 
-<script>
 // Configuration we're testing.
-var quirksMode;
-var ieMajorVersionNumber;
-
-quirksMode = document.compatMode == "BackCompat";
-ieMajorVersionNumber = navigator.userAgent.match(/MSIE\s(\d+)/) || NaN;
+//NOTE: IE11 no longer indentifies as MSIE in user agent string
+var quirksMode = document.compatMode === 'BackCompat';
+var ieMajorVersionNumber = navigator.userAgent.match(/MSIE\s(\d+)/) || NaN;
 if (ieMajorVersionNumber) {
   ieMajorVersionNumber = +ieMajorVersionNumber[1];
 }
-</script>
 
-<script>
 (function () {
   // DOM elements.
-  var oneLine = document.getElementById("one-line");
-  var twoLines = document.getElementById("two-lines");
-  var twoLinesMutated = document.getElementById("two-lines-mutated");
+  var oneLine = document.getElementById('one-line');
+  var twoLines = document.getElementById('two-lines');
+  var twoLinesMutated = document.getElementById('two-lines-mutated');
 
   var originalHeight = twoLinesMutated.offsetHeight;
 
   // If the matrix cell being tested is correct, the following should
   // end up true.
   var pass = false;
-  var reason = "unknown";
+  var reason = 'unknown';
 
   // The DOM subtree to modify.
   var textNode = twoLinesMutated.firstChild;
 
   if (textNode.nodeType !== 3 /* TEXT */ || textNode.nextSibling) {
-    reason = "unexpected DOM structure";  // Maybe not normalized.
+    reason = 'unexpected DOM structure';  // Maybe not normalized.
   } else {
     // Perform the action we are testing.
     try {
-      textNode.nodeValue = twoLines.firstChild.nodeValue.replace
-          /\r\n?|\n/g, matrix(quirksMode, ieMajorVersionNumber);
+      textNode.nodeValue = twoLines.firstChild.nodeValue.replace(
+        /\r\n?|\n/g, matrix(quirksMode, ieMajorVersionNumber));
     } catch (ex) {
-      reason = String(ex);
+      reason = ex.toString();
     }
 
     // Check it against known good DOM subtrees.
     if (Math.abs(twoLinesMutated.offsetHeight - twoLines.offsetHeight) <= 1) {
       pass = true;
     } else if (Math.abs(twoLinesMutated.offsetHeight - oneLine.offsetHeight) <= 1) {
-      reason = "newlines not preserved";
+      reason = 'newlines not preserved';
     } else {
       // offsetHeight should trigger layout, but might not have???
     }
   }
 
-  document.title += " : " + pass ? "PASS" : "FAIL";
+  var container = document.getElementById('result');
+  container.className = (pass ? 'pass' : 'fail');
+  container.appendChild(document.createTextNode(pass ? 'PASS' : 'FAIL'));
   if (!pass) {
-    document.getElementById("error").appendChild(document.createTextNode(
-       "quirksMode is " + quirksMode +
-       "\nieMajorVersionNumber is " + ieMajorVersionNumber +
-       "\nheight was " + originalHeight +
-       "\nheight is " + twoLinesMutated.offsetHeight +
-       "\nexpected " + twoLines.offsetHeight +
-       "\nreason=" + reason));
+    document.getElementById('log').appendChild(document.createTextNode(
+      'UserAgent = ' + navigator.userAgent +
+      '\nquirksMode = ' + quirksMode +
+      '\nieMajorVersionNumber = ' + ieMajorVersionNumber +
+      '\nheight before = ' + originalHeight +
+      '\nheight after = ' + twoLinesMutated.offsetHeight +
+      '\nheight expected = ' + twoLines.offsetHeight +
+      '\nreason = ' + reason));
   }
 })();
 </script>
+
+</body>
+</html>

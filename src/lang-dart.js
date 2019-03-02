@@ -70,6 +70,9 @@ PR['registerLangHandler'](
       [PR['PR_STRING'], /^r?\'(\'|(?:[^\n\r\f])*?[^\\]\')/],
       [PR['PR_STRING'], /^r?\"(\"|(?:[^\n\r\f])*?[^\\]\")/],
 
+      // Types are capitalized by convention.
+      [PR['PR_TYPE'], /^[A-Z]\w*/],
+
       // Identifiers.
       [PR['PR_PLAIN'], /^[a-z_$][a-z0-9_]*/i],
 
