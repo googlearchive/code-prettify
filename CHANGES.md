@@ -13,15 +13,15 @@
 
 ## 29 March 2007
 
- * Added [tests](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#PHP)
+ * Added [tests](https://raw.githack.com/google/code-prettify/master/tests/prettify_test.html#php)
    for PHP support to address issue [#3](https://github.com/google/code-prettify/issues/3).
  * Fixed bug [#6](https://github.com/google/code-prettify/issues/6): `prettyPrintOne`
    was not halting. This was not reachable through the normal entry point.
  * Fixed bug [#4](https://github.com/google/code-prettify/issues/4): recursing into a
    script block or PHP tag that was not properly closed would not silently drop the content.
-   ([test](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue4))
+   ([test](https://raw.githack.com/google/code-prettify/master/tests/prettify_test.html#js_script))
  * Fixed bug [#8](https://github.com/google/code-prettify/issues/8): was eating tabs
-   ([test](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue8))
+   ([test](https://raw.githack.com/google/code-prettify/master/tests/prettify_test.html#issue8))
  * Fixed entity handling so that the caveat
 
    > Caveats: please properly escape less-thans. `x&lt;y` instead of `x<y`,
@@ -51,7 +51,7 @@
  * Support for `nocode` spans to allow embedding of line numbers and code
    annotations which should not be styled or otherwise affect the tokenization
    of prettified code. See the issue [#22](https://github.com/google/code-prettify/issues/22)
-   [testcase](https://rawgit.com/google/code-prettify/master/tests/prettify_test.html#issue22).
+   [testcase](https://raw.githack.com/google/code-prettify/master/tests/prettify_test.html#issue22).
 
 ## 6 Jan 2009
 
@@ -99,7 +99,7 @@
 
 ## 4 March 2011
 
- * Added a [themes gallery](https://rawgit.com/google/code-prettify/master/styles/index.html)
+ * Added a [themes gallery](https://raw.githack.com/google/code-prettify/master/styles/index.html)
    to showcase contributed styles.
  * Added support for XQuery courtesy *Patrick Wied*, Nemerle courtesy *Zimin A.V.*,
    and Latex support courtesy *Martin S*.
@@ -126,7 +126,7 @@
 
  * Added a one script autoload&run mechanism and a way to embed hints in
    processing instructions/comments. See
-   [example](https://rawgit.com/google/code-prettify/master/examples/quine.html).
+   [example](https://raw.githack.com/google/code-prettify/master/examples/quine.html).
 
 ## 4 March 2013
 
