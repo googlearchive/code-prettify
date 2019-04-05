@@ -45,8 +45,8 @@ PR['registerLangHandler'](
 		[PR['PR_TAG'], /^'\w+?\b/],
 
 		// Keywords, reserved keywords and primitive types
-		[PR['PR_KEYWORD'], /^(?:match|if|else|as|break|box|continue|extern|fn|for|in|if|impl|let|loop|pub|return|super|unsafe|where|while|use|mod|trait|struct|enum|type|move|mut|ref|static|const|crate)\b/],
-		[PR['PR_KEYWORD'], /^(?:alignof|become|do|offsetof|priv|pure|sizeof|typeof|unsized|yield|abstract|virtual|final|override|macro)\b/],
+		[PR['PR_KEYWORD'], /^(?:match|if|else|as|break|box|continue|extern|fn|for|in|if|impl|dyn|let|loop|pub|return|super|unsafe|where|while|use|mod|trait|struct|enum|type|move|mut|ref|static|const|crate)\b/],
+		[PR['PR_KEYWORD'], /^(?:alignof|become|do|offsetof|priv|pure|sizeof|typeof|unsized|yield|async|await|try|abstract|virtual|final|override|macro)\b/],
 		[PR['PR_TYPE'], /^(?:[iu](8|16|32|64|128|size)|char|bool|f32|f64|str|Self)\b/],
 
 		// Rust 1.0 prelude items
