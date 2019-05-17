@@ -37,9 +37,9 @@ PR['registerLangHandler'](
       // Script tag.
       [PR['PR_COMMENT'], /^#!(?:.*)/],
 
-      // `import`, `library`, `part of`, `part`, `as`, `show`, and `hide`
+      // `deferred`, `export`, `import`, `library`, `part of`, `part`, `as`, `show`, and `hide`
       // keywords.
-      [PR['PR_KEYWORD'], /^\b(?:import|library|part of|part|as|show|hide)\b/i],
+      [PR['PR_KEYWORD'], /^\b(?:deferred|export|import|library|part of|part|as|show|hide)\b/i],
 
       // Single-line comments.
       [PR['PR_COMMENT'], /^\/\/(?:.*)/],
@@ -47,17 +47,17 @@ PR['registerLangHandler'](
       // Multiline comments.
       [PR['PR_COMMENT'], /^\/\*[^*]*\*+(?:[^\/*][^*]*\*+)*\//], // */
 
-      // `class` and `interface` keywords.
-      [PR['PR_KEYWORD'], /^\b(?:class|interface)\b/i],
+      // `class`, `enum`, `interface`, and `mixin` keywords.
+      [PR['PR_KEYWORD'], /^\b(?:class|enum|interface|mixin)\b/i],
 
       // General keywords.
-      [PR['PR_KEYWORD'], /^\b(?:assert|async|await|break|case|catch|continue|default|do|else|finally|for|if|in|is|new|return|super|switch|sync|this|throw|try|while)\b/i],
+      [PR['PR_KEYWORD'], /^\b(?:assert|async|await|break|case|catch|continue|default|do|else|finally|for|if|in|is|new|on|rethrow|return|super|switch|sync|this|throw|try|while|yield)\b/i],
 
       // Declaration keywords.
-      [PR['PR_KEYWORD'], /^\b(?:abstract|const|extends|factory|final|get|implements|native|operator|set|static|typedef|var)\b/i],
+      [PR['PR_KEYWORD'], /^\b(?:abstract|const|covariant|extends|external|factory|final|get|implements|native|operator|set|static|typedef|var|with)\b/i],
 
       // Keywords for types.
-      [PR['PR_TYPE'], /^\b(?:bool|double|Dynamic|int|num|Object|String|void)\b/i],
+      [PR['PR_TYPE'], /^\b(?:bool|double|dynamic|Function|int|num|Object|String|void)\b/i],
 
       // Keywords for constants.
       [PR['PR_KEYWORD'], /^\b(?:false|null|true)\b/i],
