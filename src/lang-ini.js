@@ -24,8 +24,7 @@
  * Then put your code in an HTML tag like
  *      <pre class="prettyprint lang-ini">(my ini file)</pre>
  * This file supports the following extensions:
- *     lang-ini - Standard INI file syntax
- *     lang-ast - Asterisk-style configuration files
+ *     lang-ini - Standard INI file syntax and Asterisk-style configuration files
  *
  * "Name"    = 'INI'
  * "Author"  = 'Michael Newton'
