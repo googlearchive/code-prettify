@@ -1778,5 +1778,22 @@ var goldens = {
     '        "break" it (or the line),\n' +
     '        and beat it"#`END`PUN;`END`PLN\n' +
     '`END`PUN}`END'
+  ),
+  ini: (
+    '`KWDbare-key =`END`PLN `END`LITvalue`END`PLN\n\n`END' +
+    '`TYP[Section 1]`END`PLN\n`END' +
+    '`KWDkey1=`END`LITvalue`END`PLN\n`END' +
+    '`KWDkey2=`END`LITvalue`END`PLN\n`END' +
+    '`COM;comment`END`PLN\n`END' +
+    '`KWDkey3 =`END`PLN `END`STR"another value"`END`PLN\n\n`END' +
+    '`TYP[Section 2]`END`PLN\n`END' +
+    '`KWDkey1 =`END`PLN `END`LITvalue`END`PLN\n`END' +
+    '`KWDkey2 =`END`PLN `END`LITanother`END`PLN `END`LITvalue;`END`PLN `END`LITbut`END`PLN `END`LITdifferent`END'
+  ),
+  ini_ast: (
+    '`COM; asterisk-style configuration`END`PLN\n`END' +
+    '`TYP[sub-conf-test]`END`PLN\n`END' +
+    '`KWDexten =&gt;`END`PLN `END`LITs,1,NoOp("testing`END`PLN `END`LITsyntax")`END`PLN\n`END' +
+    '`KWDexten =&gt;`END`PLN `END`LITs,2,Return()`END`PLN\n`END'
   )
 };
