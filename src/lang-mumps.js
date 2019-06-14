@@ -31,7 +31,7 @@
  * Known issues:
  * 
  * - Currently can't distinguish between keywords and local or global variables having the same name
- *   for exampe SET IF="IF?"
+ *   for example SET IF="IF?"
  * - m file are already used for MatLab hence using mumps.
  */
 

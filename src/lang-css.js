@@ -46,7 +46,7 @@
 //        fallThroughPatterns),
 //    [languageId0, ..., languageIdN])
 
-// Langugage IDs
+// Language IDs
 // =============
 // The language IDs are typically the file extensions of source files for
 // that language so that users can syntax highlight arbitrary files based
@@ -73,7 +73,7 @@
 
 //    1. use js-modules/combinePrefixPatterns.js to 
 //       combine all regular expressions into one 
-//    2. use a single global regular expresion match to extract all tokens
+//    2. use a single global regular expression match to extract all tokens
 //    3. for each token try regular expressions in order until one matches it
 //       and classify it using the associated style
 

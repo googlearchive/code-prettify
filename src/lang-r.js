@@ -43,7 +43,7 @@ PR['registerLangHandler'](
         [
             [PR['PR_COMMENT'],     /^#.*/],
 	    [PR['PR_KEYWORD'],     /^(?:if|else|for|while|repeat|in|next|break|return|switch|function)(?![A-Za-z0-9_.])/],
-	    // hex numbes
+	    // hex numbers
 	    [PR['PR_LITERAL'], /^0[xX][a-fA-F0-9]+([pP][0-9]+)?[Li]?/],
 	    // Decimal numbers
             [PR['PR_LITERAL'], /^[+-]?([0-9]+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?[Li]?/],
