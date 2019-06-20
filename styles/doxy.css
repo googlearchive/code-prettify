@@ -51,7 +51,7 @@ li.L1,li.L3,li.L5,li.L7,li.L9 { }
   pre.prettyprint, code.prettyprint { background-color: #fff;  }
   pre .str, code .str { color: #088; }
   pre .kwd, code .kwd { color: #006; font-weight: bold; }
-  pre .com, code .com { color: #oc3; font-style: italic; }
+  pre .com, code .com { color: #0c3; font-style: italic; }
   pre .typ, code .typ { color: #404; font-weight: bold; }
   pre .lit, code .lit { color: #044; }
   pre .pun, code .pun { color: #440; }
