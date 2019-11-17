@@ -21,6 +21,7 @@
   // JS & CSS prettify files to load
   var base = /[&?]loader\b/.test(location.search) ? '../loader/' : '../src/';
   var sources = [
+    'lang-ada.js',
     'lang-basic.js',
     'lang-clj.js',
     'lang-css.js',
@@ -577,6 +578,95 @@ BEGIN
     END;
   END;
 END;
+</pre>
+
+
+<h1>Ada</h1>
+<pre class="prettyprint lang-ada" id="ada">
+generic -- Example from Rosetta Code
+   type Element is private;
+   type Index is (&lt;&gt;);
+   type Element_Array is array(Index range &lt;&gt;) of Element;
+   with function "&lt;" (Left, Right : Element) return Boolean is &lt;&gt;;
+procedure Quick_Sort(A : in out Element_Array);
+
+-- The procedure body deals with any discrete index type, either an integer type or an enumerated type.
+
+procedure Quick_Sort (A : in out Element_Array) is
+
+   procedure Swap(Left, Right : Index) is
+      Temp : Element := A (Left);
+   begin
+      A (Left) := A (Right);
+      A (Right) := Temp;
+   end Swap;
+
+begin
+   if A'Length &gt; 1 then
+   declare
+      Pivot_Value : Element := A (A'First);
+      Right       : Index := A'Last;
+      Left        : Index := A'First;
+   begin
+       loop
+          while Left &lt; Right and not (Pivot_Value &lt; A (Left)) loop
+             Left := Index'Succ (Left);
+          end loop;
+          while Pivot_Value &lt; A (Right) loop
+             Right := Index'Pred (Right);
+          end loop;
+          exit when Right &lt;= Left;
+          Swap (Left, Right);
+          Left := Index'Succ (Left);
+          Right := Index'Pred (Right);
+       end loop;
+       if Right = A'Last then
+          Right := Index'Pred (Right);
+          Swap (A'First, A'Last);
+       end if;
+       if Left = A'First then
+          Left := Index'Succ (Left);
+       end if;
+       Quick_Sort (A (A'First .. Right));
+       Quick_Sort (A (Left .. A'Last));
+   end;
+   end if;
+end Quick_Sort;
+
+-- An example of how this procedure may be used is:
+
+with Ada.Text_Io;
+with Ada.Float_Text_IO; use Ada.Float_Text_IO;
+
+procedure Sort_Test is
+   type Days is (Mon, Tue, Wed, Thu, Fri, Sat, Sun);
+   type Sales is array (Days range &lt;&gt;) of Float;
+   procedure Sort_Days is new Quick_Sort(Float, Days, Sales);
+
+   procedure Print (Item : Sales) is
+   begin
+      for I in Item'range loop
+         Put(Item =&gt; Item(I), Fore =&gt; 5, Aft =&gt; 2, Exp =&gt; 0);
+      end loop;
+   end Print;
+
+   Weekly_Sales : Sales :=
+     (Mon =&gt; 300.0,
+      Tue =&gt; 700.0,
+      Wed =&gt; 800.0,
+      Thu =&gt; 500.0,
+      Fri =&gt; 200.0,
+      Sat =&gt; 100.0,
+      Sun =&gt; 900.0);
+
+begin
+
+   Print(Weekly_Sales);
+   Ada.Text_Io.New_Line(2);
+   Sort_Days(Weekly_Sales);
+   Print(Weekly_Sales);
+
+end Sort_Test;
 </pre>
 
 <h1>BASIC</h1>
