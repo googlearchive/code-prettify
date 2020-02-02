@@ -6,7 +6,7 @@ An embeddable script that makes source-code snippets in HTML prettier.
 
 * Works on HTML pages.
 * Works even if code contains embedded links, line numbers, etc.
-* Simple API: include some JS & CSS and add an onload handler.
+* Simple API: include some JavaScript & CSS and add an onload handler.
 * Lightweights: small download and does not block page from loading while
   running.
 * Customizable styles via CSS. See the [themes gallery][1].
@@ -49,11 +49,11 @@ public:
 
 ### For which languages does it work?
 
-The comments in `prettify.js` are authoritative but the lexer should work on a
+The comments in `prettify.js` are authoritative, but the lexer should work on a
 number of languages including C and friends, Java, Python, Bash, SQL, HTML,
 XML, CSS, JavaScript, Makefile, and Rust.
 
-It works passably on Ruby, PHP, VB, and Awk and a decent subset of Perl and
+It works passably on Ruby, PHP, Visual Basic, and AWK and a decent subset of Perl and
 Ruby, but because of commenting conventions, doesn't work on Smalltalk, OCaml,
 etc. without a language extension.
 
@@ -125,7 +125,7 @@ i.e. outside the scope of this tool.
 
 ### Which browsers does it work with?
 
-It's been tested with IE 6, Firefox 1.5 & 2, and Safari 2.0.4. Look at
+It's been tested with Internet Explorer 6, Firefox 1.5 & 2, and Safari 2.0.4. Look at
 [the tests][4] to see if it works in your browser.
 
 ### What's changed?
@@ -134,7 +134,7 @@ See the [changelog](CHANGES.md).
 
 ### Why doesn't Prettyprinting of strings work on WordPress?
 
-Apparently wordpress does "smart quoting" which changes close quotes.  This
+Apparently WordPress does "smart quoting" which changes close quotes.  This
 causes end quotes to not match up with open quotes.
 
 This breaks prettifying as well as copying and pasting of code samples.  See
@@ -171,7 +171,7 @@ int y = bar();
 </pre>
 ```
 
-For a more complete example see the [issue #22 testcase][6].
+For a more complete example, see the [issue #22 testcase][6].
 
 ### I get an error message "a is not a function" or "opt_whenDone is not a function"
 
