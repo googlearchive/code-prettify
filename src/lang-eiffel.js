@@ -45,6 +45,8 @@ PR.registerLangHandler(
             [PR['PR_KEYWORD'],     /^\b(?:across|agent|alias|all|and|as|assign|attached|attribute|check|class|convert|create|debug|deferred|detachable|do|else|elseif|end|ensure|expanded|export|external|feature|from|frozen|if|implies|inherit|inspect|invariant|like|local|loop|not|note|obsolete|old|once|only|or|redefine|rename|require|rescue|retry|select|separate|some|then|undefine|until|variant|when|xor)\b/i],
                 // A reserved word: entity
             [PR['PR_KEYWORD'],     /^\b(?:Current|Precursor|Result)\b/i],
+                // A reserved symbol: syntax (for_all, there_exists, broken_bar, clockwise_gapped_circle_arrow, anticlockwise_gapped_circle_arrow)
+            [PR['PR_KEYWORD'],     /^(?<=[^\u0080-\uFFFF\w])[\u2200\u2203\xA6\u27F3\u27F2](?=[\s\xA0\w])/i],
                 // A reserved word: value
             [PR['PR_LITERAL'],     /^\b(?:False|True|Void)\b/i],
                 // Treat an upper case identifier as a type
@@ -54,6 +56,6 @@ PR.registerLangHandler(
                 // Identifier
             [PR['PR_PLAIN'],       /^[a-z]\w*/iu],
                 // Other symbols
-            [PR['PR_PUNCTUATION'], /^[^\s\w]+/]
+            [PR['PR_PUNCTUATION'], /^[^\s\xA0\w'"\u2200\u2203\xA6\u27F3\u27F2]+/]
         ]),
     ['eiffel','e']);
