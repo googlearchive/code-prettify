@@ -1118,6 +1118,8 @@ var goldens = {
     '				`END`STR"{\n' +
     '					and a "new"-style one.\n' +
     '				}"`END`PLN\n' +
+    '			`END`KWDResult`END`PUN.`END`PLNprecede `END`PUN(`END`STR\'=\'`END`PUN)`END`PLN\n' +
+    '			`END`KWDResult`END`PUN.`END`PLNappend_boolean `END`PUN(`END`KWD\u2200`END`PLN x`END`PUN:`END`PLN `END`KWDResult`END`PLN `END`KWD\xA6`END`PLN x `END`PUN&gt;=`END`PLN `END`STR\' \'`END`PUN)`END`PLN\n' +
     '		`END`KWDensure`END`PLN `END`KWDthen`END`PLN\n' +
     '			result_attached`END`PUN:`END`PLN `END`KWDResult`END`PLN `END`PUN/=`END`PLN `END`LITVoid`END`PLN\n' +
     '		`END`KWDend`END`PLN\n' +

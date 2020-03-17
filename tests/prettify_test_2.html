@@ -1253,6 +1253,8 @@ feature -- Output
 				"{
 					and a "new"-style one.
 				}"
+			Result.precede ('=')
+			Result.append_boolean (∀ x: Result ¦ x >= ' ')
 		ensure then
 			result_attached: Result /= Void
 		end
