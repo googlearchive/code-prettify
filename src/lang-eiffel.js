@@ -30,7 +30,7 @@ PR.registerLangHandler(
     PR.createSimpleLexer(
         [ // shortcutStylePatterns
                 // Whitespace
-            [PR['PR_PLAIN'],       /^\s+/, null, ' \r\n\t\xA0'],
+            [PR['PR_PLAIN'],       /^\s+/u, null, ' \r\n\t\xA0'],
                 // Character
             [PR['PR_STRING'],      /^(?:'''|'[^']+')/, null, "'"],
                 // String
@@ -46,7 +46,7 @@ PR.registerLangHandler(
                 // A reserved word: entity
             [PR['PR_KEYWORD'],     /^\b(?:Current|Precursor|Result)\b/i],
                 // A reserved symbol: syntax (for_all, there_exists, broken_bar, clockwise_gapped_circle_arrow, anticlockwise_gapped_circle_arrow)
-            [PR['PR_KEYWORD'],     /^(?<=[^\u0080-\uFFFF\w])[\u2200\u2203\xA6\u27F3\u27F2](?=[\s\xA0\w])/i],
+            [PR['PR_KEYWORD'],     /^[\u2200\u2203\xA6\u27F3\u27F2]/iu],
                 // A reserved word: value
             [PR['PR_LITERAL'],     /^\b(?:False|True|Void)\b/i],
                 // Treat an upper case identifier as a type
