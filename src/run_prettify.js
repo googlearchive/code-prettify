@@ -35,7 +35,7 @@
  * +------------------+---------------+------------------------------+--------+
  * | skin=            | skin name     | Loads the skin stylesheet    | none.  |
  * |                  |               | named "<NAME>.css".          |        |
- * |                  |               | https://cdn.rawgit.com/      |        |
+ * |                  |               | https://raw.githack.com/     |        |
  * |                  |               | google/code-prettify/master/ |        |
  * |                  |               | styles/index.html            |        |
  * +------------------+---------------+------------------------------+--------+
@@ -56,7 +56,7 @@
  *   2. Loads the sunburst.css stylesheet instead of the default prettify.css
  *      stylesheet.
  *      A gallery of stylesheets is available at
- *      https://cdn.rawgit.com/google/code-prettify/master/styles/index.html
+ *      https://raw.githack.com/google/code-prettify/master/styles/index.html
  *   3. Since autorun=false is not specified, calls prettyPrint() on page load.
  * </div>
  */
@@ -228,7 +228,7 @@ var IN_GLOBAL_SCOPE = false;
   // This only works if this script is loaded via https : something
   // over which we exercise no control.
   var LOADER_BASE_URL =
-     'https://cdn.rawgit.com/google/code-prettify/master/loader';
+     'https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader';
 
   for (var i = 0, n = langs.length; i < n; ++i) (function (lang) {
     var script = doc.createElement("script");
