@@ -1,0 +1,29 @@
+
+pre .com, code .com { color: #75715e; font-style: italic; } /* comment - gray */
+pre .kwd, code .kwd { color: #f92672; } /* keyword - dark pink */
+pre .str, code .str { color: #e6db74; } /* string  - green */
+pre .lit, code .lit { color: #f8f8f2; } /* literal - blue */
+pre .typ, code .typ { color: #67d8ef; } /* type - light blue */
+
+pre .atn, code .atn { color: #a5e12c; } /* html/xml attribute name  - khaki */
+pre .tag, code .tag { color: #f92672; } /* html/xml tag    - light blue */
+pre .atv, code .atv { color: #e7db74; } /* html/xml attribute value - green */
+
+pre .pun, code .pun { color: #fff; } /* punctuation - white */
+pre .pln, code .pln { color: #67d8ef; } /* plaintext - white */
+pre .dec, code .dec { color: #ae81ff; } /* decimal - blue */
+
+pre.prettyprint, code.prettyprint {
+  font-family: Ubuntu Mono, monospace;
+  background-color: #272822;
+  border-radius: 8px;
+  border: 0px;
+  color: #f8f8f2;
+}
+
+pre.prettyprint {
+  width: 95%;
+  margin: 1em auto;
+  padding: 1em;
+  white-space: pre-wrap;
+}
