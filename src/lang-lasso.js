@@ -37,7 +37,7 @@ PR['registerLangHandler'](
           [PR['PR_STRING'],       /^\"[^\"\\]*(?:\\[\s\S][^\"\\]*)*(?:\"|$)/, null, '"'],
           // ticked strings
           [PR['PR_STRING'],       /^\`[^\`]*(?:\`|$)/, null, '`'],
-          // numeral as integer or hexidecimal
+          // numeral as integer or hexadecimal
           [PR['PR_LITERAL'],      /^0x[\da-f]+|\d+/i, null, '0123456789'],
           // local or thread variables, or hashbang
           [PR['PR_ATTRIB_NAME'],  /^[#$][a-z_][\w.]*|#\d+\b|#![ \S]+lasso9\b/i, null, '#$']

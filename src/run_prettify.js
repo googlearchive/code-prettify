@@ -972,7 +972,7 @@ var IN_GLOBAL_SCOPE = false;
         * recognized.
         *
         * Shortcut is an optional string of characters, any of which, if the first
-        * character, gurantee that this pattern and only this pattern matches.
+        * character, guarantee that this pattern and only this pattern matches.
         *
         * @param {Array} shortcutStylePatterns patterns that always start with
         *   a known character.  Must have a shortcut string.
@@ -1256,12 +1256,12 @@ var IN_GLOBAL_SCOPE = false;
           // preprocessor directives.
 
           // This definition of punctuation does not include # in the list of
-          // follow-on exclusions, so # will not be broken before if preceeded
+          // follow-on exclusions, so # will not be broken before if preceded
           // by a punctuation character.  We could try to exclude # after
           // [|&;<>] but that doesn't seem to cause many major problems.
           // If that does turn out to be a problem, we should change the below
           // when hc is truthy to include # in the run of punctuation characters
-          // only when not followint [|&;<>].
+          // only when not following [|&;<>].
           '^.[^\\s\\w.$@\'"`/\\\\]*';
         if (options['regexLiterals']) {
           punctuation += '(?!\s*\/)';

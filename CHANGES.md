@@ -59,7 +59,7 @@
  * Added `.mxml` extension to the markup style handler for
    Flex [MXML files](http://en.wikipedia.org/wiki/MXML).
    See issue [#37](https://github.com/google/code-prettify/issues/37).
- * Added `.m` extension to the C style handler so that Objective C source files
+ * Added `.m` extension to the C style handler so that Objective-C source files
    properly highlight. See issue [#58](https://github.com/google/code-prettify/issues/58).
  * Changed HTML lexer to use the same embedded source mechanism as the wiki
    language handler, and changed to use the registered CSS handler for STYLE
@@ -134,4 +134,4 @@
 
 ## 28 Apr 2015
 
- * Migrated to Github
+ * Migrated to GitHub

@@ -74,7 +74,7 @@
 
   // identifiers: variable/function name, or a chain of variable names joined by dots (obj.method, struct.field1.field2, etc..)
   // valid variable names (start with letter, and contains letters, digits, and underscores).
-  // we match "xx.yy" as a whole so that if "xx" is plain and "yy" is not, we dont get a false positive for "yy"
+  // we match "xx.yy" as a whole so that if "xx" is plain and "yy" is not, we don't get a false positive for "yy"
   //var reIdent = '(?:[a-zA-Z][a-zA-Z0-9_]*)';
   //var reIdentChain = '(?:' + reIdent + '(?:\.' + reIdent + ')*' + ')';
 

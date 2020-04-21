@@ -32,7 +32,7 @@
 (function () {
 // Falls back to plain for stylesheets that don't style fun.
 var PR_FUNCTION = 'fun pln';
-// Falls back to plaiin for stylesheets that don't style var.
+// Falls back to plain for stylesheets that don't style var.
 var PR_VARIABLE = 'var pln';
 
 PR['registerLangHandler'](
