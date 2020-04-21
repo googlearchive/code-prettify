@@ -41,7 +41,7 @@ pre.prettyprint a, code.prettyprint a {
    text-decoration:none;
 }
 /* Specify class=linenums on a pre to get line numbering; line numbers themselves are the same color as punctuation */
-ol.linenums { margin-top: 0; margin-bottom: 0; color: #8B8970; } /* IE indents via margin-left */
+ol.linenums { margin-top: 0; margin-bottom: 0; color: #8B8970; display: inline-block; } /* IE indents via margin-left */
 li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { list-style-type: none }
 /* Alternate shading for lines */
 li.L1,li.L3,li.L5,li.L7,li.L9 { }
