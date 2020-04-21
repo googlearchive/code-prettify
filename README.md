@@ -69,15 +69,16 @@ Other languages are supported via extensions:
 
 [Apollo](src/lang-apollo.js);
 [Basic](src/lang-basic.js);
-[Clojure](src/lang-clj.js);
 [CSS](src/lang-css.js);
+[Clojure](src/lang-clj.js);
 [Dart](src/lang-dart.js);
 [Erlang](src/lang-erlang.js);
 [Go](src/lang-go.js);
 [Haskell](src/lang-hs.js);
+[LLVM](src/lang-llvm.js);
+[LaTeX](src/lang-tex.js);
 [Lasso](src/lang-lasso.js);
 [Lisp, Scheme](src/lang-lisp.js);
-[LLVM](src/lang-llvm.js);
 [Logtalk](src/lang-logtalk.js);
 [Lua](src/lang-lua.js);
 [MATLAB](src/lang-matlab.js);
@@ -89,16 +90,16 @@ Other languages are supported via extensions:
 [R, S](src/lang-r.js);
 [RD](src/lang-rd.js);
 [Rust](src/lang-rust.js);
-[Scala](src/lang-scala.js);
 [SQL](src/lang-sql.js);
+[Scala](src/lang-scala.js);
 [Swift](src/lang-swift.js);
 [TCL](src/lang-tcl.js);
-[LaTeX](src/lang-tex.js);
-[Visual Basic](src/lang-vb.js);
 [VHDL](src/lang-vhdl.js);
+[Verilog](src/lang-verilog.js);
+[Visual Basic](src/lang-vb.js);
 [Wiki](src/lang-wiki.js);
 [XQ](src/lang-xq.js);
-[YAML](src/lang-yaml.js)
+[YAML](src/lang-yaml.js);
 
 If you'd like to add an extension for your favorite language, please look at
 `src/lang-lisp.js` and submit a pull request.

@@ -768,6 +768,75 @@ var goldens = {
       '\n' +
       '`END`KWDfun`END`PLN `END`TYPBoolean`END`PUN?.`END`PLNgetOrThrow`END`PUN():`END`PLN `END`TYPBoolean`END`PLN `END`PUN=`END`PLN `END`KWDthis`END`PLN `END`PUN?:`END`PLN `END`KWDthrow`END`PLN `END`TYPException`END`PUN()`END'
   ),
+  verilog: (
+      '`COM/*\n' +
+      ' * Multiline\n' +
+      ' * comment\n' +
+      ' */`END`PLN\n' +
+      'a `END`PUN=`END`PLN `END`STR"123"`END`PLN\n' +
+      '`END<span class="typ">nor`END`PLN `END`PUN(`END`PLN `END`TAGsmall`END`PLN `END`PUN)`END`PLN\n' +
+      '`END<span class="typ">nor`END`PLN `END`PUN(`END`TAGhighz1`END`PUN,`END`PLN `END`TAGstrong0`END`PUN)`END`PLN\n' +
+      '`END`COM//-----------------------------------------------------`END`PLN\n' +
+      '`END`COM// Design Name : cam`END`PLN\n' +
+      '`END`COM// File Name   : cam.v`END`PLN\n' +
+      '`END`COM// Function    : CAM`END`PLN\n' +
+      '`END`COM// Coder       : Deepak Kumar Tala`END`PLN\n' +
+      '`END`COM//-----------------------------------------------------`END`PLN\n' +
+      '`END`KWDmodule`END`PLN cam `END`PUN(`END`PLN\n' +
+      'clk         `END`PUN,`END`PLN `END`COM// Cam clock`END`PLN\n' +
+      'cam_enable  `END`PUN,`END`PLN `END`COM// Cam enable`END`PLN\n' +
+      'cam_data_in `END`PUN,`END`PLN `END`COM// Cam data to match`END`PLN\n' +
+      'cam_hit_out `END`PUN,`END`PLN `END`COM// Cam match has happened`END`PLN\n' +
+      'cam_addr_out  `END`COM// Cam output address`END`PLN\n' +
+      '`END`PUN);`END`PLN\n' +
+      '\n' +
+      '`END`KWDparameter`END`PLN ADDR_WIDTH  `END`PUN=`END`PLN `END`LIT8`END`PUN;`END`PLN\n' +
+      '`END`KWDparameter`END`PLN DEPTH       `END`PUN=`END`PLN `END`LIT1`END`PLN `END`PUN&lt;&lt;`END`PLN ADDR_WIDTH`END`PUN;`END`PLN\n' +
+      '`END`COM//------------Input Ports--------------`END`PLN\n' +
+      '`END`TYPinput`END`PLN                    clk`END`PUN;`END`PLN\n' +
+      '`END`TYPinput`END`PLN                    cam_enable`END`PUN;`END`PLN\n' +
+      '`END`TYPinput`END`PLN  `END`PUN[`END`PLNDEPTH`END`PUN-`END`LIT1`END`PUN:`END`LIT0`END`PUN]`END`PLN       cam_data_in`END`PUN;`END`PLN\n' +
+      '`END`COM//----------Output Ports--------------`END`PLN\n' +
+      '`END`TYPoutput`END`PLN                   cam_hit_out`END`PUN;`END`PLN\n' +
+      '`END`TYPoutput`END`PLN `END`PUN[`END`PLNADDR_WIDTH`END`PUN-`END`LIT1`END`PUN:`END`LIT0`END`PUN]`END`PLN  cam_addr_out`END`PUN;`END`PLN\n' +
+      '`END`COM//------------Internal Variables--------`END`PLN\n' +
+      '`END`TYPreg`END`PLN `END`PUN[`END`PLNADDR_WIDTH`END`PUN-`END`LIT1`END`PUN:`END`LIT0`END`PUN]`END`PLN  cam_addr_out`END`PUN;`END`PLN\n' +
+      '`END`TYPreg`END`PLN                   cam_hit_out`END`PUN;`END`PLN\n' +
+      '`END`TYPreg`END`PLN `END`PUN[`END`PLNADDR_WIDTH`END`PUN-`END`LIT1`END`PUN:`END`LIT0`END`PUN]`END`PLN  cam_addr_combo`END`PUN;`END`PLN\n' +
+      '`END`TYPreg`END`PLN                   cam_hit_combo`END`PUN;`END`PLN\n' +
+      '`END`TYPreg`END`PLN                   found_match`END`PUN;`END`PLN\n' +
+      '`END`TYPinteger`END`PLN               i`END`PUN;`END`PLN\n' +
+      '`END`COM//-------------Code Starts Here-------`END`PLN\n' +
+      '`END`KWDalways`END`PLN `END`PUN@(`END`PLNcam_data_in`END`PUN)`END`PLN `END`KWDbegin`END`PLN\n' +
+      '  cam_addr_combo   `END`PUN=`END`PLN `END`PUN{`END`PLNADDR_WIDTH`END`PUN{`END`LIT1\'b0`END`PUN}};`END`PLN\n' +
+      '  found_match      `END`PUN=`END`PLN `END`LIT1\'b0`END`PUN;`END`PLN\n' +
+      '  cam_hit_combo    `END`PUN=`END`PLN `END`LIT1\'b0`END`PUN;`END`PLN\n' +
+      '  `END`KWDfor`END`PLN `END`PUN(`END`PLNi`END`PUN=`END`LIT0`END`PUN;`END`PLN i`END`PUN&lt;`END`PLNDEPTH`END`PUN;`END`PLN i`END`PUN=`END`PLNi`END`PUN+`END`LIT1`END`PUN)`END`PLN `END`KWDbegin`END`PLN\n' +
+      '    `END`KWDif`END`PLN `END`PUN(`END`PLNcam_data_in`END`PUN[`END`PLNi`END`PUN]`END`PLN `END`PUN&amp;&amp;`END`PLN `END`PUN!`END`PLNfound_match`END`PUN)`END`PLN `END`KWDbegin`END`PLN\n' +
+      '      found_match     `END`PUN=`END`PLN `END`LIT1\'b1`END`PUN;`END`PLN\n' +
+      '      cam_hit_combo   `END`PUN=`END`PLN `END`LIT1\'b1`END`PUN;`END`PLN\n' +
+      '      cam_addr_combo  `END`PUN=`END`PLN i`END`PUN;`END`PLN\n' +
+      '    `END`KWDend`END`PLN `END`KWDelse`END`PLN `END`KWDbegin`END`PLN\n' +
+      '      found_match     `END`PUN=`END`PLN found_match`END`PUN;`END`PLN\n' +
+      '      cam_hit_combo   `END`PUN=`END`PLN cam_hit_combo`END`PUN;`END`PLN\n' +
+      '      cam_addr_combo  `END`PUN=`END`PLN cam_addr_combo`END`PUN;`END`PLN\n' +
+      '    `END`KWDend`END`PLN\n' +
+      '  `END`KWDend`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END`COM// Register the outputs`END`PLN\n' +
+      '`END`KWDalways`END`PLN `END`PUN@(`END`KWDposedge`END`PLN clk`END`PUN)`END`PLN `END`KWDbegin`END`PLN\n' +
+      '  `END`KWDif`END`PLN `END`PUN(`END`PLNcam_enable`END`PUN)`END`PLN `END`KWDbegin`END`PLN\n' +
+      '    cam_hit_out  `END`PUN&lt;=`END`PLN  cam_hit_combo`END`PUN;`END`PLN\n' +
+      '    cam_addr_out `END`PUN&lt;=`END`PLN  cam_addr_combo`END`PUN;`END`PLN\n' +
+      '  `END`KWDend`END`PLN `END`KWDelse`END`PLN `END`KWDbegin`END`PLN\n' +
+      '    cam_hit_out  `END`PUN&lt;=`END`PLN  `END`LIT1\'b0`END`PUN;`END`PLN\n' +
+      '    cam_addr_out `END`PUN&lt;=`END`PLN  `END`PUN{`END`PLNADDR_WIDTH`END`PUN{`END`LIT1\'b0`END`PUN}};`END`PLN\n' +
+      '  `END`KWDend`END`PLN\n' +
+      '`END`KWDend`END`PLN\n' +
+      '\n' +
+      '`END`KWDendmodule`END'
+  ),
   llvm: (
     '`COM; Declare the string constant as a global constant.`END`PLN\n' +
     '@.str `END`PUN=`END`PLN `END`KWDprivate`END`PLN `END`KWDunnamed_addr`END`PLN `END`KWDconstant`END`PLN `END`PUN[`END`LIT13`END`PLN `END`KWDx`END`PLN `END`KWDi8`END`PUN]`END`PLN `END`KWDc`END`STR"hello world\\0A\\00"`END`PLN\n' +
