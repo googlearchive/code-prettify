@@ -13,9 +13,9 @@ Announcement: [**Action required** *rawgit.com* is going away](https://groups.go
 An embeddable script that makes source-code snippets in HTML prettier.
 
 * Works on HTML pages.
-* Works even if code contains embedded links, line numbers, etc.
+* Works even if the code contains embedded links, line numbers, etc.
 * Simple API: include some JS & CSS and add an onload handler.
-* Lightweights: small download and does not block page from loading while
+* Lightweights: small download and does not block the  page from loading while
   running.
 * Customizable styles via CSS. See the [themes gallery][1].
 * Supports all C-like, Bash-like, and XML-like languages. No need to specify
@@ -142,8 +142,8 @@ See the [changelog](CHANGES.md).
 
 ### Why doesn't Prettyprinting of strings work on WordPress?
 
-Apparently wordpress does "smart quoting" which changes close quotes.  This
-causes end quotes to not match up with open quotes.
+Apparently, WordPress does "smart quoting" which changes close quotes.  This
+causes end quotes do not match up with open quotes.
 
 This breaks prettifying as well as copying and pasting of code samples.  See
 [WordPress's help center][5] for info on how to stop smart quoting of code
@@ -167,7 +167,7 @@ faz();
 </pre>
 ```
 
-### How do I prevent a portion of markup from being marked as code?
+### How do I prevent a portion of the markup from being marked as code?
 
 You can use the `nocode` class to identify a span of markup that is not code:
 
