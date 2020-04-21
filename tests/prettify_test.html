@@ -35,7 +35,8 @@
     'lang-vb.js',
     'lang-vhdl.js',
     'lang-wiki.js',
-    'lang-yaml.js'
+    'lang-yaml.js',
+    'lang-ini.js'
   ];
   var styles = [
     'prettify.css'
@@ -1434,5 +1435,28 @@ fn main() {
 }
 </pre>
 
+<h1>Ini</h1>
+<pre class="prettyprint lang-ini" id="ini">
+bare-key = value
+
+[Section 1]
+key1=value
+key2=value
+;comment
+key3 = "another value"
+
+[Section 2]
+key1 = value
+key2 = another value; but different
+</pre>
+
+<h1>Ini</h1>
+<pre class="prettyprint lang-ini" id="ini_ast">
+; asterisk-style configuration
+[sub-conf-test]
+exten => s,1,NoOp("testing syntax")
+exten => s,2,Return()
+
+</pre>
 </body>
 </html>
