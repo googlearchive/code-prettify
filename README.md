@@ -1,3 +1,11 @@
+# Status: Archived
+
+![status: inactive](https://img.shields.io/badge/status-inactive-red.svg)
+
+This repository has been archived and is no longer maintained.
+
+---
+
 # JavaScript code prettifier
 
 Announcement: [**Action required** *rawgit.com* is going away](https://groups.google.com/forum/#!topic/js-code-prettifier/IFHev_kLm30).
