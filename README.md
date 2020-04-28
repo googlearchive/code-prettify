@@ -86,6 +86,7 @@ Other languages are supported via extensions:
 [Nemerle](src/lang-n.js);
 [Pascal](src/lang-pascal.js);
 [Protocol buffers](src/lang-proto.js);
+[Puppet](src/lang-puppet.js);
 [R, S](src/lang-r.js);
 [RD](src/lang-rd.js);
 [Rust](src/lang-rust.js);
