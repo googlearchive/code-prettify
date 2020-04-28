@@ -99,4 +99,4 @@ PR['registerLangHandler'](
          // matches the symbol production
          [PR['PR_PUNCTUATION'], /^[^\t\n\x0B\x0C\r a-zA-Z0-9\'\"]+/]
         ]),
-    ['hs']);
+    ['hs', 'haskell']);
