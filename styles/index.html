@@ -83,12 +83,16 @@ Print preview this page to see how the themes work on the printed page.
 </p>
 
 <script type="text/javascript">
+// Called by the demo.html frames loaded per theme to
+// size the iframes properly and to allow them to tile
+// the page nicely.
 var allThemes = [
   { name: 'default' },
   { name: 'desert', author: '<a href="https://code.google.com/u/techtonik@gmail.com/">anatoly techtonik<\/a>' },
   { name: 'sunburst', author: 'David Leibovic' },
   { name: 'sons-of-obsidian', author: '<a href="http://CodeTunnel.com/blog/post/71/google-code-prettify-obsidian-theme">Alex Ford<\/a>' },
-  { name: 'doxy', author: 'Robert Sperberg' }
+  { name: 'doxy', author: 'Robert Sperberg' },
+  { name: 'vscode-monaco', authorHtml: '<a href="https://github.com/nidorx" target="_blank">Alex Rodin<\/a>' }
 ];
 
 (function () {
