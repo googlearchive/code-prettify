@@ -71,6 +71,7 @@ Other languages are supported via extensions:
 [Basic](src/lang-basic.js);
 [Clojure](src/lang-clj.js);
 [CSS](src/lang-css.js);
+[CQL](src/lang-cql.js);
 [Dart](src/lang-dart.js);
 [Erlang](src/lang-erlang.js);
 [Go](src/lang-go.js);

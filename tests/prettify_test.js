@@ -184,6 +184,24 @@ var goldens = {
       '`PUN,`END`PLN `END`LIT1U`END`PUN);`END`PLN\n' +
     '`END`PUN}`END'
   ),
+  cql_lang: (
+    '`COM/* A multi-line\n' +
+    ' * comment *\/`END`PLN\n' +
+    '`END`STR\'Another string /* Isn\\\'t a comment\'`END`PUN,`END`PLN\n' +
+    '`END`STR"A string *\/"`END`PLN\n' +
+    '`END`COM-- A line comment`END`PLN\n' +
+    '`END`KWDUSE`END`PLN `END`KWDKEYSPACE`END`PLN killrvideo`END`PUN;`END`PLN\n' +
+    '`END`KWDSELECT`END`PLN `END`PUN*`END`PLN `END`KWDFROM`END' +
+      '`PLN usernames `END`KWDWHERE`END`PLN id `END`KWDIN`END`PLN `END' +
+      '`PUN(`END`LIT1`END`PUN,`END`PLN `END`LIT2.0`END`PUN,`END`PLN `END' +
+      '`LIT+30e-1`END`PUN);`END`PLN\n' +
+    '`END`COM-- keywords are case-insensitive.`END`PLN\n' +
+    '`END`COM-- Note: user-table is a single identifier, not a pair of' +
+      ' keywords`END`PLN\n' +
+    '`END`KWDselect`END`PLN `END`PUN*`END`PLN `END`KWDfrom`END' +
+      '`PLN user-table `END`KWDwhere`END`PLN id `END`KWDin`END`PLN `END' +
+      '`PUN(`END`PLNx`END`PUN,`END`PLN y`END`PUN,`END`PLN z`END`PUN);`END'
+  ),
   java: (
     '`KWDpackage`END`PLN foo`END`PUN;`END`PLN\n' +
     '\n' +
